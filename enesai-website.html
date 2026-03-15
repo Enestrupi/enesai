@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Enes's AI — Roblox Script Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Syncopate:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://js.puter.com/v2/"></script>
+<style>
+:root {
+  --purple: #9d00ff;
+  --purple2: #c400ff;
+  --neon: #e040fb;
+  --cyan: #00f0ff;
+  --dark: #07070f;
+  --panel: #0d0d1e;
+  --panel2: #11112a;
+  --border: rgba(157,0,255,0.25);
+  --glow-purple: 0 0 30px rgba(157,0,255,0.4);
+  --glow-cyan: 0 0 20px rgba(0,240,255,0.3);
+  --text: #e8e0ff;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── Animated background ── */
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-fx::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(157,0,255,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(0,240,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 60% 10%, rgba(196,0,255,0.07) 0%, transparent 70%);
+  animation: bgPulse 8s ease-in-out infinite alternate;
+}
+
+.bg-fx::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(157,0,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157,0,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Floating particles */
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--neon);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--neon);
+  animation: floatUp linear infinite;
+  opacity: 0;
+}
+
+/* ── Layout ── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+/* ── Header ── */
+header {
+  text-align: center;
+  margin-bottom: 50px;
+  animation: fadeDown 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+
+.logo-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bolt {
+  font-size: 52px;
+  line-height: 1;
+  filter: drop-shadow(0 0 20px var(--neon)) drop-shadow(0 0 40px var(--purple));
+  animation: boltPulse 3s ease-in-out infinite;
+}
+
+.logo-text {
+  font-family: 'Syncopate', monospace;
+  font-weight: 700;
+  font-size: clamp(24px, 6vw, 44px);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, var(--neon) 40%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(157,0,255,0.5));
+}
+
+.logo-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 8px;
+  color: rgba(157,0,255,0.7);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.badge-purple {
+  background: rgba(157,0,255,0.1);
+  border: 1px solid rgba(157,0,255,0.4);
+  color: var(--neon);
+}
+
+.badge-cyan {
+  background: rgba(0,240,255,0.08);
+  border: 1px solid rgba(0,240,255,0.3);
+  color: var(--cyan);
+}
+
+.badge .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+  animation: dotPulse 2s infinite;
+}
+
+/* ── Sections ── */
+.section-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(157,0,255,0.6);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-label::before { content: '//'; color: var(--cyan); }
+
+/* ── Mode tabs ── */
+.modes {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s ease 0.1s both;
+}
+
+.mode-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: rgba(255,255,255,0.35);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.mode-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--purple), var(--neon));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mode-btn span { position: relative; z-index: 1; }
+
+.mode-btn:hover {
+  border-color: var(--purple);
+  color: var(--neon);
+  box-shadow: var(--glow-purple);
+}
+
+.mode-btn.active {
+  border-color: var(--neon);
+  color: #fff;
+  box-shadow: var(--glow-purple);
+}
+
+.mode-btn.active::before { opacity: 1; }
+
+/* ── Input card ── */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  animation: fadeUp 0.7s ease 0.2s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon), transparent);
+  opacity: 0.6;
+}
+
+textarea {
+  width: 100%;
+  min-height: 110px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(157,0,255,0.2);
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 14px 16px;
+  resize: vertical;
+  outline: none;
+  transition: all 0.25s;
+}
+
+textarea:focus {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(157,0,255,0.15), var(--glow-purple);
+}
+
+textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+/* ── Example chips ── */
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  background: rgba(157,0,255,0.07);
+  border: 1px solid rgba(157,0,255,0.2);
+  color: rgba(255,255,255,0.45);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  background: rgba(157,0,255,0.2);
+  border-color: var(--neon);
+  color: var(--neon);
+  box-shadow: 0 0 12px rgba(157,0,255,0.3);
+}
+
+/* ── Toggles ── */
+.toggles {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(157,0,255,0.1);
+}
+
+.toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-item input { display: none; }
+
+.toggle-track {
+  width: 36px; height: 20px;
+  background: rgba(157,0,255,0.15);
+  border: 1px solid rgba(157,0,255,0.3);
+  border-radius: 10px;
+  position: relative;
+  transition: all 0.25s;
+}
+
+.toggle-item input:checked + .toggle-track {
+  background: linear-gradient(135deg, var(--purple), var(--neon));
+  border-color: var(--neon);
+  box-shadow: 0 0 12px rgba(157,0,255,0.4);
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: left 0.25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.toggle-item input:checked + .toggle-track::after { left: 19px; }
+
+.toggle-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ── Generate button ── */
+.gen-btn {
+  width: 100%;
+  padding: 18px;
+  margin-top: 22px;
+  background: linear-gradient(135deg, #7700cc, #c400ff, #9d00ff);
+  background-size: 200% 200%;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Syncopate', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  animation: gradShift 4s ease infinite;
+}
+
+.gen-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+
+.gen-btn:hover::before { left: 100%; }
+.gen-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(157,0,255,0.6), 0 0 60px rgba(157,0,255,0.2);
+}
+
+.gen-btn:active { transform: translateY(0); }
+.gen-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Progress bar ── */
+.progress {
+  height: 2px;
+  background: transparent;
+  border-radius: 2px;
+  margin-top: 14px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress.active { display: block; background: rgba(157,0,255,0.15); }
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--purple), var(--neon), var(--cyan));
+  border-radius: 2px;
+  animation: progressAnim 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--neon);
+}
+
+/* ── Status ── */
+.status {
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(157,0,255,0.6);
+  margin-top: 12px;
+  display: none;
+  text-transform: uppercase;
+}
+
+.status.active { display: block; }
+.status.error { color: #ff4466; }
+.status.success { color: #66ffaa; }
+
+/* ── Output card ── */
+.output-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: fadeUp 0.5s ease both;
+  display: none;
+  margin-bottom: 20px;
+}
+
+.output-card.visible { display: block; }
+
+.output-card::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.5;
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--border);
+}
+
+.output-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.output-title::before { content: '//'; color: var(--neon); }
+
+.type-pill {
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.pill-local { background: rgba(0,240,255,0.1); color: var(--cyan); border: 1px solid rgba(0,240,255,0.3); }
+.pill-server { background: rgba(255,80,80,0.1); color: #ff6666; border: 1px solid rgba(255,80,80,0.3); }
+.pill-module { background: rgba(255,180,50,0.1); color: #ffb432; border: 1px solid rgba(255,180,50,0.3); }
+
+.btn-row { display: flex; gap: 8px; }
+
+.out-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  border: none;
+}
+
+.copy-btn {
+  background: transparent;
+  border: 1px solid var(--neon);
+  color: var(--neon);
+}
+
+.copy-btn:hover { background: var(--neon); color: #000; box-shadow: var(--glow-purple); }
+.copy-btn.done { background: #00cc66; border-color: #00cc66; color: #fff; }
+
+.code-area {
+  padding: 22px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #c8ffc8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 460px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.25);
+}
+
+.code-area::-webkit-scrollbar { width: 5px; }
+.code-area::-webkit-scrollbar-track { background: transparent; }
+.code-area::-webkit-scrollbar-thumb { background: rgba(157,0,255,0.4); border-radius: 3px; }
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(157,0,255,0.3);
+  text-transform: uppercase;
+  animation: fadeUp 0.7s ease 0.5s both;
+}
+
+/* ── Animations ── */
+@keyframes fadeDown {
+  from { opacity:0; transform:translateY(-30px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes bgPulse {
+  from { opacity:0.8; }
+  to   { opacity:1.2; }
+}
+@keyframes boltPulse {
+  0%,100% { filter: drop-shadow(0 0 20px var(--neon)) drop-shadow(0 0 40px var(--purple)); }
+  50%     { filter: drop-shadow(0 0 35px var(--cyan)) drop-shadow(0 0 60px var(--neon)); }
+}
+@keyframes dotPulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%     { opacity:0.4; transform:scale(0.7); }
+}
+@keyframes gradShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes progressAnim {
+  0%   { width:0%; margin-left:0; }
+  50%  { width:70%; margin-left:15%; }
+  100% { width:0%; margin-left:100%; }
+}
+@keyframes floatUp {
+  0%   { transform:translateY(100vh) scale(0); opacity:0; }
+  10%  { opacity:1; }
+  90%  { opacity:1; }
+  100% { transform:translateY(-10vh) scale(1); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-fx"></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-wrap">
+      <div class="bolt">⚡</div>
+      <div class="logo-text">Enes's AI</div>
+      <div class="logo-sub">Roblox Script Generator</div>
+    </div>
+    <div class="badges">
+      <span class="badge badge-purple"><span class="dot"></span> Claude AI</span>
+      <span class="badge badge-cyan"><span class="dot"></span> 100% Free</span>
+      <span class="badge badge-purple"><span class="dot"></span> No API Key</span>
+      <span class="badge badge-cyan"><span class="dot"></span> Puter.js</span>
+    </div>
+  </header>
+
+  <!-- MODE SELECTOR -->
+  <div class="section-label" style="animation: fadeUp 0.7s ease 0.1s both;">Script Mode</div>
+  <div class="modes">
+    <button class="mode-btn active" data-mode="localscript"><span>LocalScript</span></button>
+    <button class="mode-btn" data-mode="script"><span>Script</span></button>
+    <button class="mode-btn" data-mode="module"><span>Module</span></button>
+    <button class="mode-btn" data-mode="gui"><span>GUI / UI</span></button>
+    <button class="mode-btn" data-mode="combat"><span>Combat</span></button>
+    <button class="mode-btn" data-mode="npc"><span>NPC</span></button>
+    <button class="mode-btn" data-mode="datastore"><span>DataStore</span></button>
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <div class="section-label">Describe Your Script</div>
+
+    <textarea id="prompt"
+      placeholder="e.g. make a beautiful admin console with fly, speed, god mode, kick and teleport commands..."></textarea>
+
+    <!-- Quick examples -->
+    <div class="chips">
+      <span class="chip" onclick="setPrompt('beautiful admin console with fly speed god mode kick teleport commands')">⚡ Admin Console</span>
+      <span class="chip" onclick="setPrompt('smooth double jump with neon particle trail effects')">🦘 Double Jump</span>
+      <span class="chip" onclick="setPrompt('animated shop GUI with items coins and buy buttons')">🛒 Shop GUI</span>
+      <span class="chip" onclick="setPrompt('sword combat system with combos damage and hit effects')">⚔️ Sword Combat</span>
+      <span class="chip" onclick="setPrompt('enemy NPC that chases and attacks players with pathfinding')">🤖 Enemy NPC</span>
+      <span class="chip" onclick="setPrompt('leaderboard with coins kills and deaths using DataStore')">🏆 Leaderboard</span>
+      <span class="chip" onclick="setPrompt('gun system with bullets reload animation and hitmarkers')">🔫 Gun System</span>
+      <span class="chip" onclick="setPrompt('pet system with equip unequip and follow logic')">🐾 Pet System</span>
+    </div>
+
+    <!-- Toggles -->
+    <div class="toggles">
+      <label class="toggle-item">
+        <input type="checkbox" id="tog-comments" checked>
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Comments</span>
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="tog-optimize" checked>
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Optimized</span>
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="tog-errors" checked>
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Error Handling</span>
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" id="tog-modern" checked>
+        <span class="toggle-track"></span>
+        <span class="toggle-label">Modern Style</span>
+      </label>
+    </div>
+
+    <!-- Button -->
+    <button class="gen-btn" id="genBtn" onclick="generate()">
+      ⚡ &nbsp; GENERATE SCRIPT
+    </button>
+
+    <!-- Progress -->
+    <div class="progress" id="progress"><div class="progress-bar"></div></div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- OUTPUT CARD -->
+  <div class="output-card" id="outputCard">
+    <div class="output-header">
+      <div class="output-title">
+        Generated Script
+        <span class="type-pill pill-local" id="typePill">LocalScript</span>
+      </div>
+      <div class="btn-row">
+        <button class="out-btn copy-btn" id="copyBtn" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <div class="code-area" id="codeArea"></div>
+  </div>
+
+  <footer>⚡ Enes's AI · Powered by Claude · Built with Puter.js · Free Forever</footer>
+
+</div>
+
+<script>
+// ── Particles ──
+const pContainer = document.getElementById('particles');
+for (let i = 0; i < 25; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.cssText = `
+    left: ${Math.random()*100}%;
+    width: ${Math.random()*3+1}px;
+    height: ${Math.random()*3+1}px;
+    animation-duration: ${Math.random()*15+10}s;
+    animation-delay: ${Math.random()*15}s;
+    opacity: 0;
+  `;
+  // Random color purple/cyan
+  p.style.background = Math.random() > 0.5 ? '#e040fb' : '#00f0ff';
+  p.style.boxShadow = `0 0 6px ${p.style.background}`;
+  pContainer.appendChild(p);
+}
+
+// ── State ──
+let currentMode = 'localscript';
+let generatedCode = '';
+
+// ── Mode buttons ──
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+
+    const pill = document.getElementById('typePill');
+    const map = {
+      localscript: ['LocalScript','pill-local'],
+      gui:         ['LocalScript','pill-local'],
+      combat:      ['LocalScript','pill-local'],
+      script:      ['Script','pill-server'],
+      npc:         ['Script','pill-server'],
+      datastore:   ['Script','pill-server'],
+      module:      ['ModuleScript','pill-module'],
+    };
+    const [label, cls] = map[currentMode] || ['LocalScript','pill-local'];
+    pill.textContent = label;
+    pill.className = 'type-pill ' + cls;
+  });
+});
+
+function setPrompt(text) {
+  document.getElementById('prompt').value = text;
+  document.getElementById('prompt').focus();
+}
+
+function buildSystem() {
+  const comments  = document.getElementById('tog-comments').checked;
+  const optimize  = document.getElementById('tog-optimize').checked;
+  const errors    = document.getElementById('tog-errors').checked;
+  const modern    = document.getElementById('tog-modern').checked;
+
+  const modeMap = {
+    localscript: "Generate a Roblox LOCALSCRIPT (runs on client). ALWAYS use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). NEVER use server-only patterns.",
+    gui:         "Generate a Roblox LOCALSCRIPT that creates a beautiful modern UI with Instance.new(). Use dark theme, UICorner for rounded elements, UIGradient for colors, TweenService for smooth animations, UIStroke for outlines. Parent ScreenGui to PlayerGui.",
+    combat:      "Generate a Roblox LOCALSCRIPT for a combat/weapon system. Include proper hit detection, animations via AnimationTrack, visual effects, and damage handling through RemoteEvents.",
+    script:      "Generate a Roblox server-side SCRIPT. Use proper server patterns. Never reference LocalPlayer.",
+    npc:         "Generate a Roblox server SCRIPT for an NPC. Use PathfindingService for movement, Humanoid for animations, and proper aggro/chase/attack logic.",
+    datastore:   "Generate a Roblox server SCRIPT using DataStoreService. Include proper save, load, and autosave with pcall error handling.",
+    module:      "Generate a Roblox MODULESCRIPT that returns a clean table/class with methods.",
+  };
+
+  let sys = "You are Enes's AI, an expert Roblox Lua scripter. " + (modeMap[currentMode] || modeMap.localscript);
+  if (comments) sys += " Add clear comments explaining what each section does.";
+  if (optimize) sys += " Write optimized, efficient Lua code using best practices.";
+  if (errors)   sys += " Include pcall() error handling for any risky operations.";
+  if (modern)   sys += " Use modern Roblox APIs (task.wait instead of wait, task.spawn instead of spawn, etc).";
+  sys += " CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. No explanation text. Start directly with -- or local or game etc.";
+  return sys;
+}
+
+async function generate() {
+  const prompt = document.getElementById('prompt').value.trim();
+  if (!prompt) {
+    setStatus('⚠ Please describe your script first!', 'error');
+    return;
+  }
+
+  const btn      = document.getElementById('genBtn');
+  const output   = document.getElementById('outputCard');
+  const code     = document.getElementById('codeArea');
+  const progress = document.getElementById('progress');
+
+  btn.disabled = true;
+  btn.textContent = '⏳   GENERATING...';
+  output.classList.remove('visible');
+  code.textContent = '';
+  generatedCode = '';
+  progress.classList.add('active');
+  setStatus('Claude is writing your script...', '');
+
+  try {
+    const response = await puter.ai.chat(prompt, {
+      model: 'claude-sonnet-4-20250514',
+      system: buildSystem(),
+      stream: true
+    });
+
+    setStatus('', '');
+    output.classList.add('visible');
+
+    for await (const chunk of response) {
+      const text = chunk?.text || '';
+      generatedCode += text;
+      code.textContent = generatedCode + '█';
+      code.scrollTop = code.scrollHeight;
+    }
+
+    code.textContent = generatedCode;
+    progress.classList.remove('active');
+    setStatus('✓ Script generated successfully!', 'success');
+    setTimeout(() => setStatus('', ''), 3000);
+
+  } catch (err) {
+    progress.classList.remove('active');
+    setStatus('Error: ' + (err.message || 'Generation failed. Try again.'), 'error');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⚡   GENERATE SCRIPT';
+}
+
+function setStatus(msg, type) {
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = 'status' + (msg ? ' active' : '') + (type ? ' ' + type : '');
+}
+
+function copyCode() {
+  if (!generatedCode) return;
+  navigator.clipboard.writeText(generatedCode).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('done');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('done');
+    }, 2500);
+  });
+}
+
+// Ctrl+Enter shortcut
+document.getElementById('prompt').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) generate();
+});
+</script>
+</body>
+</html>
