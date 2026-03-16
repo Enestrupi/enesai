@@ -3,9 +3,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Enes's AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #020408;
@@ -18,227 +18,929 @@
   --dim: #3a5570;
   --code: #7affb2;
   --border: rgba(0,255,234,0.12);
-  --glow-cyan: 0 0 20px rgba(0,255,234,0.4);
-  --glow-pink: 0 0 20px rgba(255,0,110,0.4);
+  --glow: 0 0 20px rgba(0,255,234,0.35);
+  --glow-pink: 0 0 20px rgba(255,0,110,0.35);
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--white);font-family:'Exo 2',sans-serif;height:100vh;overflow:hidden;cursor:crosshair;}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
-.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,255,234,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,234,0.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite;}
-.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:orbFloat ease-in-out infinite alternate;}
-.orb1{width:400px;height:400px;background:rgba(0,255,234,0.06);top:-100px;left:-100px;animation-duration:12s;}
-.orb2{width:350px;height:350px;background:rgba(255,0,110,0.05);bottom:-80px;right:-80px;animation-duration:15s;}
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.p{position:absolute;animation:pFloat linear infinite;opacity:0;}
 
-/* App */
-.app{position:relative;z-index:1;display:grid;grid-template-rows:64px 1fr;height:100vh;}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; overflow:hidden; }
 
-/* Header */
-header{padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(–border);background:rgba(2,4,8,0.95);backdrop-filter:blur(20px);}
-.logo{display:flex;align-items:center;gap:12px;}
-.logo-icon{font-size:26px;filter:drop-shadow(0 0 12px var(–cyan));animation:iconPulse 3s ease-in-out infinite;}
-.logo-text{font-family:‘Orbitron’,monospace;font-weight:900;font-size:20px;letter-spacing:4px;background:linear-gradient(90deg,var(–cyan),var(–pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.logo-v{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:3px;color:var(–dim);border:1px solid var(–dim);padding:2px 6px;border-radius:2px;}
-.hdr-right{display:flex;align-items:center;gap:16px;}
-.hdr-stat{font-family:‘Share Tech Mono’,monospace;font-size:10px;letter-spacing:2px;color:var(–dim);text-transform:uppercase;display:flex;align-items:center;gap:6px;}
-.hdr-stat .dot{width:5px;height:5px;border-radius:50%;background:var(–cyan);box-shadow:0 0 6px var(–cyan);animation:dotBlink 2s infinite;}
+body {
+background: var(–bg);
+color: var(–white);
+font-family: ‘Exo 2’, sans-serif;
+height: 100dvh;
+overflow: hidden;
+}
 
-/* Main */
-main{display:grid;grid-template-columns:220px 1fr;overflow:hidden;}
+/* scanlines */
+body::after {
+content:’’;position:fixed;inset:0;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+pointer-events:none;z-index:9999;
+}
 
-/* Sidebar */
-.sidebar{border-right:1px solid var(–border);background:rgba(5,13,20,0.9);display:flex;flex-direction:column;overflow:hidden;}
-.sb-sec{padding:14px 14px 10px;border-bottom:1px solid var(–border);}
-.sb-title{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:4px;color:var(–cyan);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.sb-title::before{content:’//’;color:var(–pink);}
-.hist-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;}
-.hist-scroll{flex:1;overflow-y:auto;padding:8px;}
-.hist-scroll::-webkit-scrollbar{width:3px;}
-.hist-scroll::-webkit-scrollbar-thumb{background:var(–dim);border-radius:2px;}
-.hist-item{padding:8px 10px;border-radius:4px;border:1px solid transparent;margin-bottom:4px;cursor:pointer;transition:all 0.15s;}
-.hist-item:hover{background:var(–panel2);border-color:var(–border);}
-.hist-mode{font-family:‘Share Tech Mono’,monospace;font-size:8px;letter-spacing:2px;color:var(–pink);text-transform:uppercase;margin-bottom:3px;}
-.hist-prompt{font-size:11px;color:rgba(255,255,255,0.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hist-empty{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:var(–dim);text-align:center;padding:24px 10px;letter-spacing:2px;text-transform:uppercase;line-height:2;}
+.bg-grid {
+position:fixed;inset:0;z-index:0;
+background-image:
+linear-gradient(rgba(0,255,234,0.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,255,234,0.025) 1px,transparent 1px);
+background-size:50px 50px;
+animation:gridMove 25s linear infinite;
+}
 
-/* Chat */
-.chat-wrap{display:flex;flex-direction:column;overflow:hidden;background:var(–bg);}
-.chat-msgs{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:16px;}
-.chat-msgs::-webkit-scrollbar{width:3px;}
-.chat-msgs::-webkit-scrollbar-thumb{background:var(–dim);border-radius:2px;}
-.msg{display:flex;gap:12px;animation:msgIn 0.3s ease;}
-.msg.user{flex-direction:row-reverse;align-self:flex-end;}
-.msg.ai{align-self:flex-start;}
-.msg-avatar{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:‘Share Tech Mono’,monospace;}
-.msg.ai .msg-avatar{background:rgba(0,255,234,0.08);border:1px solid rgba(0,255,234,0.25);color:var(–cyan);}
-.msg.user .msg-avatar{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.25);color:var(–pink);}
-.msg-content{display:flex;flex-direction:column;gap:6px;max-width:75%;}
-.msg-bubble{padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;}
-.msg.ai .msg-bubble{background:var(–panel);border:1px solid rgba(0,255,234,0.1);color:var(–white);border-top-left-radius:2px;}
-.msg.user .msg-bubble{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.2);color:var(–white);border-top-right-radius:2px;}
-.msg-code{background:rgba(0,0,0,0.6);border:1px solid rgba(0,255,234,0.15);border-radius:6px;padding:14px 16px;font-family:‘Share Tech Mono’,monospace;font-size:11px;line-height:1.8;color:var(–code);white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;}
-.msg-code::-webkit-scrollbar{width:3px;}
-.msg-code::-webkit-scrollbar-thumb{background:var(–dim);}
-.confirm-btns{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
-.confirm-btn{padding:7px 16px;border-radius:5px;font-family:‘Share Tech Mono’,monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;}
-.btn-yes{background:transparent;border:1px solid var(–cyan);color:var(–cyan);}
-.btn-yes:hover{background:var(–cyan);color:var(–bg);box-shadow:var(–glow-cyan);}
-.btn-no{background:transparent;border:1px solid var(–dim);color:var(–dim);}
-.btn-no:hover{border-color:var(–pink);color:var(–pink);}
-.btn-mod{background:transparent;border:1px solid rgba(255,230,0,0.4);color:var(–yellow);}
-.btn-mod:hover{background:rgba(255,230,0,0.1);}
-.typing{display:flex;align-items:center;gap:5px;padding:14px 16px;background:var(–panel);border:1px solid rgba(0,255,234,0.1);border-radius:8px;border-top-left-radius:2px;width:fit-content;}
-.typing-dot{width:6px;height:6px;border-radius:50%;background:var(–cyan);animation:typingBounce 1.2s ease-in-out infinite;}
-.typing-dot:nth-child(2){animation-delay:0.2s;}
-.typing-dot:nth-child(3){animation-delay:0.4s;}
+.orb {
+position:fixed;border-radius:50%;
+filter:blur(70px);pointer-events:none;z-index:0;
+animation:orbFloat ease-in-out infinite alternate;
+}
+.orb1{width:300px;height:300px;background:rgba(0,255,234,0.07);top:-80px;left:-80px;animation-duration:12s;}
+.orb2{width:280px;height:280px;background:rgba(255,0,110,0.05);bottom:-60px;right:-60px;animation-duration:16s;}
 
-/* Input */
-.input-area{padding:16px 28px 20px;border-top:1px solid var(–border);background:rgba(5,13,20,0.95);backdrop-filter:blur(10px);}
-.input-wrap{display:flex;gap:10px;align-items:flex-end;}
-.input-box{flex:1;background:var(–panel);border:1px solid var(–border);border-radius:8px;color:var(–white);font-family:‘Exo 2’,sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border-color 0.2s;resize:none;min-height:46px;max-height:120px;line-height:1.5;}
-.input-box:focus{border-color:var(–cyan);box-shadow:var(–glow-cyan);}
-.input-box::placeholder{color:var(–dim);}
-.send-btn{padding:12px 24px;background:transparent;border:1px solid var(–cyan);border-radius:8px;color:var(–cyan);font-family:‘Orbitron’,monospace;font-size:11px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;white-space:nowrap;height:46px;}
-.send-btn:hover{background:var(–cyan);color:var(–bg);box-shadow:var(–glow-cyan);}
-.input-hint{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:2px;color:var(–dim);margin-top:8px;text-align:center;text-transform:uppercase;}
+/* ══════════════════════════
+PAGES
+══════════════════════════ */
+.page {
+position: fixed;
+inset: 0;
+z-index: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 24px 20px;
+transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
-/* Animations */
-@keyframes gridMove{from{background-position:0 0}to{background-position:60px 60px}}
-@keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(20px,20px) scale(1.1)}}
-@keyframes pFloat{0%{transform:translateY(100vh);opacity:0}5%{opacity:1}95%{opacity:1}100%{transform:translateY(-5vh);opacity:0}}
-@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 10px var(–cyan))}50%{filter:drop-shadow(0 0 25px var(–cyan)) drop-shadow(0 0 40px var(–pink))}}
+.page.hidden {
+opacity: 0;
+pointer-events: none;
+transform: translateY(20px);
+}
+
+/* ══════════════════════════
+KEY PAGE
+══════════════════════════ */
+#keyPage {
+gap: 0;
+justify-content: flex-start;
+padding-top: 60px;
+}
+
+.key-card {
+width: 100%;
+max-width: 420px;
+background: var(–panel);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 32px 28px;
+position: relative;
+overflow: hidden;
+}
+
+.key-card::before {
+content:’’;position:absolute;top:0;left:0;right:0;height:2px;
+background:linear-gradient(90deg,transparent,var(–cyan),var(–pink),transparent);
+}
+
+.kc-logo {
+text-align: center;
+margin-bottom: 28px;
+}
+
+.kc-icon {
+font-size: 44px;
+display: block;
+filter: drop-shadow(0 0 16px var(–cyan));
+animation: iconPulse 3s ease-in-out infinite;
+margin-bottom: 10px;
+}
+
+.kc-title {
+font-family: ‘Orbitron’, monospace;
+font-weight: 900;
+font-size: 26px;
+letter-spacing: 4px;
+background: linear-gradient(90deg, var(–cyan), var(–pink));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.kc-sub {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 10px;
+letter-spacing: 3px;
+color: var(–dim);
+text-transform: uppercase;
+margin-top: 4px;
+}
+
+.kc-label {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 3px;
+color: var(–cyan);
+text-transform: uppercase;
+margin-bottom: 8px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.kc-label::before { content:’//’; color:var(–pink); }
+
+.key-input {
+width: 100%;
+background: var(–panel2);
+border: 1px solid var(–border);
+border-radius: 10px;
+color: var(–white);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 15px;
+letter-spacing: 3px;
+padding: 14px 16px;
+outline: none;
+transition: all 0.2s;
+text-align: center;
+text-transform: uppercase;
+}
+
+.key-input:focus {
+border-color: var(–cyan);
+box-shadow: var(–glow);
+}
+
+.key-input::placeholder {
+color: var(–dim);
+letter-spacing: 2px;
+font-size: 12px;
+}
+
+.key-error {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 11px;
+letter-spacing: 1px;
+color: var(–pink);
+text-align: center;
+margin-top: 8px;
+min-height: 18px;
+transition: opacity 0.2s;
+}
+
+.key-btn {
+width: 100%;
+padding: 15px;
+margin-top: 14px;
+background: transparent;
+border: 1px solid var(–cyan);
+border-radius: 10px;
+color: var(–cyan);
+font-family: ‘Orbitron’, monospace;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 4px;
+cursor: pointer;
+transition: all 0.25s;
+text-transform: uppercase;
+position: relative;
+overflow: hidden;
+}
+
+.key-btn::before {
+content:’’;position:absolute;inset:0;
+background:linear-gradient(90deg,transparent,rgba(0,255,234,0.12),transparent);
+transform:translateX(-100%);transition:transform 0.5s;
+}
+
+.key-btn:hover::before { transform:translateX(100%); }
+.key-btn:hover { background:rgba(0,255,234,0.08); box-shadow:var(–glow); }
+.key-btn:active { transform:scale(0.98); }
+
+.divider {
+display: flex;
+align-items: center;
+gap: 12px;
+margin: 18px 0;
+}
+
+.divider-line {
+flex:1;height:1px;
+background:var(–border);
+}
+
+.divider-text {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 3px;
+color: var(–dim);
+text-transform: uppercase;
+}
+
+.get-key-btn {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, rgba(255,0,110,0.15), rgba(157,0,255,0.15));
+border: 1px solid rgba(255,0,110,0.4);
+border-radius: 10px;
+color: var(–pink);
+font-family: ‘Orbitron’, monospace;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 3px;
+cursor: pointer;
+transition: all 0.25s;
+text-transform: uppercase;
+}
+
+.get-key-btn:hover {
+background: linear-gradient(135deg, rgba(255,0,110,0.25), rgba(157,0,255,0.25));
+box-shadow: var(–glow-pink);
+transform: translateY(-1px);
+}
+
+.get-key-btn:active { transform:scale(0.98); }
+
+/* ══════════════════════════
+GET KEY PAGE
+══════════════════════════ */
+#getKeyPage {
+gap: 0;
+justify-content: flex-start;
+padding-top: 50px;
+}
+
+.gk-card {
+width: 100%;
+max-width: 420px;
+background: var(–panel);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 28px 24px;
+position: relative;
+overflow: hidden;
+}
+
+.gk-card::before {
+content:’’;position:absolute;top:0;left:0;right:0;height:2px;
+background:linear-gradient(90deg,transparent,var(–pink),var(–cyan),transparent);
+}
+
+.gk-header {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 24px;
+}
+
+.back-btn {
+width: 36px; height: 36px;
+background: var(–panel2);
+border: 1px solid var(–border);
+border-radius: 8px;
+color: var(–cyan);
+font-size: 16px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+flex-shrink: 0;
+}
+
+.back-btn:hover { border-color:var(–cyan); box-shadow:var(–glow); }
+
+.gk-title {
+font-family: ‘Orbitron’, monospace;
+font-weight: 700;
+font-size: 16px;
+letter-spacing: 3px;
+color: var(–white);
+}
+
+.gk-desc {
+font-size: 13px;
+line-height: 1.7;
+color: rgba(255,255,255,0.6);
+margin-bottom: 20px;
+padding: 14px;
+background: var(–panel2);
+border-radius: 10px;
+border-left: 3px solid var(–cyan);
+}
+
+.gen-key-btn {
+width: 100%;
+padding: 16px;
+background: linear-gradient(135deg, #00c8be, #0066cc);
+border: none;
+border-radius: 10px;
+color: var(–bg);
+font-family: ‘Orbitron’, monospace;
+font-size: 13px;
+font-weight: 900;
+letter-spacing: 3px;
+cursor: pointer;
+transition: all 0.25s;
+text-transform: uppercase;
+position: relative;
+overflow: hidden;
+}
+
+.gen-key-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 24px rgba(0,255,234,0.4);
+}
+
+.gen-key-btn:active { transform:scale(0.98); }
+.gen-key-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+.key-result {
+margin-top: 16px;
+display: none;
+flex-direction: column;
+gap: 10px;
+}
+
+.key-result.show { display:flex; }
+
+.key-display {
+background: rgba(0,0,0,0.5);
+border: 1px solid var(–cyan);
+border-radius: 10px;
+padding: 16px;
+text-align: center;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 18px;
+letter-spacing: 4px;
+color: var(–cyan);
+box-shadow: var(–glow);
+word-break: break-all;
+}
+
+.copy-key-btn {
+width: 100%;
+padding: 13px;
+background: transparent;
+border: 1px solid var(–cyan);
+border-radius: 10px;
+color: var(–cyan);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 12px;
+letter-spacing: 3px;
+cursor: pointer;
+transition: all 0.2s;
+text-transform: uppercase;
+}
+
+.copy-key-btn:hover { background:var(–cyan); color:var(–bg); }
+.copy-key-btn.copied { background:#00cc66; border-color:#00cc66; color:var(–bg); }
+
+.key-note {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 10px;
+letter-spacing: 1px;
+color: var(–dim);
+text-align: center;
+line-height: 1.6;
+}
+
+/* ══════════════════════════
+CHAT PAGE
+══════════════════════════ */
+#chatPage {
+padding: 0;
+justify-content: flex-start;
+align-items: stretch;
+}
+
+.chat-header {
+padding: 14px 18px;
+border-bottom: 1px solid var(–border);
+background: rgba(2,4,8,0.95);
+backdrop-filter: blur(20px);
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-shrink: 0;
+}
+
+.ch-logo {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.ch-icon {
+font-size: 20px;
+filter: drop-shadow(0 0 8px var(–cyan));
+animation: iconPulse 3s ease-in-out infinite;
+}
+
+.ch-title {
+font-family: ‘Orbitron’, monospace;
+font-weight: 900;
+font-size: 15px;
+letter-spacing: 3px;
+background: linear-gradient(90deg,var(–cyan),var(–pink));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.ch-right {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.online-badge {
+display: flex;
+align-items: center;
+gap: 5px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 2px;
+color: var(–cyan);
+text-transform: uppercase;
+}
+
+.online-dot {
+width: 6px; height: 6px;
+border-radius: 50%;
+background: var(–cyan);
+box-shadow: 0 0 6px var(–cyan);
+animation: dotBlink 2s infinite;
+}
+
+.logout-btn {
+padding: 5px 12px;
+background: transparent;
+border: 1px solid rgba(255,0,110,0.3);
+border-radius: 6px;
+color: rgba(255,0,110,0.6);
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 2px;
+cursor: pointer;
+transition: all 0.2s;
+text-transform: uppercase;
+}
+
+.logout-btn:hover { border-color:var(–pink); color:var(–pink); }
+
+/* Chat messages */
+.chat-msgs {
+flex: 1;
+overflow-y: auto;
+padding: 16px 16px 8px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+-webkit-overflow-scrolling: touch;
+}
+
+.chat-msgs::-webkit-scrollbar { width: 3px; }
+.chat-msgs::-webkit-scrollbar-thumb { background:var(–dim); border-radius:2px; }
+
+.msg {
+display: flex;
+gap: 10px;
+animation: msgIn 0.3s ease;
+}
+
+.msg.user { flex-direction:row-reverse; align-self:flex-end; max-width:85%; }
+.msg.ai { align-self:flex-start; max-width:90%; }
+
+.msg-av {
+width: 28px; height: 28px;
+border-radius: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+flex-shrink: 0;
+font-family: ‘Share Tech Mono’, monospace;
+}
+
+.msg.ai .msg-av { background:rgba(0,255,234,0.08); border:1px solid rgba(0,255,234,0.2); color:var(–cyan); }
+.msg.user .msg-av { background:rgba(255,0,110,0.08); border:1px solid rgba(255,0,110,0.2); color:var(–pink); }
+
+.msg-body { display:flex; flex-direction:column; gap:6px; }
+
+.msg-bubble {
+padding: 10px 14px;
+border-radius: 10px;
+font-size: 13px;
+line-height: 1.65;
+}
+
+.msg.ai .msg-bubble { background:var(–panel); border:1px solid rgba(0,255,234,0.1); color:var(–white); border-top-left-radius:2px; }
+.msg.user .msg-bubble { background:rgba(255,0,110,0.1); border:1px solid rgba(255,0,110,0.2); color:var(–white); border-top-right-radius:2px; }
+
+.msg-code {
+background: rgba(0,0,0,0.65);
+border: 1px solid rgba(0,255,234,0.15);
+border-radius: 8px;
+padding: 12px 14px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 10px;
+line-height: 1.7;
+color: var(–code);
+white-space: pre-wrap;
+word-break: break-word;
+max-height: 260px;
+overflow-y: auto;
+}
+
+.confirm-btns {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+margin-top: 4px;
+}
+
+.cbtn {
+padding: 8px 14px;
+border-radius: 6px;
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 10px;
+letter-spacing: 1px;
+cursor: pointer;
+transition: all 0.2s;
+text-transform: uppercase;
+border: none;
+-webkit-tap-highlight-color: transparent;
+}
+
+.cbtn-yes { background:transparent; border:1px solid var(–cyan); color:var(–cyan); }
+.cbtn-yes:hover,.cbtn-yes:active { background:var(–cyan); color:var(–bg); }
+.cbtn-no { background:transparent; border:1px solid var(–dim); color:var(–dim); }
+.cbtn-no:hover,.cbtn-no:active { border-color:var(–pink); color:var(–pink); }
+.cbtn-mod { background:transparent; border:1px solid rgba(255,230,0,0.4); color:var(–yellow); }
+.cbtn-mod:hover,.cbtn-mod:active { background:rgba(255,230,0,0.1); }
+
+.typing {
+display:flex; align-items:center; gap:4px;
+padding:12px 14px;
+background:var(–panel); border:1px solid rgba(0,255,234,0.1);
+border-radius:10px; border-top-left-radius:2px;
+width:fit-content;
+}
+
+.td {
+width:5px; height:5px; border-radius:50%;
+background:var(–cyan);
+animation:typingBounce 1.2s ease-in-out infinite;
+}
+.td:nth-child(2){animation-delay:0.2s;}
+.td:nth-child(3){animation-delay:0.4s;}
+
+/* Input area */
+.input-area {
+padding: 10px 14px 16px;
+border-top: 1px solid var(–border);
+background: rgba(5,13,20,0.98);
+backdrop-filter: blur(10px);
+flex-shrink: 0;
+}
+
+.input-wrap {
+display: flex;
+gap: 8px;
+align-items: flex-end;
+}
+
+.input-box {
+flex: 1;
+background: var(–panel);
+border: 1px solid var(–border);
+border-radius: 10px;
+color: var(–white);
+font-family: ‘Exo 2’, sans-serif;
+font-size: 14px;
+padding: 11px 14px;
+outline: none;
+transition: border-color 0.2s;
+resize: none;
+min-height: 44px;
+max-height: 100px;
+line-height: 1.5;
+-webkit-appearance: none;
+}
+
+.input-box:focus { border-color:var(–cyan); box-shadow:var(–glow); }
+.input-box::placeholder { color:var(–dim); }
+
+.send-btn {
+width: 44px; height: 44px;
+background: transparent;
+border: 1px solid var(–cyan);
+border-radius: 10px;
+color: var(–cyan);
+font-size: 18px;
+cursor: pointer;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+-webkit-tap-highlight-color: transparent;
+}
+
+.send-btn:hover,.send-btn:active { background:var(–cyan); color:var(–bg); box-shadow:var(–glow); }
+
+.input-hint {
+font-family: ‘Share Tech Mono’, monospace;
+font-size: 9px;
+letter-spacing: 2px;
+color: var(–dim);
+margin-top: 6px;
+text-align: center;
+text-transform: uppercase;
+}
+
+/* ══════════════════════════
+ANIMATIONS
+══════════════════════════ */
+@keyframes gridMove{from{background-position:0 0}to{background-position:50px 50px}}
+@keyframes orbFloat{from{transform:translate(0,0)}to{transform:translate(15px,15px)}}
+@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 10px var(–cyan))}50%{filter:drop-shadow(0 0 22px var(–cyan)) drop-shadow(0 0 40px var(–pink))}}
 @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:0.2}}
-@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 </style>
 
 </head>
 <body>
+
 <div class="bg-grid"></div>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-<div id="particles"></div>
 
-<div class="app">
-  <header>
-    <div class="logo">
-      <span class="logo-icon">⚡</span>
-      <span class="logo-text">ENES'S AI</span>
-      <span class="logo-v">V3.0</span>
-    </div>
-    <div class="hdr-right">
-      <div class="hdr-stat"><span class="dot"></span>ONLINE</div>
-      <div class="hdr-stat" id="scriptCounter">0 SCRIPTS</div>
-    </div>
-  </header>
+<!-- ══ KEY PAGE ══ -->
 
-  <main>
-    <aside class="sidebar">
-      <div class="hist-wrap">
-        <div class="sb-sec" style="border-bottom:none;padding-bottom:6px;">
-          <div class="sb-title">Command History</div>
-        </div>
-        <div class="hist-scroll" id="historyList">
-          <div class="hist-empty">NO HISTORY YET<br>START CHATTING!</div>
-        </div>
-      </div>
-    </aside>
+<div class="page" id="keyPage">
+  <div class="key-card">
+    <div class="kc-logo">
+      <span class="kc-icon">⚡</span>
+      <div class="kc-title">ENES'S AI</div>
+      <div class="kc-sub">Roblox Script Generator</div>
+    </div>
 
 ```
-<div class="chat-wrap">
-  <div class="chat-msgs" id="chatMessages">
-    <div class="msg ai">
-      <div class="msg-avatar">⚡</div>
-      <div class="msg-content">
-        <div class="msg-bubble">
-          Hey! I'm <strong>Enes's AI</strong> — your Roblox scripting assistant! 👋<br><br>
-          Just tell me what you want and I'll ask your opinion before doing anything. Try saying <em>"make me a double jump"</em> or <em>"create an admin console"</em>!
-        </div>
-      </div>
+<div class="kc-label">Enter Your Key</div>
+<input class="key-input" id="keyInput" type="text" placeholder="ENES-XXXX-XXXX-XXXX" maxlength="19" autocomplete="off" spellcheck="false">
+<div class="key-error" id="keyError"></div>
+
+<button class="key-btn" onclick="verifyKey()">⚡ &nbsp; UNLOCK</button>
+
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-text">No key?</div>
+  <div class="divider-line"></div>
+</div>
+
+<button class="get-key-btn" onclick="showPage('getKeyPage')">🔑 &nbsp; GET FREE KEY</button>
+```
+
+  </div>
+</div>
+
+<!-- ══ GET KEY PAGE ══ -->
+
+<div class="page hidden" id="getKeyPage">
+  <div class="gk-card">
+    <div class="gk-header">
+      <button class="back-btn" onclick="showPage('keyPage')">←</button>
+      <div class="gk-title">GET FREE KEY</div>
+    </div>
+
+```
+<div class="gk-desc">
+  Generate your free key below. Keep it safe — you'll need it every time you use Enes's AI in Roblox Studio!
+</div>
+
+<button class="gen-key-btn" id="genKeyBtn" onclick="generateKey()">
+  ⚡ &nbsp; GENERATE MY KEY
+</button>
+
+<div class="key-result" id="keyResult">
+  <div class="key-display" id="keyDisplay">ENES-XXXX-XXXX-XXXX</div>
+  <button class="copy-key-btn" id="copyKeyBtn" onclick="copyKey()">⎘ &nbsp; COPY KEY</button>
+  <div class="key-note">
+    Copy this key and paste it in the plugin.<br>
+    This key is free and works forever!
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══ CHAT PAGE ══ -->
+
+<div class="page hidden" id="chatPage">
+  <div class="chat-header">
+    <div class="ch-logo">
+      <span class="ch-icon">⚡</span>
+      <span class="ch-title">ENES'S AI</span>
+    </div>
+    <div class="ch-right">
+      <div class="online-badge"><span class="online-dot"></span>ONLINE</div>
+      <button class="logout-btn" onclick="logout()">LOGOUT</button>
     </div>
   </div>
+
+  <div class="chat-msgs" id="chatMsgs"></div>
 
   <div class="input-area">
     <div class="input-wrap">
       <textarea class="input-box" id="chatInput" placeholder="Tell me what you want to build..." rows="1"></textarea>
-      <button class="send-btn" onclick="sendMessage()">SEND</button>
+      <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
-    <div class="input-hint">Press Enter to send • Shift+Enter for new line</div>
+    <div class="input-hint">Tap send or press Enter</div>
   </div>
-</div>
-```
-
-  </main>
 </div>
 
 <script>
-// Particles
-const pc = document.getElementById('particles');
-for(let i=0;i<25;i++){
-  const p=document.createElement('div');p.className='p';
-  const c=['#00ffea','#ff006e','#0080ff'][Math.floor(Math.random()*3)];
-  p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:${c};box-shadow:0 0 4px ${c};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*20}s;border-radius:50%;`;
-  pc.appendChild(p);
+const SERVER = 'https://enesai.onrender.com/api/generate';
+let currentKey = '';
+let selectedMode = 'LocalScript';
+let waitingConfirm = false;
+let pendingPrompt = '';
+let pendingMode = '';
+let msgCount = 0;
+
+// ── Page navigation ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
 }
 
-const SERVER = 'https://enesai.onrender.com/api/generate';
-let selectedMode = 'LocalScript';
-let scriptCount = 0;
-let history = [];
-let waitingForConfirm = false;
+// ── Format key input ──
+document.getElementById('keyInput').addEventListener('input', function() {
+  let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  let parts = [];
+  if(v.length > 0) parts.push(v.substring(0,4));
+  if(v.length > 4) parts.push(v.substring(4,8));
+  if(v.length > 8) parts.push(v.substring(8,12));
+  if(v.length > 12) parts.push(v.substring(12,16));
+  this.value = parts.join('-');
+});
 
+// ── Generate key ──
+async function generateKey() {
+  const btn = document.getElementById('genKeyBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳  GENERATING...';
+
+  // Generate key locally (no server needed for free keys)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const seg = () => Array.from({length:4}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+  const key = `ENES-${seg()}-${seg()}-${seg()}`;
+
+  // Save to localStorage so it persists
+  const keys = JSON.parse(localStorage.getItem('enesai_keys') || '[]');
+  keys.push(key);
+  localStorage.setItem('enesai_keys', JSON.stringify(keys));
+
+  document.getElementById('keyDisplay').textContent = key;
+  document.getElementById('keyResult').classList.add('show');
+
+  btn.disabled = false;
+  btn.textContent = '⚡  GENERATE ANOTHER';
+}
+
+// ── Copy key ──
+function copyKey() {
+  const key = document.getElementById('keyDisplay').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const btn = document.getElementById('copyKeyBtn');
+    btn.textContent = '✓  COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘  COPY KEY'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback for mobile
+    const ta = document.createElement('textarea');
+    ta.value = key;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn = document.getElementById('copyKeyBtn');
+    btn.textContent = '✓  COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘  COPY KEY'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── Verify key ──
+function verifyKey() {
+  const key = document.getElementById('keyInput').value.trim().toUpperCase();
+  const err = document.getElementById('keyError');
+
+  if(key.length < 4) {
+    err.textContent = '⚠ Please enter your key';
+    return;
+  }
+
+  // Check if key starts with ENES- (valid format)
+  if(!key.startsWith('ENES-') || key.length < 14) {
+    err.textContent = '✗ Invalid key format. Keys start with ENES-';
+    return;
+  }
+
+  // Valid! Save and go to chat
+  currentKey = key;
+  localStorage.setItem('enesai_active_key', key);
+  err.textContent = '';
+  showPage('chatPage');
+  initChat();
+}
+
+// ── Auto login if key saved ──
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('enesai_active_key');
+  if(saved && saved.startsWith('ENES-')) {
+    currentKey = saved;
+    document.getElementById('keyInput').value = saved;
+    showPage('chatPage');
+    initChat();
+  }
+});
+
+// ── Logout ──
+function logout() {
+  localStorage.removeItem('enesai_active_key');
+  currentKey = '';
+  document.getElementById('keyInput').value = '';
+  document.getElementById('chatMsgs').innerHTML = '';
+  msgCount = 0;
+  showPage('keyPage');
+}
+
+// ── Init chat ──
+function initChat() {
+  const msgs = document.getElementById('chatMsgs');
+  if(msgs.children.length === 0) {
+    addMsg("Hey! I'm <strong>Enes's AI</strong> — your Roblox scripting assistant! 👋<br><br>Tell me what you want to build and I'll ask your opinion before doing anything. Try saying <em>\"make me a double jump\"</em> or <em>\"create an admin console\"</em>!", false, false, false, null);
+  }
+}
+
+// ── Detect mode ──
 function detectMode(p) {
   const t = p.toLowerCase();
-  if(t.includes('gui')||t.includes('ui')||t.includes('menu')||t.includes('button')||t.includes('shop')||t.includes('inventory')||t.includes('hud')||t.includes('screen')||t.includes('interface')) return 'GUI';
+  if(t.includes('gui')||t.includes(' ui ')||t.includes('menu')||t.includes('button')||t.includes('shop')||t.includes('inventory')||t.includes('hud')) return 'GUI';
   if(t.includes('admin')||t.includes('console')||t.includes('command')) return 'Admin';
-  if(t.includes('combat')||t.includes('sword')||t.includes('weapon')||t.includes('gun')||t.includes('shoot')||t.includes('fight')||t.includes('damage')||t.includes('attack')) return 'Combat';
-  if(t.includes('npc')||t.includes('enemy')||t.includes('mob')||t.includes('chase')||t.includes('zombie')||t.includes('bot')) return 'NPC';
-  if(t.includes('datastore')||t.includes('save')||t.includes('load')||t.includes('leaderboard')) return 'DataStore';
-  if(t.includes('module')||t.includes('library')||t.includes('class')) return 'Module';
-  if(t.includes('server')||t.includes('remote')||t.includes('spawner')) return 'Script';
+  if(t.includes('combat')||t.includes('sword')||t.includes('weapon')||t.includes('gun')||t.includes('shoot')||t.includes('fight')||t.includes('damage')) return 'Combat';
+  if(t.includes('npc')||t.includes('enemy')||t.includes('mob')||t.includes('chase')||t.includes('zombie')) return 'NPC';
+  if(t.includes('datastore')||t.includes('save')||t.includes('leaderboard')) return 'DataStore';
+  if(t.includes('module')||t.includes('library')) return 'Module';
+  if(t.includes('server')||t.includes('remote')) return 'Script';
   return 'LocalScript';
 }
 
 function isScriptRequest(msg) {
-  return ['make','create','build','write','generate','script','gui','system','add','give me','i want','i need','do a','do an','can you'].some(k=>msg.toLowerCase().includes(k));
+  return ['make','create','build','write','generate','script','gui','system','i want','i need','do a','can you','give me','add'].some(k=>msg.toLowerCase().includes(k));
 }
 
-function buildSystem() {
+function buildSystem(mode) {
   const map = {
     LocalScript:"Generate a Roblox LOCALSCRIPT. Use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). Client-side only.",
     GUI:"Generate a Roblox LOCALSCRIPT with beautiful neon dark UI. Use Instance.new(), UICorner, UIGradient, TweenService. Parent ScreenGui to PlayerGui.",
     Combat:"Generate a Roblox LOCALSCRIPT for combat. Proper hit detection, RemoteEvents, visual effects.",
     Script:"Generate a Roblox server SCRIPT. Server-side only.",
     NPC:"Generate a Roblox server SCRIPT for NPC with PathfindingService and attack logic.",
-    DataStore:"Generate a Roblox server SCRIPT using DataStoreService with pcall error handling.",
+    DataStore:"Generate a Roblox server SCRIPT using DataStoreService with pcall.",
     Module:"Generate a Roblox MODULESCRIPT returning a clean table/class.",
     Admin:"Generate a Roblox LOCALSCRIPT for a beautiful neon admin console. Commands: fly, speed, god, kick, teleport, heal, invisible, noclip.",
   };
-  return "You are Enes's AI, expert Roblox Lua scripter. "+(map[selectedMode]||map.LocalScript)+" Add clear comments. Use task.wait() and task.spawn(). Use pcall() for error handling. CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. No explanation. Start code directly.";
+  return "You are Enes's AI, expert Roblox Lua scripter. "+(map[mode]||map.LocalScript)+" Add clear comments. Use task.wait() and task.spawn(). Use pcall() for error handling. CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. No explanation. Start code directly.";
 }
 
+// ── Add message ──
 function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
-  const msgs = document.getElementById('chatMessages');
+  const msgs = document.getElementById('chatMsgs');
   const div = document.createElement('div');
   div.className = 'msg '+(isUser?'user':'ai');
-  const avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  avatar.textContent = isUser?'>':'⚡';
-  const contentDiv = document.createElement('div');
-  contentDiv.className = 'msg-content';
+
+  const av = document.createElement('div');
+  av.className = 'msg-av';
+  av.textContent = isUser?'>':'⚡';
+
+  const body = document.createElement('div');
+  body.className = 'msg-body';
 
   if(isCode) {
     const code = document.createElement('div');
     code.className = 'msg-code';
     code.textContent = content;
-    contentDiv.appendChild(code);
+    body.appendChild(code);
   } else {
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble';
     bubble.innerHTML = content;
-    contentDiv.appendChild(bubble);
+    body.appendChild(bubble);
   }
 
   if(showConfirm && originalPrompt) {
@@ -246,114 +948,106 @@ function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
     btns.className = 'confirm-btns';
 
     const yes = document.createElement('button');
-    yes.className = 'confirm-btn btn-yes';
-    yes.textContent = '✓ Yes, do it!';
-    yes.onclick = ()=>{ btns.remove(); waitingForConfirm=false; generateScript(originalPrompt); };
+    yes.className = 'cbtn cbtn-yes';
+    yes.textContent = '✓ Yes!';
+    yes.onclick = () => { btns.remove(); waitingConfirm=false; generateScript(originalPrompt, pendingMode); };
 
     const no = document.createElement('button');
-    no.className = 'confirm-btn btn-no';
-    no.textContent = '✗ No thanks';
-    no.onclick = ()=>{ btns.remove(); waitingForConfirm=false; addMsg("No problem! Let me know if you want something else 😊",false,false,false,null); };
+    no.className = 'cbtn cbtn-no';
+    no.textContent = '✗ No';
+    no.onclick = () => { btns.remove(); waitingConfirm=false; addMsg("No problem! Let me know what you want 😊",false,false,false,null); };
 
     const mod = document.createElement('button');
-    mod.className = 'confirm-btn btn-mod';
+    mod.className = 'cbtn cbtn-mod';
     mod.textContent = '✎ Modify';
-    mod.onclick = ()=>{ btns.remove(); waitingForConfirm=false; addMsg("Sure! Tell me what to change 👇",false,false,false,null); document.getElementById('chatInput').focus(); };
+    mod.onclick = () => { btns.remove(); waitingConfirm=false; addMsg("Sure! What should I change? 👇",false,false,false,null); document.getElementById('chatInput').focus(); };
 
     btns.append(yes,no,mod);
-    contentDiv.appendChild(btns);
-    waitingForConfirm = true;
+    body.appendChild(btns);
+    waitingConfirm = true;
   }
 
-  div.append(avatar, contentDiv);
+  div.append(av, body);
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+  msgCount++;
 }
 
 function showTyping() {
-  const msgs = document.getElementById('chatMessages');
+  const msgs = document.getElementById('chatMsgs');
   const div = document.createElement('div');
   div.className='msg ai'; div.id='typing';
-  const av = document.createElement('div'); av.className='msg-avatar'; av.textContent='⚡';
-  const t = document.createElement('div'); t.className='typing';
-  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='typing-dot';t.appendChild(d);}
+  const av=document.createElement('div'); av.className='msg-av'; av.textContent='⚡';
+  const t=document.createElement('div'); t.className='typing';
+  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='td';t.appendChild(d);}
   div.append(av,t); msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
 
 function removeTyping() { const el=document.getElementById('typing'); if(el) el.remove(); }
 
-function addHistory(prompt) {
-  history.unshift({prompt, mode:selectedMode});
-  if(history.length>15) history.pop();
-  const el = document.getElementById('historyList');
-  el.innerHTML = history.map(h=>`
-    <div class="hist-item" onclick="quickPrompt('${h.prompt.replace(/'/g,"\\'")}')">
-      <div class="hist-mode">${h.mode}</div>
-      <div class="hist-prompt">${h.prompt}</div>
-    </div>
-  `).join('');
-}
-
-function quickPrompt(t) { document.getElementById('chatInput').value=t; document.getElementById('chatInput').focus(); }
-
-async function generateScript(prompt) {
+// ── Generate script ──
+async function generateScript(prompt, mode) {
   showTyping();
   try {
     const res = await fetch(SERVER, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt, mode:selectedMode, system:buildSystem()})
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt, mode, system:buildSystem(mode)})
     });
     const data = await res.json();
-    const code = data.code || '-- No code returned';
+    const code = data.code||'-- No code returned';
     removeTyping();
     addMsg(code, false, true, false, null);
-    scriptCount++;
-    document.getElementById('scriptCounter').textContent = scriptCount+' SCRIPTS';
-    addHistory(prompt);
-    setTimeout(()=>{ addMsg(`✅ Done! <strong>${code.split('\\n').length} lines</strong> of ${selectedMode} code.<br><br>Want me to change anything or add features?`,false,false,false,null); },400);
+    const lines = code.split('\n').length;
+    setTimeout(()=>{ addMsg(`✅ Done! <strong>${lines} lines</strong> of ${mode} code.<br><br>Copy it and paste into Roblox Studio. Want me to change anything?`,false,false,false,null); },300);
   } catch(e) {
     removeTyping();
-    addMsg('❌ Could not reach server. Check your connection!',false,false,false,null);
+    addMsg('❌ Could not reach server. Try again!',false,false,false,null);
   }
 }
 
+// ── Chat with AI ──
 async function chatWithAI(prompt) {
   showTyping();
   try {
     const res = await fetch(SERVER, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt, mode:'chat', system:"You are Enes's AI, a friendly Roblox scripting assistant. Answer clearly and concisely. No markdown."})
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt, mode:'chat', system:"You are Enes's AI, a friendly Roblox scripting assistant. Answer clearly and concisely. No markdown."})
     });
     const data = await res.json();
     removeTyping();
-    addMsg(data.code||'I could not get a response, try again!',false,false,false,null);
+    addMsg(data.code||'Could not get a response, try again!',false,false,false,null);
   } catch(e) {
     removeTyping();
     addMsg('❌ Could not reach server!',false,false,false,null);
   }
 }
 
-async function sendMessage() {
+// ── Send message ──
+async function sendMsg() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
-  if(!msg || waitingForConfirm) return;
+  if(!msg || waitingConfirm) return;
   input.value=''; input.style.height='auto';
   addMsg(msg, true, false, false, null);
 
   if(isScriptRequest(msg)) {
-    selectedMode = detectMode(msg);
+    pendingPrompt = msg;
+    pendingMode = detectMode(msg);
     showTyping();
-    await new Promise(r=>setTimeout(r,800));
+    await new Promise(r=>setTimeout(r,700));
     removeTyping();
-    addMsg(`Got it! I detected this is a <strong>${selectedMode}</strong> request.<br><br>You want: "<em>${msg}</em>"<br><br>Should I go ahead? 👇`,false,false,true,msg);
+    addMsg(`Got it! I detected this as a <strong>${pendingMode}</strong> script.<br><br>You want: "<em>${msg}</em>"<br><br>Should I go ahead? 👇`,false,false,true,msg);
   } else {
     chatWithAI(msg);
   }
 }
 
+// ── Input handling ──
 const inputBox = document.getElementById('chatInput');
-inputBox.addEventListener('input',()=>{ inputBox.style.height='auto'; inputBox.style.height=Math.min(inputBox.scrollHeight,120)+'px'; });
-inputBox.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} });
+inputBox.addEventListener('input', ()=>{ inputBox.style.height='auto'; inputBox.style.height=Math.min(inputBox.scrollHeight,100)+'px'; });
+inputBox.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} });
 </script>
 
 </body>
