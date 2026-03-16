@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,13 +9,11 @@
 <style>
 :root {
   --bg: #020408;
-  --bg2: #050d14;
   --panel: #080f1a;
   --panel2: #0c1626;
   --cyan: #00ffea;
   --pink: #ff006e;
   --yellow: #ffe600;
-  --blue: #0080ff;
   --white: #e8f4ff;
   --dim: #3a5570;
   --code: #7affb2;
@@ -22,657 +21,215 @@
   --glow-cyan: 0 0 20px rgba(0,255,234,0.4);
   --glow-pink: 0 0 20px rgba(255,0,110,0.4);
 }
-
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--white);
-  font-family: 'Exo 2', sans-serif;
-  min-height: 100vh;
-  overflow: hidden;
-  cursor: crosshair;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.bg-grid {
-  position: fixed; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(rgba(0,255,234,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,234,0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: gridMove 20s linear infinite;
-}
-
-.orb {
-  position: fixed; border-radius: 50%;
-  filter: blur(80px); pointer-events: none; z-index: 0;
-  animation: orbFloat ease-in-out infinite alternate;
-}
-.orb1 { width:400px;height:400px;background:rgba(0,255,234,0.06);top:-100px;left:-100px;animation-duration:12s; }
-.orb2 { width:350px;height:350px;background:rgba(255,0,110,0.05);bottom:-80px;right:-80px;animation-duration:15s; }
-
-#particles { position:fixed;inset:0;z-index:0;pointer-events:none; }
-.p {
-  position:absolute;width:1px;height:1px;
-  animation:pFloat linear infinite;opacity:0;
-}
-
-/* ── App layout ── */
-.app {
-  position: relative; z-index: 1;
-  display: grid;
-  grid-template-rows: 64px 1fr;
-  height: 100vh;
-}
-
-/* ── Header ── */
-header {
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  background: rgba(2,4,8,0.95);
-  backdrop-filter: blur(20px);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-icon {
-  font-size: 26px;
-  filter: drop-shadow(0 0 12px var(--cyan));
-  animation: iconPulse 3s ease-in-out infinite;
-}
-
-.logo-text {
-  font-family: 'Orbitron', monospace;
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 4px;
-  background: linear-gradient(90deg, var(--cyan), var(--pink));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.logo-version {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--dim);
-  border: 1px solid var(--dim);
-  padding: 2px 6px;
-  border-radius: 2px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.hdr-stat {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--dim);
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hdr-stat .dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 6px var(--cyan);
-  animation: dotBlink 2s infinite;
-}
-
-/* ── Main: sidebar + chat ── */
-main {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  overflow: hidden;
-}
-
-/* ── Sidebar ── */
-.sidebar {
-  border-right: 1px solid var(--border);
-  background: rgba(5,13,20,0.9);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.sb-section {
-  padding: 14px 14px 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sb-title {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 4px;
-  color: var(--cyan);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.sb-title::before { content: '//'; color: var(--pink); }
-
-/* Mode selector */
-.mode-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5px;
-}
-
-.mode-btn {
-  padding: 7px 4px;
-  background: var(--panel2);
-  border: 1px solid rgba(0,255,234,0.08);
-  border-radius: 4px;
-  color: var(--dim);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.mode-btn:hover { border-color: var(--cyan); color: var(--cyan); }
-.mode-btn.active {
-  background: rgba(0,255,234,0.08);
-  border-color: var(--cyan);
-  color: var(--cyan);
-  box-shadow: inset 0 0 10px rgba(0,255,234,0.05);
-}
-
-/* History */
-.history-wrap {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.history-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-}
-
-.history-scroll::-webkit-scrollbar { width: 3px; }
-.history-scroll::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
-
-.hist-item {
-  padding: 8px 10px;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  margin-bottom: 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.hist-item:hover {
-  background: var(--panel2);
-  border-color: var(--border);
-}
-
-.hist-mode {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--pink);
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-
-.hist-prompt {
-  font-size: 11px;
-  color: rgba(255,255,255,0.35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hist-empty {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: var(--dim);
-  text-align: center;
-  padding: 24px 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  line-height: 2;
-}
-
-/* ── Chat ── */
-.chat-wrap {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--bg);
-}
-
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.chat-messages::-webkit-scrollbar { width: 3px; }
-.chat-messages::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
-
-/* Messages */
-.msg {
-  display: flex;
-  gap: 12px;
-  animation: msgIn 0.3s ease;
-  max-width: 800px;
-}
-
-.msg.user {
-  flex-direction: row-reverse;
-  align-self: flex-end;
-}
-
-.msg.ai { align-self: flex-start; }
-
-.msg-avatar {
-  width: 32px; height: 32px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-  font-family: 'Share Tech Mono', monospace;
-}
-
-.msg.ai .msg-avatar {
-  background: rgba(0,255,234,0.08);
-  border: 1px solid rgba(0,255,234,0.25);
-  color: var(--cyan);
-}
-
-.msg.user .msg-avatar {
-  background: rgba(255,0,110,0.08);
-  border: 1px solid rgba(255,0,110,0.25);
-  color: var(--pink);
-}
-
-.msg-content { display: flex; flex-direction: column; gap: 6px; }
-
-.msg-bubble {
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.msg.ai .msg-bubble {
-  background: var(--panel);
-  border: 1px solid rgba(0,255,234,0.1);
-  color: var(--white);
-  border-top-left-radius: 2px;
-}
-
-.msg.user .msg-bubble {
-  background: rgba(255,0,110,0.08);
-  border: 1px solid rgba(255,0,110,0.2);
-  color: var(--white);
-  border-top-right-radius: 2px;
-}
-
-/* Code block inside chat */
-.msg-code {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(0,255,234,0.15);
-  border-radius: 6px;
-  padding: 14px 16px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  line-height: 1.8;
-  color: var(--code);
-  white-space: pre-wrap;
-  word-break: break-word;
-  max-height: 300px;
-  overflow-y: auto;
-  position: relative;
-}
-
-.msg-code::-webkit-scrollbar { width: 3px; }
-.msg-code::-webkit-scrollbar-thumb { background: var(--dim); }
-
-/* Confirm buttons */
-.confirm-btns {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.confirm-btn {
-  padding: 7px 18px;
-  border-radius: 5px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  border: none;
-}
-
-.btn-yes {
-  background: transparent;
-  border: 1px solid var(--cyan);
-  color: var(--cyan);
-}
-
-.btn-yes:hover {
-  background: var(--cyan);
-  color: var(--bg);
-  box-shadow: var(--glow-cyan);
-}
-
-.btn-no {
-  background: transparent;
-  border: 1px solid var(--dim);
-  color: var(--dim);
-}
-
-.btn-no:hover {
-  border-color: var(--pink);
-  color: var(--pink);
-}
-
-.btn-modify {
-  background: transparent;
-  border: 1px solid rgba(255,230,0,0.4);
-  color: var(--yellow);
-}
-
-.btn-modify:hover {
-  background: rgba(255,230,0,0.1);
-  box-shadow: 0 0 12px rgba(255,230,0,0.3);
-}
-
-/* Typing indicator */
-.typing {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 14px 16px;
-  background: var(--panel);
-  border: 1px solid rgba(0,255,234,0.1);
-  border-radius: 8px;
-  border-top-left-radius: 2px;
-  width: fit-content;
-}
-
-.typing-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--cyan);
-  animation: typingBounce 1.2s ease-in-out infinite;
-}
-
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-/* ── Input area ── */
-.input-area {
-  padding: 16px 28px 20px;
-  border-top: 1px solid var(--border);
-  background: rgba(5,13,20,0.95);
-  backdrop-filter: blur(10px);
-}
-
-.input-wrap {
-  display: flex;
-  gap: 10px;
-  align-items: flex-end;
-}
-
-.input-box {
-  flex: 1;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--white);
-  font-family: 'Exo 2', sans-serif;
-  font-size: 14px;
-  padding: 12px 16px;
-  outline: none;
-  transition: border-color 0.2s;
-  resize: none;
-  min-height: 46px;
-  max-height: 120px;
-  line-height: 1.5;
-}
-
-.input-box:focus {
-  border-color: var(--cyan);
-  box-shadow: var(--glow-cyan);
-}
-
-.input-box::placeholder { color: var(--dim); }
-
-.send-btn {
-  padding: 12px 24px;
-  background: transparent;
-  border: 1px solid var(--cyan);
-  border-radius: 8px;
-  color: var(--cyan);
-  font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  white-space: nowrap;
-  height: 46px;
-}
-
-.send-btn:hover {
-  background: var(--cyan);
-  color: var(--bg);
-  box-shadow: var(--glow-cyan);
-}
-
-.input-hint {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--dim);
-  margin-top: 8px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-/* ── Animations ── */
-@keyframes gridMove { from{background-position:0 0} to{background-position:60px 60px} }
-@keyframes orbFloat { from{transform:translate(0,0) scale(1)} to{transform:translate(20px,20px) scale(1.1)} }
-@keyframes pFloat { 0%{transform:translateY(100vh);opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{transform:translateY(-5vh);opacity:0} }
-@keyframes iconPulse { 0%,100%{filter:drop-shadow(0 0 10px var(--cyan))} 50%{filter:drop-shadow(0 0 25px var(--cyan)) drop-shadow(0 0 40px var(--pink))} }
-@keyframes dotBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-@keyframes msgIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-@keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:'Exo 2',sans-serif;height:100vh;overflow:hidden;cursor:crosshair;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;z-index:9999;}
+.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,255,234,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,234,0.03) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite;}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:orbFloat ease-in-out infinite alternate;}
+.orb1{width:400px;height:400px;background:rgba(0,255,234,0.06);top:-100px;left:-100px;animation-duration:12s;}
+.orb2{width:350px;height:350px;background:rgba(255,0,110,0.05);bottom:-80px;right:-80px;animation-duration:15s;}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.p{position:absolute;animation:pFloat linear infinite;opacity:0;}
+
+/* App */
+.app{position:relative;z-index:1;display:grid;grid-template-rows:64px 1fr;height:100vh;}
+
+/* Header */
+header{padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(–border);background:rgba(2,4,8,0.95);backdrop-filter:blur(20px);}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{font-size:26px;filter:drop-shadow(0 0 12px var(–cyan));animation:iconPulse 3s ease-in-out infinite;}
+.logo-text{font-family:‘Orbitron’,monospace;font-weight:900;font-size:20px;letter-spacing:4px;background:linear-gradient(90deg,var(–cyan),var(–pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-v{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:3px;color:var(–dim);border:1px solid var(–dim);padding:2px 6px;border-radius:2px;}
+.hdr-right{display:flex;align-items:center;gap:16px;}
+.hdr-stat{font-family:‘Share Tech Mono’,monospace;font-size:10px;letter-spacing:2px;color:var(–dim);text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.hdr-stat .dot{width:5px;height:5px;border-radius:50%;background:var(–cyan);box-shadow:0 0 6px var(–cyan);animation:dotBlink 2s infinite;}
+
+/* Main */
+main{display:grid;grid-template-columns:220px 1fr;overflow:hidden;}
+
+/* Sidebar */
+.sidebar{border-right:1px solid var(–border);background:rgba(5,13,20,0.9);display:flex;flex-direction:column;overflow:hidden;}
+.sb-sec{padding:14px 14px 10px;border-bottom:1px solid var(–border);}
+.sb-title{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:4px;color:var(–cyan);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.sb-title::before{content:’//’;color:var(–pink);}
+.hist-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.hist-scroll{flex:1;overflow-y:auto;padding:8px;}
+.hist-scroll::-webkit-scrollbar{width:3px;}
+.hist-scroll::-webkit-scrollbar-thumb{background:var(–dim);border-radius:2px;}
+.hist-item{padding:8px 10px;border-radius:4px;border:1px solid transparent;margin-bottom:4px;cursor:pointer;transition:all 0.15s;}
+.hist-item:hover{background:var(–panel2);border-color:var(–border);}
+.hist-mode{font-family:‘Share Tech Mono’,monospace;font-size:8px;letter-spacing:2px;color:var(–pink);text-transform:uppercase;margin-bottom:3px;}
+.hist-prompt{font-size:11px;color:rgba(255,255,255,0.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-empty{font-family:‘Share Tech Mono’,monospace;font-size:9px;color:var(–dim);text-align:center;padding:24px 10px;letter-spacing:2px;text-transform:uppercase;line-height:2;}
+
+/* Chat */
+.chat-wrap{display:flex;flex-direction:column;overflow:hidden;background:var(–bg);}
+.chat-msgs{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:16px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(–dim);border-radius:2px;}
+.msg{display:flex;gap:12px;animation:msgIn 0.3s ease;}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;}
+.msg.ai{align-self:flex-start;}
+.msg-avatar{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:‘Share Tech Mono’,monospace;}
+.msg.ai .msg-avatar{background:rgba(0,255,234,0.08);border:1px solid rgba(0,255,234,0.25);color:var(–cyan);}
+.msg.user .msg-avatar{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.25);color:var(–pink);}
+.msg-content{display:flex;flex-direction:column;gap:6px;max-width:75%;}
+.msg-bubble{padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;}
+.msg.ai .msg-bubble{background:var(–panel);border:1px solid rgba(0,255,234,0.1);color:var(–white);border-top-left-radius:2px;}
+.msg.user .msg-bubble{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.2);color:var(–white);border-top-right-radius:2px;}
+.msg-code{background:rgba(0,0,0,0.6);border:1px solid rgba(0,255,234,0.15);border-radius:6px;padding:14px 16px;font-family:‘Share Tech Mono’,monospace;font-size:11px;line-height:1.8;color:var(–code);white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;}
+.msg-code::-webkit-scrollbar{width:3px;}
+.msg-code::-webkit-scrollbar-thumb{background:var(–dim);}
+.confirm-btns{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+.confirm-btn{padding:7px 16px;border-radius:5px;font-family:‘Share Tech Mono’,monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;}
+.btn-yes{background:transparent;border:1px solid var(–cyan);color:var(–cyan);}
+.btn-yes:hover{background:var(–cyan);color:var(–bg);box-shadow:var(–glow-cyan);}
+.btn-no{background:transparent;border:1px solid var(–dim);color:var(–dim);}
+.btn-no:hover{border-color:var(–pink);color:var(–pink);}
+.btn-mod{background:transparent;border:1px solid rgba(255,230,0,0.4);color:var(–yellow);}
+.btn-mod:hover{background:rgba(255,230,0,0.1);}
+.typing{display:flex;align-items:center;gap:5px;padding:14px 16px;background:var(–panel);border:1px solid rgba(0,255,234,0.1);border-radius:8px;border-top-left-radius:2px;width:fit-content;}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(–cyan);animation:typingBounce 1.2s ease-in-out infinite;}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+
+/* Input */
+.input-area{padding:16px 28px 20px;border-top:1px solid var(–border);background:rgba(5,13,20,0.95);backdrop-filter:blur(10px);}
+.input-wrap{display:flex;gap:10px;align-items:flex-end;}
+.input-box{flex:1;background:var(–panel);border:1px solid var(–border);border-radius:8px;color:var(–white);font-family:‘Exo 2’,sans-serif;font-size:14px;padding:12px 16px;outline:none;transition:border-color 0.2s;resize:none;min-height:46px;max-height:120px;line-height:1.5;}
+.input-box:focus{border-color:var(–cyan);box-shadow:var(–glow-cyan);}
+.input-box::placeholder{color:var(–dim);}
+.send-btn{padding:12px 24px;background:transparent;border:1px solid var(–cyan);border-radius:8px;color:var(–cyan);font-family:‘Orbitron’,monospace;font-size:11px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;white-space:nowrap;height:46px;}
+.send-btn:hover{background:var(–cyan);color:var(–bg);box-shadow:var(–glow-cyan);}
+.input-hint{font-family:‘Share Tech Mono’,monospace;font-size:9px;letter-spacing:2px;color:var(–dim);margin-top:8px;text-align:center;text-transform:uppercase;}
+
+/* Animations */
+@keyframes gridMove{from{background-position:0 0}to{background-position:60px 60px}}
+@keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(20px,20px) scale(1.1)}}
+@keyframes pFloat{0%{transform:translateY(100vh);opacity:0}5%{opacity:1}95%{opacity:1}100%{transform:translateY(-5vh);opacity:0}}
+@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 10px var(–cyan))}50%{filter:drop-shadow(0 0 25px var(–cyan)) drop-shadow(0 0 40px var(–pink))}}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:0.2}}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 </style>
+
 </head>
 <body>
-
 <div class="bg-grid"></div>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <div id="particles"></div>
 
 <div class="app">
-
-  <!-- HEADER -->
   <header>
     <div class="logo">
       <span class="logo-icon">⚡</span>
       <span class="logo-text">ENES'S AI</span>
-      <span class="logo-version">V3.0</span>
+      <span class="logo-v">V3.0</span>
     </div>
-    <div class="header-right">
-      <div class="hdr-stat"><span class="dot"></span> ONLINE</div>
+    <div class="hdr-right">
+      <div class="hdr-stat"><span class="dot"></span>ONLINE</div>
       <div class="hdr-stat" id="scriptCounter">0 SCRIPTS</div>
     </div>
   </header>
 
   <main>
-
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-
-
-
-      <div class="history-wrap">
-        <div class="sb-section" style="border-bottom:none;padding-bottom:6px;">
+      <div class="hist-wrap">
+        <div class="sb-sec" style="border-bottom:none;padding-bottom:6px;">
           <div class="sb-title">Command History</div>
         </div>
-        <div class="history-scroll" id="historyList">
+        <div class="hist-scroll" id="historyList">
           <div class="hist-empty">NO HISTORY YET<br>START CHATTING!</div>
         </div>
       </div>
-
     </aside>
 
-    <!-- CHAT -->
-    <div class="chat-wrap">
-      <div class="chat-messages" id="chatMessages">
-
-        <!-- Welcome -->
-        <div class="msg ai">
-          <div class="msg-avatar">⚡</div>
-          <div class="msg-content">
-            <div class="msg-bubble">
-              Hey! I'm <strong>Enes's AI</strong> — your personal Roblox scripting assistant! 👋<br><br>
-              Tell me what you want to build and I'll ask for your opinion before doing anything. Just say something like <em>"make me a double jump"</em> or <em>"create an admin console"</em> and we'll go from there!
-            </div>
-          </div>
+```
+<div class="chat-wrap">
+  <div class="chat-msgs" id="chatMessages">
+    <div class="msg ai">
+      <div class="msg-avatar">⚡</div>
+      <div class="msg-content">
+        <div class="msg-bubble">
+          Hey! I'm <strong>Enes's AI</strong> — your Roblox scripting assistant! 👋<br><br>
+          Just tell me what you want and I'll ask your opinion before doing anything. Try saying <em>"make me a double jump"</em> or <em>"create an admin console"</em>!
         </div>
-
-      </div>
-
-      <!-- Input -->
-      <div class="input-area">
-        <div class="input-wrap">
-          <textarea class="input-box" id="chatInput" placeholder="Tell me what you want to build..." rows="1"></textarea>
-          <button class="send-btn" onclick="sendMessage()">SEND</button>
-        </div>
-        <div class="input-hint">Press Enter to send • Shift+Enter for new line</div>
       </div>
     </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea class="input-box" id="chatInput" placeholder="Tell me what you want to build..." rows="1"></textarea>
+      <button class="send-btn" onclick="sendMessage()">SEND</button>
+    </div>
+    <div class="input-hint">Press Enter to send • Shift+Enter for new line</div>
+  </div>
+</div>
+```
 
   </main>
 </div>
 
 <script>
-// ── Particles ──
+// Particles
 const pc = document.getElementById('particles');
-for (let i = 0; i < 25; i++) {
-  const p = document.createElement('div');
-  p.className = 'p';
-  const colors = ['#00ffea','#ff006e','#0080ff'];
-  const c = colors[Math.floor(Math.random()*colors.length)];
-  p.style.cssText = `left:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:${c};box-shadow:0 0 4px ${c};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*20}s;`;
+for(let i=0;i<25;i++){
+  const p=document.createElement('div');p.className='p';
+  const c=['#00ffea','#ff006e','#0080ff'][Math.floor(Math.random()*3)];
+  p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:${c};box-shadow:0 0 4px ${c};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*20}s;border-radius:50%;`;
   pc.appendChild(p);
 }
 
-// ── State ──
 const SERVER = 'https://enesai.onrender.com/api/generate';
 let selectedMode = 'LocalScript';
 let scriptCount = 0;
 let history = [];
-let pendingRequest = null;
 let waitingForConfirm = false;
 
-// ── Auto detect mode from prompt ──
-function detectMode(prompt) {
-  const p = prompt.toLowerCase();
-  if (p.includes('gui') || p.includes('ui') || p.includes('menu') || p.includes('button') || p.includes('screen') || p.includes('interface') || p.includes('shop') || p.includes('inventory') || p.includes('hud')) return 'GUI';
-  if (p.includes('admin') || p.includes('console') || p.includes('command')) return 'Admin';
-  if (p.includes('combat') || p.includes('sword') || p.includes('weapon') || p.includes('gun') || p.includes('shoot') || p.includes('fight') || p.includes('kill') || p.includes('damage') || p.includes('attack')) return 'Combat';
-  if (p.includes('npc') || p.includes('enemy') || p.includes('mob') || p.includes('pathfind') || p.includes('chase') || p.includes('zombie') || p.includes('bot')) return 'NPC';
-  if (p.includes('datastore') || p.includes('data store') || p.includes('save') || p.includes('load') || p.includes('leaderboard') || p.includes('persistent')) return 'DataStore';
-  if (p.includes('module') || p.includes('library') || p.includes('class')) return 'Module';
-  if (p.includes('server') || p.includes('remote') || p.includes('remoteevent') || p.includes('spawner')) return 'Script';
-  if (p.includes('local') || p.includes('client') || p.includes('player') || p.includes('jump') || p.includes('run') || p.includes('walk') || p.includes('dash') || p.includes('fly') || p.includes('speed')) return 'LocalScript';
+function detectMode(p) {
+  const t = p.toLowerCase();
+  if(t.includes('gui')||t.includes('ui')||t.includes('menu')||t.includes('button')||t.includes('shop')||t.includes('inventory')||t.includes('hud')||t.includes('screen')||t.includes('interface')) return 'GUI';
+  if(t.includes('admin')||t.includes('console')||t.includes('command')) return 'Admin';
+  if(t.includes('combat')||t.includes('sword')||t.includes('weapon')||t.includes('gun')||t.includes('shoot')||t.includes('fight')||t.includes('damage')||t.includes('attack')) return 'Combat';
+  if(t.includes('npc')||t.includes('enemy')||t.includes('mob')||t.includes('chase')||t.includes('zombie')||t.includes('bot')) return 'NPC';
+  if(t.includes('datastore')||t.includes('save')||t.includes('load')||t.includes('leaderboard')) return 'DataStore';
+  if(t.includes('module')||t.includes('library')||t.includes('class')) return 'Module';
+  if(t.includes('server')||t.includes('remote')||t.includes('spawner')) return 'Script';
   return 'LocalScript';
 }
 
-// ── Auto resize textarea ──
-const inputBox = document.getElementById('chatInput');
-inputBox.addEventListener('input', () => {
-  inputBox.style.height = 'auto';
-  inputBox.style.height = Math.min(inputBox.scrollHeight, 120) + 'px';
-});
-
-inputBox.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// ── Detect if message is a script request ──
-const scriptKeywords = [
-  'make', 'create', 'build', 'write', 'generate', 'code',
-  'script', 'gui', 'system', 'add', 'give me', 'can you make',
-  'i want', 'i need', 'do a', 'do an'
-];
-
 function isScriptRequest(msg) {
-  const lower = msg.toLowerCase();
-  return scriptKeywords.some(kw => lower.includes(kw));
+  return ['make','create','build','write','generate','script','gui','system','add','give me','i want','i need','do a','do an','can you'].some(k=>msg.toLowerCase().includes(k));
 }
 
-// ── Add message to chat ──
+function buildSystem() {
+  const map = {
+    LocalScript:"Generate a Roblox LOCALSCRIPT. Use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). Client-side only.",
+    GUI:"Generate a Roblox LOCALSCRIPT with beautiful neon dark UI. Use Instance.new(), UICorner, UIGradient, TweenService. Parent ScreenGui to PlayerGui.",
+    Combat:"Generate a Roblox LOCALSCRIPT for combat. Proper hit detection, RemoteEvents, visual effects.",
+    Script:"Generate a Roblox server SCRIPT. Server-side only.",
+    NPC:"Generate a Roblox server SCRIPT for NPC with PathfindingService and attack logic.",
+    DataStore:"Generate a Roblox server SCRIPT using DataStoreService with pcall error handling.",
+    Module:"Generate a Roblox MODULESCRIPT returning a clean table/class.",
+    Admin:"Generate a Roblox LOCALSCRIPT for a beautiful neon admin console. Commands: fly, speed, god, kick, teleport, heal, invisible, noclip.",
+  };
+  return "You are Enes's AI, expert Roblox Lua scripter. "+(map[selectedMode]||map.LocalScript)+" Add clear comments. Use task.wait() and task.spawn(). Use pcall() for error handling. CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. No explanation. Start code directly.";
+}
+
 function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
   const msgs = document.getElementById('chatMessages');
-
   const div = document.createElement('div');
-  div.className = 'msg ' + (isUser ? 'user' : 'ai');
-
+  div.className = 'msg '+(isUser?'user':'ai');
   const avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = isUser ? '>' : '⚡';
-
+  avatar.textContent = isUser?'>':'⚡';
   const contentDiv = document.createElement('div');
   contentDiv.className = 'msg-content';
 
-  if (isCode) {
+  if(isCode) {
     const code = document.createElement('div');
     code.className = 'msg-code';
     code.textContent = content;
@@ -684,207 +241,120 @@ function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
     contentDiv.appendChild(bubble);
   }
 
-  // Add confirm buttons if needed
-  if (showConfirm && originalPrompt) {
+  if(showConfirm && originalPrompt) {
     const btns = document.createElement('div');
     btns.className = 'confirm-btns';
 
     const yes = document.createElement('button');
     yes.className = 'confirm-btn btn-yes';
     yes.textContent = '✓ Yes, do it!';
-    yes.onclick = () => {
-      btns.remove();
-      waitingForConfirm = false;
-      generateScript(originalPrompt);
-    };
+    yes.onclick = ()=>{ btns.remove(); waitingForConfirm=false; generateScript(originalPrompt); };
 
     const no = document.createElement('button');
     no.className = 'confirm-btn btn-no';
     no.textContent = '✗ No thanks';
-    no.onclick = () => {
-      btns.remove();
-      waitingForConfirm = false;
-      pendingRequest = null;
-      addMsg("No problem! Let me know if you want something else. 😊", false, false, false, null);
-    };
+    no.onclick = ()=>{ btns.remove(); waitingForConfirm=false; addMsg("No problem! Let me know if you want something else 😊",false,false,false,null); };
 
-    const modify = document.createElement('button');
-    modify.className = 'confirm-btn btn-modify';
-    modify.textContent = '✎ Modify it';
-    modify.onclick = () => {
-      btns.remove();
-      waitingForConfirm = false;
-      pendingRequest = null;
-      addMsg("Sure! Tell me what you'd like to change and I'll adjust it.", false, false, false, null);
-      document.getElementById('chatInput').focus();
-    };
+    const mod = document.createElement('button');
+    mod.className = 'confirm-btn btn-mod';
+    mod.textContent = '✎ Modify';
+    mod.onclick = ()=>{ btns.remove(); waitingForConfirm=false; addMsg("Sure! Tell me what to change 👇",false,false,false,null); document.getElementById('chatInput').focus(); };
 
-    btns.appendChild(yes);
-    btns.appendChild(no);
-    btns.appendChild(modify);
+    btns.append(yes,no,mod);
     contentDiv.appendChild(btns);
     waitingForConfirm = true;
   }
 
-  div.appendChild(avatar);
-  div.appendChild(contentDiv);
+  div.append(avatar, contentDiv);
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-// ── Show typing indicator ──
 function showTyping() {
   const msgs = document.getElementById('chatMessages');
   const div = document.createElement('div');
-  div.className = 'msg ai';
-  div.id = 'typingIndicator';
-
-  const avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  avatar.textContent = '⚡';
-
-  const typing = document.createElement('div');
-  typing.className = 'typing';
-  for (let i = 0; i < 3; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'typing-dot';
-    typing.appendChild(dot);
-  }
-
-  div.appendChild(avatar);
-  div.appendChild(typing);
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  div.className='msg ai'; div.id='typing';
+  const av = document.createElement('div'); av.className='msg-avatar'; av.textContent='⚡';
+  const t = document.createElement('div'); t.className='typing';
+  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='typing-dot';t.appendChild(d);}
+  div.append(av,t); msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
 }
 
-function removeTyping() {
-  const el = document.getElementById('typingIndicator');
-  if (el) el.remove();
-}
+function removeTyping() { const el=document.getElementById('typing'); if(el) el.remove(); }
 
-// ── Add to history ──
 function addHistory(prompt) {
-  history.unshift({ prompt, mode: selectedMode });
-  if (history.length > 15) history.pop();
-
+  history.unshift({prompt, mode:selectedMode});
+  if(history.length>15) history.pop();
   const el = document.getElementById('historyList');
-  el.innerHTML = history.map(h => `
-    <div class="hist-item" onclick="quickPrompt('${h.prompt.replace(/'/g, "\\'")}')">
+  el.innerHTML = history.map(h=>`
+    <div class="hist-item" onclick="quickPrompt('${h.prompt.replace(/'/g,"\\'")}')">
       <div class="hist-mode">${h.mode}</div>
       <div class="hist-prompt">${h.prompt}</div>
     </div>
   `).join('');
 }
 
-function quickPrompt(text) {
-  document.getElementById('chatInput').value = text;
-  document.getElementById('chatInput').focus();
-}
+function quickPrompt(t) { document.getElementById('chatInput').value=t; document.getElementById('chatInput').focus(); }
 
-// ── Build system prompt ──
-function buildSystem() {
-  const map = {
-    LocalScript: "Generate a Roblox LOCALSCRIPT. Use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). Client-side only.",
-    GUI:         "Generate a Roblox LOCALSCRIPT with beautiful neon dark UI. Use Instance.new(), UICorner, UIGradient, TweenService. Parent ScreenGui to PlayerGui.",
-    Combat:      "Generate a Roblox LOCALSCRIPT for combat. Proper hit detection, RemoteEvents, visual effects.",
-    Script:      "Generate a Roblox server SCRIPT. Server-side only.",
-    NPC:         "Generate a Roblox server SCRIPT for NPC with PathfindingService and attack logic.",
-    DataStore:   "Generate a Roblox server SCRIPT using DataStoreService with pcall error handling.",
-    Module:      "Generate a Roblox MODULESCRIPT returning a clean table/class.",
-    Admin:       "Generate a Roblox LOCALSCRIPT for a beautiful neon admin console. Include commands: fly, speed, god, kick, teleport, heal, invisible, noclip.",
-  };
-  return "You are Enes's AI, expert Roblox Lua scripter. " + (map[selectedMode]||map.LocalScript) +
-    " Add clear comments. Write optimized code. Use task.wait() and task.spawn(). Use pcall() for error handling." +
-    " CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. No explanation. Start code directly.";
-}
-
-// ── Generate script ──
 async function generateScript(prompt) {
   showTyping();
-
   try {
     const res = await fetch(SERVER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, mode: selectedMode, system: buildSystem() })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt, mode:selectedMode, system:buildSystem()})
     });
-
     const data = await res.json();
     const code = data.code || '-- No code returned';
-
     removeTyping();
     addMsg(code, false, true, false, null);
-
-    const lines = code.split('\n').length;
     scriptCount++;
-    document.getElementById('scriptCounter').textContent = scriptCount + ' SCRIPTS';
+    document.getElementById('scriptCounter').textContent = scriptCount+' SCRIPTS';
     addHistory(prompt);
-
-    // Follow up
-    setTimeout(() => {
-      addMsg(`Done! ✅ Generated <strong>${lines} lines</strong> of ${selectedMode} code.<br><br>Want me to change anything or add more features?`, false, false, false, null);
-    }, 400);
-
+    setTimeout(()=>{ addMsg(`✅ Done! <strong>${code.split('\\n').length} lines</strong> of ${selectedMode} code.<br><br>Want me to change anything or add features?`,false,false,false,null); },400);
   } catch(e) {
     removeTyping();
-    addMsg('❌ Error connecting to server. Make sure the server is online at <strong>enesai.onrender.com</strong>', false, false, false, null);
+    addMsg('❌ Could not reach server. Check your connection!',false,false,false,null);
   }
 }
 
-// ── Chat with AI (non-script questions) ──
 async function chatWithAI(prompt) {
   showTyping();
-
   try {
     const res = await fetch(SERVER, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt,
-        mode: 'chat',
-        system: "You are Enes's AI, a friendly and helpful Roblox scripting assistant. Answer questions clearly and helpfully. Keep responses concise and friendly. Don't use markdown formatting."
-      })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt, mode:'chat', system:"You are Enes's AI, a friendly Roblox scripting assistant. Answer clearly and concisely. No markdown."})
     });
-
     const data = await res.json();
     removeTyping();
-    addMsg(data.code || data.response || 'I could not get a response, try again!', false, false, false, null);
-
+    addMsg(data.code||'I could not get a response, try again!',false,false,false,null);
   } catch(e) {
     removeTyping();
-    addMsg('❌ Could not reach server. Check your connection!', false, false, false, null);
+    addMsg('❌ Could not reach server!',false,false,false,null);
   }
 }
 
-// ── Send message ──
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
-  if (!msg || waitingForConfirm) return;
-
-  input.value = '';
-  input.style.height = 'auto';
+  if(!msg || waitingForConfirm) return;
+  input.value=''; input.style.height='auto';
   addMsg(msg, true, false, false, null);
 
-  if (isScriptRequest(msg)) {
-    // Auto detect mode
+  if(isScriptRequest(msg)) {
     selectedMode = detectMode(msg);
-    pendingRequest = msg;
-    const modeText = selectedMode;
-
     showTyping();
-    await new Promise(r => setTimeout(r, 800));
+    await new Promise(r=>setTimeout(r,800));
     removeTyping();
-
-    addMsg(
-      `Got it! You want me to create a <strong>${modeText}</strong> for: "<em>${msg}</em>"<br><br>Before I start — do you want me to go ahead with that? You can also ask me to modify the idea first! 👇`,
-      false, false, true, msg
-    );
+    addMsg(`Got it! I detected this is a <strong>${selectedMode}</strong> request.<br><br>You want: "<em>${msg}</em>"<br><br>Should I go ahead? 👇`,false,false,true,msg);
   } else {
-    // Regular chat
     chatWithAI(msg);
   }
 }
+
+const inputBox = document.getElementById('chatInput');
+inputBox.addEventListener('input',()=>{ inputBox.style.height='auto'; inputBox.style.height=Math.min(inputBox.scrollHeight,120)+'px'; });
+inputBox.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} });
 </script>
+
 </body>
 </html>
