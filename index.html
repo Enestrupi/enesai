@@ -31,11 +31,10 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .bg-fx::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 40% at 70% 50%,rgba(0,255,234,0.04) 0%,transparent 70%),radial-gradient(ellipse 30% 40% at 20% 80%,rgba(255,0,110,0.03) 0%,transparent 70%);}
 .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,255,234,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,234,0.02) 1px,transparent 1px);background-size:50px 50px;}
 
-/* LAYOUT */
 .app{position:relative;z-index:1;display:grid;grid-template-columns:240px 1fr;height:100vh;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;z-index:10;}
+.sidebar{background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
 .sb-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .sb-logo-icon{font-size:22px;filter:drop-shadow(0 0 8px var(--cyan));animation:iconPulse 3s ease-in-out infinite;}
 .sb-logo-text{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;letter-spacing:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -52,17 +51,14 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .sb-item:hover{background:rgba(0,255,234,0.05);color:rgba(255,255,255,0.7);}
 .sb-item.active{background:rgba(0,255,234,0.08);color:var(--cyan);border-color:rgba(0,255,234,0.15);}
 .sb-item-icon{font-size:14px;width:18px;text-align:center;}
-
-/* KEY CARD in sidebar */
 .sb-key-card{margin:10px 12px;padding:12px;background:rgba(0,255,234,0.05);border:1px solid rgba(0,255,234,0.15);border-radius:10px;}
 .sb-key-title{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
 .sb-key-title::before{content:'//';color:var(--pink);}
-.sb-key-value{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--cyan);word-break:break-all;margin-bottom:8px;line-height:1.5;}
+.sb-key-value{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--cyan);word-break:break-all;margin-bottom:8px;line-height:1.5;}
 .sb-key-status{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:1px;text-transform:uppercase;}
 .sb-key-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:dotBlink 2s infinite;}
 .sb-regen-btn{width:100%;margin-top:8px;padding:6px;background:transparent;border:1px solid var(--dim2);border-radius:6px;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
 .sb-regen-btn:hover{border-color:var(--cyan);color:var(--cyan);}
-
 .sb-bottom{padding:10px 12px;border-top:1px solid var(--border);margin-top:auto;}
 .sb-discord{padding:8px 12px;background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.3);border-radius:8px;color:#8b9bff;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;text-decoration:none;}
 .sb-discord:hover{background:rgba(88,101,242,0.25);}
@@ -71,7 +67,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .main{position:relative;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(10,10,15,0.8);backdrop-filter:blur(20px);flex-shrink:0;}
 .tb-left{display:flex;align-items:center;gap:10px;}
-.tb-key-preview{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim2);text-transform:uppercase;display:flex;align-items:center;gap:6px;}
+.tb-key-preview{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--dim2);display:flex;align-items:center;gap:6px;}
 .tb-right{display:flex;align-items:center;gap:12px;}
 .tb-online{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase;}
 .tb-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:dotBlink 2s infinite;}
@@ -82,7 +78,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .page{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
 .page.hidden{display:none;}
 
-/* HOME PAGE */
+/* HOME */
 #homePage{position:relative;}
 .float-cards{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 .float-card{position:absolute;width:110px;height:75px;border-radius:10px;border:1px solid var(--border2);background:var(--panel);overflow:hidden;opacity:0.45;animation:floatCard ease-in-out infinite alternate;}
@@ -114,7 +110,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .chat-msgs::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px;}
 .msg{display:flex;gap:12px;animation:msgIn 0.3s ease;}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:75%;}
-.msg.ai{align-self:flex-start;max-width:80%;}
+.msg.ai{align-self:flex-start;max-width:85%;}
 .msg-av{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
 .msg.ai .msg-av{background:rgba(0,255,234,0.08);border:1px solid rgba(0,255,234,0.2);color:var(--cyan);}
 .msg.user .msg-av{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.2);color:var(--pink);}
@@ -122,17 +118,16 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .msg-bubble{padding:11px 15px;border-radius:10px;font-size:13px;line-height:1.65;}
 .msg.ai .msg-bubble{background:var(--panel);border:1px solid rgba(0,255,234,0.1);color:var(--white);border-top-left-radius:2px;}
 .msg.user .msg-bubble{background:rgba(255,0,110,0.08);border:1px solid rgba(255,0,110,0.15);color:var(--white);border-top-right-radius:2px;}
-.msg-code{background:rgba(0,0,0,0.6);border:1px solid rgba(0,255,234,0.15);border-radius:8px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.8;color:#7affb2;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow-y:auto;}
+.msg-code{background:rgba(0,0,0,0.6);border:1px solid rgba(0,255,234,0.15);border-radius:8px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.8;color:#7affb2;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;}
 .msg-code::-webkit-scrollbar{width:3px;}
 .msg-code::-webkit-scrollbar-thumb{background:var(--dim);}
-.confirm-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
-.cbtn{padding:7px 16px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;}
-.cbtn-yes{background:transparent;border:1px solid var(--cyan);color:var(--cyan);}
-.cbtn-yes:hover{background:var(--cyan);color:#000;box-shadow:var(--glow);}
-.cbtn-no{background:transparent;border:1px solid var(--dim2);color:var(--dim2);}
-.cbtn-no:hover{border-color:var(--pink);color:var(--pink);}
-.cbtn-mod{background:transparent;border:1px solid rgba(255,230,0,0.3);color:var(--yellow);}
-.cbtn-mod:hover{background:rgba(255,230,0,0.08);}
+
+/* Copy button on code */
+.code-wrap{display:flex;flex-direction:column;gap:6px;}
+.copy-code-btn{padding:6px 14px;background:transparent;border:1px solid var(--cyan);border-radius:6px;color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;align-self:flex-start;}
+.copy-code-btn:hover{background:var(--cyan);color:#000;}
+.copy-code-btn.copied{background:#00cc66;border-color:#00cc66;color:#000;}
+
 .typing{display:flex;align-items:center;gap:5px;padding:12px 15px;background:var(--panel);border:1px solid rgba(0,255,234,0.1);border-radius:10px;border-top-left-radius:2px;width:fit-content;}
 .td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:typingBounce 1.2s ease-in-out infinite;}
 .td:nth-child(2){animation-delay:0.2s;}
@@ -144,8 +139,15 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 .chat-input::placeholder{color:var(--dim2);}
 .chat-send{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;background:var(--cyan);border:none;border-radius:8px;color:#000;font-size:15px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
 .chat-send:hover{background:var(--pink);box-shadow:var(--glow-pink);}
+.chat-send:disabled{opacity:0.5;cursor:not-allowed;}
 
-/* ANIMATIONS */
+/* Status bar */
+.status-bar{padding:6px 28px;background:rgba(5,5,10,0.9);border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim2);display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.status-bar .s-dot{width:5px;height:5px;border-radius:50%;background:var(--dim2);}
+.status-bar.ok .s-dot{background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
+.status-bar.err .s-dot{background:var(--pink);box-shadow:0 0 6px var(--pink);}
+.status-bar.loading .s-dot{background:var(--yellow);box-shadow:0 0 6px var(--yellow);animation:dotBlink 0.6s infinite;}
+
 @keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 10px var(--cyan))}50%{filter:drop-shadow(0 0 22px var(--cyan)) drop-shadow(0 0 40px var(--pink))}}
 @keyframes dotBlink{0%,100%{opacity:1}50%{opacity:0.2}}
 @keyframes floatCard{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-12px) rotate(1deg)}}
@@ -166,16 +168,13 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 <div class="bg-grid"></div>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sb-logo">
       <span class="sb-logo-icon">⚡</span>
       <span class="sb-logo-text">ENES'S AI</span>
-      <span class="sb-logo-v">V4</span>
+      <span class="sb-logo-v">V5</span>
     </div>
-
     <button class="sb-new-btn" onclick="showHome()">New Project</button>
-
     <div class="sb-content">
       <div class="sb-section">
         <div class="sb-section-title">Navigation</div>
@@ -184,41 +183,33 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
         <div class="sb-item" onclick="startChat('create a beautiful GUI')"><span class="sb-item-icon">🎨</span> GUI Builder</div>
         <div class="sb-item" onclick="startChat('make an admin console')"><span class="sb-item-icon">⚙️</span> Admin Tools</div>
       </div>
-
       <div class="sb-section">
         <div class="sb-section-title">Recent</div>
-        <div id="recentList">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim2);padding:6px 4px;letter-spacing:1px;">NO HISTORY YET</div>
-        </div>
+        <div id="recentList"><div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim2);padding:6px 4px;letter-spacing:1px;">NO HISTORY YET</div></div>
       </div>
-
-      <!-- KEY CARD -->
       <div class="sb-section">
         <div class="sb-section-title">Your API Key</div>
         <div class="sb-key-card">
           <div class="sb-key-title">Key</div>
-          <div class="sb-key-value" id="sidebarKey">Generating...</div>
+          <div class="sb-key-value" id="sidebarKey">Loading...</div>
           <div class="sb-key-status"><span class="sb-key-dot"></span> Active</div>
           <button class="sb-regen-btn" onclick="regenKey()">↺ Regenerate</button>
         </div>
       </div>
     </div>
-
     <div class="sb-bottom">
       <a class="sb-discord" href="#" target="_blank"><span>💬</span> Join Discord</a>
     </div>
   </aside>
 
-  <!-- MAIN -->
   <div class="main">
-    <!-- Topbar -->
     <div class="topbar">
       <div class="tb-left">
-        <div class="tb-key-preview">⚡ <span id="topbarKey" style="color:var(--cyan);"></span></div>
+        <div class="tb-key-preview">⚡ <span id="topbarKey" style="color:var(--cyan);font-size:9px;"></span></div>
       </div>
       <div class="tb-right">
         <div class="tb-online"><span class="tb-dot"></span> ONLINE</div>
-        <button class="tb-plugin-btn" onclick="showPluginInfo()">Get Plugin</button>
+        <button class="tb-plugin-btn" onclick="alert('Install EnesAI_Plugin_v5.lua in your Roblox Studio Plugins folder!\n\nYour key: ' + myKey)">Get Plugin</button>
       </div>
     </div>
 
@@ -254,9 +245,13 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
       <div class="chat-msgs" id="chatMsgs"></div>
       <div class="chat-input-area">
         <div class="chat-input-wrap">
-          <textarea class="chat-input" id="chatInput" placeholder="Tell me what you want to build..." rows="1"></textarea>
-          <button class="chat-send" onclick="sendMsg()">➤</button>
+          <textarea class="chat-input" id="chatInput" placeholder="Describe your script and I'll generate it instantly..." rows="1"></textarea>
+          <button class="chat-send" id="sendBtn" onclick="sendMsg()">➤</button>
         </div>
+      </div>
+      <div class="status-bar" id="statusBar">
+        <span class="s-dot"></span>
+        <span id="statusText">READY</span>
       </div>
     </div>
   </div>
@@ -264,23 +259,22 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;b
 
 <script>
 const SERVER = 'https://enesai.onrender.com/api/generate';
-let waitingConfirm=false, pendingPrompt='', pendingMode='', recentHistory=[];
+let recentHistory = [];
+let isGenerating = false;
 
-// ── KEY SYSTEM ──
+// KEY SYSTEM - auto generate on first visit
 function generateKey() {
   const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const s = () => Array.from({length:4}, () => c[Math.floor(Math.random()*c.length)]).join('');
   return `ENES-${s()}-${s()}-${s()}`;
 }
 
-// Auto generate or load saved key
-let myKey = localStorage.getItem('enesai_key_v4');
+let myKey = localStorage.getItem('enesai_key_v5');
 if(!myKey || !myKey.startsWith('ENES-')) {
   myKey = generateKey();
-  localStorage.setItem('enesai_key_v4', myKey);
+  localStorage.setItem('enesai_key_v5', myKey);
 }
 
-// Display key everywhere
 function updateKeyDisplay() {
   document.getElementById('sidebarKey').textContent = myKey;
   document.getElementById('topbarKey').textContent = myKey.substring(0,9)+'...';
@@ -289,15 +283,11 @@ updateKeyDisplay();
 
 function regenKey() {
   myKey = generateKey();
-  localStorage.setItem('enesai_key_v4', myKey);
+  localStorage.setItem('enesai_key_v5', myKey);
   updateKeyDisplay();
 }
 
-function showPluginInfo() {
-  alert('Download the Enes\'s AI plugin for Roblox Studio!\n\nYour key: ' + myKey + '\n\nThe plugin uses this same key automatically.');
-}
-
-// ── PAGES ──
+// PAGES
 function showHome() {
   document.getElementById('homePage').classList.remove('hidden');
   document.getElementById('chatPage').classList.add('hidden');
@@ -323,12 +313,15 @@ function startChat(prompt) {
   showChat();
   const msgs = document.getElementById('chatMsgs');
   if(msgs.children.length === 0) {
-    addMsg("Hey! I'm <strong>Enes's AI</strong> 👋 I'll ask your opinion before generating anything!", false, false, false, null);
+    addMsg("Hey! I'm <strong>Enes's AI</strong> ⚡ Just tell me what you want and I'll generate it instantly!", false, false, null);
   }
-  setTimeout(() => { addMsg(prompt, true, false, false, null); processMessage(prompt); }, 100);
+  setTimeout(() => {
+    addMsg(prompt, true, false, null);
+    generateScript(prompt);
+  }, 100);
 }
 
-// ── RECENT ──
+// RECENT
 function addToRecent(prompt) {
   recentHistory.unshift(prompt);
   if(recentHistory.length > 5) recentHistory.pop();
@@ -341,7 +334,15 @@ function addToRecent(prompt) {
   `).join('');
 }
 
-// ── AI ──
+// STATUS
+function setStatus(msg, type) {
+  const bar = document.getElementById('statusBar');
+  const txt = document.getElementById('statusText');
+  bar.className = 'status-bar ' + (type||'');
+  txt.textContent = msg.toUpperCase();
+}
+
+// DETECT MODE
 function detectMode(p) {
   const t = p.toLowerCase();
   if(t.includes('gui')||t.includes('shop')||t.includes('inventory')||t.includes('hud')||t.includes('menu')||t.includes('button')) return 'GUI';
@@ -352,10 +353,6 @@ function detectMode(p) {
   if(t.includes('module')||t.includes('library')) return 'Module';
   if(t.includes('server')||t.includes('remote')) return 'Script';
   return 'LocalScript';
-}
-
-function isScriptRequest(msg) {
-  return ['make','create','build','write','generate','script','gui','i want','i need','do a','can you','give me','add'].some(k => msg.toLowerCase().includes(k));
 }
 
 function buildSystem(mode) {
@@ -372,7 +369,8 @@ function buildSystem(mode) {
   return "You are Enes's AI, expert Roblox Lua scripter. "+(map[mode]||map.LocalScript)+" Add clear comments. Use task.wait() and task.spawn(). Use pcall() for error handling. CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. Start code directly.";
 }
 
-function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
+// ADD MESSAGE
+function addMsg(content, isUser, isCode, code) {
   const msgs = document.getElementById('chatMsgs');
   const div = document.createElement('div');
   div.className = 'msg '+(isUser?'user':'ai');
@@ -383,32 +381,34 @@ function addMsg(content, isUser, isCode, showConfirm, originalPrompt) {
   body.className = 'msg-body';
 
   if(isCode) {
-    const code = document.createElement('div');
-    code.className = 'msg-code';
-    code.textContent = content;
-    body.appendChild(code);
+    const wrap = document.createElement('div');
+    wrap.className = 'code-wrap';
+    const codeEl = document.createElement('div');
+    codeEl.className = 'msg-code';
+    codeEl.textContent = content;
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-code-btn';
+    copyBtn.textContent = '⎘ Copy Code';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(content).catch(() => {
+        const t = document.createElement('textarea');
+        t.value = content;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+      });
+      copyBtn.textContent = '✓ Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => { copyBtn.textContent = '⎘ Copy Code'; copyBtn.classList.remove('copied'); }, 2000);
+    };
+    wrap.append(codeEl, copyBtn);
+    body.appendChild(wrap);
   } else {
     const bubble = document.createElement('div');
     bubble.className = 'msg-bubble';
     bubble.innerHTML = content;
     body.appendChild(bubble);
-  }
-
-  if(showConfirm && originalPrompt) {
-    const btns = document.createElement('div');
-    btns.className = 'confirm-btns';
-    const yes = document.createElement('button');
-    yes.className='cbtn cbtn-yes'; yes.textContent='✓ Yes, do it!';
-    yes.onclick = () => { btns.remove(); waitingConfirm=false; generateScript(originalPrompt, pendingMode); };
-    const no = document.createElement('button');
-    no.className='cbtn cbtn-no'; no.textContent='✗ No';
-    no.onclick = () => { btns.remove(); waitingConfirm=false; addMsg("No problem! What else do you need? 😊",false,false,false,null); };
-    const mod = document.createElement('button');
-    mod.className='cbtn cbtn-mod'; mod.textContent='✎ Modify';
-    mod.onclick = () => { btns.remove(); waitingConfirm=false; addMsg("Sure! Tell me what to change 👇",false,false,false,null); document.getElementById('chatInput').focus(); };
-    btns.append(yes,no,mod);
-    body.appendChild(btns);
-    waitingConfirm = true;
   }
 
   div.append(av, body);
@@ -428,62 +428,62 @@ function showTyping() {
 
 function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
 
-async function generateScript(prompt, mode) {
+// GENERATE SCRIPT - no confirmation, instant!
+async function generateScript(prompt) {
+  if(isGenerating) return;
+  isGenerating = true;
+
+  const mode = detectMode(prompt);
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.disabled = true;
   showTyping();
+  setStatus('Generating ' + mode + ' script...', 'loading');
   addToRecent(prompt);
+
   try {
     const res = await fetch(SERVER, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt, mode, key: myKey, system: buildSystem(mode)})
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        prompt,
+        mode,
+        key: myKey,
+        system: buildSystem(mode)
+      })
     });
+
     const data = await res.json();
     const code = data.code || '-- No code returned';
     removeTyping();
-    addMsg(code, false, true, false, null);
+
+    // Show code with copy button
+    addMsg(code, false, true, code);
+
     const lines = code.split('\n').length;
-    setTimeout(() => { addMsg(`✅ Done! <strong>${lines} lines</strong> of ${mode} code.<br><br>Copy and paste into Roblox Studio. Want changes?`, false, false, false, null); }, 300);
+    setTimeout(() => {
+      addMsg(`✅ <strong>${lines} lines</strong> of ${mode} generated!<br>Click <strong>Copy Code</strong> above and paste into Roblox Studio.`, false, false, null);
+    }, 200);
+
+    setStatus('Done! ' + lines + ' lines generated', 'ok');
+
   } catch(e) {
     removeTyping();
-    addMsg('❌ Could not reach server. Try again!', false, false, false, null);
+    addMsg('❌ Could not reach server. Try again in a moment!', false, false, null);
+    setStatus('Server error', 'err');
   }
+
+  sendBtn.disabled = false;
+  isGenerating = false;
 }
 
-async function chatWithAI(prompt) {
-  showTyping();
-  try {
-    const res = await fetch(SERVER, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt, mode:'chat', key: myKey, system:"You are Enes's AI, a friendly Roblox scripting assistant. Answer clearly. No markdown."})
-    });
-    const data = await res.json();
-    removeTyping();
-    addMsg(data.code || 'Could not get a response!', false, false, false, null);
-  } catch(e) {
-    removeTyping();
-    addMsg('❌ Could not reach server!', false, false, false, null);
-  }
-}
-
-async function processMessage(msg) {
-  if(isScriptRequest(msg)) {
-    pendingPrompt = msg;
-    pendingMode = detectMode(msg);
-    showTyping();
-    await new Promise(r => setTimeout(r, 700));
-    removeTyping();
-    addMsg(`Got it! Detected as <strong>${pendingMode}</strong>.<br><br>You want: "<em>${msg}</em>"<br><br>Should I go ahead? 👇`, false, false, true, msg);
-  } else {
-    chatWithAI(msg);
-  }
-}
-
+// SEND MESSAGE
 async function sendMsg() {
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
-  if(!msg || waitingConfirm) return;
+  if(!msg || isGenerating) return;
   input.value = ''; input.style.height = 'auto';
-  addMsg(msg, true, false, false, null);
-  processMessage(msg);
+  addMsg(msg, true, false, null);
+  generateScript(msg);
 }
 
 const chatInput = document.getElementById('chatInput');
