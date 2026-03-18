@@ -1685,6 +1685,29 @@ $('ai-in').addEventListener('input',updateCC);
 /* ══ Main AI flow ══ */
 async function handleAI(){if(codeReady){await sendCode();}else{await generate();}}
 
+const SYS=`You are NEXUS — the world's most powerful Roblox Studio AI. You have complete mastery of every Roblox API, Lua scripting pattern, terrain generation, GUI design, animation, tween, datastore, remote events, pathfinding, combat, round systems, admin tools, and every game mechanic in Roblox.
+
+Your single job: receive a plain English request and produce PERFECT, COMPLETE, IMMEDIATELY EXECUTABLE Lua code for Roblox Studio. The code runs in the command bar context giving you direct access to game, workspace, Players, ServerScriptService, ReplicatedStorage, StarterGui, StarterPack, Lighting, workspace.Terrain etc.
+
+RULES — NEVER BREAK:
+1. Code is 100% complete. Zero placeholders. Zero TODO comments.
+2. Every Part has: Name, Material (Enum.Material.X), BrickColor or Color3.fromRGB(), Size, Position/CFrame, Anchored, CanCollide, Parent set LAST.
+3. Scripts that persist: create Script/LocalScript, set .Source to full Lua string, set .Parent.
+4. ALL services via game:GetService(). Never game.ServiceName directly.
+5. Terrain: workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) or :FillBall(Vector3.new(x,y,z), radius, Enum.Material.X).
+6. TweenService: game:GetService("TweenService"):Create(obj, TweenInfo.new(dur,style,dir), {prop=val}):Play()
+7. DataStore: always pcall, always handle errors, key by player.UserId.
+8. GUIs: ScreenGui in StarterGui, Frame with UDim2 Size and Position, all children fully configured.
+9. Kill bricks: Script inside Part, Touched event, Humanoid:TakeDamage(math.huge).
+10. When user says baseplate or base or ground: Part, Size=Vector3.new(512,1,512), Material=Enum.Material.Grass, BrickColor=BrickColor.new("Bright green"), Anchored=true, Position=Vector3.new(0,0,0).
+11. Understand ALL Roblox slang: obby, tycoon, FE, hitbox, GUI, leaderstats, datastore, NPC, tool, kill brick, spawn, admin, etc.
+12. For complex builds generate ALL parts explicitly in loops.
+
+RESPONSE FORMAT — ONLY this JSON, nothing else, no markdown, no backticks:
+{"lua":"complete lua code with \\n for newlines","explanation":"One sentence describing what was built."}`;
+
+const THINKS=['Analyzing your request…','Crafting Lua code…','Building your world…','Almost ready…'];
+
 async function generate(){
   const prompt=$('ai-in').value.trim();
   if(!prompt){toast('Tell NEXUS what to build!','bad');return;}
@@ -1692,26 +1715,48 @@ async function generate(){
   $('aistate').classList.add('on');
   $('aithink').style.display='flex';
   $('aiprev').style.display='none';
-  $('aibtn').disabled=true;$('aibtn').textContent='✦ Matching…';
+  $('aibtn').disabled=true;$('aibtn').textContent='✦ Thinking…';
   $('regenbtn').style.display='none';
 
-  // Simulate quick processing feel
-  await new Promise(r=>setTimeout(r,400));
+  let ti=0;
+  const tint=setInterval(()=>{$('thinkttxt').textContent=THINKS[ti++%THINKS.length];},900);
+  addLog('ai','request',`"${prompt}"`);
 
-  const result = nexusProcess(prompt);
-  genCode = result.code;
+  try{
+    const res=await fetch(BACKEND+'/api/ai',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:prompt, system:SYS})
+    });
+    clearInterval(tint);
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'Server error');
 
-  $('aithink').style.display='none';
-  $('aiprev').style.display='block';
-  $('aicode').textContent=genCode;
-  $('ainote').textContent='💡 ' + result.explanation;
+    const raw=data.content[0].text;
+    let parsed;
+    try{ parsed=JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch{ parsed={lua:raw, explanation:'Generated Lua code.'}; }
 
-  codeReady=true;
-  $('aibtn').disabled=false;$('aibtn').textContent='▶ Send to Studio';
-  $('aibtn').className='xb prim';
-  $('regenbtn').style.display='flex';
-  addLog('ai','matched', result.explanation);
-  toast('✦ Ready — click Send!','ai');
+    genCode=parsed.lua;
+    $('aithink').style.display='none';
+    $('aiprev').style.display='block';
+    $('aicode').textContent=genCode;
+    $('ainote').textContent='💡 '+parsed.explanation;
+    codeReady=true;
+    $('aibtn').disabled=false;$('aibtn').textContent='▶ Send to Studio';
+    $('aibtn').className='xb prim';
+    $('regenbtn').style.display='flex';
+    addLog('ai','generated',parsed.explanation);
+    toast('✦ Code ready — click Send!','ai');
+
+  }catch(e){
+    clearInterval(tint);
+    $('aithink').style.display='none';
+    $('aistate').classList.remove('on');
+    $('aibtn').disabled=false;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb grn';
+    addLog('err','ai-fail',e.message);
+    toast('Error: '+e.message,'bad');
+  }
 }
 
 async function sendCode(){
