@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Studio Bridge — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@400;600;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;--bg2:#0c0f1a;--bg3:#131726;--bg4:#1a1f30;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.16);
+  --accent:#00d4ff;--accent2:#0099cc;--accent-dim:rgba(0,212,255,0.1);--accent-glow:rgba(0,212,255,0.2);
+  --green:#00ff88;--green-dim:rgba(0,255,136,0.1);
+  --red:#ff4466;--red-dim:rgba(255,68,102,0.1);
+  --orange:#ffaa00;--orange-dim:rgba(255,170,0,0.1);
+  --text:#e8eaf2;--text2:#7880a0;--text3:#3a3f55;
+  --roblox:#e31e25;
+  --font-display:'Unbounded',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --r:6px;--rlg:10px;
+}
+html{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6}
+body{min-height:100vh}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── BG grid ── */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+#root{position:relative;z-index:1}
+
+/* ── Auth ── */
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;background:var(--bg)}
+#auth.gone{display:none}
+
+.auth-wrap{width:400px}
+.auth-logo{font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
+.auth-logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
+
+.auth-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative;overflow:hidden}
+.auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none}
+
+.auth-box h2{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);margin-bottom:0.25rem}
+.auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+
+.rbx-verify-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.rbx-icon{width:36px;height:36px;border-radius:var(--r);background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:900;color:white;font-family:var(--font-display)}
+.rbx-label{font-size:11px;color:var(--text2)}
+.rbx-label strong{display:block;color:var(--text);font-size:13px;margin-bottom:1px}
+
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:0.1em;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--text3)}
+
+.auth-note{font-size:11px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:1rem;line-height:1.6}
+.auth-note code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono)}
+
+.btn-main{width:100%;background:var(--accent);color:#06080f;border:none;border-radius:var(--r);padding:11px;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:0.05em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn-main:hover{background:var(--accent2);box-shadow:0 0 20px var(--accent-glow)}
+.btn-main:active{transform:scale(0.98)}
+.btn-main.roblox{background:var(--roblox);color:white}
+.btn-main.roblox:hover{background:#c01920}
+
+.auth-err{color:var(--red);font-size:11px;margin-top:8px;display:none}
+.auth-step{display:none}
+.auth-step.active{display:block}
+
+/* ── App ── */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+/* ── Topbar ── */
+.topbar{height:52px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:var(--bg);flex-shrink:0}
+.topbar-logo{font-family:var(--font-display);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.plugin-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);margin-left:auto}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .3s}
+.status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--green)}
+.status-dot.waiting{background:var(--orange);animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.topbar-user{display:flex;align-items:center;gap:8px;padding:4px 10px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);cursor:pointer;transition:border-color .15s}
+.topbar-user:hover{border-color:var(--border3)}
+.rbx-avatar{width:24px;height:24px;border-radius:50%;background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.topbar-uname{font-size:12px;color:var(--text)}
+.logout-x{color:var(--text3);font-size:11px;margin-left:4px;cursor:pointer}
+.logout-x:hover{color:var(--red)}
+
+/* ── Main layout ── */
+.main-layout{flex:1;display:flex;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:200px;min-width:200px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg);overflow-y:auto}
+.nav-section{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px .875rem;margin:1px .5rem;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(--font-mono)}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);border:0.5px solid rgba(0,212,255,.18)}
+.nav-item .ico{font-size:13px;width:14px;text-align:center}
+
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;padding:1.25rem}
+.view{display:none}
+.view.active{display:block}
+
+/* ── Command panel ── */
+.cmd-panel{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;height:calc(100vh - 52px - 2.5rem)}
+
+.cmd-left{display:flex;flex-direction:column;gap:1rem}
+
+.panel-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);overflow:hidden}
+.panel-header{padding:.75rem 1rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+
+/* Command input */
+.cmd-input-wrap{padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.cmd-textarea{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;resize:none;transition:border-color .2s;min-height:100px}
+.cmd-textarea:focus{border-color:var(--accent)}
+.cmd-textarea::placeholder{color:var(--text3)}
+.cmd-actions{display:flex;gap:8px;align-items:center}
+.cmd-type-select{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text2);outline:none;transition:border-color .2s}
+.cmd-type-select:focus{border-color:var(--accent)}
+.btn{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--r);padding:7px 14px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.send{background:var(--accent);color:#06080f;border-color:var(--accent);font-weight:700;margin-left:auto}
+.btn.send:hover{background:var(--accent2);box-shadow:0 0 16px var(--accent-glow)}
+.btn.send:active{transform:scale(.98)}
+.btn.send:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none}
+
+/* Quick commands */
+.quick-cmds{padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:6px}
+.qcmd{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--font-mono)}
+.qcmd:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Command log */
+.cmd-log{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.cmd-log-inner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:6px}
+.log-entry{padding:8px 10px;border-radius:var(--r);font-size:12px;border-left:2px solid transparent;background:var(--bg3)}
+.log-entry.sent{border-left-color:var(--accent)}
+.log-entry.result{border-left-color:var(--green)}
+.log-entry.err{border-left-color:var(--red)}
+.log-entry.sys{border-left-color:var(--text3)}
+.log-entry .le-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.log-tag{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.log-tag.sent{background:var(--accent-dim);color:var(--accent)}
+.log-tag.result{background:var(--green-dim);color:var(--green)}
+.log-tag.err{background:var(--red-dim);color:var(--red)}
+.log-tag.sys{background:var(--bg4);color:var(--text3)}
+.le-time{font-size:10px;color:var(--text3);margin-left:auto}
+.le-body{color:var(--text2);font-size:12px;word-break:break-all}
+.le-body code{color:var(--text);font-family:var(--font-mono)}
+
+/* Right panel */
+.cmd-right{display:flex;flex-direction:column;gap:1rem}
+
+/* Connection status card */
+.conn-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem}
+.conn-indicator{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.conn-big-dot{width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.conn-big-dot.on{background:var(--green);box-shadow:0 0 10px var(--green)}
+.conn-big-dot.wait{background:var(--orange);animation:blink 1.2s infinite}
+.conn-label{font-family:var(--font-display);font-size:12px;font-weight:700}
+.conn-sub{font-size:11px;color:var(--text2);line-height:1.5}
+.conn-id-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 10px;margin-top:.75rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.conn-id-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.conn-id-val{font-size:12px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em}
+.copy-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;transition:all .15s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Plugin setup card */
+.setup-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);flex:1;overflow:hidden;display:flex;flex-direction:column}
+.setup-steps{padding:1rem;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1}
+.setup-step{display:flex;gap:10px;align-items:flex-start}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--bg4);border:0.5px solid var(--border2);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-size:12px;color:var(--text);font-weight:700;margin-bottom:2px}
+.step-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.step-desc code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono);font-size:10px}
+.step-code{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:8px 10px;margin-top:6px;font-size:11px;color:var(--text2);font-family:var(--font-mono);word-break:break-all;position:relative}
+.step-code .copy-btn{position:absolute;top:6px;right:6px}
+
+/* Projects view */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.875rem;margin-top:1rem}
+.proj-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dim),transparent);opacity:0;transition:opacity .2s}
+.proj-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.proj-card:hover::before{opacity:1}
+.proj-name{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.proj-id{font-size:10px;color:var(--text3);margin-bottom:8px}
+.proj-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
+.proj-pill.synced{background:var(--green-dim);color:var(--green)}
+.proj-pill.offline{background:var(--bg4);color:var(--text3)}
+.proj-pill.error{background:var(--red-dim);color:var(--red)}
+.proj-actions{display:flex;gap:6px;margin-top:10px}
+.pact{flex:1;background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font-mono)}
+.pact:hover{border-color:var(--accent);color:var(--accent)}
+.pact.del:hover{border-color:var(--red);color:var(--red)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.25rem}
+.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:.875rem 1rem}
+.scard-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.scard-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--text);line-height:1}
+.scard-val.c{color:var(--accent)}
+.scard-val.g{color:var(--green)}
+.scard-val.r{color:var(--red)}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(6,8,15,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:1.5rem;width:420px;transform:translateY(8px);transition:transform .2s;position:relative}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-title{font-family:var(--font-display);font-size:14px;font-weight:800;margin-bottom:.25rem}
+.modal-sub{font-size:11px;color:var(--text2);margin-bottom:1.25rem}
+.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
+.modal-x:hover{color:var(--text)}
+.mbtns{display:flex;gap:8px;margin-top:1rem}
+.mbtns .btn{flex:1;justify-content:center}
+
+/* Toast */
+#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999}
+.toast{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:9px 13px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:200px}
+.toast.ok{border-left:2px solid var(--green)}
+.toast.bad{border-left:2px solid var(--red)}
+.toast.info{border-left:2px solid var(--accent)}
+@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+
+/* Section header */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.sec-title{font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--text)}
+.search-input{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:6px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;transition:border-color .2s;width:200px}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+
+@media(max-width:900px){.cmd-panel{grid-template-columns:1fr}.cmd-right{display:none}.stats-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- AUTH -->
+<div id="auth">
+  <div class="auth-wrap">
+    <div class="auth-logo"><span class="auth-logo-dot"></span>Studio Bridge</div>
+    <div class="auth-box">
+      <!-- Step 1: enter username -->
+      <div class="auth-step active" id="step1">
+        <h2>Connect with Roblox</h2>
+        <p>Enter your Roblox username to get started. We'll verify it in the next step.</p>
+        <div class="field">
+          <label>Roblox username</label>
+          <input type="text" id="rbx-username" placeholder="YourRobloxName" autocomplete="off" />
+        </div>
+        <div id="step1-err" class="auth-err">Please enter your Roblox username.</div>
+        <button class="btn-main" onclick="step1Next()">Continue →</button>
+      </div>
+
+      <!-- Step 2: verify via description -->
+      <div class="auth-step" id="step2">
+        <h2>Verify your account</h2>
+        <p>Add this code to your Roblox <strong>profile description</strong>, then click Verify. You can remove it after.</p>
+        <div class="auth-note">
+          1. Go to <strong>roblox.com/home</strong> → Edit profile<br/>
+          2. Paste this code in your <strong>About / description</strong> field:<br/><br/>
+          <code id="verify-code">BRIDGE-XXXXXX</code><br/><br/>
+          3. Save, then click <strong>Verify</strong> below.
+        </div>
+        <div id="step2-err" class="auth-err"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-main" style="flex:.4;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)" onclick="goStep(1)">← Back</button>
+          <button class="btn-main roblox" style="flex:1" onclick="step2Verify()">Verify ✓</button>
+        </div>
+      </div>
+
+      <!-- Step 3: verified -->
+      <div class="auth-step" id="step3">
+        <h2 id="step3-title">Welcome!</h2>
+        <p id="step3-sub">You're signed in. Enter the dashboard.</p>
+        <div class="rbx-verify-box">
+          <div class="rbx-icon" id="step3-icon">?</div>
+          <div class="rbx-label"><strong id="step3-name">—</strong>Roblox account verified ✓</div>
+        </div>
+        <button class="btn-main" onclick="enterApp()">Open Dashboard →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo"><span style="width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);display:inline-block"></span>Studio Bridge</div>
+    <div class="plugin-status">
+      <span class="status-dot" id="plugin-dot"></span>
+      <span id="plugin-status-text">Plugin not connected</span>
+    </div>
+    <div class="topbar-user">
+      <div class="rbx-avatar" id="top-avatar">?</div>
+      <span class="topbar-uname" id="top-uname">—</span>
+      <span class="logout-x" onclick="logout()" title="Sign out">⏻</span>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-section">Workspace</div>
+      <button class="nav-item active" onclick="nav('commands',this)"><span class="ico">▸</span>Commands</button>
+      <button class="nav-item" onclick="nav('projects',this)"><span class="ico">⬡</span>Projects</button>
+      <div class="nav-section">System</div>
+      <button class="nav-item" onclick="nav('setup',this)"><span class="ico">⚙</span>Setup guide</button>
+    </aside>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- COMMANDS VIEW -->
+      <div id="view-commands" class="view active">
+        <div class="cmd-panel">
+          <div class="cmd-left">
+
+            <!-- Input -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <span class="panel-title">Send command to Studio</span>
+                <select class="cmd-type-select" id="cmd-type">
+                  <option value="run_script">Run script</option>
+                  <option value="insert_part">Insert part</option>
+                  <option value="set_property">Set property</option>
+                  <option value="delete_instance">Delete instance</option>
+                  <option value="get_children">Get children</option>
+                  <option value="eval">Eval Lua</option>
+                </select>
+              </div>
+              <div class="cmd-input-wrap">
+                <textarea class="cmd-textarea" id="cmd-input" placeholder="Type a command or Lua snippet to run in Roblox Studio…&#10;e.g. game.Workspace.Part.Size = Vector3.new(10,10,10)" rows="4"></textarea>
+                <div class="cmd-actions">
+                  <button class="btn" onclick="clearLog()">✕ Clear log</button>
+                  <button class="btn send" id="send-btn" onclick="sendCommand()">▶ Send to Studio</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick commands -->
+            <div class="panel-card">
+              <div class="panel-header"><span class="panel-title">Quick commands</span></div>
+              <div class="quick-cmds">
+                <span class="qcmd" onclick="setCmd('print(game.Name)')">print game name</span>
+                <span class="qcmd" onclick="setCmd('print(#game.Workspace:GetChildren())')">count workspace children</span>
+                <span class="qcmd" onclick="setCmd('game.Lighting.Brightness = 2')">set brightness</span>
+                <span class="qcmd" onclick="setCmd('local p = Instance.new(\"Part\")\np.Parent = game.Workspace\np.Size = Vector3.new(4,4,4)')">insert part</span>
+                <span class="qcmd" onclick="setCmd('for _,v in ipairs(game.Workspace:GetChildren()) do\n  print(v.Name, v.ClassName)\nend')">list workspace</span>
+                <span class="qcmd" onclick="setCmd('game.Workspace:ClearAllChildren()')">clear workspace</span>
+              </div>
+            </div>
+
+            <!-- Log -->
+            <div class="panel-card cmd-log">
+              <div class="panel-header">
+                <span class="panel-title">Command log</span>
+                <span style="font-size:10px;color:var(--text3)" id="log-count">0 entries</span>
+              </div>
+              <div class="cmd-log-inner" id="cmd-log-inner">
+                <div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time" id="boot-time"></span></div><div class="le-body">Dashboard ready. Connect your Studio plugin to begin.</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right -->
+          <div class="cmd-right">
+            <!-- Connection -->
+            <div class="conn-card">
+              <div class="conn-indicator">
+                <div class="conn-big-dot wait" id="conn-dot"></div>
+                <div>
+                  <div class="conn-label" id="conn-label">Waiting for plugin</div>
+                  <div class="conn-sub" id="conn-sub">Open Roblox Studio and activate your plugin.</div>
+                </div>
+              </div>
+              <div class="conn-id-box">
+                <div>
+                  <div class="conn-id-label">Session token</div>
+                  <div class="conn-id-val" id="session-token">—</div>
+                </div>
+                <span class="copy-btn" onclick="copyToken()">copy</span>
+              </div>
+            </div>
+
+            <!-- Setup steps -->
+            <div class="setup-card">
+              <div class="panel-header"><span class="panel-title">Plugin setup</span></div>
+              <div class="setup-steps">
+                <div class="setup-step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Download the plugin</div>
+                    <div class="step-desc">Save <code>studio-plugin.lua</code> (provided in the download) as a <code>.rbxm</code> in your Roblox Studio plugins folder.</div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Set your backend URL</div>
+                    <div class="step-desc">In the plugin script, replace <code>YOUR_BACKEND_URL</code> with your server address.</div>
+                    <div class="step-code">https://your-server.com/api<span class="copy-btn" onclick="copyText('https://your-server.com/api')">copy</span></div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Paste session token</div>
+                    <div class="step-desc">Copy the session token above and paste it into the plugin's token field in Studio. This links your session.</div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Activate plugin</div>
+                    <div class="step-desc">Click the Studio Bridge button in your Studio toolbar. The dot above will turn <span style="color:var(--green)">green</span> when connected.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS VIEW -->
+      <div id="view-projects" class="view">
+        <div class="stats-row">
+          <div class="scard"><div class="scard-label">Total</div><div class="scard-val c" id="sp-total">0</div></div>
+          <div class="scard"><div class="scard-label">Synced</div><div class="scard-val g" id="sp-synced">0</div></div>
+          <div class="scard"><div class="scard-label">Errors</div><div class="scard-val r" id="sp-err">0</div></div>
+          <div class="scard"><div class="scard-label">Offline</div><div class="scard-val" id="sp-off">0</div></div>
+        </div>
+        <div class="sec-head">
+          <div class="sec-title">Projects</div>
+          <div style="display:flex;gap:8px">
+            <input class="search-input" placeholder="Search…" oninput="filterProj(this.value)" />
+            <button class="btn" onclick="openModal('new-proj')">+ New</button>
+          </div>
+        </div>
+        <div class="proj-grid" id="proj-grid"></div>
+      </div>
+
+      <!-- SETUP VIEW -->
+      <div id="view-setup" class="view">
+        <div style="max-width:600px">
+          <div class="sec-title" style="margin-bottom:1.25rem">Full setup guide</div>
+          <div class="panel-card" style="margin-bottom:1rem">
+            <div class="panel-header"><span class="panel-title">Architecture overview</span></div>
+            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
+              <strong style="color:var(--text)">How it works:</strong><br/>
+              Website → sends command → your Node.js server → stores in queue → Studio plugin polls every 2s → executes → sends result back → server → website shows result.<br/><br/>
+              <strong style="color:var(--text)">Files you need:</strong><br/>
+              <code style="display:block;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px;margin:8px 0;color:var(--accent)">dashboard.html      ← this file (website)<br/>server.js           ← Node.js backend<br/>studio-plugin.lua   ← Roblox Studio plugin</code>
+              Download all three from the dashboard. Host <code>server.js</code> on Railway, Render, or any Node host. Load the plugin into Studio.
+            </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header"><span class="panel-title">Backend endpoints used</span></div>
+            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
+              <code style="color:var(--accent)">POST /api/command</code> — website sends command + token<br/>
+              <code style="color:var(--accent)">GET  /api/poll/:token</code> — plugin polls for pending commands<br/>
+              <code style="color:var(--accent)">POST /api/result</code> — plugin posts execution result<br/>
+              <code style="color:var(--accent)">GET  /api/result/:token</code> — website checks for result<br/>
+              <code style="color:var(--accent)">POST /api/verify</code> — verifies Roblox username<br/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- NEW PROJECT MODAL -->
+<div class="modal-bg" id="modal-new-proj">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('new-proj')">✕</button>
+    <div class="modal-title">New project</div>
+    <div class="modal-sub">Create a project to organise your Studio sessions.</div>
+    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Game" /></div>
+    <div class="field"><label>Project ID (auto)</label><input type="text" id="np-id" readonly style="opacity:.5" /></div>
+    <div class="mbtns">
+      <button class="btn" onclick="closeModal('new-proj')">Cancel</button>
+      <button class="btn send" onclick="createProj()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ── Config ──
+// CHANGE THIS to your backend URL when you deploy server.js
+const BACKEND = "https://your-server.com";
+
+// ── State ──
+let user = null;
+let sessionToken = null;
+let projects = [];
+let cmdLog = [];
+let pluginConnected = false;
+let pollInterval = null;
+let verifyCode = null;
+
+// ── Utils ──
+const $ = id => document.getElementById(id);
+function genToken(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function genId(){const c="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";let r='';for(let i=0;i<12;i++)r+=c[Math.floor(Math.random()*62)];return r;}
+function ts(){return new Date().toLocaleTimeString();}
+function toast(msg,type='info'){const c=$('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
+function save(){localStorage.setItem('sb_user',JSON.stringify(user));localStorage.setItem('sb_token',sessionToken);localStorage.setItem('sb_projects',JSON.stringify(projects));}
+function load(){try{user=JSON.parse(localStorage.getItem('sb_user'));sessionToken=localStorage.getItem('sb_token');projects=JSON.parse(localStorage.getItem('sb_projects')||'[]');}catch{}}
+
+// ── Auth: Step 1 ──
+function step1Next(){
+  const u=$('rbx-username').value.trim();
+  if(!u){$('step1-err').style.display='block';return;}
+  $('step1-err').style.display='none';
+  verifyCode='BRIDGE-'+genToken();
+  $('verify-code').textContent=verifyCode;
+  goStep(2);
+}
+
+// ── Auth: Step 2 ── (simulated — replace with real Roblox API call in your backend)
+async function step2Verify(){
+  const uname=$('rbx-username').value.trim();
+  const errEl=$('step2-err');
+  errEl.style.display='none';
+
+  // In production: call your server which checks Roblox profile description
+  // POST BACKEND + /api/verify { username: uname, code: verifyCode }
+  // For this demo we simulate success after a short wait
+  const btn=document.querySelector('#step2 .btn-main.roblox');
+  btn.textContent='Checking…'; btn.disabled=true;
+
+  await new Promise(r=>setTimeout(r,1400)); // simulate network
+
+  // DEMO: always passes. Replace with real fetch to your backend.
+  const verified = true;
+  btn.textContent='Verify ✓'; btn.disabled=false;
+
+  if(!verified){
+    errEl.textContent='Code not found in profile. Make sure you saved it.';
+    errEl.style.display='block'; return;
+  }
+
+  user={username:uname,avatar:uname[0].toUpperCase()};
+  sessionToken=genToken()+genToken();
+  $('step3-title').textContent='Welcome, '+uname+'!';
+  $('step3-icon').textContent=uname[0].toUpperCase();
+  $('step3-name').textContent=uname;
+  goStep(3);
+}
+
+function goStep(n){
+  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('active'));
+  $('step'+n).classList.add('active');
+}
+
+function enterApp(){
+  save();
+  $('auth').classList.add('gone');
+  $('app').classList.add('show');
+  $('top-avatar').textContent=user.avatar;
+  $('top-uname').textContent=user.username;
+  $('session-token').textContent=sessionToken;
+  $('boot-time').textContent=ts();
+  renderProjects();
+  startPolling();
+  if(projects.length===0) seedProjects();
+}
+
+function logout(){
+  user=null; sessionToken=null;
+  localStorage.clear();
+  stopPolling();
+  $('app').classList.remove('show');
+  $('auth').classList.remove('gone');
+  goStep(1);
+  $('rbx-username').value='';
+}
+
+// ── Boot ──
+load();
+if(user&&sessionToken){
+  goStep(3);
+  $('step3-title').textContent='Welcome back, '+user.username+'!';
+  $('step3-icon').textContent=user.avatar;
+  $('step3-name').textContent=user.username;
+  $('step3-sub').textContent='Your session is still active.';
+}
+
+// ── Nav ──
+function nav(name, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='projects') renderProjects();
+}
+
+// ── Commands ──
+function setCmd(s){ $('cmd-input').value=s; }
+
+async function sendCommand(){
+  const body=$('cmd-input').value.trim();
+  const type=$('cmd-type').value;
+  if(!body){toast('Enter a command.','bad');return;}
+
+  addLog('sent',type,body);
+  $('cmd-input').value='';
+
+  const btn=$('send-btn');
+  btn.disabled=true; btn.textContent='Sending…';
+
+  // Real call: POST BACKEND/api/command { token, type, body }
+  // Plugin will pick this up on next poll
+  try {
+    // DEMO: simulate round-trip
+    await new Promise(r=>setTimeout(r,600));
+    // Simulate plugin response
+    const fakeResults = {
+      run_script:'Script executed successfully.',
+      eval:'nil',
+      insert_part:'Part inserted into Workspace.',
+      set_property:'Property updated.',
+      delete_instance:'Instance deleted.',
+      get_children:'[Baseplate, Camera, SpawnLocation]'
+    };
+    addLog('result',type, fakeResults[type]||'OK');
+  } catch(e){
+    addLog('err',type,'Connection failed: '+e.message);
+    toast('Send failed.','bad');
+  }
+
+  btn.disabled=false; btn.textContent='▶ Send to Studio';
+}
+
+function clearLog(){
+  $('cmd-log-inner').innerHTML=`<div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time">${ts()}</span></div><div class="le-body">Log cleared.</div></div>`;
+  cmdLog=[];
+  $('log-count').textContent='0 entries';
+}
+
+function addLog(kind,label,msg){
+  const inner=$('cmd-log-inner');
+  const div=document.createElement('div');
+  div.className=`log-entry ${kind}`;
+  div.innerHTML=`<div class="le-top"><span class="log-tag ${kind}">${kind}</span><span style="font-size:10px;color:var(--text3);margin-left:6px">${label}</span><span class="le-time">${ts()}</span></div><div class="le-body">${msg}</div>`;
+  inner.appendChild(div);
+  inner.scrollTop=inner.scrollHeight;
+  cmdLog.push({kind,label,msg});
+  $('log-count').textContent=cmdLog.length+' entr'+(cmdLog.length===1?'y':'ies');
+}
+
+// ── Plugin polling (website side) ──
+function startPolling(){
+  // Real implementation: poll BACKEND/api/result/:token for results
+  // and BACKEND/api/ping to check if plugin is alive
+  pollInterval=setInterval(()=>{
+    // Simulated: randomly flip connected after 4s
+    if(!pluginConnected && Math.random()>0.97){
+      setPluginConnected(true);
+    }
+  },2000);
+}
+function stopPolling(){ if(pollInterval) clearInterval(pollInterval); }
+
+function setPluginConnected(v){
+  pluginConnected=v;
+  $('plugin-dot').className='status-dot '+(v?'connected':'waiting');
+  $('plugin-status-text').textContent=v?'Studio connected':'Plugin not connected';
+  $('conn-dot').className='conn-big-dot '+(v?'on':'wait');
+  $('conn-label').textContent=v?'Studio connected':'Waiting for plugin';
+  $('conn-sub').textContent=v?'Commands will execute in Roblox Studio.':'Open Roblox Studio and activate your plugin.';
+  if(v){ toast('Studio plugin connected!','ok'); addLog('sys','connection','Plugin connected — session active.'); }
+}
+
+// ── Projects ──
+function seedProjects(){
+  projects=[
+    {id:genId(),name:'Obby Adventure',status:'synced',updated:Date.now()-3600000},
+    {id:genId(),name:'My Tycoon',status:'offline',updated:Date.now()-86400000},
+  ];
+  save();
+}
+
+function renderProjects(search=''){
+  const grid=$('proj-grid');
+  let list=projects.filter(p=>p.name.toLowerCase().includes(search.toLowerCase())||p.id.toLowerCase().includes(search.toLowerCase()));
+  if(!list.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3)">No projects. Create one.</div>`;return;}
+  grid.innerHTML=list.map(p=>`
+    <div class="proj-card">
+      <div class="proj-name">${p.name}</div>
+      <div class="proj-id">${p.id}</div>
+      <span class="proj-pill ${p.status}">${p.status}</span>
+      <div class="proj-actions">
+        <button class="pact" onclick="syncProj('${p.id}')">↻ Sync</button>
+        <button class="pact del" onclick="deleteProj('${p.id}')">✕</button>
+      </div>
+    </div>`).join('');
+  $('sp-total').textContent=projects.length;
+  $('sp-synced').textContent=projects.filter(p=>p.status==='synced').length;
+  $('sp-err').textContent=projects.filter(p=>p.status==='error').length;
+  $('sp-off').textContent=projects.filter(p=>p.status==='offline').length;
+}
+
+function filterProj(v){renderProjects(v);}
+
+function syncProj(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  p.status='synced'; p.updated=Date.now();
+  save(); renderProjects();
+  toast(`"${p.name}" synced.`,'ok');
+  addLog('sys','sync',`Project "${p.name}" synced.`);
+}
+
+function deleteProj(id){
+  const p=projects.find(x=>x.id===id);
+  projects=projects.filter(x=>x.id!==id);
+  save(); renderProjects();
+  if(p) toast(`"${p.name}" deleted.`,'info');
+}
+
+function createProj(){
+  const name=$('np-name').value.trim();
+  if(!name){toast('Enter a name.','bad');return;}
+  projects.unshift({id:genId(),name,status:'offline',updated:Date.now()});
+  save(); closeModal('new-proj'); renderProjects();
+  $('np-name').value='';
+  toast(`"${name}" created.`,'ok');
+}
+
+// ── Modals ──
+function openModal(n){
+  if(n==='new-proj') $('np-id').value=genId();
+  $('modal-'+n).classList.add('open');
+}
+function closeModal(n){$('modal-'+n).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ── Copy ──
+function copyToken(){navigator.clipboard.writeText(sessionToken);toast('Token copied!','ok');}
+function copyText(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
+</script>
+</body>
+</html>
