@@ -224,7 +224,7 @@ app.get("/api/ping/:token", (req, res) => {
   if (!session) return res.json({ connected: false });
 
   const age = Date.now() - session.lastPing;
-  const connected = age < 6000;
+  const connected = age < 2000;
 
   res.json({ connected, lastPing: session.lastPing });
 });
