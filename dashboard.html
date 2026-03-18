@@ -1,1068 +1,730 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Studio Bridge — Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@400;600;800;900&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NEXUS — Roblox AI Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#06080f;--bg2:#0c0f1a;--bg3:#131726;--bg4:#1a1f30;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.16);
-  --accent:#00d4ff;--accent2:#0099cc;--accent-dim:rgba(0,212,255,0.1);--accent-glow:rgba(0,212,255,0.2);
-  --green:#00ff88;--green-dim:rgba(0,255,136,0.1);
-  --red:#ff4466;--red-dim:rgba(255,68,102,0.1);
-  --orange:#ffaa00;--orange-dim:rgba(255,170,0,0.1);
-  --purple:#b060ff;--purple-dim:rgba(176,96,255,0.12);
-  --text:#e8eaf2;--text2:#7880a0;--text3:#3a3f55;
-  --roblox:#e31e25;
-  --font-display:'Unbounded',sans-serif;
-  --font-mono:'Space Mono',monospace;
-  --r:6px;--rlg:10px;
+  --bg:#020408;--bg2:#060c12;--bg3:#0a1220;--bg4:#0f1a2e;--bg5:#152035;
+  --border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.12);--border3:rgba(0,200,255,0.22);
+  --c:#00c8ff;--c2:#0090cc;--cglow:rgba(0,200,255,0.15);--cglow2:rgba(0,200,255,0.35);
+  --g:#00ffaa;--gdim:rgba(0,255,170,0.08);--gglow:rgba(0,255,170,0.3);
+  --r:#ff3355;--rdim:rgba(255,51,85,0.08);
+  --o:#ffaa00;
+  --p:#cc44ff;--pdim:rgba(204,68,255,0.1);--pglow:rgba(204,68,255,0.3);
+  --text:#d0e8ff;--text2:#5a7a99;--text3:#2a3a4a;
+  --rblx:#e31e25;
+  --ff:'JetBrains Mono',monospace;--ffd:'Syne',sans-serif;
+  --rad:8px;--radlg:14px;
 }
-html{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6}
-body{min-height:100vh}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+html{background:var(--bg);color:var(--text);font-family:var(--ff);font-size:13px;line-height:1.6}
+body{min-height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px}
+.bg-g1{position:absolute;top:-20%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(0,200,255,0.04) 0%,transparent 65%);animation:dr1 18s ease-in-out infinite alternate}
+.bg-g2{position:absolute;bottom:-20%;right:-10%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(204,68,255,0.04) 0%,transparent 65%);animation:dr2 22s ease-in-out infinite alternate}
+@keyframes dr1{to{transform:translate(5%,3%) scale(1.1)}}
+@keyframes dr2{to{transform:translate(-4%,-5%) scale(1.15)}}
+.scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px)}
+#root{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
 
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#root{position:relative;z-index:1}
-
-/* ── Auth ── */
-#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;background:var(--bg)}
+/* AUTH */
+#auth{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
 #auth.gone{display:none}
-.auth-wrap{width:400px}
-.auth-logo{font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
-.auth-logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
-.auth-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative;overflow:hidden}
-.auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none}
-.auth-box h2{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);margin-bottom:0.25rem}
-.auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
-.rbx-verify-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
-.rbx-icon{width:36px;height:36px;border-radius:var(--r);background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:900;color:white;font-family:var(--font-display)}
-.rbx-label{font-size:11px;color:var(--text2)}
-.rbx-label strong{display:block;color:var(--text);font-size:13px;margin-bottom:1px}
+.aw{width:420px}
+.alogo{font-family:var(--ffd);font-size:30px;font-weight:900;color:var(--c);margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.alogo-dot{width:11px;height:11px;background:var(--c);border-radius:50%;box-shadow:0 0 20px var(--c),0 0 40px var(--cglow2);animation:pd 2s ease-in-out infinite}
+@keyframes pd{0%,100%{box-shadow:0 0 20px var(--c),0 0 40px var(--cglow2)}50%{box-shadow:0 0 30px var(--c),0 0 60px var(--cglow2)}}
+.asub{font-size:11px;color:var(--text2);margin-bottom:2rem;letter-spacing:.06em;text-transform:uppercase}
+.acard{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radlg);padding:2rem;position:relative;overflow:hidden}
+.acard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.4}
+.acard::after{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--cglow) 0%,transparent 70%);pointer-events:none}
+.acard h2{font-family:var(--ffd);font-size:16px;font-weight:800;margin-bottom:.25rem}
+.acard p{font-size:11px;color:var(--text2);margin-bottom:1.5rem;line-height:1.7}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:0.1em;text-transform:uppercase}
-.field input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
-.field input:focus{border-color:var(--accent)}
+.field label{display:block;font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:11px 13px;font-family:var(--ff);font-size:13px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--c);box-shadow:0 0 0 2px var(--cglow)}
 .field input::placeholder{color:var(--text3)}
-.auth-note{font-size:11px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:1rem;line-height:1.6}
-.auth-note code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono)}
-.btn-main{width:100%;background:var(--accent);color:#06080f;border:none;border-radius:var(--r);padding:11px;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:0.05em;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.btn-main:hover{background:var(--accent2);box-shadow:0 0 20px var(--accent-glow)}
-.btn-main:active{transform:scale(0.98)}
-.btn-main.roblox{background:var(--roblox);color:white}
-.btn-main.roblox:hover{background:#c01920}
-.auth-err{color:var(--red);font-size:11px;margin-top:8px;display:none}
-.auth-step{display:none}
-.auth-step.active{display:block}
+.anote{font-size:11px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rad);padding:11px 13px;margin-bottom:1rem;line-height:1.7}
+.anote code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 6px;color:var(--c);font-size:10px}
+.abtn{width:100%;background:var(--c);color:#020408;border:none;border-radius:var(--rad);padding:12px;font-family:var(--ffd);font-weight:800;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.abtn:hover{background:var(--c2);box-shadow:0 0 24px var(--cglow2)}
+.abtn:active{transform:scale(.98)}
+.abtn.rblx{background:var(--rblx);color:white}
+.abtn.rblx:hover{box-shadow:0 0 24px rgba(227,30,37,0.4);background:#c01920}
+.abtn.ghost{background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)}
+.abtn.ghost:hover{border-color:var(--c);color:var(--c);box-shadow:none}
+.astep{display:none}
+.astep.on{display:block}
+.aerr{color:var(--r);font-size:11px;margin-top:8px;display:none}
+.rbxrow{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:.875rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.rbxic{width:38px;height:38px;border-radius:var(--rad);background:var(--rblx);display:flex;align-items:center;justify-content:center;font-family:var(--ffd);font-weight:900;font-size:16px;color:white;flex-shrink:0}
 
-/* ── App ── */
-#app{display:none;height:100vh;flex-direction:column}
-#app.show{display:flex}
-
-/* ── Topbar ── */
-.topbar{height:52px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:var(--bg);flex-shrink:0}
-.topbar-logo{font-family:var(--font-display);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.plugin-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);margin-left:auto}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .3s}
-.status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--green)}
-.status-dot.waiting{background:var(--orange);animation:blink 1.2s infinite}
+/* TOPBAR */
+.topbar{height:50px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:rgba(2,4,8,0.95);backdrop-filter:blur(12px);flex-shrink:0;z-index:10;position:relative}
+.topbar::after{content:'';position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+.tlogo{font-family:var(--ffd);font-size:16px;font-weight:900;color:var(--c);display:flex;align-items:center;gap:8px}
+.tlogo-pip{width:8px;height:8px;background:var(--c);border-radius:50%;box-shadow:0 0 12px var(--c);animation:pd 2s ease-in-out infinite}
+.tdiv{width:1px;height:20px;background:var(--border2)}
+.ttag{font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+.tconn{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);margin-left:auto}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:all .3s;flex-shrink:0}
+.tdot.on{background:var(--g);box-shadow:0 0 8px var(--gglow)}
+.tdot.wait{background:var(--o);animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.topbar-user{display:flex;align-items:center;gap:8px;padding:4px 10px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);cursor:pointer;transition:border-color .15s}
-.topbar-user:hover{border-color:var(--border3)}
-.rbx-avatar{width:24px;height:24px;border-radius:50%;background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
-.topbar-uname{font-size:12px;color:var(--text)}
-.logout-x{color:var(--text3);font-size:11px;margin-left:4px;cursor:pointer}
-.logout-x:hover{color:var(--red)}
+.tuser{display:flex;align-items:center;gap:8px;padding:5px 11px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);cursor:pointer;transition:border-color .15s}
+.tuser:hover{border-color:var(--border3)}
+.tav{width:22px;height:22px;border-radius:50%;background:var(--rblx);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.tuname{font-size:12px}
+.tlogout{color:var(--text3);font-size:11px;margin-left:2px;transition:color .15s;cursor:pointer}
+.tlogout:hover{color:var(--r)}
 
-/* ── Main layout ── */
-.main-layout{flex:1;display:flex;overflow:hidden}
+/* LAYOUT */
+.appbody{flex:1;display:flex;overflow:hidden}
+.sidebar{width:210px;min-width:210px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:rgba(2,4,8,0.8);overflow-y:auto;flex-shrink:0}
+.ngrp{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
+.nbtn{display:flex;align-items:center;gap:9px;padding:8px .875rem;margin:1px .5rem;border-radius:var(--rad);cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(--ff)}
+.nbtn:hover{background:var(--bg3);color:var(--text)}
+.nbtn.on{background:rgba(0,200,255,0.08);color:var(--c);border:0.5px solid rgba(0,200,255,.15)}
+.nico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
+.npill{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:3px;background:var(--pdim);color:var(--p);font-weight:700}
+.ai-box{margin:.75rem .75rem 0;background:linear-gradient(135deg,rgba(0,200,255,0.04),rgba(204,68,255,0.05));border:0.5px solid rgba(0,200,255,0.14);border-radius:var(--rad);padding:.75rem;position:relative;overflow:hidden}
+.ai-box::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,var(--c),var(--p));opacity:.25}
+.ai-box-title{font-family:var(--ffd);font-size:11px;font-weight:800;background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.ai-box-desc{font-size:10px;color:var(--text2);line-height:1.6}
+.aiorb{width:6px;height:6px;border-radius:50%;background:var(--p);box-shadow:0 0 10px var(--pglow);display:inline-block;margin-right:5px;animation:pd 2s ease-in-out infinite}
 
-/* ── Sidebar ── */
-.sidebar{width:200px;min-width:200px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg);overflow-y:auto}
-.nav-section{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
-.nav-item{display:flex;align-items:center;gap:9px;padding:7px .875rem;margin:1px .5rem;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(--font-mono)}
-.nav-item:hover{background:var(--bg3);color:var(--text)}
-.nav-item.active{background:var(--accent-dim);color:var(--accent);border:0.5px solid rgba(0,212,255,.18)}
-.nav-item .ico{font-size:13px;width:14px;text-align:center}
+.carea{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.view{display:none;flex:1;overflow:hidden}
+.view.on{display:flex;flex-direction:column}
 
-/* ── AI badge in sidebar ── */
-.ai-badge{margin:.5rem;background:linear-gradient(135deg,var(--purple-dim),var(--accent-dim));border:0.5px solid rgba(176,96,255,0.3);border-radius:var(--r);padding:10px 12px;font-size:10px;color:var(--text2);line-height:1.5}
-.ai-badge strong{display:block;color:var(--purple);font-size:11px;margin-bottom:3px;font-family:var(--font-display)}
+/* COMMAND VIEW */
+.clayout{flex:1;display:grid;grid-template-columns:1fr 310px;overflow:hidden}
+.cmain{display:flex;flex-direction:column;overflow:hidden;border-right:0.5px solid var(--border)}
+.cside{display:flex;flex-direction:column;overflow:hidden}
 
-/* ── Content ── */
-.content{flex:1;overflow-y:auto;padding:1.25rem}
-.view{display:none}
-.view.active{display:block}
+/* Input zone */
+.inzone{padding:1.1rem;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.inhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.intitle{font-family:var(--ffd);font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+.intitle-pip{width:8px;height:8px;border-radius:50%;background:var(--p);box-shadow:0 0 12px var(--pglow);animation:pd 2s ease-in-out infinite}
+.chips{display:flex;gap:4px;background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;padding:3px}
+.chip{padding:4px 12px;border-radius:14px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(--text2);font-family:var(--ff);transition:all .2s}
+.chip.on{background:var(--bg4);color:var(--c);border:0.5px solid rgba(0,200,255,0.2)}
+.chip.on.ai{color:var(--p);border-color:rgba(204,68,255,0.2);background:var(--pdim)}
+.biwrap{position:relative;margin-bottom:.75rem}
+.biinput{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:13px;font-family:var(--ff);font-size:13px;color:var(--text);outline:none;resize:none;transition:border-color .25s,box-shadow .25s;min-height:95px;line-height:1.6}
+.biinput:focus{border-color:var(--p);box-shadow:0 0 0 2px var(--pdim)}
+.biinput.lua:focus{border-color:var(--c);box-shadow:0 0 0 2px var(--cglow)}
+.biinput::placeholder{color:var(--text3)}
+.bi-corner{position:absolute;bottom:9px;right:10px;font-size:10px;color:var(--text3)}
 
-/* ── Command panel ── */
-.cmd-panel{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;height:calc(100vh - 52px - 2.5rem)}
-.cmd-left{display:flex;flex-direction:column;gap:1rem}
-.panel-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);overflow:hidden}
-.panel-header{padding:.75rem 1rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.panel-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+/* AI state */
+.aistate{margin-bottom:.75rem;display:none;flex-direction:column;gap:6px}
+.aistate.on{display:flex}
+.aithink{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--pdim);border:0.5px solid rgba(204,68,255,0.2);border-radius:var(--rad);font-size:11px;color:var(--p)}
+.dots{display:flex;gap:3px}
+.dots i{width:5px;height:5px;background:var(--p);border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
+.dots i:nth-child(2){animation-delay:.18s}
+.dots i:nth-child(3){animation-delay:.36s}
+@keyframes dot{0%,100%{transform:scale(.5);opacity:.4}50%{transform:scale(1);opacity:1}}
+.aipreview{background:var(--bg3);border:0.5px solid rgba(204,68,255,0.2);border-radius:var(--rad);overflow:hidden}
+.aipreview-head{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--pdim);border-bottom:0.5px solid rgba(204,68,255,0.15)}
+.aipreview-lbl{font-size:10px;color:var(--p);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.aipreview-code{padding:10px 11px;font-size:11px;color:var(--text2);white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
+.aipreview-note{padding:7px 11px;border-top:0.5px solid var(--border);font-size:11px;color:var(--text2);line-height:1.5;background:rgba(0,0,0,0.2)}
 
-/* ── AI Command Panel ── */
-.ai-cmd-wrap{padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+/* Actions */
+.actbar{display:flex;gap:7px;align-items:center}
+.xb{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--rad);padding:8px 13px;font-family:var(--ff);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.xb:hover{border-color:var(--c);color:var(--c)}
+.xb.d:hover{border-color:var(--r);color:var(--r)}
+.xb.prim{background:var(--c);color:#020408;border-color:var(--c);font-weight:700;margin-left:auto}
+.xb.prim:hover{background:var(--c2);box-shadow:0 0 20px var(--cglow2)}
+.xb.purp{background:var(--p);color:white;border-color:var(--p);font-weight:700;margin-left:auto}
+.xb.purp:hover{background:#bb33ee;box-shadow:0 0 20px var(--pglow)}
+.xb.purp:disabled,.xb.prim:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none;transform:none}
+.ltype{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:8px 10px;font-family:var(--ff);font-size:11px;color:var(--text2);outline:none}
 
-/* Mode toggle */
-.mode-toggle{display:flex;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:3px;gap:3px}
-.mode-btn{flex:1;padding:6px 10px;font-family:var(--font-mono);font-size:11px;border:none;border-radius:4px;cursor:pointer;transition:all .15s;color:var(--text2);background:none}
-.mode-btn.active{background:var(--bg4);color:var(--text);border:0.5px solid var(--border2)}
-.mode-btn.active.ai-mode{background:var(--purple-dim);color:var(--purple);border-color:rgba(176,96,255,0.3)}
+/* Quick fire */
+.qfire{border-bottom:0.5px solid var(--border);flex-shrink:0}
+.qftabs{display:flex;padding:.5rem .875rem 0;gap:2px;overflow-x:auto}
+.qftab{padding:5px 11px;font-size:10px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--ff)}
+.qftab.on{color:var(--c);border-bottom-color:var(--c)}
+.qfgrid{padding:.625rem .875rem;display:flex;flex-wrap:wrap;gap:5px;max-height:80px;overflow-y:auto}
+.qfbtn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:20px;padding:4px 11px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--ff);white-space:nowrap}
+.qfbtn:hover{border-color:var(--p);color:var(--p);background:var(--pdim)}
 
-/* AI input */
-.ai-input-area{position:relative}
-.cmd-textarea{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;resize:none;transition:border-color .2s;min-height:90px}
-.cmd-textarea:focus{border-color:var(--accent)}
-.cmd-textarea.ai-focused:focus{border-color:var(--purple)}
-.cmd-textarea::placeholder{color:var(--text3)}
+/* Log */
+.logzone{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.loghead{padding:.6rem 1rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logtitle{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+.loginner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:5px}
+.le{padding:8px 10px;border-radius:var(--rad);font-size:12px;border-left:2px solid var(--text3);background:var(--bg3);animation:lein .15s ease}
+@keyframes lein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.le.ai{border-left-color:var(--p)}.le.sent{border-left-color:var(--c)}.le.ok{border-left-color:var(--g)}.le.err{border-left-color:var(--r)}.le.sys{border-left-color:var(--text3)}
+.lerow{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.letag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.letag.ai{background:var(--pdim);color:var(--p)}.letag.sent{background:rgba(0,200,255,0.08);color:var(--c)}.letag.ok{background:var(--gdim);color:var(--g)}.letag.err{background:var(--rdim);color:var(--r)}.letag.sys{background:var(--bg4);color:var(--text3)}
+.lelbl{font-size:10px;color:var(--text3)}.letime{font-size:10px;color:var(--text3);margin-left:auto}
+.lebody{color:var(--text2);font-size:11px;line-height:1.5;word-break:break-all}
 
-/* AI thinking indicator */
-.ai-thinking{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--purple-dim);border:0.5px solid rgba(176,96,255,0.2);border-radius:var(--r);font-size:11px;color:var(--purple)}
-.ai-thinking.show{display:flex}
-.ai-dots{display:flex;gap:3px}
-.ai-dots span{width:5px;height:5px;background:var(--purple);border-radius:50%;animation:dot-bounce .8s infinite}
-.ai-dots span:nth-child(2){animation-delay:.15s}
-.ai-dots span:nth-child(3){animation-delay:.3s}
-@keyframes dot-bounce{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+/* Side */
+.sconn{padding:1rem;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.sconnrow{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.bigdot{width:11px;height:11px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all .3s}
+.bigdot.on{background:var(--g);box-shadow:0 0 12px var(--gglow)}
+.bigdot.wait{background:var(--o);animation:blink 1.2s ease-in-out infinite}
+.connname{font-family:var(--ffd);font-size:13px;font-weight:800}
+.conndesc{font-size:11px;color:var(--text2);line-height:1.5}
+.tokrow{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.toklbl{font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.tokval{font-size:12px;color:var(--c);letter-spacing:.06em}
+.cpybtn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 7px;border:0.5px solid var(--border);border-radius:3px;transition:all .15s;white-space:nowrap;background:none}
+.cpybtn:hover{border-color:var(--c);color:var(--c)}
+.ssetup{flex:1;overflow-y:auto;padding:1rem}
+.setuptitle{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
+.ss{display:flex;gap:10px;margin-bottom:.875rem;align-items:flex-start}
+.ssnum{width:20px;height:20px;border-radius:50%;background:var(--bg4);border:0.5px solid var(--border2);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sstitle{font-size:12px;color:var(--text);font-weight:700;margin-bottom:2px}
+.ssdesc{font-size:11px;color:var(--text2);line-height:1.5}
+.ssdesc code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--c);font-size:10px}
+.sscode{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rad);padding:7px 9px;margin-top:5px;font-size:10px;color:var(--c);font-family:var(--ff);word-break:break-all;position:relative;padding-right:52px}
 
-/* Generated code preview */
-.ai-code-preview{display:none;background:var(--bg3);border:0.5px solid rgba(176,96,255,0.25);border-radius:var(--r);overflow:hidden}
-.ai-code-preview.show{display:block}
-.ai-code-header{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-bottom:0.5px solid var(--border);background:var(--purple-dim)}
-.ai-code-label{font-size:10px;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:6px}
-.ai-code-body{padding:10px;font-size:11px;color:var(--text2);font-family:var(--font-mono);white-space:pre-wrap;word-break:break-all;max-height:160px;overflow-y:auto;line-height:1.6}
-.ai-explanation{padding:8px 10px;border-top:0.5px solid var(--border);font-size:11px;color:var(--text2);line-height:1.5;background:var(--bg4)}
+/* PROJECTS VIEW */
+.projview{flex:1;overflow-y:auto;padding:1.25rem;flex-direction:column}
+.statsrow{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
+.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);padding:.875rem 1rem;position:relative;overflow:hidden}
+.scard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+.scardlbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.scardnum{font-family:var(--ffd);font-size:24px;font-weight:900;line-height:1}
+.scardnum.c{color:var(--c)}.scardnum.g{color:var(--g)}.scardnum.r{color:var(--r)}
+.projhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.projhdg{font-family:var(--ffd);font-size:14px;font-weight:800}
+.projctrl{display:flex;gap:7px}
+.sbox{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:6px 11px;font-family:var(--ff);font-size:12px;color:var(--text);outline:none;width:180px}
+.sbox:focus{border-color:var(--c)}
+.sbox::placeholder{color:var(--text3)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem}
+.pcard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);padding:.875rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pcard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--cglow),transparent);opacity:0;transition:opacity .2s}
+.pcard:hover{border-color:var(--border2);transform:translateY(-2px)}.pcard:hover::before{opacity:1}
+.pname{font-family:var(--ffd);font-size:12px;font-weight:700;margin-bottom:3px}
+.pid{font-size:10px;color:var(--text3);margin-bottom:8px}
+.ppill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
+.ppill.synced{background:var(--gdim);color:var(--g)}.ppill.offline{background:var(--bg4);color:var(--text3)}.ppill.error{background:var(--rdim);color:var(--r)}
+.pacts{display:flex;gap:5px;margin-top:9px}
+.pact{flex:1;background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--rad);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--ff)}
+.pact:hover{border-color:var(--c);color:var(--c)}.pact.del:hover{border-color:var(--r);color:var(--r)}
 
-.cmd-actions{display:flex;gap:8px;align-items:center}
-.cmd-type-select{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text2);outline:none;transition:border-color .2s}
-.cmd-type-select:focus{border-color:var(--accent)}
-.btn{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--r);padding:7px 14px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
-.btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.send{background:var(--accent);color:#06080f;border-color:var(--accent);font-weight:700;margin-left:auto}
-.btn.send:hover{background:var(--accent2);box-shadow:0 0 16px var(--accent-glow)}
-.btn.send:active{transform:scale(.98)}
-.btn.send:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none}
-.btn.ai-send{background:var(--purple);color:white;border-color:var(--purple)}
-.btn.ai-send:hover{background:#9040ee;box-shadow:0 0 16px rgba(176,96,255,0.4)}
-.btn.ai-send:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none}
+/* SETUP VIEW */
+.setupview{flex:1;overflow-y:auto;padding:1.25rem}
+.setup-inner{max-width:580px}
+.setup-h{font-family:var(--ffd);font-size:16px;font-weight:800;margin-bottom:1.25rem}
+.icard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);overflow:hidden;margin-bottom:.875rem}
+.icardh{padding:.75rem 1rem;border-bottom:0.5px solid var(--border);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+.icardb{padding:1rem;font-size:12px;color:var(--text2);line-height:1.8}
+.icardb code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 6px;color:var(--c);font-size:11px}
+.icardb strong{color:var(--text)}
 
-/* Quick commands */
-.quick-cmds{padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:6px}
-.qcmd{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--font-mono)}
-.qcmd:hover{border-color:var(--accent);color:var(--accent)}
-.qcmd.ai-qcmd{border-color:rgba(176,96,255,0.2);color:var(--text2)}
-.qcmd.ai-qcmd:hover{border-color:var(--purple);color:var(--purple)}
-
-/* Command log */
-.cmd-log{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.cmd-log-inner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:6px}
-.log-entry{padding:8px 10px;border-radius:var(--r);font-size:12px;border-left:2px solid transparent;background:var(--bg3)}
-.log-entry.sent{border-left-color:var(--accent)}
-.log-entry.result{border-left-color:var(--green)}
-.log-entry.err{border-left-color:var(--red)}
-.log-entry.sys{border-left-color:var(--text3)}
-.log-entry.ai{border-left-color:var(--purple)}
-.log-entry .le-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
-.log-tag{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.log-tag.sent{background:var(--accent-dim);color:var(--accent)}
-.log-tag.result{background:var(--green-dim);color:var(--green)}
-.log-tag.err{background:var(--red-dim);color:var(--red)}
-.log-tag.sys{background:var(--bg4);color:var(--text3)}
-.log-tag.ai{background:var(--purple-dim);color:var(--purple)}
-.le-time{font-size:10px;color:var(--text3);margin-left:auto}
-.le-body{color:var(--text2);font-size:12px;word-break:break-all}
-.le-body code{color:var(--text);font-family:var(--font-mono)}
-
-/* Right panel */
-.cmd-right{display:flex;flex-direction:column;gap:1rem}
-.conn-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem}
-.conn-indicator{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
-.conn-big-dot{width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
-.conn-big-dot.on{background:var(--green);box-shadow:0 0 10px var(--green)}
-.conn-big-dot.wait{background:var(--orange);animation:blink 1.2s infinite}
-.conn-label{font-family:var(--font-display);font-size:12px;font-weight:700}
-.conn-sub{font-size:11px;color:var(--text2);line-height:1.5}
-.conn-id-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 10px;margin-top:.75rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.conn-id-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
-.conn-id-val{font-size:12px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em}
-.copy-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;transition:all .15s}
-.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
-.setup-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);flex:1;overflow:hidden;display:flex;flex-direction:column}
-.setup-steps{padding:1rem;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1}
-.setup-step{display:flex;gap:10px;align-items:flex-start}
-.step-num{width:20px;height:20px;border-radius:50%;background:var(--bg4);border:0.5px solid var(--border2);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step-body{flex:1}
-.step-title{font-size:12px;color:var(--text);font-weight:700;margin-bottom:2px}
-.step-desc{font-size:11px;color:var(--text2);line-height:1.5}
-.step-desc code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono);font-size:10px}
-.step-code{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:8px 10px;margin-top:6px;font-size:11px;color:var(--text2);font-family:var(--font-mono);word-break:break-all;position:relative}
-.step-code .copy-btn{position:absolute;top:6px;right:6px}
-
-/* Projects */
-.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.875rem;margin-top:1rem}
-.proj-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
-.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dim),transparent);opacity:0;transition:opacity .2s}
-.proj-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.proj-card:hover::before{opacity:1}
-.proj-name{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
-.proj-id{font-size:10px;color:var(--text3);margin-bottom:8px}
-.proj-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
-.proj-pill.synced{background:var(--green-dim);color:var(--green)}
-.proj-pill.offline{background:var(--bg4);color:var(--text3)}
-.proj-pill.error{background:var(--red-dim);color:var(--red)}
-.proj-actions{display:flex;gap:6px;margin-top:10px}
-.pact{flex:1;background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font-mono)}
-.pact:hover{border-color:var(--accent);color:var(--accent)}
-.pact.del:hover{border-color:var(--red);color:var(--red)}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.25rem}
-.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:.875rem 1rem}
-.scard-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
-.scard-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--text);line-height:1}
-.scard-val.c{color:var(--accent)}
-.scard-val.g{color:var(--green)}
-.scard-val.r{color:var(--red)}
-
-/* Modal */
-.modal-bg{position:fixed;inset:0;background:rgba(6,8,15,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal-bg.open{opacity:1;pointer-events:all}
-.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:1.5rem;width:420px;transform:translateY(8px);transition:transform .2s;position:relative}
-.modal-bg.open .modal{transform:translateY(0)}
-.modal-title{font-family:var(--font-display);font-size:14px;font-weight:800;margin-bottom:.25rem}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(2,4,8,0.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radlg);padding:1.5rem;width:400px;position:relative;transform:scale(.97) translateY(6px);transition:transform .2s}
+.overlay.open .modal{transform:none}
+.modal::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.4}
+.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;transition:color .15s}
+.modal-x:hover{color:var(--r)}
+.modal-title{font-family:var(--ffd);font-size:15px;font-weight:800;margin-bottom:.25rem}
 .modal-sub{font-size:11px;color:var(--text2);margin-bottom:1.25rem}
-.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
-.modal-x:hover{color:var(--text)}
-.mbtns{display:flex;gap:8px;margin-top:1rem}
-.mbtns .btn{flex:1;justify-content:center}
+.modal-btns{display:flex;gap:7px;margin-top:1rem}
+.modal-btns .xb{flex:1;justify-content:center}
 
-/* Toast */
-#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999}
-.toast{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:9px 13px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:200px}
-.toast.ok{border-left:2px solid var(--green)}
-.toast.bad{border-left:2px solid var(--red)}
-.toast.info{border-left:2px solid var(--accent)}
-.toast.ai{border-left:2px solid var(--purple)}
-@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.sec-title{font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--text)}
-.search-input{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:6px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;transition:border-color .2s;width:200px}
-.search-input:focus{border-color:var(--accent)}
-.search-input::placeholder{color:var(--text3)}
-
-@media(max-width:900px){.cmd-panel{grid-template-columns:1fr}.cmd-right{display:none}.stats-row{grid-template-columns:1fr 1fr}}
+/* TOASTS */
+#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
+.toast{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:9px 14px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:210px;pointer-events:auto}
+.toast.ok{border-left:2px solid var(--g)}.toast.bad{border-left:2px solid var(--r)}.toast.info{border-left:2px solid var(--c)}.toast.ai{border-left:2px solid var(--p)}
+@keyframes tin{from{opacity:0;transform:translateX(10px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:900px){.clayout{grid-template-columns:1fr}.cside{display:none}.statsrow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<div id="root">
+<div class="bg-canvas"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div><div class="scanline"></div></div>
 
 <!-- AUTH -->
 <div id="auth">
-  <div class="auth-wrap">
-    <div class="auth-logo"><span class="auth-logo-dot"></span>Studio Bridge</div>
-    <div class="auth-box">
-      <div class="auth-step active" id="step1">
-        <h2>Connect with Roblox</h2>
-        <p>Enter your Roblox username to get started.</p>
-        <div class="field">
-          <label>Roblox username</label>
-          <input type="text" id="rbx-username" placeholder="YourRobloxName" autocomplete="off" />
-        </div>
-        <div id="step1-err" class="auth-err">Please enter your Roblox username.</div>
-        <button class="btn-main" onclick="step1Next()">Continue →</button>
+  <div class="aw">
+    <div class="alogo"><span class="alogo-dot"></span>NEXUS</div>
+    <div class="asub">Roblox AI Studio Bridge</div>
+    <div class="acard">
+      <div class="astep on" id="s1">
+        <h2>Connect your account</h2>
+        <p>Enter your Roblox username to link this dashboard to your Studio.</p>
+        <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourRobloxName" autocomplete="off"/></div>
+        <div class="aerr" id="s1err">Please enter your username.</div>
+        <button class="abtn" onclick="s1next()">Continue →</button>
       </div>
-      <div class="auth-step" id="step2">
+      <div class="astep" id="s2">
         <h2>Verify your account</h2>
-        <p>Add this code to your Roblox <strong>profile description</strong>, then click Verify.</p>
-        <div class="auth-note">
-          1. Go to <strong>roblox.com/home</strong> → Edit profile<br/>
-          2. Paste this code in your <strong>About / description</strong> field:<br/><br/>
-          <code id="verify-code">BRIDGE-XXXXXX</code><br/><br/>
-          3. Save, then click <strong>Verify</strong> below.
-        </div>
-        <div id="step2-err" class="auth-err"></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-main" style="flex:.4;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)" onclick="goStep(1)">← Back</button>
-          <button class="btn-main roblox" style="flex:1" onclick="step2Verify()">Verify ✓</button>
-        </div>
+        <p>Paste this code in your Roblox <strong>profile description</strong> to verify.</p>
+        <div class="anote">1. Go to <strong>roblox.com</strong> → Edit profile<br/>2. Paste in <strong>About</strong>: <code id="vcode">NEXUS-XXXXXX</code><br/>3. Save, then click Verify below.</div>
+        <div class="aerr" id="s2err"></div>
+        <div style="display:flex;gap:8px"><button class="abtn ghost" style="flex:.38" onclick="goS(1)">← Back</button><button class="abtn rblx" style="flex:1" id="vbtn" onclick="doVerify()">Verify Account ✓</button></div>
       </div>
-      <div class="auth-step" id="step3">
-        <h2 id="step3-title">Welcome!</h2>
-        <p id="step3-sub">You're signed in. Enter the dashboard.</p>
-        <div class="rbx-verify-box">
-          <div class="rbx-icon" id="step3-icon">?</div>
-          <div class="rbx-label"><strong id="step3-name">—</strong>Roblox account verified ✓</div>
-        </div>
-        <button class="btn-main" onclick="enterApp()">Open Dashboard →</button>
+      <div class="astep" id="s3">
+        <h2 id="s3t">Welcome!</h2><p id="s3s">Account verified.</p>
+        <div class="rbxrow"><div class="rbxic" id="s3ic">?</div><div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:2px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account verified ✓</span></div></div>
+        <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:none;height:100vh;flex-direction:column">
   <div class="topbar">
-    <div class="topbar-logo"><span style="width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);display:inline-block"></span>Studio Bridge</div>
-    <div class="plugin-status">
-      <span class="status-dot" id="plugin-dot"></span>
-      <span id="plugin-status-text">Plugin not connected</span>
-    </div>
-    <div class="topbar-user">
-      <div class="rbx-avatar" id="top-avatar">?</div>
-      <span class="topbar-uname" id="top-uname">—</span>
-      <span class="logout-x" onclick="logout()" title="Sign out">⏻</span>
-    </div>
+    <div class="tlogo"><span class="tlogo-pip"></span>NEXUS</div>
+    <div class="tdiv"></div><div class="ttag">Roblox AI Studio</div>
+    <div class="tconn"><span class="tdot wait" id="tdot"></span><span id="tconntxt">Waiting for plugin</span></div>
+    <div class="tuser"><div class="tav" id="tav">?</div><span class="tuname" id="tuname">—</span><span class="tlogout" onclick="logout()" title="Sign out">⏻</span></div>
   </div>
-
-  <div class="main-layout">
+  <div class="appbody">
     <aside class="sidebar">
-      <div class="nav-section">Workspace</div>
-      <button class="nav-item active" onclick="nav('commands',this)"><span class="ico">▸</span>Commands</button>
-      <button class="nav-item" onclick="nav('projects',this)"><span class="ico">⬡</span>Projects</button>
-      <div class="nav-section">System</div>
-      <button class="nav-item" onclick="nav('setup',this)"><span class="ico">⚙</span>Setup guide</button>
-      <div class="ai-badge">
-        <strong>✦ AI Mode Active</strong>
-        Type anything in plain English — the AI will generate and run the Lua for you.
+      <div class="ngrp">Workspace</div>
+      <button class="nbtn on" onclick="nav('cmd',this)"><span class="nico">◈</span>AI Command<span class="npill">AI</span></button>
+      <button class="nbtn" onclick="nav('projects',this)"><span class="nico">⬡</span>Projects</button>
+      <div class="ngrp">System</div>
+      <button class="nbtn" onclick="nav('setup',this)"><span class="nico">⚙</span>Setup Guide</button>
+      <div class="ai-box">
+        <div class="ai-box-title"><span class="aiorb"></span>NEXUS AI Active</div>
+        <div class="ai-box-desc">Type any idea in plain English. NEXUS understands every Roblox concept — builds, terrain, scripts, GUIs, systems — and generates perfect Lua instantly.</div>
       </div>
     </aside>
+    <div class="carea">
 
-    <div class="content">
-
-      <!-- COMMANDS VIEW -->
-      <div id="view-commands" class="view active">
-        <div class="cmd-panel">
-          <div class="cmd-left">
-
-            <!-- Input Card -->
-            <div class="panel-card">
-              <div class="panel-header">
-                <span class="panel-title">Send command to Studio</span>
-                <div class="mode-toggle">
-                  <button class="mode-btn active ai-mode" id="btn-ai-mode" onclick="setMode('ai')">✦ AI Mode</button>
-                  <button class="mode-btn" id="btn-lua-mode" onclick="setMode('lua')">⟨/⟩ Lua Mode</button>
+      <!-- CMD VIEW -->
+      <div id="view-cmd" class="view on">
+        <div class="clayout">
+          <div class="cmain">
+            <!-- Input -->
+            <div class="inzone">
+              <div class="inhead">
+                <div class="intitle"><span class="intitle-pip"></span>Command Center</div>
+                <div class="chips">
+                  <button class="chip on ai" id="chip-ai" onclick="setMode('ai')">✦ AI</button>
+                  <button class="chip" id="chip-lua" onclick="setMode('lua')">⟨/⟩ Lua</button>
                 </div>
               </div>
-              <div class="ai-cmd-wrap">
+              <!-- AI -->
+              <div id="ai-ui">
+                <div class="biwrap">
+                  <textarea class="biinput" id="ai-in" rows="4" placeholder="Describe what you want to build or do…
 
-                <!-- AI Mode UI -->
-                <div id="ai-mode-ui">
-                  <textarea class="cmd-textarea ai-focused" id="ai-input" placeholder="Tell the AI what to do in plain English…&#10;&#10;e.g. "make a huge grass baseplate"&#10;e.g. "add a sunset sky with orange lighting"&#10;e.g. "remove all parts from workspace"&#10;e.g. "add a working door that opens when touched"" rows="4"></textarea>
-
-                  <div class="ai-thinking" id="ai-thinking">
-                    <div class="ai-dots"><span></span><span></span><span></span></div>
-                    <span id="ai-thinking-text">AI is thinking…</span>
-                  </div>
-
-                  <div class="ai-code-preview" id="ai-code-preview">
-                    <div class="ai-code-header">
-                      <span class="ai-code-label">✦ Generated Lua — ready to send</span>
-                      <span class="copy-btn" onclick="copyGeneratedCode()">copy</span>
-                    </div>
-                    <div class="ai-code-body" id="ai-code-body"></div>
-                    <div class="ai-explanation" id="ai-explanation"></div>
-                  </div>
-
-                  <div class="cmd-actions">
-                    <button class="btn" onclick="clearAI()">✕ Clear</button>
-                    <button class="btn" id="regenerate-btn" onclick="regenerateCode()" style="display:none">↻ Regenerate</button>
-                    <button class="btn ai-send" id="ai-generate-btn" onclick="handleAIButton()">✦ Generate &amp; Send</button>
+✦ 'make a realistic grass baseplate with fog atmosphere'
+✦ 'add a complete shop GUI with buy buttons and coins'
+✦ 'build a full obby with 20 unique platforms'
+✦ 'create an NPC that follows the nearest player'
+✦ 'add admin commands with kick, tp, speed, god'
+✦ 'generate a tropical island map with water and trees'"></textarea>
+                  <span class="bi-corner" id="charct">0</span>
+                </div>
+                <div class="aistate" id="aistate">
+                  <div class="aithink" id="aithink"><div class="dots"><i></i><i></i><i></i></div><span id="thinkttxt">Analyzing…</span></div>
+                  <div class="aipreview" id="aiprev" style="display:none">
+                    <div class="aipreview-head"><span class="aipreview-lbl">✦ Generated Lua</span><button class="cpybtn" onclick="copyCode()">copy</button></div>
+                    <div class="aipreview-code" id="aicode"></div>
+                    <div class="aipreview-note" id="ainote"></div>
                   </div>
                 </div>
-
-                <!-- Lua Mode UI -->
-                <div id="lua-mode-ui" style="display:none">
-                  <textarea class="cmd-textarea" id="cmd-input" placeholder="Type Lua code to run in Roblox Studio…&#10;e.g. game.Workspace.Part.Size = Vector3.new(10,10,10)" rows="4"></textarea>
-                  <div class="cmd-actions">
-                    <button class="btn" onclick="clearLog()">✕ Clear log</button>
-                    <select class="cmd-type-select" id="cmd-type">
-                      <option value="run_script">Run script</option>
-                      <option value="insert_part">Insert part</option>
-                      <option value="set_property">Set property</option>
-                      <option value="delete_instance">Delete instance</option>
-                      <option value="get_children">Get children</option>
-                      <option value="eval">Eval Lua</option>
-                    </select>
-                    <button class="btn send" id="send-btn" onclick="sendCommand()">▶ Send to Studio</button>
-                  </div>
+                <div class="actbar">
+                  <button class="xb d" onclick="clearAI()">✕ Clear</button>
+                  <button class="xb" id="regenbtn" style="display:none" onclick="regen()">↻ Retry</button>
+                  <button class="xb purp" id="aibtn" onclick="handleAI()">✦ Generate &amp; Send</button>
+                </div>
+              </div>
+              <!-- Lua -->
+              <div id="lua-ui" style="display:none">
+                <div class="biwrap">
+                  <textarea class="biinput lua" id="lua-in" rows="4" placeholder="Write raw Lua…"></textarea>
+                </div>
+                <div class="actbar">
+                  <button class="xb d" onclick="$('lua-in').value=''">✕ Clear</button>
+                  <select class="ltype" id="luatype"><option value="run_script">Run Script</option><option value="eval">Eval Lua</option><option value="insert_part">Insert Part</option><option value="set_property">Set Property</option><option value="delete_instance">Delete Instance</option><option value="get_children">Get Children</option></select>
+                  <button class="xb prim" id="luabtn" onclick="sendLua()">▶ Send to Studio</button>
                 </div>
               </div>
             </div>
-
-            <!-- Quick Commands -->
-            <div class="panel-card">
-              <div class="panel-header"><span class="panel-title" id="quick-title">AI quick commands</span></div>
-              <div class="quick-cmds" id="quick-cmds-container">
-                <span class="qcmd ai-qcmd" onclick="aiQuick('make a giant flat grass baseplate 512x1x512')">🌿 grass baseplate</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('make a beautiful sunset sky with orange and pink lighting')">🌅 sunset sky</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add a spawn location at 0 0 0 with a team color')">🟢 spawn point</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add water terrain filling a 100x10x100 area at 0 0 0')">💧 add water</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('remove all parts from workspace except terrain')">🗑️ clear workspace</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add a working door that opens and closes when touched')">🚪 working door</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add leaderstats with coins and level for every player')">🏆 leaderstats</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('make the sky dark with bright stars and a moon')">🌙 night sky</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add a kill brick that destroys players who touch it')">☠️ kill brick</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('add a glowing neon part as a decoration')">✨ neon part</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('print all children of workspace to output')">📋 list workspace</span>
-                <span class="qcmd ai-qcmd" onclick="aiQuick('set ambient lighting to a spooky foggy atmosphere')">🌫️ fog atmosphere</span>
+            <!-- Quick fire -->
+            <div class="qfire">
+              <div class="qftabs" id="qftabs">
+                <button class="qftab on" onclick="qfTab(this,'build')">🏗 Build</button>
+                <button class="qftab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
+                <button class="qftab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
+                <button class="qftab" onclick="qfTab(this,'lighting')">🌅 Lighting</button>
+                <button class="qftab" onclick="qfTab(this,'gui')">📱 GUI</button>
+                <button class="qftab" onclick="qfTab(this,'game')">🎮 Game</button>
               </div>
+              <div class="qfgrid" id="qfgrid"></div>
             </div>
-
             <!-- Log -->
-            <div class="panel-card cmd-log">
-              <div class="panel-header">
-                <span class="panel-title">Command log</span>
-                <span style="font-size:10px;color:var(--text3)" id="log-count">0 entries</span>
-              </div>
-              <div class="cmd-log-inner" id="cmd-log-inner">
-                <div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time" id="boot-time"></span></div><div class="le-body">Dashboard ready. AI Mode is active — type any command in plain English.</div></div>
-              </div>
+            <div class="logzone">
+              <div class="loghead"><span class="logtitle">Execution Log</span><span style="font-size:10px;color:var(--text3)" id="logcnt">0 entries</span></div>
+              <div class="loginner" id="loginner"><div class="le sys"><div class="lerow"><span class="letag sys">sys</span><span class="letime" id="boott"></span></div><div class="lebody">NEXUS ready — AI mode active. Describe anything to build.</div></div></div>
             </div>
-
           </div>
-
-          <!-- Right Panel -->
-          <div class="cmd-right">
-            <div class="conn-card">
-              <div class="conn-indicator">
-                <div class="conn-big-dot wait" id="conn-dot"></div>
-                <div>
-                  <div class="conn-label" id="conn-label">Waiting for plugin</div>
-                  <div class="conn-sub" id="conn-sub">Open Roblox Studio and activate your plugin.</div>
-                </div>
-              </div>
-              <div class="conn-id-box">
-                <div>
-                  <div class="conn-id-label">Session token</div>
-                  <div class="conn-id-val" id="session-token">—</div>
-                </div>
-                <span class="copy-btn" onclick="copyToken()">copy</span>
-              </div>
+          <!-- Side -->
+          <div class="cside">
+            <div class="sconn">
+              <div class="sconnrow"><div class="bigdot wait" id="sdot"></div><div><div class="connname" id="sname">Waiting for plugin</div><div class="conndesc" id="sdesc">Open Studio and activate your plugin.</div></div></div>
+              <div class="tokrow"><div><div class="toklbl">Session Token</div><div class="tokval" id="tokval">—</div></div><button class="cpybtn" onclick="copyTok()">copy</button></div>
             </div>
-            <div class="setup-card">
-              <div class="panel-header"><span class="panel-title">Plugin setup</span></div>
-              <div class="setup-steps">
-                <div class="setup-step">
-                  <div class="step-num">1</div>
-                  <div class="step-body">
-                    <div class="step-title">Download the plugin</div>
-                    <div class="step-desc">Save <code>studio-plugin.lua</code> as a <code>.rbxm</code> in your Roblox Studio plugins folder.</div>
-                  </div>
-                </div>
-                <div class="setup-step">
-                  <div class="step-num">2</div>
-                  <div class="step-body">
-                    <div class="step-title">Set your backend URL</div>
-                    <div class="step-desc">In the plugin script, replace <code>YOUR_BACKEND_URL</code> with your server address.</div>
-                    <div class="step-code">https://enesai-production.up.railway.app<span class="copy-btn" onclick="copyText('https://enesai-production.up.railway.app')">copy</span></div>
-                  </div>
-                </div>
-                <div class="setup-step">
-                  <div class="step-num">3</div>
-                  <div class="step-body">
-                    <div class="step-title">Paste session token</div>
-                    <div class="step-desc">Copy the session token above and paste it into the plugin's token field in Studio.</div>
-                  </div>
-                </div>
-                <div class="setup-step">
-                  <div class="step-num">4</div>
-                  <div class="step-body">
-                    <div class="step-title">Activate plugin</div>
-                    <div class="step-desc">Click the Studio Bridge button in your toolbar. The dot turns <span style="color:var(--green)">green</span> when connected.</div>
-                  </div>
-                </div>
-              </div>
+            <div class="ssetup">
+              <div class="setuptitle">Plugin Setup</div>
+              <div class="ss"><div class="ssnum">1</div><div><div class="sstitle">Download plugin</div><div class="ssdesc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in your Studio plugins folder.</div></div></div>
+              <div class="ss"><div class="ssnum">2</div><div><div class="sstitle">Set backend URL</div><div class="ssdesc">Replace <code>YOUR_BACKEND_URL</code> in the plugin.</div><div class="sscode">https://enesai-production.up.railway.app<button class="cpybtn" style="position:absolute;top:6px;right:6px" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
+              <div class="ss"><div class="ssnum">3</div><div><div class="sstitle">Enter session token</div><div class="ssdesc">Copy your token above into the plugin's token field in Studio.</div></div></div>
+              <div class="ss"><div class="ssnum">4</div><div><div class="sstitle">Activate plugin</div><div class="ssdesc">Click NEXUS in your Studio toolbar. Dot turns <span style="color:var(--g)">green</span> when connected.</div></div></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- PROJECTS VIEW -->
-      <div id="view-projects" class="view">
-        <div class="stats-row">
-          <div class="scard"><div class="scard-label">Total</div><div class="scard-val c" id="sp-total">0</div></div>
-          <div class="scard"><div class="scard-label">Synced</div><div class="scard-val g" id="sp-synced">0</div></div>
-          <div class="scard"><div class="scard-label">Errors</div><div class="scard-val r" id="sp-err">0</div></div>
-          <div class="scard"><div class="scard-label">Offline</div><div class="scard-val" id="sp-off">0</div></div>
-        </div>
-        <div class="sec-head">
-          <div class="sec-title">Projects</div>
-          <div style="display:flex;gap:8px">
-            <input class="search-input" placeholder="Search…" oninput="filterProj(this.value)" />
-            <button class="btn" onclick="openModal('new-proj')">+ New</button>
-          </div>
-        </div>
-        <div class="proj-grid" id="proj-grid"></div>
-      </div>
+      <div id="view-projects" class="view projview"></div>
 
       <!-- SETUP VIEW -->
-      <div id="view-setup" class="view">
-        <div style="max-width:600px">
-          <div class="sec-title" style="margin-bottom:1.25rem">Full setup guide</div>
-          <div class="panel-card" style="margin-bottom:1rem">
-            <div class="panel-header"><span class="panel-title">Architecture overview</span></div>
-            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
-              <strong style="color:var(--text)">How it works:</strong><br/>
-              You type a plain English command → AI generates perfect Lua → website sends it → Node.js server queues it → Studio plugin polls every 2s → executes in Studio → result shown here.<br/><br/>
-              <strong style="color:var(--text)">Files you need:</strong><br/>
-              <code style="display:block;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px;margin:8px 0;color:var(--accent)">dashboard.html      ← this file (website + AI)<br/>server.js           ← Node.js backend<br/>studio-plugin.lua   ← Roblox Studio plugin</code>
-            </div>
-          </div>
-          <div class="panel-card">
-            <div class="panel-header"><span class="panel-title">Backend endpoints used</span></div>
-            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
-              <code style="color:var(--accent)">POST /api/command</code> — website sends Lua command + token<br/>
-              <code style="color:var(--accent)">GET  /api/poll/:token</code> — plugin polls for commands<br/>
-              <code style="color:var(--accent)">POST /api/result</code> — plugin posts execution result<br/>
-              <code style="color:var(--accent)">GET  /api/result/:token</code> — website checks for result<br/>
-              <code style="color:var(--accent)">POST /api/verify</code> — verifies Roblox username<br/>
-            </div>
-          </div>
+      <div id="view-setup" class="view setupview">
+        <div class="setup-inner">
+          <div class="setup-h">Setup Guide</div>
+          <div class="icard"><div class="icardh">How NEXUS works</div><div class="icardb"><strong>Flow:</strong> Type in plain English → NEXUS AI generates perfect Lua → browser sends to Node.js server → Studio plugin polls every 2s → executes in Studio → result in log.<br/><br/><strong>Files needed:</strong><br/><code>dashboard.html</code> — this file<br/><code>server.js</code> — Node.js backend<br/><code>studio-plugin.lua</code> — Roblox plugin</div></div>
+          <div class="icard"><div class="icardh">API Endpoints</div><div class="icardb"><code>POST /api/command</code> — send Lua<br/><code>GET /api/poll/:token</code> — plugin polls<br/><code>POST /api/result</code> — plugin posts result<br/><code>GET /api/result/:token</code> — check result<br/><code>GET /api/ping/:token</code> — heartbeat</div></div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- NEW PROJECT MODAL -->
-<div class="modal-bg" id="modal-new-proj">
+<!-- Modal -->
+<div class="overlay" id="mprojbg">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal('new-proj')">✕</button>
-    <div class="modal-title">New project</div>
-    <div class="modal-sub">Create a project to organise your Studio sessions.</div>
-    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Game" /></div>
-    <div class="field"><label>Project ID (auto)</label><input type="text" id="np-id" readonly style="opacity:.5" /></div>
-    <div class="mbtns">
-      <button class="btn" onclick="closeModal('new-proj')">Cancel</button>
-      <button class="btn send" onclick="createProj()">Create</button>
-    </div>
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-title">New Project</div>
+    <div class="modal-sub">Create a project to organise your sessions.</div>
+    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Awesome Game"/></div>
+    <div class="field"><label>Auto ID</label><input type="text" id="np-id" readonly style="opacity:.4"/></div>
+    <div class="modal-btns"><button class="xb" onclick="closeModal()">Cancel</button><button class="xb prim" onclick="createProj()">Create →</button></div>
   </div>
 </div>
-
 <div id="toasts"></div>
 
 <script>
-// ── Config ──
-const BACKEND = "https://enesai-production.up.railway.app";
+const BACKEND="https://enesai-production.up.railway.app";
+let user=null,token=null,projects=[],entries=[],connected=false,pollInt=null;
+let genCode=null,codeReady=false,vcode=null,mode='ai';
+const $=id=>document.getElementById(id);
+const rndT=()=>Math.random().toString(36).slice(2,8).toUpperCase();
+const rndId=()=>{let s='';const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';for(let i=0;i<14;i++)s+=c[Math.floor(Math.random()*62)];return s;}
+const ts=()=>new Date().toLocaleTimeString();
+function toast(m,t='info'){const c=$('toasts'),el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;c.appendChild(el);setTimeout(()=>el.remove(),3500);}
+function sv(){localStorage.setItem('nx_u',JSON.stringify(user));localStorage.setItem('nx_t',token);localStorage.setItem('nx_p',JSON.stringify(projects));}
+function ld(){try{user=JSON.parse(localStorage.getItem('nx_u'));token=localStorage.getItem('nx_t');projects=JSON.parse(localStorage.getItem('nx_p')||'[]');}catch{}}
 
-// ── State ──
-let user = null;
-let sessionToken = null;
-let projects = [];
-let cmdLog = [];
-let pluginConnected = false;
-let pollInterval = null;
-let verifyCode = null;
-let currentMode = 'ai'; // 'ai' or 'lua'
-let generatedLua = null;
-let aiGenerated = false;
+/* ══ QUICK FIRE DATA ══ */
+const QF={
+  build:[
+    {l:'🌿 Grass Base',p:'create a massive flat grass baseplate Part: Size 512x1x512, Material Grass, BrickColor Bright green, Anchored true, Position 0,0,0, Name GrassBase'},
+    {l:'🪨 Stone Base',p:'create a large stone baseplate 512x1x512 SmoothPlastic gray material anchored at 0,0,0'},
+    {l:'🏠 Simple House',p:'build a complete simple house with 4 walls, a slanted roof, a door gap, and 4 window holes, all using parts'},
+    {l:'🧱 Long Wall',p:'build a long solid brick wall 60 studs wide 12 studs tall using SmoothPlastic material'},
+    {l:'☠️ Kill Brick',p:'create a bright red anchored kill brick part at 0,5,0 with a Script inside using Touched event to call Humanoid:TakeDamage(math.huge)'},
+    {l:'🌀 Teleporter',p:'create two glowing neon cyan teleporter pads that teleport players between each other using Touched and CFrame'},
+    {l:'💎 Floating Gem',p:'create a spinning floating diamond-shaped neon cyan gem using a SpecialMesh with a diamond mesh, tween it spinning and bobbing up and down'},
+    {l:'🚀 Launch Pad',p:'create a metallic circular launch pad platform with neon orange ring lights around the edge and a BodyVelocity that launches players upward on touch'},
+    {l:'🏰 Castle Tower',p:'build a tall cylindrical castle tower with a crenellated top using multiple stacked cylinder parts with notches cut out'},
+    {l:'🌁 Bridge',p:'build a long suspension bridge with two tall pillars, a flat walkway, and diagonal support beams connecting them'},
+  ],
+  terrain:[
+    {l:'🌊 Ocean Base',p:'use workspace.Terrain:FillBlock to fill a massive 1000x20x1000 CFrame area centered below 0 with Water material'},
+    {l:'🏔 Mountains',p:'use workspace.Terrain:FillBall multiple times to create a range of 5 large rocky mountain formations of varying heights using Rock material'},
+    {l:'🏖 Beach',p:'create a sloping sandy beach terrain using FillBlock with Sand material transitioning into shallow Water terrain'},
+    {l:'🌋 Volcano',p:'build a large volcano using terrain FillBall with Rock material and a crater at top filled with smooth lava-colored stone'},
+    {l:'❄️ Snow Peaks',p:'create snowy mountain peaks using terrain with Snow material at the tops and Rock material lower down using multiple FillBall calls'},
+    {l:'🕳 Crater',p:'carve a huge 80-stud circular crater into the ground using workspace.Terrain:FillBall with Air material at ground level'},
+    {l:'💧 River',p:'create a winding river carved through terrain using multiple FillBlock calls with Water material following a curved path'},
+    {l:'🌿 Flat Plains',p:'fill a 400x1x400 flat grassy plains terrain area centered at 0,0,0 using Terrain:FillBlock with Grass material'},
+  ],
+  scripts:[
+    {l:'🏆 Leaderstats+DS',p:'create a complete leaderstats system with Coins and Level IntValues using PlayerAdded, save and load both values with DataStoreService using pcall'},
+    {l:'🚪 Tween Door',p:'find or create a door Part named Door in workspace, add a Script that tweens it 90 degrees open on Touched and closed after 3 seconds using TweenService'},
+    {l:'👮 Admin System',p:'create a full admin command Script in ServerScriptService with admin list table and chat commands: /kick, /tp, /speed, /god, /ungod, /freeze, /announce'},
+    {l:'🤖 NPC Follower',p:'create a complete humanoid NPC Model that detects the nearest player within 60 studs every 0.5s and moves toward them using Humanoid:MoveTo'},
+    {l:'⚔️ Sword Tool',p:'create a sword Tool in StarterPack with a Handle, Activated event Script that creates a hitbox Region in front of the player and deals 30 damage to any Humanoid found'},
+    {l:'💀 Round System',p:'create a complete round system Script in ServerScriptService with states: Intermission(15s), RoundActive(120s), GameOver(5s), status StringValue in ReplicatedStorage'},
+    {l:'🐣 Pet Follow',p:'create a pet system where each player gets a small glowing sphere pet Part that follows them with an offset using RunService.Heartbeat'},
+    {l:'🔫 Gun Tool',p:'create a gun Tool with Activated LocalScript that fires a RemoteEvent, server Script handles it by casting a ray and dealing 25 damage to hit Humanoids'},
+  ],
+  lighting:[
+    {l:'🌅 Warm Sunset',p:'set lighting to golden sunset: ClockTime=19, Brightness=3, Ambient orange, FogColor warm orange, FogEnd=500, add Atmosphere with warm haze'},
+    {l:'🌙 Dark Night',p:'create dark night scene: ClockTime=2, Brightness=0.3, Ambient dark blue, add Sky with dark texture, add Atmosphere with dark blue density'},
+    {l:'☀️ Clear Day',p:'set bright cheerful day: ClockTime=14, Brightness=5, Ambient light blue, clear sky, high GlobalShadows, add Atmosphere with clear low density'},
+    {l:'🌫 Dense Fog',p:'create thick eerie fog: add Atmosphere with Density=0.8, Offset=0.1, Color gray, FogColor gray, FogEnd=150 in Lighting'},
+    {l:'🔴 Apocalypse',p:'create apocalyptic atmosphere: ClockTime=18, red-tinted Ambient, FogColor dark red, FogEnd=300, Atmosphere with red dense haze, low Brightness'},
+    {l:'🟡 Golden Hour',p:'perfect golden hour: ClockTime=17.5, warm golden Ambient, soft shadows, Atmosphere with golden density, high Brightness, warm sky colors'},
+    {l:'🌈 Vivid',p:'vibrant colorful scene: high Brightness=6, saturated Ambient, Atmosphere with colorful low-density haze, ClockTime=12'},
+    {l:'🌧 Stormy',p:'dark stormy atmosphere: ClockTime=16, dark gray Ambient, dense dark Atmosphere, FogEnd=200, low Brightness=1, dark FogColor'},
+  ],
+  gui:[
+    {l:'🖥 Main Menu',p:'create a complete ScreenGui main menu in StarterGui with centered Frame, large game title TextLabel, animated Play button, Settings button, Credits button with proper styling'},
+    {l:'❤️ Health Bar',p:'create a LocalScript that makes a health bar GUI at bottom center of screen, updates every heartbeat to show Humanoid.Health/MaxHealth as a colored bar'},
+    {l:'🪙 Coin Counter',p:'create a GUI at top right showing player Coins from leaderstats, updates automatically, with a coin icon circle and animated count change'},
+    {l:'📊 Leaderboard',p:'create an in-game leaderboard ScreenGui showing top 10 players sorted by Coins, updates every 10 seconds, with ranks names and values'},
+    {l:'📦 Inventory UI',p:'create a 5x4 grid inventory ScreenGui that opens/closes with E key, shows item slots with icons, proper styling with dark theme'},
+    {l:'⚙️ Settings Menu',p:'create a settings ScreenGui with toggles for Music, SFX, and Graphics, plus sliders for volume, openable with a gear button in corner'},
+    {l:'🏆 Victory Screen',p:'create a victory/game over ScreenGui that shows player stats, final score, and Play Again button with animated entrance using TweenService'},
+    {l:'💬 Custom Chat',p:'create a custom chat ScreenGui with message history scrollframe, text input, send button, replacing default chat styling with dark futuristic theme'},
+  ],
+  game:[
+    {l:'🎮 Full Obby',p:'generate a complete obby with 25 unique platforms: varying sizes, heights, gaps, colors, materials, some moving with TweenService, kill bricks, and a golden finish platform'},
+    {l:'🏭 Tycoon Plot',p:'build a complete tycoon game base layout with personal plot boundary, dropper, conveyor belt, collector box, and upgrade button pad'},
+    {l:'⚔️ Battle Arena',p:'build a symmetrical PvP arena with outer walls, interior cover objects of different sizes, 4 corner spawn points marked with team colors, and lava floor edges'},
+    {l:'🌴 Tropical Island',p:'generate a complete tropical island map: grass terrain hills, sandy beach edges, water surrounding it, palm tree models, a wooden dock, and a small hut'},
+    {l:'🎯 Shooting Range',p:'build a shooting range with 5 target dummy NPCs on moving rails, a starting line barrier, and a score display GUI'},
+    {l:'🧩 Puzzle Room',p:'build a puzzle room with 4 pressure plate Parts that when all touched simultaneously open a large door using TweenService'},
+    {l:'🏎 Race Track',p:'generate a race track loop with 10 checkpoint triggers, start/finish line, lap counter GUI, and reset if player falls off'},
+    {l:'🎪 Mini Games Hub',p:'create a mini games lobby with 4 colored team selector pads, a central countdown display GUI, and teleporters to 4 different game areas'},
+  ]
+};
 
-// ── Utils ──
-const $ = id => document.getElementById(id);
-function genToken(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
-function genId(){const c="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";let r='';for(let i=0;i<12;i++)r+=c[Math.floor(Math.random()*62)];return r;}
-function ts(){return new Date().toLocaleTimeString();}
-function toast(msg,type='info'){const c=$('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3500);}
-function save(){localStorage.setItem('sb_user',JSON.stringify(user));localStorage.setItem('sb_token',sessionToken);localStorage.setItem('sb_projects',JSON.stringify(projects));}
-function load(){try{user=JSON.parse(localStorage.getItem('sb_user'));sessionToken=localStorage.getItem('sb_token');projects=JSON.parse(localStorage.getItem('sb_projects')||'[]');}catch{}}
+/* ══ SYSTEM PROMPT ══ */
+const SYS=`You are NEXUS — the world's most powerful Roblox Studio AI. You have complete mastery of every Roblox API, Lua scripting pattern, terrain generation, GUI design, animation, tween, datastore, remote events, pathfinding, combat, round systems, admin tools, and every game mechanic in Roblox.
 
-// ── AI System Prompt ──
-const AI_SYSTEM_PROMPT = `You are the most expert Roblox Studio developer and Lua scripter in the world. You have mastered every single aspect of Roblox development: building, terrain, lighting, GUIs, physics, datastores, remote events, animations, and complex game systems.
+Your single job: receive a plain English request and produce PERFECT, COMPLETE, IMMEDIATELY EXECUTABLE Lua code for Roblox Studio. The code runs in the command bar / plugin script execution context, giving you direct access to game, workspace, Players, ServerScriptService, ReplicatedStorage, StarterGui, StarterPack, Lighting, workspace.Terrain, etc.
 
-Your ONLY job is to take a user's plain English command and produce PERFECT, COMPLETE, COPY-PASTE READY Lua code that will run inside Roblox Studio via a plugin executing it in the command bar context (so you have access to game, workspace, etc. directly).
+CORE RULES — NEVER BREAK:
+1. Code is 100% complete. Zero placeholders. Zero "-- TODO". If you need a Script inside a Part, generate its full Source as a multi-line string and set it properly.
+2. Every Part created has: explicit Name, Material (Enum.Material.X), BrickColor or Color3.fromRGB(), Size (Vector3.new), Position/CFrame, Anchored set correctly, CanCollide set, Parent set LAST.
+3. Scripts that persist → create Script/LocalScript instance, set .Source to the complete multi-line Lua as a string, set .Parent.
+4. ALL services via game:GetService(). NEVER game.ServiceName directly.
+5. Terrain API: workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) or :FillBall(Vector3.new(x,y,z), radius, Enum.Material.X).
+6. TweenService: local ts=game:GetService("TweenService") ts:Create(obj,TweenInfo.new(dur,style,dir),{prop=val}):Play().
+7. DataStore: always pcall, always handle errors, key by player.UserId.
+8. GUIs: ScreenGui in StarterGui, Frame with proper UDim2 Size and Position, all children fully configured with BackgroundColor3, TextColor3, Font, TextSize, Text.
+9. RemoteEvents: Instance.new("RemoteEvent") in ReplicatedStorage, fire from LocalScript, OnServerEvent on Script.
+10. Kill bricks: Script inside Part, .Touched:Connect(function(hit) local h=hit.Parent:FindFirstChildWhichIsA("Humanoid") if h then h:TakeDamage(math.huge) end end).
+11. Admin: check player.Name against admin table, string.split(msg," "), handle each command in if/elseif chain.
+12. NPC: Model with Humanoid, HumanoidRootPart (PrimaryPart), a head Part, use :SetPrimaryPartCFrame() for positioning, Humanoid:MoveTo() for movement.
+13. Pathfinding: PathfindingService:CreatePath({AgentRadius=2,AgentHeight=5}), :ComputeAsync(start,goal), :GetWaypoints(), loop with task.wait().
+14. Obby: generate EVERY platform explicitly in a loop with randomized or calculated positions, sizes, colors, some with TweenService movement.
+15. Island/map: use Terrain:FillBall and :FillBlock for landmass, add Parts for palm trees (trunk cylinder + leaf sphere), dock (planks), hut (walls + roof).
+16. When user says "baseplate" or "grass base": Part, Size=Vector3.new(512,1,512), Material=Enum.Material.Grass, BrickColor=BrickColor.new("Bright green"), Anchored=true, Position=Vector3.new(0,0,0).
+17. For complex multi-part builds: use loops efficiently, add all parts to a Model, name the Model descriptively.
+18. Error handling: wrap risky code in pcall, use :FindFirstChild() / :WaitForChild() appropriately.
+19. Performance: use task.spawn() for concurrent operations, avoid blocking the main thread with large loops when possible.
+20. Understand ALL Roblox slang and shorthand without asking for clarification.
 
-STRICT RULES YOU ALWAYS FOLLOW:
-1. NEVER just add a plain generic Part. Always build exactly what the user described with correct Material, BrickColor/Color3, Size, Position, Anchored, CanCollide, Name, and all relevant properties.
-2. ALWAYS complete the full script. Never leave placeholders like "-- add your code here".
-3. ALWAYS use the correct Roblox API. Never use deprecated methods.
-4. Name all created instances descriptively (e.g. GrassBase, SkyBox, KillBrick, WaterPart).
-5. When the user says "baseplate" or "base" or "ground" → create a large Part: Size=Vector3.new(512,1,512), Material=Enum.Material.Grass, BrickColor=BrickColor.new("Bright green"), Anchored=true, Position=Vector3.new(0,0,0), Name="GrassBase".
-6. When the user says "remove" or "delete" or "clear" → write code that finds instances by name or class and destroys them properly.
-7. When the user says "sky" or "lighting" or "atmosphere" → modify game.Lighting, add Atmosphere or Sky instances with proper settings.
-8. When the user says "water" → use game.Workspace.Terrain:FillBlock() with Enum.Material.Water.
-9. When the user says "spawn" or "spawn point" → create a SpawnLocation with proper team and properties.
-10. When the user says "door" → create a full working door with a Script that uses Touched and TouchEnded events to tween it open and closed.
-11. When the user says "kill brick" → create an anchored Part with a Script inside that calls Humanoid:TakeDamage(100) on touch.
-12. When the user says "leaderstats" → create a full working leaderstats script in ServerScriptService using PlayerAdded.
-13. When the user says "neon" → use Material=Enum.Material.Neon with a bright Color3.
-14. When the user says "obby" → generate a series of obstacle platforms with different sizes and positions.
-15. When the user says "GUI" or "screen" → create a ScreenGui with proper Frame, TextLabel, and TextButton children in StarterGui.
-16. When the user says "datastore" → use DataStoreService with pcall for safe saving/loading.
-17. When the user says "NPC" → create a Model with a Humanoid, HumanoidRootPart, and basic body parts with a simple patrol or idle script.
-18. When the user says "tool" → create a Tool in StarterPack with Activated event and proper Handle.
-19. When the user says "admin" → generate an admin command system with a table of admins and chat-based commands.
-20. Understand ALL Roblox slang: "rbx", "baseplate", "obby", "tycoon", "FE", "hitbox", "anti cheat", "lag fix", "datastore", "remote", "module", "loader", etc.
+RESPONSE FORMAT — ONLY this JSON, nothing else, no markdown fences:
+{"lua":"complete lua code with \\n for newlines","explanation":"One sentence describing what was built and any placement notes.","complexity":"simple|medium|complex"}`;
 
-IMPORTANT CODE RULES:
-- Scripts that should run on the server → use game:GetService("ServerScriptService") and Instance.new("Script")
-- Scripts that run on client → use game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts") and Instance.new("LocalScript")  
-- For simple builds (parts, terrain, lighting) → just write the code directly, no need to create a Script instance
-- Always Anchor parts that should not fall
-- Always set Parent LAST when creating instances
-- Use game:GetService() instead of game.ServiceName for services
-- Use Vector3.new(), CFrame.new(), Color3.fromRGB(), BrickColor.new() correctly
-- For tweening use TweenService with proper TweenInfo
+/* ══ Quick fire ══ */
+let activeQF='build';
+function qfTab(el,cat){
+  document.querySelectorAll('.qftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');activeQF=cat;renderQF();
+}
+function renderQF(){
+  $('qfgrid').innerHTML=QF[activeQF].map(q=>`<button class="qfbtn" onclick="qfFire(${JSON.stringify(q.p)})">${q.l}</button>`).join('');
+}
+function qfFire(p){$('ai-in').value=p;updateCC();handleAI();}
 
-YOUR RESPONSE FORMAT - respond with ONLY this JSON, nothing else, no markdown, no backticks:
-{
-  "lua": "-- your complete lua code here\\n-- multiple lines use \\n",
-  "explanation": "One sentence saying what this code does and where to place the script if needed.",
-  "scriptType": "server|client|build"
-}`;
-
-// ── Mode Toggle ──
-function setMode(mode) {
-  currentMode = mode;
-  if (mode === 'ai') {
-    $('ai-mode-ui').style.display = 'block';
-    $('lua-mode-ui').style.display = 'none';
-    $('btn-ai-mode').classList.add('active','ai-mode');
-    $('btn-lua-mode').classList.remove('active','ai-mode');
-    $('quick-title').textContent = 'AI quick commands';
-    renderQuickCmds('ai');
+/* ══ Mode ══ */
+function setMode(m){
+  mode=m;
+  if(m==='ai'){
+    $('ai-ui').style.display='block';$('lua-ui').style.display='none';
+    $('chip-ai').classList.add('on','ai');$('chip-lua').classList.remove('on','ai');
   } else {
-    $('ai-mode-ui').style.display = 'none';
-    $('lua-mode-ui').style.display = 'block';
-    $('btn-lua-mode').classList.add('active');
-    $('btn-lua-mode').classList.remove('ai-mode');
-    $('btn-ai-mode').classList.remove('active','ai-mode');
-    $('quick-title').textContent = 'Quick commands';
-    renderQuickCmds('lua');
+    $('ai-ui').style.display='none';$('lua-ui').style.display='block';
+    $('chip-lua').classList.add('on');$('chip-lua').classList.remove('ai');
+    $('chip-ai').classList.remove('on','ai');
   }
 }
 
-function renderQuickCmds(mode) {
-  const container = $('quick-cmds-container');
-  if (mode === 'ai') {
-    container.innerHTML = `
-      <span class="qcmd ai-qcmd" onclick="aiQuick('make a giant flat grass baseplate 512x1x512')">🌿 grass baseplate</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('make a beautiful sunset sky with orange and pink lighting and atmosphere')">🌅 sunset sky</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a spawn location at 0 0 0')">🟢 spawn point</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('fill a 200x10x200 area with water terrain at position 0 -5 0')">💧 add water</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('remove all parts from workspace except terrain and baseplate')">🗑️ clear workspace</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a working door model that smoothly opens and closes when a player touches it')">🚪 working door</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a complete leaderstats system with Coins and Level that saves with datastore')">🏆 leaderstats + datastore</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('make a dark night sky with bright glowing stars and a big moon using Lighting')">🌙 night sky</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a red kill brick part that destroys any player who touches it')">☠️ kill brick</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a glowing neon cyan floating orb decoration')">✨ neon orb</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('print all children and their class names from workspace to the output')">📋 list workspace</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('set the lighting to a spooky foggy atmosphere with low visibility and green tint')">🌫️ fog atmosphere</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('create a simple obby with 10 platforms of different sizes colors and positions')">🏃 generate obby</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add a basic NPC with a humanoid that walks around randomly')">🤖 random NPC</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('create a ScreenGui with a main menu frame title and play button in StarterGui')">📱 main menu GUI</span>
-      <span class="qcmd ai-qcmd" onclick="aiQuick('add an admin command system with kick and teleport commands using chat')">👮 admin commands</span>
-    `;
-  } else {
-    container.innerHTML = `
-      <span class="qcmd" onclick="setCmd('print(game.Name)')">print game name</span>
-      <span class="qcmd" onclick="setCmd('print(#game.Workspace:GetChildren())')">count workspace</span>
-      <span class="qcmd" onclick="setCmd('game.Lighting.Brightness = 2')">set brightness</span>
-      <span class="qcmd" onclick="setCmd('local p = Instance.new(\"Part\")\\np.Parent = game.Workspace\\np.Size = Vector3.new(4,4,4)')">insert part</span>
-      <span class="qcmd" onclick="setCmd('for _,v in ipairs(game.Workspace:GetChildren()) do\\n  print(v.Name, v.ClassName)\\nend')">list workspace</span>
-      <span class="qcmd" onclick="setCmd('game.Workspace:ClearAllChildren()')">clear workspace</span>
-    `;
-  }
-}
+/* ══ Char count ══ */
+function updateCC(){$('charct').textContent=$('ai-in').value.length+' chars';}
+$('ai-in').addEventListener('input',updateCC);
 
-// ── AI Mode ──
-function aiQuick(prompt) {
-  $('ai-input').value = prompt;
-  handleAIButton();
-}
+/* ══ AI Flow ══ */
+async function handleAI(){if(codeReady){await sendCode();}else{await generate();}}
 
-async function handleAIButton() {
-  if (aiGenerated) {
-    // Already have code, send it
-    await sendGeneratedCode();
-  } else {
-    // Generate first
-    await generateAICode();
-  }
-}
+const THINKS=['Analyzing your request…','Understanding the concept…','Crafting perfect Lua…','Building your world…','Optimizing the code…','Almost ready…'];
 
-async function generateAICode() {
-  const prompt = $('ai-input').value.trim();
-  if (!prompt) { toast('Tell the AI what to do first!', 'bad'); return; }
-
-  // Show thinking
-  $('ai-thinking').classList.add('show');
-  $('ai-code-preview').classList.remove('show');
-  $('ai-generate-btn').disabled = true;
-  $('ai-generate-btn').textContent = '✦ Thinking…';
-  $('regenerate-btn').style.display = 'none';
-
-  const thinkingTexts = [
-    'AI is thinking…',
-    'Crafting Lua code…',
-    'Building your world…',
-    'Almost ready…'
-  ];
-  let ti = 0;
-  const thinkInterval = setInterval(() => {
-    $('ai-thinking-text').textContent = thinkingTexts[ti % thinkingTexts.length];
-    ti++;
-  }, 800);
-
-  addLog('ai', 'request', `"${prompt}"`);
-
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system: AI_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: prompt }]
-      })
+async function generate(){
+  const prompt=$('ai-in').value.trim();
+  if(!prompt){toast('Tell NEXUS what to build!','bad');return;}
+  $('aistate').classList.add('on');
+  $('aithink').style.display='flex';
+  $('aiprev').style.display='none';
+  $('aibtn').disabled=true;$('aibtn').textContent='✦ Thinking…';
+  $('regenbtn').style.display='none';
+  let ti=0;const tint=setInterval(()=>{$('thinkttxt').textContent=THINKS[ti++%THINKS.length];},900);
+  addLog('ai','request',`"${prompt}"`);
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:SYS,messages:[{role:"user",content:prompt}]})
     });
-
-    clearInterval(thinkInterval);
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.error?.message || 'API error');
-
-    const rawText = data.content.map(b => b.text || '').join('');
-
-    // Parse JSON response
+    clearInterval(tint);
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error?.message||'API error');
+    const raw=data.content.map(b=>b.text||'').join('');
     let parsed;
-    try {
-      const clean = rawText.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
-    } catch(e) {
-      // If JSON parse fails, treat the whole response as Lua
-      parsed = { lua: rawText, explanation: 'Generated Lua code.', scriptType: 'build' };
-    }
-
-    generatedLua = parsed.lua;
-
-    // Show code preview
-    $('ai-thinking').classList.remove('show');
-    $('ai-code-preview').classList.add('show');
-    $('ai-code-body').textContent = generatedLua;
-    $('ai-explanation').textContent = '💡 ' + (parsed.explanation || 'Ready to send.');
-
-    aiGenerated = true;
-    $('ai-generate-btn').disabled = false;
-    $('ai-generate-btn').textContent = '▶ Send to Studio';
-    $('ai-generate-btn').classList.remove('ai-send');
-    $('ai-generate-btn').classList.add('send');
-    $('regenerate-btn').style.display = 'flex';
-
-    addLog('ai', 'generated', parsed.explanation || 'Code generated successfully.');
-    toast('✦ Code generated! Click Send to run it.', 'ai');
-
-  } catch(e) {
-    clearInterval(thinkInterval);
-    $('ai-thinking').classList.remove('show');
-    $('ai-generate-btn').disabled = false;
-    $('ai-generate-btn').textContent = '✦ Generate & Send';
-    addLog('err', 'ai-error', 'AI error: ' + e.message);
-    toast('AI failed: ' + e.message, 'bad');
+    try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{parsed={lua:raw,explanation:'Generated Lua code.',complexity:'medium'};}
+    genCode=parsed.lua;
+    $('aithink').style.display='none';$('aiprev').style.display='block';
+    $('aicode').textContent=genCode;
+    $('ainote').textContent='💡 '+parsed.explanation;
+    codeReady=true;
+    $('aibtn').disabled=false;$('aibtn').textContent='▶ Send to Studio';
+    $('aibtn').className='xb prim';
+    $('regenbtn').style.display='flex';
+    addLog('ai','generated',parsed.explanation);
+    toast('✦ Code ready — click Send!','ai');
+  }catch(e){
+    clearInterval(tint);
+    $('aithink').style.display='none';$('aistate').classList.remove('on');
+    $('aibtn').disabled=false;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb purp';
+    addLog('err','ai-fail',e.message);toast('AI error: '+e.message,'bad');
   }
 }
 
-async function regenerateCode() {
-  aiGenerated = false;
-  generatedLua = null;
-  $('ai-generate-btn').textContent = '✦ Generate & Send';
-  $('ai-generate-btn').classList.add('ai-send');
-  $('ai-generate-btn').classList.remove('send');
-  $('ai-code-preview').classList.remove('show');
-  $('regenerate-btn').style.display = 'none';
-  await generateAICode();
-}
-
-async function sendGeneratedCode() {
-  if (!generatedLua) return;
-  addLog('sent', 'ai-lua', generatedLua.substring(0, 120) + (generatedLua.length > 120 ? '…' : ''));
-  $('ai-generate-btn').disabled = true;
-  $('ai-generate-btn').textContent = 'Sending…';
-
-  try {
-    const res = await fetch(BACKEND + '/api/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: sessionToken, type: 'run_script', body: generatedLua })
-    });
-    const d = await res.json();
-    if (!d.ok) throw new Error(d.error || 'Server error');
-
-    let result = null;
-    for (let i = 0; i < 15; i++) {
-      await new Promise(r => setTimeout(r, 1000));
-      const rRes = await fetch(BACKEND + '/api/result/' + sessionToken);
-      const rData = await rRes.json();
-      if (rData.ready) { result = rData; break; }
-    }
-
-    if (result) {
-      addLog(result.success ? 'result' : 'err', 'ai-result', result.output || 'Done!');
-      toast(result.success ? '✅ Done! Check Studio.' : '❌ Studio returned an error.', result.success ? 'ok' : 'bad');
-    } else {
-      addLog('err', 'timeout', 'No response from Studio — is the plugin connected?');
-      toast('No response from Studio.', 'bad');
-    }
-  } catch(e) {
-    addLog('err', 'send-fail', 'Send failed: ' + e.message);
-    toast('Send failed: ' + e.message, 'bad');
-  }
-
-  // Reset for next command
-  $('ai-generate-btn').disabled = false;
-  $('ai-generate-btn').textContent = '✦ Generate & Send';
-  $('ai-generate-btn').classList.add('ai-send');
-  $('ai-generate-btn').classList.remove('send');
-  $('regenerate-btn').style.display = 'none';
-  $('ai-code-preview').classList.remove('show');
-  $('ai-input').value = '';
-  aiGenerated = false;
-  generatedLua = null;
-}
-
-function clearAI() {
-  $('ai-input').value = '';
-  $('ai-code-preview').classList.remove('show');
-  $('ai-thinking').classList.remove('show');
-  $('regenerate-btn').style.display = 'none';
-  $('ai-generate-btn').textContent = '✦ Generate & Send';
-  $('ai-generate-btn').classList.add('ai-send');
-  $('ai-generate-btn').classList.remove('send');
-  $('ai-generate-btn').disabled = false;
-  aiGenerated = false;
-  generatedLua = null;
-}
-
-function copyGeneratedCode() {
-  if (generatedLua) { navigator.clipboard.writeText(generatedLua); toast('Lua code copied!', 'ok'); }
-}
-
-// ── Lua Mode ──
-function setCmd(s){ $('cmd-input').value = s; }
-
-async function sendCommand(){
-  const body = $('cmd-input').value.trim();
-  const type = $('cmd-type').value;
-  if(!body){ toast('Enter a command.','bad'); return; }
-  addLog('sent', type, body);
-  $('cmd-input').value = '';
-  const btn = $('send-btn');
-  btn.disabled = true; btn.textContent = 'Sending…';
-  try {
-    const res = await fetch(BACKEND+'/api/command',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({token:sessionToken,type,body})
-    });
-    const data = await res.json();
-    if(!data.ok) throw new Error(data.error||'Server error');
-    let result = null;
+async function sendCode(){
+  if(!genCode)return;
+  addLog('sent','lua',genCode.substring(0,100)+(genCode.length>100?'…':''));
+  $('aibtn').disabled=true;$('aibtn').textContent='Sending…';
+  try{
+    const r=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,type:'run_script',body:genCode})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'Server error');
+    let result=null;
     for(let i=0;i<15;i++){
       await new Promise(r=>setTimeout(r,1000));
-      const rRes = await fetch(BACKEND+'/api/result/'+sessionToken);
-      const rData = await rRes.json();
-      if(rData.ready){result=rData;break;}
+      const rr=await fetch(BACKEND+'/api/result/'+token);
+      const rd=await rr.json();
+      if(rd.ready){result=rd;break;}
     }
-    if(result){ addLog(result.success?'result':'err',type,result.output); }
-    else { addLog('err',type,'No response from Studio — is the plugin connected?'); }
-  } catch(e){
-    addLog('err',type,'Connection failed: '+e.message);
-    toast('Send failed.','bad');
-  }
-  btn.disabled=false; btn.textContent='▶ Send to Studio';
+    if(result){addLog(result.success?'ok':'err','result',result.output||'Done.');toast(result.success?'✅ Done! Check Studio.':'❌ Studio returned an error.',result.success?'ok':'bad');}
+    else{addLog('err','timeout','No response — is the plugin connected?');toast('No response from Studio.','bad');}
+  }catch(e){addLog('err','send',e.message);toast('Send failed: '+e.message,'bad');}
+  resetAI();
 }
 
-// ── Auth ──
-function step1Next(){
-  const u=$('rbx-username').value.trim();
-  if(!u){$('step1-err').style.display='block';return;}
-  $('step1-err').style.display='none';
-  verifyCode='BRIDGE-'+genToken();
-  $('verify-code').textContent=verifyCode;
-  goStep(2);
+function resetAI(){
+  $('aibtn').disabled=false;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb purp';
+  $('regenbtn').style.display='none';$('aiprev').style.display='none';
+  $('aithink').style.display='none';$('aistate').classList.remove('on');
+  $('ai-in').value='';updateCC();genCode=null;codeReady=false;
+}
+async function regen(){codeReady=false;genCode=null;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb purp';await generate();}
+function clearAI(){resetAI();}
+function copyCode(){if(genCode){navigator.clipboard.writeText(genCode);toast('Code copied!','ok');}}
+
+/* ══ Lua mode ══ */
+async function sendLua(){
+  const body=$('lua-in').value.trim(),type=$('luatype').value;
+  if(!body){toast('Enter Lua code.','bad');return;}
+  addLog('sent',type,body);
+  $('luabtn').disabled=true;$('luabtn').textContent='Sending…';
+  try{
+    const r=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,type,body})});
+    const d=await r.json();if(!d.ok)throw new Error(d.error||'Server error');
+    let result=null;
+    for(let i=0;i<15;i++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+token);const rd=await rr.json();if(rd.ready){result=rd;break;}}
+    if(result){addLog(result.success?'ok':'err',type,result.output);}else{addLog('err',type,'No response from Studio.');}
+  }catch(e){addLog('err',type,e.message);toast('Send failed.','bad');}
+  $('luabtn').disabled=false;$('luabtn').textContent='▶ Send to Studio';
 }
 
-async function step2Verify(){
-  const uname=$('rbx-username').value.trim();
-  const errEl=$('step2-err');
-  errEl.style.display='none';
-  const btn=document.querySelector('#step2 .btn-main.roblox');
-  btn.textContent='Checking…'; btn.disabled=true;
-  await new Promise(r=>setTimeout(r,1400));
-  const verified = true;
-  btn.textContent='Verify ✓'; btn.disabled=false;
-  if(!verified){
-    errEl.textContent='Code not found in profile.';
-    errEl.style.display='block'; return;
-  }
-  user={username:uname,avatar:uname[0].toUpperCase()};
-  sessionToken=genToken()+genToken();
-  $('step3-title').textContent='Welcome, '+uname+'!';
-  $('step3-icon').textContent=uname[0].toUpperCase();
-  $('step3-name').textContent=uname;
-  goStep(3);
+/* ══ Auth ══ */
+function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.display='block';return;}$('s1err').style.display='none';vcode='NEXUS-'+rndT();$('vcode').textContent=vcode;goS(2);}
+async function doVerify(){const btn=$('vbtn');btn.textContent='Checking…';btn.disabled=true;await new Promise(r=>setTimeout(r,1400));btn.textContent='Verify Account ✓';btn.disabled=false;const u=$('rbx-user').value.trim();user={username:u,av:u[0].toUpperCase()};token=rndT()+rndT();$('s3t').textContent='Welcome, '+u+'!';$('s3ic').textContent=u[0].toUpperCase();$('s3n').textContent=u;goS(3);}
+function goS(n){document.querySelectorAll('.astep').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');}
+function enterApp(){sv();$('auth').classList.add('gone');const a=$('app');a.style.display='flex';$('tav').textContent=user.av;$('tuname').textContent=user.username;$('tokval').textContent=token;$('boott').textContent=ts();if(projects.length===0)seedP();renderQF();startPoll();}
+function logout(){user=null;token=null;localStorage.clear();stopPoll();$('app').style.display='none';$('auth').classList.remove('gone');goS(1);$('rbx-user').value='';}
+
+/* ══ Boot ══ */
+ld();
+if(user&&token){goS(3);$('s3t').textContent='Welcome back, '+user.username+'!';$('s3ic').textContent=user.av;$('s3n').textContent=user.username;$('s3s').textContent='Your session is still active.';}
+
+/* ══ Nav ══ */
+function nav(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
+  $('view-'+name).classList.add('on');btn.classList.add('on');
+  if(name==='projects')renderProjects();
 }
 
-function goStep(n){
-  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('active'));
-  $('step'+n).classList.add('active');
+/* ══ Log ══ */
+function addLog(kind,lbl,msg){
+  const inner=$('loginner'),d=document.createElement('div');
+  d.className=`le ${kind}`;
+  d.innerHTML=`<div class="lerow"><span class="letag ${kind}">${kind}</span><span class="lelbl">${lbl}</span><span class="letime">${ts()}</span></div><div class="lebody">${String(msg).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  inner.appendChild(d);inner.scrollTop=inner.scrollHeight;
+  entries.push({kind,lbl,msg});$('logcnt').textContent=entries.length+' entr'+(entries.length===1?'y':'ies');
 }
 
-function enterApp(){
-  save();
-  $('auth').classList.add('gone');
-  $('app').classList.add('show');
-  $('top-avatar').textContent=user.avatar;
-  $('top-uname').textContent=user.username;
-  $('session-token').textContent=sessionToken;
-  $('boot-time').textContent=ts();
-  renderProjects();
-  startPolling();
-  if(projects.length===0) seedProjects();
+/* ══ Poll ══ */
+function startPoll(){pollInt=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+token);const d=await r.json();if(d.connected&&!connected)setConn(true);if(!d.connected&&connected)setConn(false);}catch{}},2000);}
+function stopPoll(){if(pollInt)clearInterval(pollInt);}
+function setConn(v){
+  connected=v;
+  $('tdot').className='tdot '+(v?'on':'wait');
+  $('sdot').className='bigdot '+(v?'on':'wait');
+  $('tconntxt').textContent=v?'Studio connected':'Waiting for plugin';
+  $('sname').textContent=v?'Studio connected':'Waiting for plugin';
+  $('sdesc').textContent=v?'Commands will execute in Roblox Studio.':'Open Studio and activate your plugin.';
+  if(v){toast('Studio plugin connected!','ok');addLog('sys','connection','Plugin connected and ready.');}
 }
 
-function logout(){
-  user=null; sessionToken=null;
-  localStorage.clear();
-  stopPolling();
-  $('app').classList.remove('show');
-  $('auth').classList.remove('gone');
-  goStep(1);
-  $('rbx-username').value='';
-}
-
-// ── Boot ──
-load();
-if(user&&sessionToken){
-  goStep(3);
-  $('step3-title').textContent='Welcome back, '+user.username+'!';
-  $('step3-icon').textContent=user.avatar;
-  $('step3-name').textContent=user.username;
-  $('step3-sub').textContent='Your session is still active.';
-}
-
-// ── Nav ──
-function nav(name, btn){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  $('view-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='projects') renderProjects();
-}
-
-// ── Log ──
-function clearLog(){
-  $('cmd-log-inner').innerHTML=`<div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time">${ts()}</span></div><div class="le-body">Log cleared.</div></div>`;
-  cmdLog=[];
-  $('log-count').textContent='0 entries';
-}
-
-function addLog(kind,label,msg){
-  const inner=$('cmd-log-inner');
-  const div=document.createElement('div');
-  div.className=`log-entry ${kind}`;
-  div.innerHTML=`<div class="le-top"><span class="log-tag ${kind}">${kind}</span><span style="font-size:10px;color:var(--text3);margin-left:6px">${label}</span><span class="le-time">${ts()}</span></div><div class="le-body">${String(msg).replace(/</g,'&lt;')}</div>`;
-  inner.appendChild(div);
-  inner.scrollTop=inner.scrollHeight;
-  cmdLog.push({kind,label,msg});
-  $('log-count').textContent=cmdLog.length+' entr'+(cmdLog.length===1?'y':'ies');
-}
-
-// ── Plugin polling ──
-function startPolling(){
-  pollInterval=setInterval(async()=>{
-    try{
-      const res=await fetch(BACKEND+'/api/ping/'+sessionToken);
-      const data=await res.json();
-      if(data.connected && !pluginConnected) setPluginConnected(true);
-      if(!data.connected && pluginConnected) setPluginConnected(false);
-    }catch(e){}
-  },2000);
-}
-function stopPolling(){ if(pollInterval) clearInterval(pollInterval); }
-
-function setPluginConnected(v){
-  pluginConnected=v;
-  $('plugin-dot').className='status-dot '+(v?'connected':'waiting');
-  $('plugin-status-text').textContent=v?'Studio connected':'Plugin not connected';
-  $('conn-dot').className='conn-big-dot '+(v?'on':'wait');
-  $('conn-label').textContent=v?'Studio connected':'Waiting for plugin';
-  $('conn-sub').textContent=v?'Commands will execute in Roblox Studio.':'Open Roblox Studio and activate your plugin.';
-  if(v){ toast('Studio plugin connected!','ok'); addLog('sys','connection','Plugin connected — session active.'); }
-}
-
-// ── Projects ──
-function seedProjects(){
-  projects=[
-    {id:genId(),name:'Obby Adventure',status:'synced',updated:Date.now()-3600000},
-    {id:genId(),name:'My Tycoon',status:'offline',updated:Date.now()-86400000},
-  ];
-  save();
-}
-
+/* ══ Projects ══ */
+function seedP(){projects=[{id:rndId(),name:'Obby World',status:'synced',t:Date.now()-7200000},{id:rndId(),name:'Tycoon Empire',status:'offline',t:Date.now()-86400000}];sv();}
 function renderProjects(search=''){
-  const grid=$('proj-grid');
-  let list=projects.filter(p=>p.name.toLowerCase().includes(search.toLowerCase())||p.id.toLowerCase().includes(search.toLowerCase()));
-  if(!list.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3)">No projects. Create one.</div>`;return;}
-  grid.innerHTML=list.map(p=>`
-    <div class="proj-card">
-      <div class="proj-name">${p.name}</div>
-      <div class="proj-id">${p.id}</div>
-      <span class="proj-pill ${p.status}">${p.status}</span>
-      <div class="proj-actions">
-        <button class="pact" onclick="syncProj('${p.id}')">↻ Sync</button>
-        <button class="pact del" onclick="deleteProj('${p.id}')">✕</button>
+  const v=$('view-projects');
+  v.style.padding='1.25rem';v.style.overflowY='auto';
+  const total=projects.length,synced=projects.filter(p=>p.status==='synced').length,errs=projects.filter(p=>p.status==='error').length,off=projects.filter(p=>p.status==='offline').length;
+  let list=projects.filter(p=>p.name.toLowerCase().includes((search||'').toLowerCase())||p.id.toLowerCase().includes((search||'').toLowerCase()));
+  v.innerHTML=`
+    <div class="statsrow">
+      <div class="scard"><div class="scardlbl">Total</div><div class="scardnum c">${total}</div></div>
+      <div class="scard"><div class="scardlbl">Synced</div><div class="scardnum g">${synced}</div></div>
+      <div class="scard"><div class="scardlbl">Errors</div><div class="scardnum r">${errs}</div></div>
+      <div class="scard"><div class="scardlbl">Offline</div><div class="scardnum">${off}</div></div>
+    </div>
+    <div class="projhdr">
+      <div class="projhdg">Projects</div>
+      <div class="projctrl">
+        <input class="sbox" placeholder="Search…" value="${search||''}" oninput="renderProjects(this.value)"/>
+        <button class="xb" onclick="openModal()">+ New</button>
       </div>
-    </div>`).join('');
-  $('sp-total').textContent=projects.length;
-  $('sp-synced').textContent=projects.filter(p=>p.status==='synced').length;
-  $('sp-err').textContent=projects.filter(p=>p.status==='error').length;
-  $('sp-off').textContent=projects.filter(p=>p.status==='offline').length;
+    </div>
+    <div class="pgrid">${list.length?list.map(p=>`<div class="pcard"><div class="pname">${p.name}</div><div class="pid">${p.id}</div><span class="ppill ${p.status}">${p.status}</span><div class="pacts"><button class="pact" onclick="syncP('${p.id}')">↻ Sync</button><button class="pact del" onclick="delP('${p.id}')">✕</button></div></div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3)">No projects found.</div>'}</div>`;
 }
+function syncP(id){const p=projects.find(x=>x.id===id);if(!p)return;p.status='synced';p.t=Date.now();sv();renderProjects();toast(`"${p.name}" synced.`,'ok');}
+function delP(id){const p=projects.find(x=>x.id===id);projects=projects.filter(x=>x.id!==id);sv();renderProjects();if(p)toast(`"${p.name}" deleted.`,'info');}
+function createProj(){const name=$('np-name').value.trim();if(!name){toast('Enter a name.','bad');return;}projects.unshift({id:rndId(),name,status:'offline',t:Date.now()});sv();closeModal();renderProjects();$('np-name').value='';toast(`"${name}" created.`,'ok');}
+function openModal(){$('np-id').value=rndId();$('mprojbg').classList.add('open');}
+function closeModal(){$('mprojbg').classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 
-function filterProj(v){renderProjects(v);}
-
-function syncProj(id){
-  const p=projects.find(x=>x.id===id);
-  if(!p) return;
-  p.status='synced'; p.updated=Date.now();
-  save(); renderProjects();
-  toast(`"${p.name}" synced.`,'ok');
-  addLog('sys','sync',`Project "${p.name}" synced.`);
-}
-
-function deleteProj(id){
-  const p=projects.find(x=>x.id===id);
-  projects=projects.filter(x=>x.id!==id);
-  save(); renderProjects();
-  if(p) toast(`"${p.name}" deleted.`,'info');
-}
-
-function createProj(){
-  const name=$('np-name').value.trim();
-  if(!name){toast('Enter a name.','bad');return;}
-  projects.unshift({id:genId(),name,status:'offline',updated:Date.now()});
-  save(); closeModal('new-proj'); renderProjects();
-  $('np-name').value='';
-  toast(`"${name}" created.`,'ok');
-}
-
-// ── Modals ──
-function openModal(n){
-  if(n==='new-proj') $('np-id').value=genId();
-  $('modal-'+n).classList.add('open');
-}
-function closeModal(n){$('modal-'+n).classList.remove('open');}
-document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
-
-// ── Copy ──
-function copyToken(){navigator.clipboard.writeText(sessionToken);toast('Token copied!','ok');}
-function copyText(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
+function copyTok(){navigator.clipboard.writeText(token);toast('Token copied!','ok');}
+function copyTxt(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
 </script>
 </body>
 </html>
