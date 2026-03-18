@@ -497,7 +497,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <script>
 // ── Config ──
 // CHANGE THIS to your backend URL when you deploy server.js
-const BACKEND = "https://your-server.com";
+const BACKEND = "https://enesai-production.up.railway.app";
 
 // ── State ──
 let user = null;
@@ -619,21 +619,24 @@ async function sendCommand(){
   const btn=$('send-btn');
   btn.disabled=true; btn.textContent='Sending…';
 
-  // Real call: POST BACKEND/api/command { token, type, body }
-  // Plugin will pick this up on next poll
   try {
-    // DEMO: simulate round-trip
-    await new Promise(r=>setTimeout(r,600));
-    // Simulate plugin response
-    const fakeResults = {
-      run_script:'Script executed successfully.',
-      eval:'nil',
-      insert_part:'Part inserted into Workspace.',
-      set_property:'Property updated.',
-      delete_instance:'Instance deleted.',
-      get_children:'[Baseplate, Camera, SpawnLocation]'
-    };
-    addLog('result',type, fakeResults[type]||'OK');
+    const res = await fetch(BACKEND+'/api/command',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:sessionToken,type,body})
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error||'Server error');
+    // Poll for result up to 15s
+    let result=null;
+    for(let i=0;i<15;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      const rRes=await fetch(BACKEND+'/api/result/'+sessionToken);
+      const rData=await rRes.json();
+      if(rData.ready){result=rData;break;}
+    }
+    if(result){ addLog(result.success?'result':'err',type,result.output); }
+    else { addLog('err',type,'No response from Studio — is the plugin connected?'); }
   } catch(e){
     addLog('err',type,'Connection failed: '+e.message);
     toast('Send failed.','bad');
@@ -661,13 +664,13 @@ function addLog(kind,label,msg){
 
 // ── Plugin polling (website side) ──
 function startPolling(){
-  // Real implementation: poll BACKEND/api/result/:token for results
-  // and BACKEND/api/ping to check if plugin is alive
-  pollInterval=setInterval(()=>{
-    // Simulated: randomly flip connected after 4s
-    if(!pluginConnected && Math.random()>0.97){
-      setPluginConnected(true);
-    }
+  pollInterval=setInterval(async()=>{
+    try{
+      const res=await fetch(BACKEND+'/api/ping/'+sessionToken);
+      const data=await res.json();
+      if(data.connected && !pluginConnected) setPluginConnected(true);
+      if(!data.connected && pluginConnected) setPluginConnected(false);
+    }catch(e){}
   },2000);
 }
 function stopPolling(){ if(pollInterval) clearInterval(pollInterval); }
