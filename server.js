@@ -7,10 +7,14 @@
 //   2. Plugin GETs /api/poll/:token every 2s, receives the command
 //   3. Plugin executes it in Studio, then POSTs result to /api/result
 //   4. Website GETs /api/result/:token to display the result
+//   5. Website POSTs to /api/ai to generate Lua via Groq (FREE)
 //
 // DEPLOY: Railway, Render, Fly.io, or any Node.js host.
 //   npm init -y && npm install express cors
 //   node server.js
+//
+// ENVIRONMENT VARIABLES:
+//   GROQ_API_KEY = gsk_your_key_here  (get free at groq.com)
 // ============================================================
 
 const express = require("express");
@@ -22,21 +26,78 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// ── In-memory store (replace with Redis or a DB for production) ──
-const pendingCommands = {}; // token -> { type, body, sentAt }
-const results = {};         // token -> { output, receivedAt }
-const sessions = {};        // token -> { username, connectedAt, lastPing }
+// ── In-memory store ──
+const pendingCommands = {};
+const results = {};
+const sessions = {};
 
 // ── Health check ──
 app.get("/", (req, res) => {
-  res.json({ ok: true, service: "studio-bridge", version: "1.0.0" });
+  res.json({ ok: true, service: "studio-bridge", version: "2.0.0" });
+});
+
+// ============================================================
+// ✦ GROQ AI — Generate Roblox Lua from plain English (FREE)
+// POST /api/ai
+// Body: { prompt: string, system: string }
+// Requires GROQ_API_KEY environment variable
+// ============================================================
+app.post("/api/ai", async (req, res) => {
+  const { prompt, system } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ error: "Missing prompt" });
+  }
+
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: "GROQ_API_KEY not set on server. Add it to Railway environment variables." });
+  }
+
+  try {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + apiKey
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        max_tokens: 1500,
+        temperature: 0.3,
+        messages: [
+          {
+            role: "system",
+            content: system || "You are an expert Roblox Lua developer. Generate complete working Lua code."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("[ai] Groq error:", data);
+      return res.status(500).json({ error: data.error?.message || "Groq API error" });
+    }
+
+    const text = data.choices?.[0]?.message?.content || "";
+    console.log(`[ai] Generated ${text.length} chars for prompt: "${prompt.slice(0, 60)}"`);
+
+    // Return in same format as Anthropic so dashboard works unchanged
+    res.json({ content: [{ text }] });
+
+  } catch (err) {
+    console.error("[ai] Fetch error:", err.message);
+    res.status(500).json({ error: "Failed to reach Groq: " + err.message });
+  }
 });
 
 // ── Verify Roblox username ──
-// The plugin polls the Roblox API to check if the user's profile description
-// contains the verification code. In this demo we simulate it.
-// Real implementation: fetch https://users.roblox.com/v1/users/search?keyword=USERNAME
-// then GET https://users.roblox.com/v1/users/:id to read description.
 app.post("/api/verify", async (req, res) => {
   const { username, code } = req.body;
 
@@ -45,7 +106,6 @@ app.post("/api/verify", async (req, res) => {
   }
 
   try {
-    // Step 1: Resolve username -> userId
     const searchRes = await fetch(
       `https://users.roblox.com/v1/usernames/users`,
       {
@@ -61,10 +121,7 @@ app.post("/api/verify", async (req, res) => {
       return res.json({ verified: false, error: "Roblox user not found" });
     }
 
-    // Step 2: Get user profile description
-    const profileRes = await fetch(
-      `https://users.roblox.com/v1/users/${userData.id}`
-    );
+    const profileRes = await fetch(`https://users.roblox.com/v1/users/${userData.id}`);
     const profile = await profileRes.json();
     const description = profile.description || "";
 
@@ -87,8 +144,6 @@ app.post("/api/verify", async (req, res) => {
 });
 
 // ── Website: send command to Studio ──
-// POST /api/command
-// Body: { token: string, type: string, body: string }
 app.post("/api/command", (req, res) => {
   const { token, type, body } = req.body;
 
@@ -96,7 +151,6 @@ app.post("/api/command", (req, res) => {
     return res.status(400).json({ ok: false, error: "Missing token or body" });
   }
 
-  // Store command for plugin to pick up
   pendingCommands[token] = {
     id: Date.now().toString(36),
     type: type || "eval",
@@ -104,7 +158,6 @@ app.post("/api/command", (req, res) => {
     sentAt: Date.now(),
   };
 
-  // Clear old result for this token
   delete results[token];
 
   console.log(`[command] token=${token} type=${type}`);
@@ -112,12 +165,9 @@ app.post("/api/command", (req, res) => {
 });
 
 // ── Plugin: poll for pending commands ──
-// GET /api/poll/:token
-// Plugin calls this every 2 seconds from Studio
 app.get("/api/poll/:token", (req, res) => {
   const { token } = req.params;
 
-  // Register/update session ping
   sessions[token] = {
     ...(sessions[token] || {}),
     lastPing: Date.now(),
@@ -129,15 +179,12 @@ app.get("/api/poll/:token", (req, res) => {
     return res.json({ hasCommand: false });
   }
 
-  // Return and clear — plugin will execute it
   delete pendingCommands[token];
   console.log(`[poll] Delivering command to plugin: token=${token} type=${cmd.type}`);
   res.json({ hasCommand: true, command: cmd });
 });
 
 // ── Plugin: post execution result back ──
-// POST /api/result
-// Body: { token: string, commandId: string, output: string, success: boolean }
 app.post("/api/result", (req, res) => {
   const { token, commandId, output, success } = req.body;
 
@@ -157,7 +204,6 @@ app.post("/api/result", (req, res) => {
 });
 
 // ── Website: check for result ──
-// GET /api/result/:token
 app.get("/api/result/:token", (req, res) => {
   const { token } = req.params;
   const r = results[token];
@@ -166,13 +212,11 @@ app.get("/api/result/:token", (req, res) => {
     return res.json({ ready: false });
   }
 
-  // Deliver result once
   delete results[token];
   res.json({ ready: true, ...r });
 });
 
-// ── Check if plugin is connected (website polls this) ──
-// GET /api/ping/:token
+// ── Check if plugin is connected ──
 app.get("/api/ping/:token", (req, res) => {
   const { token } = req.params;
   const session = sessions[token];
@@ -180,7 +224,7 @@ app.get("/api/ping/:token", (req, res) => {
   if (!session) return res.json({ connected: false });
 
   const age = Date.now() - session.lastPing;
-  const connected = age < 6000; // consider connected if pinged in last 6s
+  const connected = age < 6000;
 
   res.json({ connected, lastPing: session.lastPing });
 });
@@ -189,25 +233,22 @@ app.get("/api/ping/:token", (req, res) => {
 setInterval(() => {
   const now = Date.now();
   for (const token in sessions) {
-    if (now - sessions[token].lastPing > 30000) {
-      delete sessions[token];
-    }
+    if (now - sessions[token].lastPing > 30000) delete sessions[token];
   }
-  // Clean stale commands older than 30s
   for (const token in pendingCommands) {
-    if (now - pendingCommands[token].sentAt > 30000) {
-      delete pendingCommands[token];
-    }
+    if (now - pendingCommands[token].sentAt > 30000) delete pendingCommands[token];
   }
 }, 60000);
 
 app.listen(PORT, () => {
   console.log(`Studio Bridge server running on port ${PORT}`);
   console.log(`Endpoints:`);
+  console.log(`  POST /api/ai           — Groq AI Lua generation (FREE)`);
   console.log(`  POST /api/command      — website sends command`);
   console.log(`  GET  /api/poll/:token  — plugin polls for command`);
   console.log(`  POST /api/result       — plugin posts result`);
   console.log(`  GET  /api/result/:token — website gets result`);
   console.log(`  POST /api/verify       — verify Roblox username`);
   console.log(`  GET  /api/ping/:token  — check plugin connection`);
+  console.log(`Groq AI: ${process.env.GROQ_API_KEY ? "✓ API key found" : "✗ GROQ_API_KEY not set!"}`);
 });
