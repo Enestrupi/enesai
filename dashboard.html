@@ -153,6 +153,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .le-time{font-size:10px;color:var(–text3);margin-left:auto}
 .le-body{color:var(–text2);font-size:11px;line-height:1.5;word-break:break-all}
 
+/* EXAMPLES */
+.examples-row{border-top:0.5px solid var(–bg3);flex-shrink:0;background:var(–bg);padding:8px 0}
+.ex-scroll{display:flex;gap:6px;overflow-x:auto;padding:0 14px;-webkit-overflow-scrolling:touch}
+.ex-scroll::-webkit-scrollbar{display:none}
+.ex-btn{background:var(–bg2);border:0.5px solid var(–bg3);color:var(–text2);border-radius:20px;padding:7px 13px;font-size:11px;cursor:pointer;font-family:var(–ff);white-space:nowrap;flex-shrink:0;transition:all .15s;font-weight:700;line-height:1}
+.ex-btn:active{transform:scale(.95)}
+.ex-btn:hover{border-color:var(–g);color:var(–g);background:var(–gdim)}
+
 /* TOAST */
 #toasts{position:fixed;bottom:20px;left:14px;right:14px;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
 .toast{background:var(–bg2);border:0.5px solid var(–bg3);border-radius:var(–r8);padding:10px 14px;font-size:12px;animation:tin .2s ease;pointer-events:auto}
@@ -229,7 +237,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     <div class="astep" id="s3">
       <h2 id="s3t">Welcome!</h2><p id="s3s">You're in.</p>
       <div class="rbxrow">
-        <img class="s3img" id="s3img" src="" alt=""/>
+        <img class="s3img" id="s3img" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''"/>
         <div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:3px;font-size:15px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account ✓</span></div>
       </div>
       <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
@@ -243,7 +251,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div class="topbar">
     <div class="t-logo"><span class="t-pip"></span>NEXUS</div>
     <div class="t-conn"><span class="t-dot wait" id="tdot"></span><span id="tconntxt">No plugin</span></div>
-    <div class="t-user"><img class="t-avatar" id="tav" src="" alt=""/><span class="t-uname" id="tuname">—</span><span class="t-logout" onclick="logout()">⏻</span></div>
+    <div class="t-user"><img class="t-avatar" id="tav" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''" /><span class="t-uname" id="tuname">—</span><span class="t-logout" onclick="logout()">⏻</span></div>
   </div>
 
   <div class="main">
@@ -288,17 +296,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     </div>
   </div>
 
-  <!-- Quick Fire -->
-  <div class="qf">
-    <div class="qf-tabs" id="qftabs">
-      <button class="qf-tab on" onclick="qfTab(this,'build')">🏗 Build</button>
-      <button class="qf-tab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
-      <button class="qf-tab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
-      <button class="qf-tab" onclick="qfTab(this,'lighting')">🌅 Sky</button>
-      <button class="qf-tab" onclick="qfTab(this,'gui')">📱 GUI</button>
-      <button class="qf-tab" onclick="qfTab(this,'game')">🎮 Game</button>
-    </div>
-    <div class="qf-grid" id="qfgrid"></div>
+  <!-- Examples -->
+  <div class="examples-row">
+    <div class="ex-scroll" id="exscroll"></div>
   </div>
 
   <!-- Log -->
@@ -427,73 +427,49 @@ UNDERSTOOD SLANG: baseplate=512x512 grass Part, obby=obstacle course, tycoon=plo
 RESPONSE: ONLY this JSON, no markdown, no backticks:
 {"lua":"complete executable code with \\n for newlines","explanation":"2-3 sentences: what was built, where scripts go, important notes."}`;
 
-/* ══ QUICK FIRE ══ */
-const QF={
-  build:[
-    {l:'🌿 Grass Base',p:'create a perfect 512x512 grass baseplate anchored at 0,0,0 with LeafyGrass material bright green'},
-    {l:'☠️ Kill Brick',p:'create a glowing red neon kill brick with server script that kills any player who touches it'},
-    {l:'🟢 Spawn Point',p:'create a styled spawn location with team color and spawn pad visual'},
-    {l:'🚪 Tween Door',p:'create a door that smoothly tweens open 90 degrees when touched and closes after 3 seconds'},
-    {l:'🌀 Teleporter',p:'create two linked neon teleporter pads that teleport players between each other'},
-    {l:'💎 Floating Gem',p:'create a spinning floating neon gem that bobs up and down with particle effects'},
-    {l:'🧱 Wall',p:'build a long solid wall 60 studs wide 12 studs tall with brick material'},
-    {l:'🚀 Launch Pad',p:'create a metallic launch pad that launches players into the air with BodyVelocity on touch'},
-  ],
-  terrain:[
-    {l:'🌴 Tropical Island',p:'generate a photorealistic tropical island with LeafyGrass terrain, sand beach ring, surrounding ocean water, palm trees, rock cliffs, cinematic sunset lighting with Atmosphere and Bloom'},
-    {l:'🏔 Mountains',p:'generate realistic mountain range with stacked FillBall rock formations, snow caps, grass base, misty Atmosphere, dramatic lighting with fog'},
-    {l:'🌊 Ocean World',p:'fill a massive ocean with water terrain, sandy islands, coral-colored rocks, underwater caves carved with Air, tropical lighting'},
-    {l:'🌋 Volcano',p:'build a dramatic volcano with CrackedLava and Rock terrain, neon lava glow parts at crater, ash Atmosphere, dark red apocalyptic lighting'},
-    {l:'❄️ Arctic',p:'create an arctic landscape with Glacier and Snow terrain, ice formations, frozen water, blizzard Atmosphere with white fog'},
-    {l:'🌿 Forest',p:'generate a dense forest with FillCylinder trunks, FillBall canopy, varied heights, morning light Atmosphere with god rays'},
-    {l:'🏜 Desert',p:'create rolling sand dune desert with Sand terrain, rock formations, scorching bright lighting, heat haze Atmosphere'},
-    {l:'🕳 Cave System',p:'carve an underground cave system using Air FillBall, add stalagmites with Limestone parts, dim atmospheric lighting'},
-  ],
-  scripts:[
-    {l:'🏆 Leaderstats + Save',p:'create complete leaderstats with Coins and Level, full DataStoreService save and load system with pcall error handling, key by UserId'},
-    {l:'👮 Admin System',p:'create full admin command system: server Script in ServerScriptService, chat listener, /kick /ban /kill /heal /god /speed /tp /freeze /announce commands with admin table'},
-    {l:'💀 Round System',p:'create complete round system: intermission 15s, active round 120s, gameover 5s, StringValue status in ReplicatedStorage, LocalScript UI showing countdown'},
-    {l:'🤖 NPC Pathfinding',p:'create humanoid NPC Model that uses PathfindingService to chase nearest player within 80 studs, attacks with damage on reach, has health bar BillboardGui'},
-    {l:'🛒 Shop System',p:'create complete shop: ScreenGui with items grid, buy buttons, RemoteEvent to server, deduct coins from leaderstats, confirmation with tween animation'},
-    {l:'⚔️ Combat Tool',p:'create sword Tool with LocalScript Activated event, RemoteEvent to server, server-side hitbox Region3 detection, 30 damage, swing animation'},
-    {l:'🐣 Pet System',p:'create pet system: each player gets glowing orb pet that follows with smooth Lerp on Heartbeat, bounces up and down, particles trail'},
-    {l:'🔫 Gun Tool',p:'create gun Tool: LocalScript fires RemoteEvent on Activated, server raycast from barrel, 25 damage to Humanoid, bullet trail Beam effect'},
-  ],
-  lighting:[
-    {l:'🌅 Cinematic Sunset',p:'apply photorealistic sunset: ClockTime 19, warm orange Ambient, Atmosphere with warm haze and glow, Bloom, ColorCorrection warm saturation, SunRaysEffect'},
-    {l:'🌙 Dark Night',p:'apply cinematic night: ClockTime 2, dark blue Ambient, Sky with 5000 stars, dense Atmosphere, DepthOfField blur, dim Bloom'},
-    {l:'☀️ Perfect Day',p:'apply bright clear day: ClockTime 14, high Brightness, blue Ambient, light Atmosphere, crisp ColorCorrection, SunRaysEffect'},
-    {l:'🌫 Spooky Fog',p:'apply dense eerie fog: gray Atmosphere Density 0.8, FogEnd 150, dark Ambient, desaturated ColorCorrection, low Brightness'},
-    {l:'🔴 Apocalypse',p:'apply apocalyptic sky: red-tinted everything, dark red Atmosphere, FogEnd 300, Bloom with red, ColorCorrection high contrast low saturation'},
-    {l:'🌈 Golden Hour',p:'apply perfect golden hour: ClockTime 17.5, warm golden Ambient, Atmosphere Color gold, Glare 1.5, Bloom, warm ColorCorrection'},
-    {l:'❄️ Winter',p:'apply winter lighting: white Ambient, cool blue sky, Atmosphere with white haze, ColorCorrection cold blue tint, crisp shadows'},
-    {l:'🌧 Storm',p:'apply stormy atmosphere: dark gray Ambient, dense gray Atmosphere, FogEnd 200, low Brightness, dark FogColor, heavy Bloom'},
-  ],
-  gui:[
-    {l:'🖥 Main Menu',p:'create beautiful main menu ScreenGui: dark bg, large animated title with UIGradient, Play button that slides in with TweenService Back easing, Settings button, animated background particles'},
-    {l:'❤️ Health Bar',p:'create animated health bar LocalScript: bottom center, UICorner rounded, color changes red when low, smooth Tween on health change, shows HP number'},
-    {l:'🪙 Coin HUD',p:'create coin display LocalScript: top right corner, UIStroke glow border, coin icon ImageLabel, smooth number tween on change, UIGradient dark bg'},
-    {l:'📊 Leaderboard',p:'create in-game leaderboard GUI: top 10 players by coins, updates every 10s, rank numbers, smooth slide-in animation, UIListLayout'},
-    {l:'⚙️ Settings Menu',p:'create settings GUI: toggle switches for Music SFX Graphics, volume sliders, UICorner everywhere, smooth open/close animation, saves to LocalPlayer attributes'},
-    {l:'🏆 Victory Screen',p:'create victory screen GUI: centered frame slides in with Back easing, player stats, animated fireworks particles, Play Again button'},
-    {l:'📦 Inventory',p:'create inventory GUI: 5x4 UIGridLayout grid, slot frames with UIStroke, item name tooltip on hover, opens with E key LocalScript, smooth animation'},
-    {l:'💬 Custom Chat',p:'create custom chat GUI: dark scrolling message history, rounded input box, send button, LocalScript handles input, server broadcasts via RemoteEvent'},
-  ],
-  game:[
-    {l:'🎮 Full Obby',p:'generate complete obby: 30 platforms with varying sizes heights gaps colors materials, 5 moving platforms with TweenService, 3 kill brick sections, checkpoint system, glowing finish platform'},
-    {l:'⚔️ Battle Arena',p:'build complete PvP arena: 100x100 flat concrete floor, 4 walls, 8 cover objects, 4 spawn points, lava kill edges, neon accent lighting'},
-    {l:'🏭 Tycoon Base',p:'build tycoon layout: personal 200x200 plot, dropper that generates parts, conveyor belt, collector that gives coins, upgrade button pad, team color boundary'},
-    {l:'🎯 Shooting Range',p:'build shooting range: 5 moving target dummies on TweenService rails, lane barriers, score GUI LocalScript, reset button'},
-    {l:'🧩 Puzzle Room',p:'build puzzle: 4 pressure plate Parts with Touched scripts, all must be activated to open door via BindableEvent, indicator lights turn green'},
-    {l:'🏎 Race Track',p:'generate oval race track: FillBlock track surface, barrier walls, 8 checkpoint triggers, lap counter LocalScript GUI, start line with countdown'},
-  ]
-};
+/* ══ EXAMPLES ══ */
+const EXAMPLES=[
+  {l:'🌿 Grass Base',p:'create a perfect 512x512 grass baseplate anchored at 0,0,0 LeafyGrass material bright green'},
+  {l:'🌴 Tropical Island',p:'photorealistic tropical island LeafyGrass terrain sand beach ocean water palm trees rock cliffs sunset Atmosphere Bloom ColorCorrection SunRaysEffect'},
+  {l:'🏔 Mountains',p:'realistic mountain range stacked rock FillBall snow caps grass base cinematic fog atmosphere dramatic lighting Bloom'},
+  {l:'🌋 Volcano',p:'dramatic volcano CrackedLava Rock terrain neon lava glow crater ash atmosphere dark red apocalyptic lighting'},
+  {l:'❄️ Arctic',p:'arctic landscape Glacier Snow terrain ice formations frozen water blizzard atmosphere white fog dim blue lighting DepthOfField'},
+  {l:'🌿 Forest',p:'dense forest FillCylinder trunks FillBall canopy varied heights morning light atmosphere god rays SunRaysEffect Bloom'},
+  {l:'🌊 Ocean',p:'massive ocean water terrain sandy islands coral rocks underwater caves carved with Air tropical sunset lighting'},
+  {l:'🏜 Desert',p:'rolling sand dune desert Sand terrain rock formations scorching bright lighting heat haze Atmosphere'},
+  {l:'☠️ Kill Brick',p:'glowing red neon kill brick server Script kills any player who touches it instantly'},
+  {l:'🚪 Tween Door',p:'door that smoothly tweens open 90 degrees when touched closes after 3 seconds TweenService'},
+  {l:'🌀 Teleporter',p:'two linked neon cyan teleporter pads teleport players between each other debounce'},
+  {l:'💎 Floating Gem',p:'spinning floating neon gem bobs up and down particle effects PointLight glow'},
+  {l:'🏆 Leaderstats+Save',p:'complete leaderstats Coins Level full DataStoreService save load pcall error handling key by UserId'},
+  {l:'👮 Admin System',p:'full admin command system server Script ServerScriptService kick ban kill heal god speed tp freeze announce'},
+  {l:'💀 Round System',p:'complete round system intermission 15s active 120s gameover 5s StringValue status LocalScript countdown UI'},
+  {l:'🤖 NPC Pathfinding',p:'humanoid NPC PathfindingService chases nearest player attacks on reach health bar BillboardGui'},
+  {l:'🛒 Shop GUI',p:'complete shop ScreenGui items grid buy buttons RemoteEvent server deduct coins leaderstats animated UICorner'},
+  {l:'⚔️ Sword Tool',p:'sword Tool LocalScript Activated RemoteEvent server hitbox Region3 30 damage swing animation'},
+  {l:'🐣 Pet System',p:'pet system each player gets glowing orb pet follows smooth Lerp Heartbeat bounces particles trail'},
+  {l:'🔫 Gun Tool',p:'gun Tool LocalScript RemoteEvent Activated server raycast 25 damage bullet trail Beam effect'},
+  {l:'🌅 Sunset Sky',p:'photorealistic sunset ClockTime 19 warm Atmosphere Bloom ColorCorrection SunRaysEffect golden ambient'},
+  {l:'🌙 Night Sky',p:'cinematic night ClockTime 2 dark blue Ambient Sky 5000 stars DepthOfField dense Atmosphere Bloom'},
+  {l:'🌫 Dense Fog',p:'spooky dense fog Atmosphere Density 0.8 FogEnd 150 dark Ambient desaturated ColorCorrection'},
+  {l:'🔴 Apocalypse',p:'apocalyptic red sky red Atmosphere FogEnd 300 Bloom red ColorCorrection high contrast'},
+  {l:'🌈 Golden Hour',p:'perfect golden hour ClockTime 17.5 warm golden Ambient Atmosphere Glare Bloom warm ColorCorrection'},
+  {l:'🖥 Main Menu',p:'beautiful animated main menu ScreenGui dark bg large title UIGradient Play button slides in TweenService Back easing'},
+  {l:'❤️ Health Bar',p:'animated health bar LocalScript bottom center UICorner color changes red when low smooth Tween HP number'},
+  {l:'🪙 Coin HUD',p:'coin display LocalScript top right UIStroke glow border smooth number tween UIGradient dark bg'},
+  {l:'📊 Leaderboard',p:'in-game leaderboard GUI top 10 players by coins updates every 10s rank numbers slide-in animation'},
+  {l:'🎮 Full Obby',p:'complete obby 30 platforms varying sizes heights colors materials 5 moving TweenService 3 kill brick sections checkpoint finish'},
+  {l:'⚔️ Battle Arena',p:'complete PvP arena 100x100 concrete floor walls 8 cover objects 4 spawn points lava kill edges neon lighting'},
+  {l:'🏭 Tycoon',p:'tycoon layout personal plot dropper conveyor belt collector gives coins upgrade button pad team color boundary'},
+  {l:'🧩 Puzzle Room',p:'puzzle room 4 pressure plate Parts all activated simultaneously open door BindableEvent indicator lights green'},
+];
 
-/* ══ Quick fire ══ */
-let activeQF='build';
-function qfTab(el,cat){document.querySelectorAll('.qf-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');activeQF=cat;renderQF();}
-function renderQF(){$('qfgrid').innerHTML=QF[activeQF].map(q=>`<button class="qf-btn" onclick="qfFire(${JSON.stringify(q.p)})">${q.l}</button>`).join('');}
-function qfFire(p){$('cmd-in').value=p;handleMain();}
+function initExamples(){
+  const el=$('exscroll');
+  if(!el)return;
+  el.innerHTML=EXAMPLES.map(e=>`<button class="ex-btn" onclick="exFire(${JSON.stringify(e.p)})">${e.l}</button>`).join('');
+}
+function exFire(p){$('cmd-in').value=p;handleMain();}
 
 /* ══ Main flow ══ */
 async function handleMain(){
@@ -635,15 +611,15 @@ async function doVerify(){
 function goS(n){document.querySelectorAll('.astep').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');}
 
 function enterApp(){
-  sv();
+  try{sv();}catch{}
   $('auth').classList.add('gone');
   $('app').classList.add('show');
-  if(user.avatarUrl){$('tav').src=user.avatarUrl;}
+  try{if(user.avatarUrl&&user.avatarUrl!='')$('tav').src=user.avatarUrl;}catch{}
   $('tuname').textContent=user.username;
-  $('tokval').textContent=token;
+  try{$('tokval').textContent=token;}catch{}
   $('boott').textContent=ts();
   if(projects.length===0)seedP();
-  renderQF();
+  initExamples();
   startPoll();
 }
 
@@ -655,14 +631,16 @@ function logout(){
 }
 
 /* ══ Boot ══ */
-ld();
-if(user&&token){
-  goS(3);
-  $('s3t').textContent='Welcome back, '+user.username+'!';
-  if(user.avatarUrl)$('s3img').src=user.avatarUrl;
-  $('s3n').textContent=user.username;
-  $('s3s').textContent='Session active — tap to continue.';
-}
+try{
+  ld();
+  if(user&&token){
+    goS(3);
+    $('s3t').textContent='Welcome back, '+user.username+'!';
+    try{if(user.avatarUrl&&user.avatarUrl!='')$('s3img').src=user.avatarUrl;}catch{}
+    $('s3n').textContent=user.username;
+    $('s3s').textContent='Session active — tap to continue.';
+  }
+}catch(e){console.log('Boot error:',e);goS(1);}
 
 /* ══ Log ══ */
 function addLog(kind,lbl,msg){
