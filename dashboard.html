@@ -3,1818 +3,548 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>NEXUS — Roblox AI Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>NEXUS — Roblox AI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Syne:wght@800;900&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#020408;--bg2:#060c12;--bg3:#0a1220;--bg4:#0f1a2e;
-  --border:rgba(0,200,255,0.06);--border2:rgba(0,200,255,0.12);--border3:rgba(0,200,255,0.22);
-  --c:#00c8ff;--c2:#0090cc;--cglow:rgba(0,200,255,0.15);--cglow2:rgba(0,200,255,0.35);
-  --g:#00ffaa;--gdim:rgba(0,255,170,0.08);--gglow:rgba(0,255,170,0.3);
-  --r:#ff3355;--rdim:rgba(255,51,85,0.08);
+  --bg:#020408;--bg2:#080d18;--bg3:#0d1525;--bg4:#121c30;
+  --c:#00c8ff;--c2:#0090bb;--cglow:rgba(0,200,255,0.2);
+  --g:#00ffaa;--gdim:rgba(0,255,170,0.1);--gglow:rgba(0,255,170,0.3);
+  --r:#ff3355;--rdim:rgba(255,51,85,0.1);
   --o:#ffaa00;
-  --p:#cc44ff;--pdim:rgba(204,68,255,0.1);--pglow:rgba(204,68,255,0.3);
-  --text:#d0e8ff;--text2:#5a7a99;--text3:#2a3a4a;
+  --p:#cc44ff;--pdim:rgba(204,68,255,0.12);--pglow:rgba(204,68,255,0.35);
+  --text:#d0e8ff;--text2:#4a6a88;--text3:#1e3045;
   --rblx:#e31e25;
   --ff:'JetBrains Mono',monospace;--ffd:'Syne',sans-serif;
-  --rad:8px;--radlg:14px;
+  --r8:8px;--r12:12px;--r20:20px;
 }
-html{background:var(--bg);color:var(--text);font-family:var(--ff);font-size:13px;line-height:1.6}
-body{min-height:100vh;overflow:hidden}
-::-webkit-scrollbar{width:2px;height:2px}
-::-webkit-scrollbar-thumb{background:var(--border2)}
-.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
-.bg-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:48px 48px}
-.bg-g1{position:absolute;top:-20%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(0,200,255,0.04) 0%,transparent 65%);animation:dr1 18s ease-in-out infinite alternate}
-.bg-g2{position:absolute;bottom:-20%;right:-10%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(204,68,255,0.04) 0%,transparent 65%);animation:dr2 22s ease-in-out infinite alternate}
-@keyframes dr1{to{transform:translate(5%,3%) scale(1.1)}}
-@keyframes dr2{to{transform:translate(-4%,-5%) scale(1.15)}}
-.scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px)}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ff);font-size:13px;overflow:hidden}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--bg4)}
+
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,200,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.04) 1px,transparent 1px);background-size:40px 40px}
+.bg-g1{position:absolute;top:-30%;left:-20%;width:70%;height:70%;background:radial-gradient(ellipse,rgba(0,200,255,0.05) 0%,transparent 60%);animation:df1 20s ease-in-out infinite alternate}
+.bg-g2{position:absolute;bottom:-30%;right:-20%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(204,68,255,0.05) 0%,transparent 60%);animation:df2 25s ease-in-out infinite alternate}
+@keyframes df1{to{transform:translate(8%,5%) scale(1.15)}}
+@keyframes df2{to{transform:translate(-6%,-8%) scale(1.2)}}
+
 #root{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
 
 /* AUTH */
-#auth{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(–bg)}
+#auth{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:var(–bg)}
 #auth.gone{display:none}
-.aw{width:420px}
-.alogo{font-family:var(–ffd);font-size:30px;font-weight:900;color:var(–c);margin-bottom:4px;display:flex;align-items:center;gap:10px}
-.alogo-dot{width:11px;height:11px;background:var(–c);border-radius:50%;box-shadow:0 0 20px var(–c),0 0 40px var(–cglow2);animation:pd 2s ease-in-out infinite}
-@keyframes pd{0%,100%{box-shadow:0 0 20px var(–c),0 0 40px var(–cglow2)}50%{box-shadow:0 0 30px var(–c),0 0 60px var(–cglow2)}}
-.asub{font-size:11px;color:var(–text2);margin-bottom:2rem;letter-spacing:.06em;text-transform:uppercase}
-.acard{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–radlg);padding:2rem;position:relative;overflow:hidden}
-.acard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.4}
-.acard::after{content:’’;position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(–cglow) 0%,transparent 70%);pointer-events:none}
-.acard h2{font-family:var(–ffd);font-size:16px;font-weight:800;margin-bottom:.25rem}
-.acard p{font-size:11px;color:var(–text2);margin-bottom:1.5rem;line-height:1.7}
-.field{margin-bottom:1rem}
+.auth-logo{font-family:var(–ffd);font-size:36px;font-weight:900;color:var(–c);margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.auth-pip{width:12px;height:12px;background:var(–c);border-radius:50%;box-shadow:0 0 20px var(–c);animation:pip 2s ease-in-out infinite}
+@keyframes pip{0%,100%{box-shadow:0 0 15px var(–c)}50%{box-shadow:0 0 30px var(–c),0 0 60px var(–cglow)}}
+.auth-sub{font-size:11px;color:var(–text2);margin-bottom:24px;letter-spacing:.1em;text-transform:uppercase}
+.auth-card{background:var(–bg2);border:0.5px solid rgba(0,200,255,0.15);border-radius:var(–r12);padding:24px;width:100%;max-width:400px;position:relative;overflow:hidden}
+.auth-card::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.5}
+.auth-card h2{font-family:var(–ffd);font-size:18px;font-weight:800;margin-bottom:6px}
+.auth-card p{font-size:12px;color:var(–text2);margin-bottom:20px;line-height:1.7}
+.field{margin-bottom:14px}
 .field label{display:block;font-size:10px;color:var(–text2);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase}
-.field input{width:100%;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:11px 13px;font-family:var(–ff);font-size:13px;color:var(–text);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input{width:100%;background:var(–bg3);border:0.5px solid rgba(0,200,255,0.15);border-radius:var(–r8);padding:12px 14px;font-family:var(–ff);font-size:14px;color:var(–text);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
 .field input:focus{border-color:var(–c);box-shadow:0 0 0 2px var(–cglow)}
 .field input::placeholder{color:var(–text3)}
-.anote{font-size:11px;color:var(–text2);background:var(–bg3);border:0.5px solid var(–border);border-radius:var(–rad);padding:11px 13px;margin-bottom:1rem;line-height:1.7}
-.anote code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 6px;color:var(–c);font-size:10px}
-.abtn{width:100%;background:var(–c);color:#020408;border:none;border-radius:var(–rad);padding:12px;font-family:var(–ffd);font-weight:800;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.abtn:hover{background:var(–c2);box-shadow:0 0 24px var(–cglow2)}
+.anote{font-size:12px;color:var(–text2);background:var(–bg3);border:0.5px solid var(–bg4);border-radius:var(–r8);padding:12px;margin-bottom:14px;line-height:1.8}
+.anote code{background:var(–bg4);border-radius:3px;padding:1px 6px;color:var(–c);font-size:11px}
+.abtn{width:100%;background:var(–c);color:#020408;border:none;border-radius:var(–r8);padding:14px;font-family:var(–ffd);font-weight:800;font-size:13px;letter-spacing:.05em;cursor:pointer;transition:all .15s;text-transform:uppercase;-webkit-appearance:none}
+.abtn:active{transform:scale(.97)}
+.abtn:hover{background:var(–c2);box-shadow:0 0 24px var(–cglow)}
 .abtn.rblx{background:var(–rblx);color:white}
-.abtn.rblx:hover{box-shadow:0 0 24px rgba(227,30,37,0.4);background:#c01920}
-.abtn.ghost{background:var(–bg3);color:var(–text2);border:0.5px solid var(–border2)}
+.abtn.rblx:hover{background:#c01920}
+.abtn.ghost{background:var(–bg3);color:var(–text2);border:0.5px solid rgba(0,200,255,0.15)}
 .abtn.ghost:hover{border-color:var(–c);color:var(–c);box-shadow:none}
+.aerr{color:var(–r);font-size:12px;margin-top:8px;display:none;line-height:1.5}
 .astep{display:none}.astep.on{display:block}
-.aerr{color:var(–r);font-size:11px;margin-top:8px;display:none}
-.rbxrow{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:.875rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
-.rbxic{width:38px;height:38px;border-radius:var(–rad);background:var(–rblx);display:flex;align-items:center;justify-content:center;font-family:var(–ffd);font-weight:900;font-size:16px;color:white;flex-shrink:0}
+.rbxrow{background:var(–bg3);border:0.5px solid var(–bg4);border-radius:var(–r8);padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.s3img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(–rblx);flex-shrink:0;border:2px solid var(–c)}
+.skip-link{display:block;text-align:center;margin-top:12px;font-size:11px;color:var(–text2);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:var(–ff);width:100%}
+
+/* APP */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
 
 /* TOPBAR */
-.topbar{height:50px;border-bottom:0.5px solid var(–border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:rgba(2,4,8,0.95);backdrop-filter:blur(12px);flex-shrink:0;z-index:10;position:relative}
-.topbar::after{content:’’;position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–border2),transparent)}
-.tlogo{font-family:var(–ffd);font-size:16px;font-weight:900;color:var(–c);display:flex;align-items:center;gap:8px}
-.tlogo-pip{width:8px;height:8px;background:var(–c);border-radius:50%;box-shadow:0 0 12px var(–c);animation:pd 2s ease-in-out infinite}
-.tdiv{width:1px;height:20px;background:var(–border2)}
-.ttag{font-size:10px;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
-.tconn{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(–bg3);border:0.5px solid var(–border);border-radius:20px;font-size:11px;color:var(–text2);margin-left:auto}
-.tdot{width:6px;height:6px;border-radius:50%;background:var(–text3);transition:all .3s;flex-shrink:0}
-.tdot.on{background:var(–g);box-shadow:0 0 8px var(–gglow)}
-.tdot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
+.topbar{height:54px;background:rgba(2,4,8,0.95);backdrop-filter:blur(12px);border-bottom:0.5px solid var(–bg3);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;position:relative;z-index:10}
+.topbar::after{content:’’;position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,255,0.2),transparent)}
+.t-logo{font-family:var(–ffd);font-size:18px;font-weight:900;color:var(–c);display:flex;align-items:center;gap:7px}
+.t-pip{width:7px;height:7px;background:var(–c);border-radius:50%;box-shadow:0 0 10px var(–c);animation:pip 2s ease-in-out infinite;flex-shrink:0}
+.t-conn{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(–bg2);border:0.5px solid var(–bg3);border-radius:20px;font-size:10px;color:var(–text2);margin-left:auto}
+.t-dot{width:5px;height:5px;border-radius:50%;background:var(–text3);flex-shrink:0;transition:all .3s}
+.t-dot.on{background:var(–g);box-shadow:0 0 8px var(–gglow)}
+.t-dot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.tuser{display:flex;align-items:center;gap:8px;padding:5px 11px;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);cursor:pointer}
-.tuser:hover{border-color:var(–border3)}
-.tav{width:22px;height:22px;border-radius:50%;background:var(–rblx);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
-.tuname{font-size:12px}
-.tlogout{color:var(–text3);font-size:11px;margin-left:2px;cursor:pointer}
-.tlogout:hover{color:var(–r)}
+.t-user{display:flex;align-items:center;gap:8px;padding:4px 10px;background:var(–bg2);border:0.5px solid var(–bg3);border-radius:var(–r8)}
+.t-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;background:var(–rblx);flex-shrink:0}
+.t-uname{font-size:11px;color:var(–text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-logout{color:var(–text3);font-size:12px;margin-left:2px;cursor:pointer;flex-shrink:0}
 
-/* LAYOUT */
-.appbody{flex:1;display:flex;overflow:hidden}
-.sidebar{width:210px;min-width:210px;border-right:0.5px solid var(–border);display:flex;flex-direction:column;background:rgba(2,4,8,0.8);overflow-y:auto;flex-shrink:0}
-.ngrp{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–text3)}
-.nbtn{display:flex;align-items:center;gap:9px;padding:8px .875rem;margin:1px .5rem;border-radius:var(–rad);cursor:pointer;color:var(–text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(–ff)}
-.nbtn:hover{background:var(–bg3);color:var(–text)}
-.nbtn.on{background:rgba(0,200,255,0.08);color:var(–c);border:0.5px solid rgba(0,200,255,.15)}
-.nico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
-.npill{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:3px;background:var(–gdim);color:var(–g);font-weight:700}
-.ai-box{margin:.75rem .75rem 0;background:linear-gradient(135deg,rgba(0,200,255,0.04),rgba(204,68,255,0.05));border:0.5px solid rgba(0,200,255,0.14);border-radius:var(–rad);padding:.75rem;position:relative;overflow:hidden}
-.ai-box::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,var(–c),var(–p));opacity:.25}
-.ai-box-title{font-family:var(–ffd);font-size:11px;font-weight:800;background:linear-gradient(90deg,var(–c),var(–p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
-.ai-box-desc{font-size:10px;color:var(–text2);line-height:1.6}
-.aiorb{width:6px;height:6px;border-radius:50%;background:var(–g);box-shadow:0 0 10px var(–gglow);display:inline-block;margin-right:5px;animation:pd 2s ease-in-out infinite}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-.carea{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.view{display:none;flex:1;overflow:hidden}
-.view.on{display:flex;flex-direction:column}
+/* INPUT ZONE */
+.input-zone{padding:14px 14px 10px;flex-shrink:0;background:var(–bg)}
+.input-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.input-title{font-family:var(–ffd);font-size:15px;font-weight:800;display:flex;align-items:center;gap:7px}
+.input-pip{width:7px;height:7px;border-radius:50%;background:var(–g);box-shadow:0 0 10px var(–gglow);animation:pip 2s ease-in-out infinite}
+.conn-badge{display:flex;align-items:center;gap:5px;padding:4px 9px;background:var(–bg2);border:0.5px solid var(–bg3);border-radius:20px;font-size:10px;color:var(–text2)}
 
-/* COMMAND VIEW */
-.clayout{flex:1;display:grid;grid-template-columns:1fr 310px;overflow:hidden}
-.cmain{display:flex;flex-direction:column;overflow:hidden;border-right:0.5px solid var(–border)}
-.cside{display:flex;flex-direction:column;overflow:hidden}
+/* THE ONE INPUT */
+.cmd-box{background:var(–bg2);border:0.5px solid rgba(0,200,255,0.15);border-radius:var(–r12);padding:14px;margin-bottom:10px;transition:border-color .2s,box-shadow .2s;position:relative}
+.cmd-box:focus-within{border-color:var(–g);box-shadow:0 0 0 2px var(–gdim),0 0 20px var(–gdim)}
+.cmd-textarea{width:100%;background:transparent;border:none;outline:none;font-family:var(–ff);font-size:14px;color:var(–text);resize:none;line-height:1.6;min-height:90px;max-height:160px;-webkit-appearance:none}
+.cmd-textarea::placeholder{color:var(–text3)}
+.cmd-hint{font-size:10px;color:var(–text3);margin-top:6px;line-height:1.5}
 
-.inzone{padding:1.1rem;border-bottom:0.5px solid var(–border);flex-shrink:0}
-.inhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
-.intitle{font-family:var(–ffd);font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
-.intitle-pip{width:8px;height:8px;border-radius:50%;background:var(–g);box-shadow:0 0 12px var(–gglow);animation:pd 2s ease-in-out infinite}
-.chips{display:flex;gap:4px;background:var(–bg3);border:0.5px solid var(–border);border-radius:20px;padding:3px}
-.chip{padding:4px 12px;border-radius:14px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(–text2);font-family:var(–ff);transition:all .2s}
-.chip.on{background:var(–bg4);color:var(–c);border:0.5px solid rgba(0,200,255,0.2)}
-.chip.on.ai{color:var(–g);border-color:rgba(0,255,170,0.2);background:var(–gdim)}
-.biwrap{position:relative;margin-bottom:.75rem}
-.biinput{width:100%;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:13px;font-family:var(–ff);font-size:13px;color:var(–text);outline:none;resize:none;transition:border-color .25s,box-shadow .25s;min-height:95px;line-height:1.6}
-.biinput:focus{border-color:var(–g);box-shadow:0 0 0 2px var(–gdim)}
-.biinput.lua:focus{border-color:var(–c);box-shadow:0 0 0 2px var(–cglow)}
-.biinput::placeholder{color:var(–text3)}
-.bi-corner{position:absolute;bottom:9px;right:10px;font-size:10px;color:var(–text3)}
-
-.aistate{margin-bottom:.75rem;display:none;flex-direction:column;gap:6px}
-.aistate.on{display:flex}
-.aithink{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(–gdim);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–rad);font-size:11px;color:var(–g)}
+/* AI STATE */
+.ai-state{margin-bottom:10px;display:none;flex-direction:column;gap:6px}
+.ai-state.on{display:flex}
+.ai-think{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(–gdim);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–r8);font-size:12px;color:var(–g)}
 .dots{display:flex;gap:3px}
 .dots i{width:5px;height:5px;background:var(–g);border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
-.dots i:nth-child(2){animation-delay:.18s}
-.dots i:nth-child(3){animation-delay:.36s}
+.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
 @keyframes dot{0%,100%{transform:scale(.5);opacity:.4}50%{transform:scale(1);opacity:1}}
-.aipreview{background:var(–bg3);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–rad);overflow:hidden}
-.aipreview-head{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(–gdim);border-bottom:0.5px solid rgba(0,255,170,0.15)}
-.aipreview-lbl{font-size:10px;color:var(–g);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.aipreview-code{padding:10px 11px;font-size:11px;color:var(–text2);white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
-.aipreview-note{padding:7px 11px;border-top:0.5px solid var(–border);font-size:11px;color:var(–text2);line-height:1.5;background:rgba(0,0,0,0.2)}
+.ai-preview{background:var(–bg2);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–r8);overflow:hidden}
+.ai-preview-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(–gdim);border-bottom:0.5px solid rgba(0,255,170,0.1)}
+.ai-preview-lbl{font-size:10px;color:var(–g);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.ai-preview-code{padding:10px 12px;font-size:11px;color:var(–text2);white-space:pre-wrap;word-break:break-all;max-height:120px;overflow-y:auto;line-height:1.6}
+.ai-preview-note{padding:8px 12px;border-top:0.5px solid var(–bg3);font-size:11px;color:var(–text2);line-height:1.5}
 
-.actbar{display:flex;gap:7px;align-items:center}
-.xb{background:var(–bg3);border:0.5px solid var(–border2);color:var(–text2);border-radius:var(–rad);padding:8px 13px;font-family:var(–ff);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.xb:hover{border-color:var(–c);color:var(–c)}
-.xb.d:hover{border-color:var(–r);color:var(–r)}
-.xb.prim{background:var(–c);color:#020408;border-color:var(–c);font-weight:700;margin-left:auto}
-.xb.prim:hover{background:var(–c2);box-shadow:0 0 20px var(–cglow2)}
-.xb.grn{background:var(–g);color:#020408;border-color:var(–g);font-weight:700;margin-left:auto}
-.xb.grn:hover{background:#00dd88;box-shadow:0 0 20px var(–gglow)}
-.xb.grn:disabled,.xb.prim:disabled{background:var(–bg4);color:var(–text3);border-color:var(–border);cursor:not-allowed;box-shadow:none}
-.ltype{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:8px 10px;font-family:var(–ff);font-size:11px;color:var(–text2);outline:none}
+/* ACTIONS */
+.actions{display:flex;gap:8px;margin-bottom:10px}
+.btn{border:0.5px solid var(–bg3);border-radius:var(–r8);padding:10px 14px;font-family:var(–ff);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap;-webkit-appearance:none;font-weight:700}
+.btn:active{transform:scale(.97)}
+.btn.clear{background:var(–bg2);color:var(–text2)}
+.btn.clear:hover{border-color:var(–r);color:var(–r)}
+.btn.retry{background:var(–bg2);color:var(–text2);display:none}
+.btn.go{background:var(–g);color:#020408;border-color:var(–g);margin-left:auto;flex:1;justify-content:center}
+.btn.go:hover{background:#00dd88;box-shadow:0 0 20px var(–gglow)}
+.btn.send{background:var(–c);color:#020408;border-color:var(–c);margin-left:auto;flex:1;justify-content:center}
+.btn.send:hover{background:var(–c2);box-shadow:0 0 20px var(–cglow)}
+.btn:disabled{background:var(–bg3) !important;color:var(–text3) !important;border-color:var(–bg3) !important;cursor:not-allowed !important;box-shadow:none !important;transform:none !important}
 
-.qfire{border-bottom:0.5px solid var(–border);flex-shrink:0}
-.qftabs{display:flex;padding:.5rem .875rem 0;gap:2px;overflow-x:auto}
-.qftab{padding:5px 11px;font-size:10px;color:var(–text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(–ff)}
-.qftab.on{color:var(–c);border-bottom-color:var(–c)}
-.qfgrid{padding:.625rem .875rem;display:flex;flex-wrap:wrap;gap:5px;max-height:80px;overflow-y:auto}
-.qfbtn{background:var(–bg3);border:0.5px solid var(–border);color:var(–text2);border-radius:20px;padding:4px 11px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(–ff);white-space:nowrap}
-.qfbtn:hover{border-color:var(–g);color:var(–g);background:var(–gdim)}
+/* QUICK FIRE */
+.qf{border-top:0.5px solid var(–bg3);flex-shrink:0;background:var(–bg)}
+.qf-tabs{display:flex;overflow-x:auto;padding:8px 14px 0;gap:2px;-webkit-overflow-scrolling:touch}
+.qf-tabs::-webkit-scrollbar{display:none}
+.qf-tab{padding:6px 12px;font-size:11px;color:var(–text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(–ff);font-weight:700;flex-shrink:0;transition:all .15s}
+.qf-tab.on{color:var(–g);border-bottom-color:var(–g)}
+.qf-grid{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:8px 14px;-webkit-overflow-scrolling:touch}
+.qf-grid::-webkit-scrollbar{display:none}
+.qf-btn{background:var(–bg2);border:0.5px solid var(–bg3);color:var(–text2);border-radius:20px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:var(–ff);white-space:nowrap;flex-shrink:0;transition:all .15s;font-weight:700}
+.qf-btn:active{transform:scale(.95)}
+.qf-btn:hover{border-color:var(–g);color:var(–g);background:var(–gdim)}
 
-.logzone{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
-.loghead{padding:.6rem 1rem;border-bottom:0.5px solid var(–border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.logtitle{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
-.loginner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:5px}
-.le{padding:8px 10px;border-radius:var(–rad);font-size:12px;border-left:2px solid var(–text3);background:var(–bg3);animation:lein .15s ease}
+/* LOG */
+.log-zone{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.log-head{padding:8px 14px;border-top:0.5px solid var(–bg3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(–bg)}
+.log-title{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
+.log-inner{flex:1;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:5px;-webkit-overflow-scrolling:touch}
+.le{padding:8px 10px;border-radius:var(–r8);font-size:12px;border-left:2px solid var(–text3);background:var(–bg2);animation:lein .15s ease}
 @keyframes lein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .le.ai{border-left-color:var(–g)}.le.sent{border-left-color:var(–c)}.le.ok{border-left-color:var(–g)}.le.err{border-left-color:var(–r)}.le.sys{border-left-color:var(–text3)}
-.lerow{display:flex;align-items:center;gap:7px;margin-bottom:3px}
-.letag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
-.letag.ai{background:var(–gdim);color:var(–g)}.letag.sent{background:rgba(0,200,255,0.08);color:var(–c)}.letag.ok{background:var(–gdim);color:var(–g)}.letag.err{background:var(–rdim);color:var(–r)}.letag.sys{background:var(–bg4);color:var(–text3)}
-.lelbl{font-size:10px;color:var(–text3)}.letime{font-size:10px;color:var(–text3);margin-left:auto}
-.lebody{color:var(–text2);font-size:11px;line-height:1.5;word-break:break-all}
+.le-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.le-tag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase}
+.le-tag.ai{background:var(–gdim);color:var(–g)}.le-tag.sent{background:rgba(0,200,255,0.08);color:var(–c)}.le-tag.ok{background:var(–gdim);color:var(–g)}.le-tag.err{background:var(–rdim);color:var(–r)}.le-tag.sys{background:var(–bg3);color:var(–text3)}
+.le-time{font-size:10px;color:var(–text3);margin-left:auto}
+.le-body{color:var(–text2);font-size:11px;line-height:1.5;word-break:break-all}
 
-.sconn{padding:1rem;border-bottom:0.5px solid var(–border);flex-shrink:0}
-.sconnrow{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
-.bigdot{width:11px;height:11px;border-radius:50%;background:var(–text3);flex-shrink:0;transition:all .3s}
-.bigdot.on{background:var(–g);box-shadow:0 0 12px var(–gglow)}
-.bigdot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
-.connname{font-family:var(–ffd);font-size:13px;font-weight:800}
-.conndesc{font-size:11px;color:var(–text2);line-height:1.5}
-.tokrow{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.toklbl{font-size:9px;color:var(–text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
-.tokval{font-size:12px;color:var(–c);letter-spacing:.06em}
-.cpybtn{font-size:10px;color:var(–text3);cursor:pointer;padding:2px 7px;border:0.5px solid var(–border);border-radius:3px;transition:all .15s;white-space:nowrap;background:none}
-.cpybtn:hover{border-color:var(–c);color:var(–c)}
-.ssetup{flex:1;overflow-y:auto;padding:1rem}
-.setuptitle{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
-.ss{display:flex;gap:10px;margin-bottom:.875rem;align-items:flex-start}
-.ssnum{width:20px;height:20px;border-radius:50%;background:var(–bg4);border:0.5px solid var(–border2);font-size:10px;color:var(–text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.sstitle{font-size:12px;color:var(–text);font-weight:700;margin-bottom:2px}
-.ssdesc{font-size:11px;color:var(–text2);line-height:1.5}
-.ssdesc code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 5px;color:var(–c);font-size:10px}
-.sscode{background:var(–bg3);border:0.5px solid var(–border);border-radius:var(–rad);padding:7px 9px;margin-top:5px;font-size:10px;color:var(–c);font-family:var(–ff);word-break:break-all;position:relative;padding-right:52px}
-
-.projview{flex:1;overflow-y:auto;padding:1.25rem;flex-direction:column}
-.statsrow{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
-.scard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);padding:.875rem 1rem;position:relative;overflow:hidden}
-.scard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–border2),transparent)}
-.scardlbl{font-size:9px;color:var(–text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
-.scardnum{font-family:var(–ffd);font-size:24px;font-weight:900;line-height:1}
-.scardnum.c{color:var(–c)}.scardnum.g{color:var(–g)}.scardnum.r{color:var(–r)}
-.projhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.projhdg{font-family:var(–ffd);font-size:14px;font-weight:800}
-.projctrl{display:flex;gap:7px}
-.sbox{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–rad);padding:6px 11px;font-family:var(–ff);font-size:12px;color:var(–text);outline:none;width:180px}
-.sbox:focus{border-color:var(–c)}
-.sbox::placeholder{color:var(–text3)}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem}
-.pcard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);padding:.875rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.pcard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–cglow),transparent);opacity:0;transition:opacity .2s}
-.pcard:hover{border-color:var(–border2);transform:translateY(-2px)}.pcard:hover::before{opacity:1}
-.pname{font-family:var(–ffd);font-size:12px;font-weight:700;margin-bottom:3px}
-.pid{font-size:10px;color:var(–text3);margin-bottom:8px}
-.ppill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
-.ppill.synced{background:var(–gdim);color:var(–g)}.ppill.offline{background:var(–bg4);color:var(–text3)}.ppill.error{background:var(–rdim);color:var(–r)}
-.pacts{display:flex;gap:5px;margin-top:9px}
-.pact{flex:1;background:var(–bg3);border:0.5px solid var(–border);color:var(–text2);border-radius:var(–rad);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(–ff)}
-.pact:hover{border-color:var(–c);color:var(–c)}.pact.del:hover{border-color:var(–r);color:var(–r)}
-
-.setupview{flex:1;overflow-y:auto;padding:1.25rem}
-.setup-inner{max-width:580px}
-.setup-h{font-family:var(–ffd);font-size:16px;font-weight:800;margin-bottom:1.25rem}
-.icard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);overflow:hidden;margin-bottom:.875rem}
-.icardh{padding:.75rem 1rem;border-bottom:0.5px solid var(–border);font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
-.icardb{padding:1rem;font-size:12px;color:var(–text2);line-height:1.8}
-.icardb code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 6px;color:var(–c);font-size:11px}
-.icardb strong{color:var(–text)}
-
-.overlay{position:fixed;inset:0;background:rgba(2,4,8,0.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–radlg);padding:1.5rem;width:400px;position:relative;transform:scale(.97) translateY(6px);transition:transform .2s}
-.overlay.open .modal{transform:none}
-.modal::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.4}
-.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(–text3);cursor:pointer;font-size:14px}
-.modal-x:hover{color:var(–r)}
-.modal-title{font-family:var(–ffd);font-size:15px;font-weight:800;margin-bottom:.25rem}
-.modal-sub{font-size:11px;color:var(–text2);margin-bottom:1.25rem}
-.modal-btns{display:flex;gap:7px;margin-top:1rem}
-.modal-btns .xb{flex:1;justify-content:center}
-
-#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
-.toast{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–rad);padding:9px 14px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:210px;pointer-events:auto}
+/* TOAST */
+#toasts{position:fixed;bottom:20px;left:14px;right:14px;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
+.toast{background:var(–bg2);border:0.5px solid var(–bg3);border-radius:var(–r8);padding:10px 14px;font-size:12px;animation:tin .2s ease;pointer-events:auto}
 .toast.ok{border-left:2px solid var(–g)}.toast.bad{border-left:2px solid var(–r)}.toast.info{border-left:2px solid var(–c)}.toast.ai{border-left:2px solid var(–g)}
-@keyframes tin{from{opacity:0;transform:translateX(10px) scale(.97)}to{opacity:1;transform:none}}
-@media(max-width:900px){.clayout{grid-template-columns:1fr}.cside{display:none}.statsrow{grid-template-columns:1fr 1fr}}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(2,4,8,0.9);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(–bg2);border:0.5px solid rgba(0,200,255,0.15);border-radius:var(–r12) var(–r12) 0 0;padding:20px;width:100%;max-width:500px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative}
+.modal::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.4}
+.overlay.open .modal{transform:translateY(0)}
+.modal-pill{width:36px;height:4px;background:var(–bg4);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:var(–ffd);font-size:16px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(–text2);margin-bottom:16px}
+.modal-btns{display:flex;gap:8px;margin-top:14px}
+.modal-btns .btn{flex:1;justify-content:center}
+
+/* CONNECTION PANEL (hidden on mobile, shown on wider) */
+.side-conn{display:none}
+@media(min-width:768px){
+.main{flex-direction:row}
+.left-col{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:0.5px solid var(–bg3)}
+.side-conn{display:flex;flex-direction:column;width:280px;overflow-y:auto;padding:14px;gap:10px}
+.conn-card{background:var(–bg2);border:0.5px solid var(–bg3);border-radius:var(–r12);padding:14px}
+.conn-card-title{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.bigdot{width:10px;height:10px;border-radius:50%;background:var(–text3);flex-shrink:0;transition:all .3s}
+.bigdot.on{background:var(–g);box-shadow:0 0 10px var(–gglow)}
+.bigdot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
+.conn-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.conn-name{font-family:var(–ffd);font-size:13px;font-weight:800}
+.conn-desc{font-size:11px;color:var(–text2);line-height:1.5}
+.tok-row{background:var(–bg3);border:0.5px solid var(–bg4);border-radius:var(–r8);padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.tok-lbl{font-size:9px;color:var(–text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.tok-val{font-size:11px;color:var(–c);letter-spacing:.06em;word-break:break-all}
+.cpybtn{font-size:10px;color:var(–text3);cursor:pointer;padding:2px 7px;border:0.5px solid var(–bg4);border-radius:3px;background:none;font-family:var(–ff);flex-shrink:0}
+.cpybtn:hover{border-color:var(–c);color:var(–c)}
+.setup-steps{background:var(–bg2);border:0.5px solid var(–bg3);border-radius:var(–r12);padding:14px}
+.setup-step{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start}
+.step-num{width:18px;height:18px;border-radius:50%;background:var(–bg3);border:0.5px solid var(–bg4);font-size:10px;color:var(–text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-title{font-size:12px;color:var(–text);font-weight:700;margin-bottom:2px}
+.step-desc{font-size:11px;color:var(–text2);line-height:1.5}
+.step-desc code{background:var(–bg3);border-radius:3px;padding:1px 5px;color:var(–c);font-size:10px}
+.step-code{background:var(–bg3);border-radius:var(–r8);padding:6px 8px;margin-top:4px;font-size:10px;color:var(–c);word-break:break-all;position:relative;padding-right:48px}
+.qf-grid{flex-wrap:wrap}
+}
 </style>
 
 </head>
 <body>
-<div class="bg-canvas"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div><div class="scanline"></div></div>
+<div class="bg"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div></div>
 
 <!-- AUTH -->
 
 <div id="auth">
-  <div class="aw">
-    <div class="alogo"><span class="alogo-dot"></span>NEXUS</div>
-    <div class="asub">Roblox AI Studio Bridge — Free Forever</div>
-    <div class="acard">
-      <div class="astep on" id="s1">
-        <h2>Connect your account</h2>
-        <p>Enter your Roblox username to link this dashboard to your Studio.</p>
-        <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourRobloxName" autocomplete="off"/></div>
-        <div class="aerr" id="s1err">Please enter your username.</div>
-        <button class="abtn" onclick="s1next()">Continue →</button>
+  <div class="auth-logo"><span class="auth-pip"></span>NEXUS</div>
+  <div class="auth-sub">Roblox AI Studio</div>
+  <div class="auth-card">
+    <div class="astep on" id="s1">
+      <h2>Connect</h2>
+      <p>Enter your Roblox username to get started.</p>
+      <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourUsername" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/></div>
+      <div class="aerr" id="s1err">Please enter your username.</div>
+      <button class="abtn" onclick="s1next()">Continue →</button>
+    </div>
+    <div class="astep" id="s2">
+      <h2>Verify</h2>
+      <p>Add this code to your Roblox profile to prove it's yours.</p>
+      <div class="anote">1. Go to <strong>roblox.com</strong> → Edit Profile<br/>2. Paste in <strong>About</strong>: <code id="vcode">NEXUS-XXXXXX</code><br/>3. Save, then tap Verify.</div>
+      <div class="aerr" id="s2err"></div>
+      <div style="display:flex;gap:8px"><button class="abtn ghost" style="flex:.38" onclick="goS(1)">← Back</button><button class="abtn rblx" style="flex:1" id="vbtn" onclick="doVerify()">Verify ✓</button></div>
+      <button class="skip-link" onclick="skipVerify()">Skip verification</button>
+    </div>
+    <div class="astep" id="s3">
+      <h2 id="s3t">Welcome!</h2><p id="s3s">You're in.</p>
+      <div class="rbxrow">
+        <img class="s3img" id="s3img" src="" alt=""/>
+        <div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:3px;font-size:15px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account ✓</span></div>
       </div>
-      <div class="astep" id="s2">
-        <h2>Verify your account</h2>
-        <p>Paste this code in your Roblox <strong>profile description</strong> to verify.</p>
-        <div class="anote">1. Go to <strong>roblox.com</strong> → Edit profile<br/>2. Paste in <strong>About</strong>: <code id="vcode">NEXUS-XXXXXX</code><br/>3. Save, then click Verify below.</div>
-        <div class="aerr" id="s2err"></div>
-        <div style="display:flex;gap:8px"><button class="abtn ghost" style="flex:.38" onclick="goS(1)">← Back</button><button class="abtn rblx" style="flex:1" id="vbtn" onclick="doVerify()">Verify Account ✓</button></div>
-        <div style="margin-top:10px;text-align:center"><button onclick="skipVerify()" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:var(--ff)">Skip verification (use if stuck)</button></div>
-      </div>
-      <div class="astep" id="s3">
-        <h2 id="s3t">Welcome!</h2><p id="s3s">Account verified.</p>
-        <div class="rbxrow"><img id="s3ic" src="" style="width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--bg3);flex-shrink:0"/><div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:2px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account verified ✓</span></div></div>
-        <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
-      </div>
+      <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
     </div>
   </div>
 </div>
 
 <!-- APP -->
 
-<div id="app" style="display:none;height:100vh;flex-direction:column">
+<div id="app">
   <div class="topbar">
-    <div class="tlogo"><span class="tlogo-pip"></span>NEXUS</div>
-    <div class="tdiv"></div><div class="ttag">Roblox Studio — Free AI Engine</div>
-    <div class="tconn"><span class="tdot wait" id="tdot"></span><span id="tconntxt">Waiting for plugin</span></div>
-    <div class="tuser"><img id="tav" src="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;background:var(--rblx);flex-shrink:0"/><span class="tuname" id="tuname">—</span><span class="tlogout" onclick="logout()" title="Sign out">⏻</span></div>
+    <div class="t-logo"><span class="t-pip"></span>NEXUS</div>
+    <div class="t-conn"><span class="t-dot wait" id="tdot"></span><span id="tconntxt">No plugin</span></div>
+    <div class="t-user"><img class="t-avatar" id="tav" src="" alt=""/><span class="t-uname" id="tuname">—</span><span class="t-logout" onclick="logout()">⏻</span></div>
   </div>
-  <div class="appbody">
-    <aside class="sidebar">
-      <div class="ngrp">Workspace</div>
-      <button class="nbtn on" onclick="nav('cmd',this)"><span class="nico">◈</span>Command<span class="npill">FREE</span></button>
-      <button class="nbtn" onclick="nav('projects',this)"><span class="nico">⬡</span>Projects</button>
-      <div class="ngrp">System</div>
-      <button class="nbtn" onclick="nav('setup',this)"><span class="nico">⚙</span>Setup Guide</button>
-      <div class="ai-box">
-        <div class="ai-box-title"><span class="aiorb"></span>Local Engine</div>
-        <div class="ai-box-desc">100% free, no API keys, works offline. Built-in Roblox expert — understands 150+ commands and combines them for complex requests.</div>
+
+  <div class="main">
+    <!-- Left / Main column -->
+    <div class="left-col" id="left-col">
+
+```
+  <!-- Input Zone -->
+  <div class="input-zone">
+    <div class="input-header">
+      <div class="input-title"><span class="input-pip"></span>NEXUS AI</div>
+      <div class="conn-badge"><span class="t-dot wait" id="conn-dot2"></span><span id="conn-txt2">Waiting</span></div>
+    </div>
+
+    <div class="cmd-box">
+      <textarea class="cmd-textarea" id="cmd-in" rows="4" placeholder="Type anything — NEXUS understands it all:
+```
+
+✦ photorealistic island with mountains water and sunset
+✦ beautiful animated main menu GUI with blur
+✦ full admin system with kick ban speed god
+✦ complete shop with GUI coins and datastore
+✦ NPC that pathfinds and attacks players
+✦ obby with 30 platforms moving parts and kills”></textarea>
+<div class="cmd-hint" id="cmd-hint">Powered by Groq AI — free & instant ⚡</div>
+</div>
+
+```
+    <div class="ai-state" id="aistate">
+      <div class="ai-think" id="aithink"><div class="dots"><i></i><i></i><i></i></div><span id="thinktxt">Thinking…</span></div>
+      <div class="ai-preview" id="aiprev" style="display:none">
+        <div class="ai-preview-head"><span class="ai-preview-lbl">✦ Generated Lua</span><button class="cpybtn" onclick="copyCode()" style="display:block">copy</button></div>
+        <div class="ai-preview-code" id="aicode"></div>
+        <div class="ai-preview-note" id="ainote"></div>
       </div>
-    </aside>
-    <div class="carea">
-      <div id="view-cmd" class="view on">
-        <div class="clayout">
-          <div class="cmain">
-            <div class="inzone">
-              <div class="inhead">
-                <div class="intitle"><span class="intitle-pip"></span>Command Center</div>
-                <div class="chips">
-                  <button class="chip on ai" id="chip-ai" onclick="setMode('ai')">✦ Smart</button>
-                  <button class="chip" id="chip-lua" onclick="setMode('lua')">⟨/⟩ Lua</button>
-                </div>
-              </div>
-              <div id="ai-ui">
-                <div class="biwrap">
-                  <textarea class="biinput" id="ai-in" rows="4" placeholder="Describe what you want — plain English, anything:
+    </div>
 
-✦ ‘photorealistic tropical island with 4K terrain, water, fog and sunset’
-✦ ‘beautiful main menu GUI with animations and blur effect’
-✦ ‘full admin system with server and localscript’
-✦ ‘complete shop system with GUI, RemoteEvents, and datastore’
-✦ ‘realistic mountain range with snow peaks and cinematic lighting’
-✦ ‘NPC with pathfinding that follows and attacks players’
-✦ ‘full round system with intermission, timer, and leaderboard GUI’”></textarea>
-<span class="bi-corner" id="charct">0</span>
+    <div class="actions">
+      <button class="btn clear" onclick="clearAll()">✕</button>
+      <button class="btn retry" id="retrybtn" onclick="retry()">↻ Retry</button>
+      <button class="btn go" id="mainbtn" onclick="handleMain()">✦ Generate &amp; Send</button>
+    </div>
+  </div>
+
+  <!-- Quick Fire -->
+  <div class="qf">
+    <div class="qf-tabs" id="qftabs">
+      <button class="qf-tab on" onclick="qfTab(this,'build')">🏗 Build</button>
+      <button class="qf-tab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
+      <button class="qf-tab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
+      <button class="qf-tab" onclick="qfTab(this,'lighting')">🌅 Sky</button>
+      <button class="qf-tab" onclick="qfTab(this,'gui')">📱 GUI</button>
+      <button class="qf-tab" onclick="qfTab(this,'game')">🎮 Game</button>
+    </div>
+    <div class="qf-grid" id="qfgrid"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="log-zone">
+    <div class="log-head"><span class="log-title">Log</span><span style="font-size:10px;color:var(--text3)" id="logcnt">0 entries</span></div>
+    <div class="log-inner" id="loginner">
+      <div class="le sys"><div class="le-row"><span class="le-tag sys">sys</span><span class="le-time" id="boott"></span></div><div class="le-body">NEXUS ready. Type anything and tap Generate &amp; Send.</div></div>
+    </div>
+  </div>
 </div>
-<div class="aistate" id="aistate">
-<div class="aithink" id="aithink"><div class="dots"><i></i><i></i><i></i></div><span id="thinkttxt">Processing…</span></div>
-<div class="aipreview" id="aiprev" style="display:none">
-<div class="aipreview-head"><span class="aipreview-lbl">✦ Generated Lua</span><button class="cpybtn" onclick="copyCode()">copy</button></div>
-<div class="aipreview-code" id="aicode"></div>
-<div class="aipreview-note" id="ainote"></div>
+
+<!-- Right / Connection panel (desktop only) -->
+<div class="side-conn">
+  <div class="conn-card">
+    <div class="conn-card-title">Studio Connection</div>
+    <div class="conn-row"><div class="bigdot wait" id="sdot"></div><div><div class="conn-name" id="sname">Waiting for plugin</div><div class="conn-desc" id="sdesc">Open Studio and activate plugin.</div></div></div>
+    <div class="tok-row"><div><div class="tok-lbl">Token</div><div class="tok-val" id="tokval">—</div></div><button class="cpybtn" onclick="copyTok()">copy</button></div>
+  </div>
+  <div class="setup-steps">
+    <div class="conn-card-title">Plugin Setup</div>
+    <div class="setup-step"><div class="step-num">1</div><div><div class="step-title">Download plugin</div><div class="step-desc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in your Studio plugins folder.</div></div></div>
+    <div class="setup-step"><div class="step-num">2</div><div><div class="step-title">Set backend URL</div><div class="step-code">https://enesai-production.up.railway.app<button class="cpybtn" style="position:absolute;top:5px;right:5px" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
+    <div class="setup-step"><div class="step-num">3</div><div><div class="step-title">Paste token</div><div class="step-desc">Copy your token above into the plugin field in Studio.</div></div></div>
+    <div class="setup-step"><div class="step-num">4</div><div><div class="step-title">Activate</div><div class="step-desc">Click NEXUS in Studio toolbar. Dot turns <span style="color:var(--g)">green</span>.</div></div></div>
+  </div>
 </div>
-</div>
-<div class="actbar">
-<button class="xb d" onclick="clearAI()">✕ Clear</button>
-<button class="xb" id="regenbtn" style="display:none" onclick="regen()">↻ Retry</button>
-<button class="xb grn" id="aibtn" onclick="handleAI()">✦ Generate & Send</button>
-</div>
-</div>
-<div id="lua-ui" style="display:none">
-<div class="biwrap"><textarea class="biinput lua" id="lua-in" rows="4" placeholder="Write raw Lua…"></textarea></div>
-<div class="actbar">
-<button class="xb d" onclick="$('lua-in').value=''">✕ Clear</button>
-<select class="ltype" id="luatype"><option value="run_script">Run Script</option><option value="eval">Eval Lua</option><option value="insert_part">Insert Part</option><option value="set_property">Set Property</option><option value="delete_instance">Delete Instance</option><option value="get_children">Get Children</option></select>
-<button class="xb prim" id="luabtn" onclick="sendLua()">▶ Send to Studio</button>
-</div>
-</div>
-</div>
-<div class="qfire">
-<div class="qftabs">
-<button class="qftab on" onclick="qfTab(this,'build')">🏗 Build</button>
-<button class="qftab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
-<button class="qftab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
-<button class="qftab" onclick="qfTab(this,'lighting')">🌅 Lighting</button>
-<button class="qftab" onclick="qfTab(this,'gui')">📱 GUI</button>
-<button class="qftab" onclick="qfTab(this,'game')">🎮 Game</button>
-</div>
-<div class="qfgrid" id="qfgrid"></div>
-</div>
-<div class="logzone">
-<div class="loghead"><span class="logtitle">Execution Log</span><span style="font-size:10px;color:var(--text3)" id="logcnt">0 entries</span></div>
-<div class="loginner" id="loginner"><div class="le sys"><div class="lerow"><span class="letag sys">sys</span><span class="letime" id="boott"></span></div><div class="lebody">NEXUS ready — Free local engine active. No API needed.</div></div></div>
-</div>
-</div>
-<div class="cside">
-<div class="sconn">
-<div class="sconnrow"><div class="bigdot wait" id="sdot"></div><div><div class="connname" id="sname">Waiting for plugin</div><div class="conndesc" id="sdesc">Open Studio and activate your plugin.</div></div></div>
-<div class="tokrow"><div><div class="toklbl">Session Token</div><div class="tokval" id="tokval">—</div></div><button class="cpybtn" onclick="copyTok()">copy</button></div>
-</div>
-<div class="ssetup">
-<div class="setuptitle">Plugin Setup</div>
-<div class="ss"><div class="ssnum">1</div><div><div class="sstitle">Download plugin</div><div class="ssdesc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in your Studio plugins folder.</div></div></div>
-<div class="ss"><div class="ssnum">2</div><div><div class="sstitle">Set backend URL</div><div class="ssdesc">Replace <code>YOUR_BACKEND_URL</code> in the plugin.</div><div class="sscode">https://enesai-production.up.railway.app<button class="cpybtn" style="position:absolute;top:6px;right:6px" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
-<div class="ss"><div class="ssnum">3</div><div><div class="sstitle">Enter session token</div><div class="ssdesc">Copy your token above into the plugin’s token field in Studio.</div></div></div>
-<div class="ss"><div class="ssnum">4</div><div><div class="sstitle">Activate plugin</div><div class="ssdesc">Click NEXUS in your toolbar. Dot turns <span style="color:var(--g)">green</span> when connected.</div></div></div>
-</div>
-</div>
-</div>
-</div>
-<div id="view-projects" class="view projview"></div>
-<div id="view-setup" class="view setupview">
-<div class="setup-inner">
-<div class="setup-h">Setup Guide</div>
-<div class="icard"><div class="icardh">How NEXUS works</div><div class="icardb"><strong>100% Free — No API keys ever.</strong> NEXUS uses a built-in local rule engine with 150+ Roblox templates. It reads your plain English command, detects every keyword, and combines matching templates into complete working Lua.<br/><br/><strong>Files needed:</strong><br/><code>dashboard.html</code> — this file<br/><code>server.js</code> — Node.js backend<br/><code>studio-plugin.lua</code> — Roblox plugin</div></div>
-<div class="icard"><div class="icardh">API Endpoints</div><div class="icardb"><code>POST /api/command</code> — send Lua<br/><code>GET /api/poll/:token</code> — plugin polls<br/><code>POST /api/result</code> — plugin posts result<br/><code>GET /api/result/:token</code> — check result<br/><code>GET /api/ping/:token</code> — heartbeat</div></div>
-</div>
-</div>
-</div>
+```
 
   </div>
 </div>
 
-<div class="overlay" id="mprojbg">
+<!-- New Project Modal -->
+
+<div class="overlay" id="mproj">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-pill"></div>
     <div class="modal-title">New Project</div>
-    <div class="modal-sub">Create a project to organise your sessions.</div>
-    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Awesome Game"/></div>
-    <div class="field"><label>Auto ID</label><input type="text" id="np-id" readonly style="opacity:.4"/></div>
-    <div class="modal-btns"><button class="xb" onclick="closeModal()">Cancel</button><button class="xb prim" onclick="createProj()">Create →</button></div>
+    <div class="modal-sub">Name your Studio session.</div>
+    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Game"/></div>
+    <div class="modal-btns">
+      <button class="btn clear" onclick="closeModal()">Cancel</button>
+      <button class="btn send" onclick="createProj()">Create →</button>
+    </div>
   </div>
 </div>
+
 <div id="toasts"></div>
 
 <script>
 const BACKEND="https://enesai-production.up.railway.app";
 let user=null,token=null,projects=[],entries=[],connected=false,pollInt=null;
-let genCode=null,codeReady=false,vcode=null,mode='ai';
+let genCode=null,codeReady=false,vcode=null;
 const $=id=>document.getElementById(id);
 const rndT=()=>Math.random().toString(36).slice(2,8).toUpperCase();
 const rndId=()=>{let s='';const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';for(let i=0;i<14;i++)s+=c[Math.floor(Math.random()*62)];return s;}
 const ts=()=>new Date().toLocaleTimeString();
 function toast(m,t='info'){const c=$('toasts'),el=document.createElement('div');el.className=`toast ${t}`;el.textContent=m;c.appendChild(el);setTimeout(()=>el.remove(),3500);}
-function sv(){localStorage.setItem('nx_u',JSON.stringify(user));localStorage.setItem('nx_t',token);localStorage.setItem('nx_p',JSON.stringify(projects));}
+function sv(){try{localStorage.setItem('nx_u',JSON.stringify(user));localStorage.setItem('nx_t',token);localStorage.setItem('nx_p',JSON.stringify(projects));}catch{}}
 function ld(){try{user=JSON.parse(localStorage.getItem('nx_u'));token=localStorage.getItem('nx_t');projects=JSON.parse(localStorage.getItem('nx_p')||'[]');}catch{}}
 
-/* ══════════════════════════════════════════════
-   LOCAL RULE ENGINE — 150+ ROBLOX TEMPLATES
-   No API. No cost. Pure JavaScript.
-══════════════════════════════════════════════ */
-const TEMPLATES = {
-
-  // ── BASES & TERRAIN PARTS ──
-  grass_base: {
-    keys: ['grass base','grass baseplate','green base','green baseplate','grass ground','green ground','grass floor'],
-    code: `local base = Instance.new("Part")
-base.Name = "GrassBase"
-base.Size = Vector3.new(512, 1, 512)
-base.Position = Vector3.new(0, 0, 0)
-base.Anchored = true
-base.Material = Enum.Material.Grass
-base.BrickColor = BrickColor.new("Bright green")
-base.TopSurface = Enum.SurfaceType.Smooth
-base.BottomSurface = Enum.SurfaceType.Smooth
-base.Parent = game:GetService("Workspace")
-print("GrassBase created!")`,
-    label: 'Grass baseplate 512x1x512'
-  },
-
-  stone_base: {
-    keys: ['stone base','rock base','stone baseplate','stone ground','stone floor','rock ground'],
-    code: `local base = Instance.new("Part")
-base.Name = "StoneBase"
-base.Size = Vector3.new(512, 1, 512)
-base.Position = Vector3.new(0, 0, 0)
-base.Anchored = true
-base.Material = Enum.Material.SmoothPlastic
-base.BrickColor = BrickColor.new("Dark grey")
-base.TopSurface = Enum.SurfaceType.Smooth
-base.BottomSurface = Enum.SurfaceType.Smooth
-base.Parent = game:GetService("Workspace")
-print("StoneBase created!")`,
-    label: 'Stone baseplate'
-  },
-
-  sand_base: {
-    keys: ['sand base','sandy base','sand ground','desert base','beach base','sand floor'],
-    code: `local base = Instance.new("Part")
-base.Name = "SandBase"
-base.Size = Vector3.new(512, 1, 512)
-base.Position = Vector3.new(0, 0, 0)
-base.Anchored = true
-base.Material = Enum.Material.Sand
-base.BrickColor = BrickColor.new("Brick yellow")
-base.TopSurface = Enum.SurfaceType.Smooth
-base.Parent = game:GetService("Workspace")`,
-    label: 'Sand baseplate'
-  },
-
-  water_terrain: {
-    keys: ['water','ocean','sea','lake','river fill','flood','water terrain','fill water'],
-    code: `local terrain = game:GetService("Workspace").Terrain
-terrain:FillBlock(CFrame.new(0, -10, 0), Vector3.new(600, 20, 600), Enum.Material.Water)
-print("Water terrain filled!")`,
-    label: 'Water terrain fill'
-  },
-
-  mountain: {
-    keys: ['mountain','mountains','hill','hills','rocky hill','terrain mountain'],
-    code: `local terrain = game:GetService("Workspace").Terrain
--- Central peak
-terrain:FillBall(Vector3.new(0, 60, 0), 80, Enum.Material.Rock)
-terrain:FillBall(Vector3.new(0, 100, 0), 50, Enum.Material.Rock)
-terrain:FillBall(Vector3.new(0, 130, 0), 30, Enum.Material.Snow)
--- Side hills
-terrain:FillBall(Vector3.new(150, 30, 50), 55, Enum.Material.Rock)
-terrain:FillBall(Vector3.new(-120, 25, -80), 50, Enum.Material.Rock)
-terrain:FillBall(Vector3.new(80, 20, -130), 45, Enum.Material.Grass)
-print("Mountains generated!")`,
-    label: 'Mountain terrain'
-  },
-
-  crater: {
-    keys: ['crater','hole','carve','dig','explosion hole'],
-    code: `local terrain = game:GetService("Workspace").Terrain
-terrain:FillBall(Vector3.new(0, 0, 0), 60, Enum.Material.Air)
-print("Crater carved!")`,
-    label: 'Terrain crater'
-  },
-
-  // ── BUILDS ──
-  kill_brick: {
-    keys: ['kill brick','killbrick','death brick','kill part','kill pad','lava','danger brick','insta kill'],
-    code: `local kb = Instance.new("Part")
-kb.Name = "KillBrick"
-kb.Size = Vector3.new(10, 1, 10)
-kb.Position = Vector3.new(0, 1, 0)
-kb.Anchored = true
-kb.Material = Enum.Material.Neon
-kb.BrickColor = BrickColor.new("Bright red")
-kb.TopSurface = Enum.SurfaceType.Smooth
-kb.Parent = game:GetService("Workspace")
-
-local s = Instance.new("Script")
-s.Source = [[
-    script.Parent.Touched:Connect(function(hit)
-        local hum = hit.Parent:FindFirstChildWhichIsA("Humanoid")
-        if hum then
-            hum:TakeDamage(math.huge)
-        end
-    end)
-]]
-s.Parent = kb
-print("KillBrick created!")`,
-    label: 'Kill brick with script'
-  },
-
-  spawn_point: {
-    keys: ['spawn','spawn point','spawnlocation','spawn location','respawn','team spawn'],
-    code: `local sp = Instance.new("SpawnLocation")
-sp.Name = "SpawnLocation"
-sp.Size = Vector3.new(6, 1, 6)
-sp.Position = Vector3.new(0, 0.5, 0)
-sp.Anchored = true
-sp.BrickColor = BrickColor.new("Bright blue")
-sp.Material = Enum.Material.SmoothPlastic
-sp.TopSurface = Enum.SurfaceType.Smooth
-sp.Neutral = true
-sp.AllowTeamChangeOnTouch = false
-sp.Parent = game:GetService("Workspace")
-print("SpawnLocation created!")`,
-    label: 'Spawn location'
-  },
-
-  door: {
-    keys: ['door','working door','tween door','open door','sliding door','hinged door'],
-    code: `local ws = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
-
--- Create door model
-local model = Instance.new("Model")
-model.Name = "Door"
-model.Parent = ws
-
-local door = Instance.new("Part")
-door.Name = "DoorPart"
-door.Size = Vector3.new(4, 8, 0.5)
-door.Position = Vector3.new(0, 4, 0)
-door.Anchored = true
-door.Material = Enum.Material.Wood
-door.BrickColor = BrickColor.new("Reddish brown")
-door.Parent = model
-
-local s = Instance.new("Script")
-s.Source = [[
-    local TweenService = game:GetService("TweenService")
-    local door = script.Parent:WaitForChild("DoorPart")
-    local open = false
-    local debounce = false
-    local openCF = door.CFrame * CFrame.new(4, 0, 0)
-    local closeCF = door.CFrame
-    local info = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-
-    local function toggle()
-        if debounce then return end
-        debounce = true
-        open = not open
-        local goal = open and {CFrame = openCF} or {CFrame = closeCF}
-        TweenService:Create(door, info, goal):Play()
-        task.wait(0.6)
-        debounce = false
-    end
-
-    door.Touched:Connect(function(hit)
-        if hit.Parent:FindFirstChildWhichIsA("Humanoid") then
-            toggle()
-            if open then
-                task.wait(3)
-                if open then toggle() end
-            end
-        end
-    end)
-]]
-s.Parent = model
-print("Working door created!")`,
-    label: 'Working tween door'
-  },
-
-  teleporter: {
-    keys: ['teleport','teleporter','tp pad','warp','warp pad','teleport pad'],
-    code: `local ws = game:GetService("Workspace")
-
-local function makePad(name, pos, dest)
-    local pad = Instance.new("Part")
-    pad.Name = name
-    pad.Size = Vector3.new(6, 1, 6)
-    pad.Position = pos
-    pad.Anchored = true
-    pad.Material = Enum.Material.Neon
-    pad.BrickColor = BrickColor.new("Cyan")
-    pad.TopSurface = Enum.SurfaceType.Smooth
-    pad.Parent = ws
-
-    local s = Instance.new("Script")
-    s.Source = string.format([[
-        local debounce = {}
-        script.Parent.Touched:Connect(function(hit)
-            local plr = game:GetService("Players"):GetPlayerFromCharacter(hit.Parent)
-            if plr and not debounce[plr] then
-                debounce[plr] = true
-                hit.Parent:SetPrimaryPartCFrame(CFrame.new(%d, 5, %d))
-                task.wait(1)
-                debounce[plr] = nil
-            end
-        end)
-    ]], dest.X, dest.Z)
-    s.Parent = pad
-end
-
-makePad("TeleporterA", Vector3.new(0, 1, 0), Vector3.new(50, 1, 50))
-makePad("TeleporterB", Vector3.new(50, 1, 50), Vector3.new(0, 1, 0))
-print("Teleporters created!")`,
-    label: 'Teleporter pads'
-  },
-
-  neon_part: {
-    keys: ['neon','glowing part','neon part','glow','glowing','neon orb','floating orb','gem'],
-    code: `local p = Instance.new("Part")
-p.Name = "NeonOrb"
-p.Shape = Enum.PartType.Ball
-p.Size = Vector3.new(4, 4, 4)
-p.Position = Vector3.new(0, 10, 0)
-p.Anchored = true
-p.Material = Enum.Material.Neon
-p.Color = Color3.fromRGB(0, 200, 255)
-p.CastShadow = false
-p.Parent = game:GetService("Workspace")
-
-local s = Instance.new("Script")
-s.Source = [[
-    local TweenService = game:GetService("TweenService")
-    local part = script.Parent
-    local baseY = part.Position.Y
-    local info = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
-    TweenService:Create(part, info, {Position = Vector3.new(part.Position.X, baseY + 3, part.Position.Z)}):Play()
-    local spinInfo = TweenInfo.new(4, Enum.EasingStyle.Linear, Enum.EasingDirection.In, -1)
-    TweenService:Create(part, spinInfo, {CFrame = part.CFrame * CFrame.Angles(0, math.pi * 2, 0)}):Play()
-]]
-s.Parent = p
-print("Neon orb created!")`,
-    label: 'Floating neon orb'
-  },
-
-  wall: {
-    keys: ['wall','long wall','brick wall','build wall','fence'],
-    code: `local wall = Instance.new("Part")
-wall.Name = "Wall"
-wall.Size = Vector3.new(60, 12, 1)
-wall.Position = Vector3.new(0, 6, 0)
-wall.Anchored = true
-wall.Material = Enum.Material.Brick
-wall.BrickColor = BrickColor.new("Medium stone grey")
-wall.Parent = game:GetService("Workspace")
-print("Wall created!")`,
-    label: 'Long wall'
-  },
-
-  platform: {
-    keys: ['platform','floating platform','island platform','sky island'],
-    code: `local p = Instance.new("Part")
-p.Name = "Platform"
-p.Size = Vector3.new(20, 2, 20)
-p.Position = Vector3.new(0, 20, 0)
-p.Anchored = true
-p.Material = Enum.Material.Grass
-p.BrickColor = BrickColor.new("Bright green")
-p.Parent = game:GetService("Workspace")
-print("Platform created!")`,
-    label: 'Floating platform'
-  },
-
-  // ── SCRIPTS ──
-  leaderstats: {
-    keys: ['leaderstats','leaderboard stats','coins stat','level stat','points stat','player stats','stats system'],
-    code: `local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    Players.PlayerAdded:Connect(function(player)
-        local ls = Instance.new("Folder")
-        ls.Name = "leaderstats"
-        ls.Parent = player
-
-        local coins = Instance.new("IntValue")
-        coins.Name = "Coins"
-        coins.Value = 0
-        coins.Parent = ls
-
-        local level = Instance.new("IntValue")
-        level.Name = "Level"
-        level.Value = 1
-        level.Parent = ls
-    end)
-]]
-s.Name = "LeaderstatsScript"
-s.Parent = game:GetService("ServerScriptService")
-print("Leaderstats script added to ServerScriptService!")`,
-    label: 'Leaderstats (Coins + Level)'
-  },
-
-  datastore: {
-    keys: ['datastore','data store','save data','load data','save coins','save progress','persistent data','save system'],
-    code: `local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    local DataStoreService = game:GetService("DataStoreService")
-    local ds = DataStoreService:GetDataStore("PlayerData_v1")
-
-    Players.PlayerAdded:Connect(function(player)
-        local ls = Instance.new("Folder")
-        ls.Name = "leaderstats"
-        ls.Parent = player
-
-        local coins = Instance.new("IntValue")
-        coins.Name = "Coins"
-        coins.Parent = ls
-
-        local level = Instance.new("IntValue")
-        level.Name = "Level"
-        level.Value = 1
-        level.Parent = ls
-
-        local ok, data = pcall(function()
-            return ds:GetAsync("Player_" .. player.UserId)
-        end)
-        if ok and data then
-            coins.Value = data.Coins or 0
-            level.Value = data.Level or 1
-        end
-    end)
-
-    Players.PlayerRemoving:Connect(function(player)
-        local ls = player:FindFirstChild("leaderstats")
-        if not ls then return end
-        pcall(function()
-            ds:SetAsync("Player_" .. player.UserId, {
-                Coins = ls.Coins.Value,
-                Level = ls.Level.Value
-            })
-        end)
-    end)
-]]
-s.Name = "DataStoreScript"
-s.Parent = game:GetService("ServerScriptService")
-print("DataStore script added!")`,
-    label: 'DataStore save/load system'
-  },
-
-  admin: {
-    keys: ['admin','admin system','admin commands','admin script','moderator','mod commands','kick command','ban command'],
-    code: `local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    local ADMINS = {"Player1", "YourUsernameHere"}
-
-    local function isAdmin(player)
-        for _, name in ipairs(ADMINS) do
-            if player.Name == name then return true end
-        end
-        return false
-    end
-
-    Players.PlayerAdded:Connect(function(player)
-        player.Chatted:Connect(function(msg)
-            if not isAdmin(player) then return end
-            local args = string.split(msg:lower(), " ")
-            local cmd = args[1]
-            local target = args[2]
-
-            local function getPlayer(name)
-                for _, p in ipairs(Players:GetPlayers()) do
-                    if p.Name:lower() == name then return p end
-                end
-            end
-
-            if cmd == "/kick" and target then
-                local p = getPlayer(target)
-                if p then p:Kick("Kicked by admin.") end
-
-            elseif cmd == "/speed" and target and args[3] then
-                local p = getPlayer(target)
-                if p and p.Character then
-                    local hum = p.Character:FindFirstChildWhichIsA("Humanoid")
-                    if hum then hum.WalkSpeed = tonumber(args[3]) or 16 end
-                end
-
-            elseif cmd == "/god" and target then
-                local p = getPlayer(target)
-                if p and p.Character then
-                    local hum = p.Character:FindFirstChildWhichIsA("Humanoid")
-                    if hum then hum.MaxHealth = math.huge hum.Health = math.huge end
-                end
-
-            elseif cmd == "/ungod" and target then
-                local p = getPlayer(target)
-                if p and p.Character then
-                    local hum = p.Character:FindFirstChildWhichIsA("Humanoid")
-                    if hum then hum.MaxHealth = 100 hum.Health = 100 end
-                end
-
-            elseif cmd == "/tp" and target and args[3] then
-                local p1 = getPlayer(target)
-                local p2 = getPlayer(args[3])
-                if p1 and p2 and p1.Character and p2.Character then
-                    p1.Character:SetPrimaryPartCFrame(p2.Character.PrimaryPart.CFrame + Vector3.new(3,0,0))
-                end
-
-            elseif cmd == "/jump" and target then
-                local p = getPlayer(target)
-                if p and p.Character then
-                    local hum = p.Character:FindFirstChildWhichIsA("Humanoid")
-                    if hum then hum.JumpPower = tonumber(args[3]) or 50 end
-                end
-
-            elseif cmd == "/announce" then
-                local announcement = table.concat(args, " ", 2)
-                for _, p in ipairs(Players:GetPlayers()) do
-                    p:SetAttribute("Announcement", announcement)
-                end
-            end
-        end)
-    end)
-]]
-s.Name = "AdminScript"
-s.Parent = game:GetService("ServerScriptService")
-print("Admin system added! Edit ADMINS table with your username.")`,
-    label: 'Full admin command system'
-  },
-
-  round_system: {
-    keys: ['round system','rounds','game round','intermission','round timer','game loop','match system'],
-    code: `local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-    local status = Instance.new("StringValue")
-    status.Name = "GameStatus"
-    status.Value = "Waiting..."
-    status.Parent = ReplicatedStorage
-
-    local function setStatus(msg)
-        status.Value = msg
-        print("[ROUND] " .. msg)
-    end
-
-    while true do
-        -- Intermission
-        for i = 15, 1, -1 do
-            setStatus("Intermission: " .. i .. "s")
-            task.wait(1)
-        end
-
-        -- Round starts
-        setStatus("Round started!")
-        task.wait(2)
-
-        -- Round timer
-        for i = 120, 1, -1 do
-            setStatus("Round: " .. i .. "s remaining")
-            task.wait(1)
-        end
-
-        -- Round over
-        setStatus("Round over!")
-        task.wait(3)
-    end
-]]
-s.Name = "RoundSystem"
-s.Parent = game:GetService("ServerScriptService")
-print("Round system added!")`,
-    label: 'Round system with intermission'
-  },
-
-  npc: {
-    keys: ['npc','bot','enemy','follower npc','ai npc','humanoid npc','walking npc','patrol npc'],
-    code: `local ws = game:GetService("Workspace")
-local Players = game:GetService("Players")
-
-local model = Instance.new("Model")
-model.Name = "NPC"
-model.Parent = ws
-
-local root = Instance.new("Part")
-root.Name = "HumanoidRootPart"
-root.Size = Vector3.new(2, 2, 1)
-root.Position = Vector3.new(0, 3, 10)
-root.Transparency = 1
-root.Anchored = false
-root.Parent = model
-
-local torso = Instance.new("Part")
-torso.Name = "Torso"
-torso.Size = Vector3.new(2, 2, 1)
-torso.Position = Vector3.new(0, 3, 10)
-torso.BrickColor = BrickColor.new("Bright blue")
-torso.Material = Enum.Material.SmoothPlastic
-torso.Parent = model
-
-local head = Instance.new("Part")
-head.Name = "Head"
-head.Shape = Enum.PartType.Ball
-head.Size = Vector3.new(2, 2, 2)
-head.Position = Vector3.new(0, 5, 10)
-head.BrickColor = BrickColor.new("Wheat")
-head.Parent = model
-
-local hum = Instance.new("Humanoid")
-hum.MaxHealth = 100
-hum.Health = 100
-hum.Parent = model
-model.PrimaryPart = root
-
-local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    local hum = script.Parent:WaitForChild("Humanoid")
-    local root = script.Parent:WaitForChild("HumanoidRootPart")
-
-    while true do
-        task.wait(0.5)
-        local nearest, dist = nil, 60
-        for _, p in ipairs(Players:GetPlayers()) do
-            if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                local d = (p.Character.HumanoidRootPart.Position - root.Position).Magnitude
-                if d < dist then nearest = p.Character nearest = p.Character dist = d end
-            end
-        end
-        if nearest then
-            hum:MoveTo(nearest.HumanoidRootPart.Position)
-        end
-    end
-]]
-s.Parent = model
-print("NPC created!")`,
-    label: 'NPC that follows players'
-  },
-
-  pet_system: {
-    keys: ['pet','pet system','follow pet','pet follow','companion'],
-    code: `local s = Instance.new("Script")
-s.Source = [[
-    local Players = game:GetService("Players")
-    local RunService = game:GetService("RunService")
-
-    Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function(char)
-            task.wait(1)
-            local root = char:WaitForChild("HumanoidRootPart")
-
-            local pet = Instance.new("Part")
-            pet.Name = player.Name .. "_Pet"
-            pet.Shape = Enum.PartType.Ball
-            pet.Size = Vector3.new(2, 2, 2)
-            pet.Material = Enum.Material.Neon
-            pet.Color = Color3.fromRGB(255, 200, 0)
-            pet.Anchored = true
-            pet.CanCollide = false
-            pet.CastShadow = false
-            pet.Parent = game:GetService("Workspace")
-
-            RunService.Heartbeat:Connect(function()
-                if not pet.Parent or not root.Parent then return end
-                local targetPos = root.Position + Vector3.new(3, 2, 0)
-                pet.Position = pet.Position:Lerp(targetPos, 0.1)
-            end)
-        end)
-    end)
-]]
-s.Name = "PetSystem"
-s.Parent = game:GetService("ServerScriptService")
-print("Pet system added!")`,
-    label: 'Pet follow system'
-  },
-
-  // ── LIGHTING ──
-  sunset: {
-    keys: ['sunset','sunrise','orange sky','warm sky','golden sky','evening','dusk','warm lighting','orange lighting'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.ClockTime = 19
-Lighting.Brightness = 3
-Lighting.Ambient = Color3.fromRGB(180, 100, 50)
-Lighting.OutdoorAmbient = Color3.fromRGB(255, 160, 80)
-Lighting.FogColor = Color3.fromRGB(255, 150, 80)
-Lighting.FogEnd = 600
-Lighting.FogStart = 0
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.4
-atmo.Offset = 0.1
-atmo.Color = Color3.fromRGB(255, 170, 90)
-atmo.Decay = Color3.fromRGB(180, 80, 30)
-atmo.Glare = 1
-atmo.Haze = 2.5
-print("Sunset lighting applied!")`,
-    label: 'Warm sunset atmosphere'
-  },
-
-  night: {
-    keys: ['night','dark sky','midnight','night time','nighttime','dark lighting','starry','moon','stars'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.ClockTime = 2
-Lighting.Brightness = 0.4
-Lighting.Ambient = Color3.fromRGB(10, 15, 40)
-Lighting.OutdoorAmbient = Color3.fromRGB(20, 25, 60)
-Lighting.FogColor = Color3.fromRGB(10, 10, 30)
-Lighting.FogEnd = 800
-Lighting.FogStart = 100
-
-local sky = Lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky", Lighting)
-sky.StarCount = 5000
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.3
-atmo.Offset = 0.05
-atmo.Color = Color3.fromRGB(20, 20, 60)
-atmo.Decay = Color3.fromRGB(5, 5, 20)
-atmo.Glare = 0
-atmo.Haze = 0
-print("Night lighting applied!")`,
-    label: 'Dark night with stars'
-  },
-
-  day: {
-    keys: ['bright day','daytime','clear day','sunny','clear sky','blue sky','noon','midday'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.ClockTime = 14
-Lighting.Brightness = 5
-Lighting.Ambient = Color3.fromRGB(100, 130, 180)
-Lighting.OutdoorAmbient = Color3.fromRGB(140, 160, 210)
-Lighting.FogEnd = 2000
-Lighting.FogStart = 1000
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.1
-atmo.Offset = 0.05
-atmo.Color = Color3.fromRGB(180, 210, 255)
-atmo.Decay = Color3.fromRGB(100, 150, 200)
-atmo.Glare = 0.3
-atmo.Haze = 0.5
-print("Daytime lighting applied!")`,
-    label: 'Bright clear daytime'
-  },
-
-  fog: {
-    keys: ['fog','foggy','dense fog','mist','misty','thick fog','spooky fog','eerie'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.FogColor = Color3.fromRGB(150, 160, 150)
-Lighting.FogEnd = 150
-Lighting.FogStart = 10
-Lighting.Brightness = 1.5
-Lighting.Ambient = Color3.fromRGB(100, 110, 100)
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.8
-atmo.Offset = 0.2
-atmo.Color = Color3.fromRGB(140, 150, 140)
-atmo.Haze = 3
-print("Dense fog applied!")`,
-    label: 'Dense eerie fog'
-  },
-
-  apocalypse: {
-    keys: ['apocalypse','apocalyptic','red sky','fire sky','end of world','armageddon','dark red','blood red sky'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.ClockTime = 18
-Lighting.Brightness = 1.5
-Lighting.Ambient = Color3.fromRGB(120, 20, 10)
-Lighting.OutdoorAmbient = Color3.fromRGB(160, 30, 10)
-Lighting.FogColor = Color3.fromRGB(180, 30, 10)
-Lighting.FogEnd = 300
-Lighting.FogStart = 50
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.6
-atmo.Offset = 0.15
-atmo.Color = Color3.fromRGB(200, 50, 10)
-atmo.Decay = Color3.fromRGB(100, 10, 5)
-atmo.Haze = 3
-atmo.Glare = 2
-print("Apocalypse lighting applied!")`,
-    label: 'Apocalyptic red sky'
-  },
-
-  golden_hour: {
-    keys: ['golden hour','golden','golden light','warm golden','perfect lighting'],
-    code: `local Lighting = game:GetService("Lighting")
-Lighting.ClockTime = 17.5
-Lighting.Brightness = 4
-Lighting.Ambient = Color3.fromRGB(200, 150, 50)
-Lighting.OutdoorAmbient = Color3.fromRGB(255, 200, 80)
-Lighting.FogEnd = 1000
-
-local atmo = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere", Lighting)
-atmo.Density = 0.25
-atmo.Offset = 0.1
-atmo.Color = Color3.fromRGB(255, 210, 100)
-atmo.Decay = Color3.fromRGB(200, 120, 40)
-atmo.Glare = 1.5
-atmo.Haze = 1.5
-print("Golden hour lighting applied!")`,
-    label: 'Golden hour lighting'
-  },
-
-  // ── GUI ──
-  main_menu: {
-    keys: ['main menu','menu gui','title screen','start screen','menu screen','home screen'],
-    code: `local sg = Instance.new("ScreenGui")
-sg.Name = "MainMenu"
-sg.ResetOnSpawn = false
-sg.Parent = game:GetService("StarterGui")
-
-local bg = Instance.new("Frame")
-bg.Name = "Background"
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.fromRGB(5, 10, 20)
-bg.BorderSizePixel = 0
-bg.Parent = sg
-
-local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.Size = UDim2.new(0.6, 0, 0.15, 0)
-title.Position = UDim2.new(0.2, 0, 0.2, 0)
-title.BackgroundTransparency = 1
-title.Text = "MY GAME"
-title.TextColor3 = Color3.fromRGB(0, 200, 255)
-title.TextScaled = true
-title.Font = Enum.Font.GothamBold
-title.Parent = bg
-
-local playBtn = Instance.new("TextButton")
-playBtn.Name = "PlayButton"
-playBtn.Size = UDim2.new(0.3, 0, 0.08, 0)
-playBtn.Position = UDim2.new(0.35, 0, 0.45, 0)
-playBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 80)
-playBtn.Text = "PLAY"
-playBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-playBtn.TextScaled = true
-playBtn.Font = Enum.Font.GothamBold
-playBtn.Parent = bg
-Instance.new("UICorner", playBtn).CornerRadius = UDim.new(0, 8)
-
-local settingsBtn = Instance.new("TextButton")
-settingsBtn.Name = "SettingsButton"
-settingsBtn.Size = UDim2.new(0.3, 0, 0.08, 0)
-settingsBtn.Position = UDim2.new(0.35, 0, 0.57, 0)
-settingsBtn.BackgroundColor3 = Color3.fromRGB(60, 70, 100)
-settingsBtn.Text = "SETTINGS"
-settingsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-settingsBtn.TextScaled = true
-settingsBtn.Font = Enum.Font.GothamBold
-settingsBtn.Parent = bg
-Instance.new("UICorner", settingsBtn).CornerRadius = UDim.new(0, 8)
-
-print("Main menu GUI created in StarterGui!")`,
-    label: 'Main menu GUI'
-  },
-
-  health_bar: {
-    keys: ['health bar','hp bar','health gui','health display','hp display','health ui'],
-    code: `local sg = Instance.new("ScreenGui")
-sg.Name = "HealthBar"
-sg.ResetOnSpawn = true
-sg.Parent = game:GetService("StarterGui")
-
-local bar_bg = Instance.new("Frame")
-bar_bg.Size = UDim2.new(0.3, 0, 0.03, 0)
-bar_bg.Position = UDim2.new(0.35, 0, 0.92, 0)
-bar_bg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-bar_bg.BorderSizePixel = 0
-bar_bg.Parent = sg
-Instance.new("UICorner", bar_bg).CornerRadius = UDim.new(0, 6)
-
-local bar = Instance.new("Frame")
-bar.Name = "Fill"
-bar.Size = UDim2.new(1, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(0, 220, 80)
-bar.BorderSizePixel = 0
-bar.Parent = bar_bg
-Instance.new("UICorner", bar).CornerRadius = UDim.new(0, 6)
-
-local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, 0, 1, 0)
-label.BackgroundTransparency = 1
-label.Text = "100 HP"
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.TextScaled = true
-label.Font = Enum.Font.GothamBold
-label.Parent = bar_bg
-
-local ls = Instance.new("LocalScript")
-ls.Source = [[
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hum = char:WaitForChild("Humanoid")
-    local bar = script.Parent:WaitForChild("Fill")
-    local label = script.Parent:WaitForChild("TextLabel")
-    hum.HealthChanged:Connect(function(hp)
-        local pct = hp / hum.MaxHealth
-        bar.Size = UDim2.new(pct, 0, 1, 0)
-        bar.BackgroundColor3 = Color3.fromRGB(pct < 0.3 and 220 or 0, pct >= 0.3 and 220 or 0, 0)
-        label.Text = math.floor(hp) .. " HP"
-    end)
-]]
-ls.Parent = bar_bg
-print("Health bar GUI created!")`,
-    label: 'Health bar GUI'
-  },
-
-  coin_display: {
-    keys: ['coin display','coins gui','coin counter','show coins','coin ui','money display'],
-    code: `local sg = Instance.new("ScreenGui")
-sg.Name = "CoinDisplay"
-sg.ResetOnSpawn = true
-sg.Parent = game:GetService("StarterGui")
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.12, 0, 0.05, 0)
-frame.Position = UDim2.new(0.87, 0, 0.02, 0)
-frame.BackgroundColor3 = Color3.fromRGB(20, 25, 40)
-frame.BorderSizePixel = 0
-frame.Parent = sg
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
-
-local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, 0, 1, 0)
-label.BackgroundTransparency = 1
-label.Text = "🪙 0"
-label.TextColor3 = Color3.fromRGB(255, 220, 0)
-label.TextScaled = true
-label.Font = Enum.Font.GothamBold
-label.Parent = frame
-
-local ls = Instance.new("LocalScript")
-ls.Source = [[
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
-    local ls = player:WaitForChild("leaderstats")
-    local coins = ls:WaitForChild("Coins")
-    local label = script.Parent
-    label.Text = "🪙 " .. coins.Value
-    coins.Changed:Connect(function(v)
-        label.Text = "🪙 " .. v
-    end)
-]]
-ls.Parent = label
-print("Coin display GUI created!")`,
-    label: 'Coin display GUI'
-  },
-
-  // ── GAME SYSTEMS ──
-  obby: {
-    keys: ['obby','obstacle course','parkour','jumping course','platforms course'],
-    code: `local ws = game:GetService("Workspace")
-local model = Instance.new("Model")
-model.Name = "Obby"
-model.Parent = ws
-
-local colors = {
-    BrickColor.new("Bright red"), BrickColor.new("Bright blue"),
-    BrickColor.new("Bright yellow"), BrickColor.new("Bright orange"),
-    BrickColor.new("Lime green"), BrickColor.new("Hot pink"),
-    BrickColor.new("Cyan"), BrickColor.new("Bright violet")
-}
-
-local x, y, z = 0, 2, 0
-for i = 1, 25 do
-    local p = Instance.new("Part")
-    p.Name = "Platform_" .. i
-    p.Size = Vector3.new(math.random(4,10), 1, math.random(4,10))
-    p.Anchored = true
-    p.Material = Enum.Material.SmoothPlastic
-    p.BrickColor = colors[(i % #colors) + 1]
-    p.TopSurface = Enum.SurfaceType.Smooth
-
-    x = x + math.random(6, 12)
-    y = y + math.random(1, 4)
-    z = z + math.random(-5, 5)
-    p.Position = Vector3.new(x, y, z)
-    p.Parent = model
-
-    -- Every 5th platform is a kill brick
-    if i % 5 == 0 then
-        p.BrickColor = BrickColor.new("Bright red")
-        p.Material = Enum.Material.Neon
-        local s = Instance.new("Script")
-        s.Source = [[
-            script.Parent.Touched:Connect(function(hit)
-                local h = hit.Parent:FindFirstChildWhichIsA("Humanoid")
-                if h then h:TakeDamage(math.huge) end
-            end)
-        ]]
-        s.Parent = p
-    end
-end
-
--- Finish platform
-local finish = Instance.new("Part")
-finish.Name = "Finish"
-finish.Size = Vector3.new(12, 1, 12)
-finish.Position = Vector3.new(x + 15, y + 2, z)
-finish.Anchored = true
-finish.Material = Enum.Material.Neon
-finish.BrickColor = BrickColor.new("Bright yellow")
-finish.Parent = model
-
-print("Obby with 25 platforms created!")`,
-    label: 'Full obby (25 platforms)'
-  },
-
-  battle_arena: {
-    keys: ['battle arena','pvp arena','fight arena','arena','combat arena','pvp map'],
-    code: `local ws = game:GetService("Workspace")
-local model = Instance.new("Model")
-model.Name = "BattleArena"
-model.Parent = ws
-
--- Floor
-local floor = Instance.new("Part")
-floor.Name = "Floor"
-floor.Size = Vector3.new(100, 1, 100)
-floor.Position = Vector3.new(0, 0, 0)
-floor.Anchored = true
-floor.Material = Enum.Material.Concrete
-floor.BrickColor = BrickColor.new("Medium stone grey")
-floor.Parent = model
-
--- Outer walls
-local walls = {
-    {Vector3.new(100, 10, 1), Vector3.new(0, 5, 50)},
-    {Vector3.new(100, 10, 1), Vector3.new(0, 5, -50)},
-    {Vector3.new(1, 10, 100), Vector3.new(50, 5, 0)},
-    {Vector3.new(1, 10, 100), Vector3.new(-50, 5, 0)},
-}
-for i, w in ipairs(walls) do
-    local wall = Instance.new("Part")
-    wall.Name = "Wall_" .. i
-    wall.Size = w[1]
-    wall.Position = w[2]
-    wall.Anchored = true
-    wall.Material = Enum.Material.Brick
-    wall.BrickColor = BrickColor.new("Dark grey")
-    wall.Parent = model
-end
-
--- Cover objects
-for i = 1, 8 do
-    local cover = Instance.new("Part")
-    cover.Name = "Cover_" .. i
-    cover.Size = Vector3.new(math.random(4,8), math.random(4,7), math.random(4,8))
-    cover.Position = Vector3.new(math.random(-35,35), cover.Size.Y/2, math.random(-35,35))
-    cover.Anchored = true
-    cover.Material = Enum.Material.Concrete
-    cover.BrickColor = BrickColor.new("Medium stone grey")
-    cover.Parent = model
-end
-
--- Spawn points
-local spawns = {Vector3.new(-40,1,-40), Vector3.new(40,1,40), Vector3.new(-40,1,40), Vector3.new(40,1,-40)}
-for i, pos in ipairs(spawns) do
-    local sp = Instance.new("SpawnLocation")
-    sp.Size = Vector3.new(6,1,6)
-    sp.Position = pos
-    sp.Anchored = true
-    sp.Neutral = true
-    sp.Parent = model
-end
-
--- Kill edges (lava border)
-for _, edge in ipairs({
-    {Vector3.new(100,1,10), Vector3.new(0,0.5,55)},
-    {Vector3.new(100,1,10), Vector3.new(0,0.5,-55)},
-}) do
-    local lava = Instance.new("Part")
-    lava.Size = edge[1]; lava.Position = edge[2]
-    lava.Anchored = true; lava.Material = Enum.Material.Neon
-    lava.BrickColor = BrickColor.new("Bright red"); lava.Parent = model
-    local s = Instance.new("Script")
-    s.Source = [[script.Parent.Touched:Connect(function(h) local hum=h.Parent:FindFirstChildWhichIsA("Humanoid") if hum then hum:TakeDamage(math.huge) end end)]]
-    s.Parent = lava
-end
-
-print("Battle arena created!")`,
-    label: 'Battle PvP arena'
-  },
-
-  tropical_island: {
-    keys: ['tropical island','island','tropical','island map','beach island','paradise'],
-    code: `local ws = game:GetService("Workspace")
-local terrain = ws.Terrain
-
--- Landmass
-terrain:FillBall(Vector3.new(0, 0, 0), 120, Enum.Material.Grass)
-terrain:FillBall(Vector3.new(30, -5, 20), 70, Enum.Material.Grass)
-terrain:FillBall(Vector3.new(-40, -8, -30), 80, Enum.Material.Grass)
-terrain:FillBall(Vector3.new(0, -3, 0), 130, Enum.Material.Sand)
-
--- Water
-terrain:FillBlock(CFrame.new(0, -15, 0), Vector3.new(800, 20, 800), Enum.Material.Water)
-
--- Beach ring
-for angle = 0, 360, 20 do
-    local rad = math.rad(angle)
-    local x = math.cos(rad) * 110
-    local z = math.sin(rad) * 110
-    terrain:FillBall(Vector3.new(x, -5, z), 30, Enum.Material.Sand)
-end
-
--- Palm trees
-local model = Instance.new("Model")
-model.Name = "TropicalIsland"
-model.Parent = ws
-
-for i = 1, 8 do
-    local angle = math.rad(i * 45 + math.random(-15,15))
-    local dist = math.random(40, 80)
-    local tx = math.cos(angle) * dist
-    local tz = math.sin(angle) * dist
-
-    -- Trunk
-    local trunk = Instance.new("Part")
-    trunk.Name = "PalmTrunk_" .. i
-    trunk.Size = Vector3.new(1.5, 12, 1.5)
-    trunk.CFrame = CFrame.new(tx, 8, tz) * CFrame.Angles(0, 0, math.rad(math.random(-10,10)))
-    trunk.Anchored = true
-    trunk.Material = Enum.Material.Wood
-    trunk.BrickColor = BrickColor.new("Reddish brown")
-    trunk.Parent = model
-
-    -- Leaves
-    local leaves = Instance.new("Part")
-    leaves.Name = "PalmLeaves_" .. i
-    leaves.Shape = Enum.PartType.Ball
-    leaves.Size = Vector3.new(9, 4, 9)
-    leaves.Position = Vector3.new(tx, 16, tz)
-    leaves.Anchored = true
-    leaves.Material = Enum.Material.Grass
-    leaves.BrickColor = BrickColor.new("Bright green")
-    leaves.Parent = model
-end
-
-print("Tropical island created!")`,
-    label: 'Tropical island map'
-  },
-
-  // ── UTILITY ──
-  clear_workspace: {
-    keys: ['clear workspace','clear all','remove all','delete all','wipe workspace','clean workspace','reset workspace'],
-    code: `local ws = game:GetService("Workspace")
-local keep = {"Camera", "Terrain", "SpawnLocation"}
-for _, child in ipairs(ws:GetChildren()) do
-    local shouldKeep = false
-    for _, k in ipairs(keep) do
-        if child.Name == k or child:IsA("Camera") or child:IsA("Terrain") then
-            shouldKeep = true break
-        end
-    end
-    if not shouldKeep then child:Destroy() end
-end
-print("Workspace cleared!")`,
-    label: 'Clear workspace'
-  },
-
-  list_workspace: {
-    keys: ['list workspace','print workspace','show workspace','workspace children','what is in workspace'],
-    code: `local ws = game:GetService("Workspace")
-print("=== Workspace Contents ===")
-for i, child in ipairs(ws:GetChildren()) do
-    print(i, child.Name, "-", child.ClassName)
-end
-print("Total:", #ws:GetChildren(), "objects")`,
-    label: 'List workspace contents'
-  },
-
-  print_test: {
-    keys: ['print test','test','hello','ping','hello world'],
-    code: `print("NEXUS is connected and working!")
-print("Game:", game.Name)
-print("Players:", #game:GetService("Players"):GetPlayers())
-print("Workspace children:", #game:GetService("Workspace"):GetChildren())`,
-    label: 'Connection test'
-  }
-};
-
-/* ══════════════════════════════════════
-   SMART MATCHER — keyword scoring engine
-══════════════════════════════════════ */
-function nexusProcess(input) {
-  const q = input.toLowerCase().trim();
-  const words = q.split(/\s+/);
-  const matched = [];
-
-  for (const [id, tmpl] of Object.entries(TEMPLATES)) {
-    let score = 0;
-
-    // Check key phrases
-    for (const key of tmpl.keys) {
-      if (q.includes(key)) score += 10;
-    }
-
-    // Check individual word overlap
-    for (const word of words) {
-      if (word.length < 3) continue;
-      for (const key of tmpl.keys) {
-        if (key.includes(word)) score += 2;
-      }
-    }
-
-    // Direct category keyword bonuses
-    const catBonuses = {
-      grass_base: ['grass','green','base','baseplate','ground','floor'],
-      stone_base: ['stone','rock','concrete','base','baseplate'],
-      sand_base: ['sand','sandy','desert','beach'],
-      water_terrain: ['water','ocean','sea','lake','flood','river','wave'],
-      mountain: ['mountain','hill','peak','rocky','terrain'],
-      kill_brick: ['kill','death','lava','danger','red','instant','damage','die'],
-      spawn_point: ['spawn','respawn','start','beginning'],
-      door: ['door','gate','open','entrance','hinged'],
-      teleporter: ['teleport','warp','tp'],
-      neon_part: ['neon','glow','orb','gem','shine','floating'],
-      leaderstats: ['leaderstats','stat','coins','level','points'],
-      datastore: ['save','load','data','persistent','store'],
-      admin: ['admin','mod','kick','ban','moderator','command'],
-      round_system: ['round','intermission','game loop','match','timer'],
-      npc: ['npc','bot','enemy','creature','mob','ai character'],
-      pet_system: ['pet','companion','follow','animal'],
-      sunset: ['sunset','warm','orange','dusk','evening'],
-      night: ['night','dark','midnight','moon','star'],
-      day: ['day','sunny','bright','clear','noon'],
-      fog: ['fog','mist','foggy','spooky','eerie'],
-      apocalypse: ['apocalypse','red sky','fire sky','doom'],
-      golden_hour: ['golden','warm gold'],
-      main_menu: ['menu','title','main screen','lobby ui'],
-      health_bar: ['health','hp','bar','life'],
-      coin_display: ['coin','money','currency display'],
-      obby: ['obby','obstacle','course','parkour','jump'],
-      battle_arena: ['arena','pvp','battle','fight','combat'],
-      tropical_island: ['island','tropical','palm','paradise'],
-      clear_workspace: ['clear','wipe','remove','delete all','clean'],
-      list_workspace: ['list','print','show','what','check']
-    };
-
-    if (catBonuses[id]) {
-      for (const kw of catBonuses[id]) {
-        if (q.includes(kw)) score += 5;
-      }
-    }
-
-    if (score > 0) matched.push({ id, score, tmpl });
-  }
-
-  // Sort by score
-  matched.sort((a, b) => b.score - a.score);
-
-  if (matched.length === 0) {
-    return {
-      code: `print("NEXUS: Command not recognized. Try being more specific!")
-print("Examples: grass base, kill brick, sunset sky, admin system, obby")`,
-      explanation: 'Command not fully recognized — try using keywords like: grass base, kill brick, sunset, admin system, obby, npc, door, leaderstats.',
-      matched: []
-    };
-  }
-
-  // Combine top matches if multiple high-scorers
-  const top = matched[0];
-  const combined = [top];
-
-  // Add additional high-scoring non-conflicting matches
-  for (let i = 1; i < matched.length && i < 4; i++) {
-    const m = matched[i];
-    if (m.score >= 5) combined.push(m);
-  }
-
-  // If only one match or clear winner
-  if (combined.length === 1 || top.score > matched[1]?.score * 2) {
-    return {
-      code: top.tmpl.code,
-      explanation: top.tmpl.label + ' — ready to send.',
-      matched: [top.id]
-    };
-  }
-
-  // Combine multiple templates
-  const parts = combined.map(m => `-- ═══ ${m.tmpl.label} ═══\n${m.tmpl.code}`);
-  const labels = combined.map(m => m.tmpl.label);
-
-  return {
-    code: parts.join('\n\n'),
-    explanation: 'Combined: ' + labels.join(' + '),
-    matched: combined.map(m => m.id)
-  };
-}
-
-/* ══ QUICK FIRE DATA ══ */
-const QF = {
+/* ══ SYSTEM PROMPT ══ */
+const SYS=`You are NEXUS — the most advanced Roblox Studio AI ever built. You are a world-class expert in every aspect of Roblox: photorealistic 4K terrain, stunning animated GUIs, complex multi-script systems, advanced Lua OOP, 3D model building, cinematic lighting, physics, networking, datastores, pathfinding, and every Roblox API.
+
+EXECUTION CONTEXT: Code runs in a Roblox Studio plugin command bar context. Direct access to all services, workspace.Terrain, Instance, Vector3, CFrame, Color3, BrickColor, UDim2, Enum, math, task.
+
+ABSOLUTE RULES:
+1. ALWAYS 100% complete. Zero placeholders. Zero TODOs.
+2. task.wait() not wait(). task.spawn() not spawn(). game:GetService() always.
+3. Parent set LAST on every instance.
+4. LocalScripts: Instance.new("LocalScript"), full .Source, parent to StarterPlayerScripts or StarterGui or StarterCharacterScripts.
+5. Scripts: Instance.new("Script"), full .Source, parent to ServerScriptService or inside a Part.
+6. NEVER mix server and client. Server=Script, Client=LocalScript, Shared=ModuleScript in ReplicatedStorage.
+7. RemoteEvents always in ReplicatedStorage. FireServer from LocalScript. OnServerEvent on Script.
+8. DataStore always pcall. Key by player.UserId.
+9. For multi-script systems: generate ALL scripts in sequence, each as a full instance with complete .Source.
+
+PHOTOREALISTIC 4K TERRAIN:
+- Layer materials: LeafyGrass top, Mud under hills, Rock cliffs, Sand beaches, Snow peaks, Basalt volcanic, Limestone caves
+- FillBall for organic shapes, FillBlock for flat, FillCylinder for pillars/trunks
+- Carve with Enum.Material.Air for caves/craters/rivers
+- ALWAYS add Atmosphere: Density, Offset, Color, Decay, Glare, Haze
+- ALWAYS add Lighting: ClockTime, Brightness, Ambient, OutdoorAmbient, FogColor, FogEnd
+- ALWAYS add post-processing: Bloom(Intensity,Size,Threshold), ColorCorrection(Brightness,Contrast,Saturation), DepthOfField, SunRaysEffect
+- Add Sky instance with StarCount
+- Natural variation with math.random() offsets in loops
+- For islands: grass FillBall core + sand FillBall ring + water FillBlock ocean + rock cliff edges
+- For mountains: stacked FillBall calls, snow cap, rock mid, grass base + atmosphere haze
+- For forests: FillCylinder trunks, FillBall canopy, vary heights/positions
+
+BEAUTIFUL GUI/UI:
+- UICorner on EVERYTHING for rounded corners
+- UIStroke for glowing borders (Color, Thickness, Transparency)
+- UIGradient for gradient fills on frames (ColorSequence, Rotation)
+- TweenService for ALL animations: slide in, scale on hover, fade
+- UIListLayout/UIGridLayout with Padding
+- UIPadding on all containers
+- TextScaled=true with UITextSizeConstraint
+- Dark pro theme: bg=Color3.fromRGB(8,10,20), panel=Color3.fromRGB(12,16,28), accent=Color3.fromRGB(0,180,255)
+- Button hover: TweenService scale 1.05 + color brighten
+- ScrollingFrame with AutomaticCanvasSize=Y, ScrollBarThickness=4
+- Slide-in: start off-screen, tween to position with Back easing
+- ViewportFrame with WorldModel for 3D previews inside GUI
+- ClipsDescendants=true on containers
+- ZIndexBehavior=Sibling on ScreenGui
+
+3D MODELS:
+- Model with PrimaryPart set
+- SpecialMesh for custom shapes
+- WeldConstraint to join parts
+- SurfaceAppearance for PBR textures
+- CFrame math for rotations: CFrame.new(pos)*CFrame.Angles(rx,ry,rz)
+- ParticleEmitter for effects
+- PointLight/SpotLight for glow
+- Beam between Attachments for energy effects
+
+ADVANCED SCRIPTING:
+- OOP: local Class={} Class.__index=Class function Class.new() local self=setmetatable({},Class) return self end return Class
+- Debounce: local db={} obj.Touched:Connect(function(h) if db[h] then return end db[h]=true task.wait(1) db[h]=nil end)
+- Pathfinding: PathfindingService:CreatePath({AgentRadius=2,AgentHeight=5,AgentCanJump=true}), ComputeAsync, GetWaypoints, MoveTo loop
+- Ragdoll: BallSocketConstraint at each joint, unanchor parts
+- Camera: workspace.CurrentCamera.CameraType=Enum.CameraType.Scriptable, CFrame each RenderStepped
+- Anti-cheat: server-side validate ALL RemoteEvent inputs with sanity checks
+
+UNDERSTOOD SLANG: baseplate=512x512 grass Part, obby=obstacle course, tycoon=plot building game, FE=RemoteEvents, hitbox=detection Part, god=MaxHealth=math.huge, fly=BodyVelocity+BodyGyro, noclip=CanCollide false loop, speed=WalkSpeed, jump=JumpPower, admin=chat commands, leaderstats=Folder in player, NPC=Model with Humanoid, pet=following model, shop=GUI+RemoteEvent+currency, tool=Tool in StarterPack, gamepass=MarketplaceService, premium=player.MembershipType
+
+RESPONSE: ONLY this JSON, no markdown, no backticks:
+{"lua":"complete executable code with \\n for newlines","explanation":"2-3 sentences: what was built, where scripts go, important notes."}`;
+
+/* ══ QUICK FIRE ══ */
+const QF={
   build:[
-    {l:'🌿 Grass Base',p:'grass base'},
-    {l:'🪨 Stone Base',p:'stone base'},
-    {l:'🏠 Wall',p:'long wall'},
-    {l:'☠️ Kill Brick',p:'kill brick'},
-    {l:'🟢 Spawn Point',p:'spawn point'},
-    {l:'🚪 Working Door',p:'working door'},
-    {l:'🌀 Teleporters',p:'teleporter pads'},
-    {l:'✨ Neon Orb',p:'neon glowing orb'},
-    {l:'🏗 Platform',p:'floating platform'},
+    {l:'🌿 Grass Base',p:'create a perfect 512x512 grass baseplate anchored at 0,0,0 with LeafyGrass material bright green'},
+    {l:'☠️ Kill Brick',p:'create a glowing red neon kill brick with server script that kills any player who touches it'},
+    {l:'🟢 Spawn Point',p:'create a styled spawn location with team color and spawn pad visual'},
+    {l:'🚪 Tween Door',p:'create a door that smoothly tweens open 90 degrees when touched and closes after 3 seconds'},
+    {l:'🌀 Teleporter',p:'create two linked neon teleporter pads that teleport players between each other'},
+    {l:'💎 Floating Gem',p:'create a spinning floating neon gem that bobs up and down with particle effects'},
+    {l:'🧱 Wall',p:'build a long solid wall 60 studs wide 12 studs tall with brick material'},
+    {l:'🚀 Launch Pad',p:'create a metallic launch pad that launches players into the air with BodyVelocity on touch'},
   ],
   terrain:[
-    {l:'🌊 Ocean Water',p:'water ocean terrain'},
-    {l:'🏔 Mountains',p:'rocky mountains terrain'},
-    {l:'🕳 Crater',p:'crater hole terrain'},
-    {l:'🌴 Tropical Island',p:'tropical island palm trees'},
-    {l:'🏖 Sandy Beach',p:'sand base beach'},
+    {l:'🌴 Tropical Island',p:'generate a photorealistic tropical island with LeafyGrass terrain, sand beach ring, surrounding ocean water, palm trees, rock cliffs, cinematic sunset lighting with Atmosphere and Bloom'},
+    {l:'🏔 Mountains',p:'generate realistic mountain range with stacked FillBall rock formations, snow caps, grass base, misty Atmosphere, dramatic lighting with fog'},
+    {l:'🌊 Ocean World',p:'fill a massive ocean with water terrain, sandy islands, coral-colored rocks, underwater caves carved with Air, tropical lighting'},
+    {l:'🌋 Volcano',p:'build a dramatic volcano with CrackedLava and Rock terrain, neon lava glow parts at crater, ash Atmosphere, dark red apocalyptic lighting'},
+    {l:'❄️ Arctic',p:'create an arctic landscape with Glacier and Snow terrain, ice formations, frozen water, blizzard Atmosphere with white fog'},
+    {l:'🌿 Forest',p:'generate a dense forest with FillCylinder trunks, FillBall canopy, varied heights, morning light Atmosphere with god rays'},
+    {l:'🏜 Desert',p:'create rolling sand dune desert with Sand terrain, rock formations, scorching bright lighting, heat haze Atmosphere'},
+    {l:'🕳 Cave System',p:'carve an underground cave system using Air FillBall, add stalagmites with Limestone parts, dim atmospheric lighting'},
   ],
   scripts:[
-    {l:'🏆 Leaderstats',p:'leaderstats coins level'},
-    {l:'💾 Datastore',p:'save load datastore'},
-    {l:'👮 Admin System',p:'admin commands kick ban'},
-    {l:'💀 Round System',p:'round system intermission'},
-    {l:'🤖 NPC Follower',p:'npc follower enemy'},
-    {l:'🐣 Pet System',p:'pet follow system'},
+    {l:'🏆 Leaderstats + Save',p:'create complete leaderstats with Coins and Level, full DataStoreService save and load system with pcall error handling, key by UserId'},
+    {l:'👮 Admin System',p:'create full admin command system: server Script in ServerScriptService, chat listener, /kick /ban /kill /heal /god /speed /tp /freeze /announce commands with admin table'},
+    {l:'💀 Round System',p:'create complete round system: intermission 15s, active round 120s, gameover 5s, StringValue status in ReplicatedStorage, LocalScript UI showing countdown'},
+    {l:'🤖 NPC Pathfinding',p:'create humanoid NPC Model that uses PathfindingService to chase nearest player within 80 studs, attacks with damage on reach, has health bar BillboardGui'},
+    {l:'🛒 Shop System',p:'create complete shop: ScreenGui with items grid, buy buttons, RemoteEvent to server, deduct coins from leaderstats, confirmation with tween animation'},
+    {l:'⚔️ Combat Tool',p:'create sword Tool with LocalScript Activated event, RemoteEvent to server, server-side hitbox Region3 detection, 30 damage, swing animation'},
+    {l:'🐣 Pet System',p:'create pet system: each player gets glowing orb pet that follows with smooth Lerp on Heartbeat, bounces up and down, particles trail'},
+    {l:'🔫 Gun Tool',p:'create gun Tool: LocalScript fires RemoteEvent on Activated, server raycast from barrel, 25 damage to Humanoid, bullet trail Beam effect'},
   ],
   lighting:[
-    {l:'🌅 Sunset',p:'warm sunset sky'},
-    {l:'🌙 Night',p:'dark night sky stars moon'},
-    {l:'☀️ Clear Day',p:'bright clear sunny day'},
-    {l:'🌫 Dense Fog',p:'dense fog mist spooky'},
-    {l:'🔴 Apocalypse',p:'apocalypse red sky doom'},
-    {l:'🟡 Golden Hour',p:'golden hour warm light'},
+    {l:'🌅 Cinematic Sunset',p:'apply photorealistic sunset: ClockTime 19, warm orange Ambient, Atmosphere with warm haze and glow, Bloom, ColorCorrection warm saturation, SunRaysEffect'},
+    {l:'🌙 Dark Night',p:'apply cinematic night: ClockTime 2, dark blue Ambient, Sky with 5000 stars, dense Atmosphere, DepthOfField blur, dim Bloom'},
+    {l:'☀️ Perfect Day',p:'apply bright clear day: ClockTime 14, high Brightness, blue Ambient, light Atmosphere, crisp ColorCorrection, SunRaysEffect'},
+    {l:'🌫 Spooky Fog',p:'apply dense eerie fog: gray Atmosphere Density 0.8, FogEnd 150, dark Ambient, desaturated ColorCorrection, low Brightness'},
+    {l:'🔴 Apocalypse',p:'apply apocalyptic sky: red-tinted everything, dark red Atmosphere, FogEnd 300, Bloom with red, ColorCorrection high contrast low saturation'},
+    {l:'🌈 Golden Hour',p:'apply perfect golden hour: ClockTime 17.5, warm golden Ambient, Atmosphere Color gold, Glare 1.5, Bloom, warm ColorCorrection'},
+    {l:'❄️ Winter',p:'apply winter lighting: white Ambient, cool blue sky, Atmosphere with white haze, ColorCorrection cold blue tint, crisp shadows'},
+    {l:'🌧 Storm',p:'apply stormy atmosphere: dark gray Ambient, dense gray Atmosphere, FogEnd 200, low Brightness, dark FogColor, heavy Bloom'},
   ],
   gui:[
-    {l:'🖥 Main Menu',p:'main menu screen gui'},
-    {l:'❤️ Health Bar',p:'health bar hp gui'},
-    {l:'🪙 Coin Display',p:'coin display counter gui'},
+    {l:'🖥 Main Menu',p:'create beautiful main menu ScreenGui: dark bg, large animated title with UIGradient, Play button that slides in with TweenService Back easing, Settings button, animated background particles'},
+    {l:'❤️ Health Bar',p:'create animated health bar LocalScript: bottom center, UICorner rounded, color changes red when low, smooth Tween on health change, shows HP number'},
+    {l:'🪙 Coin HUD',p:'create coin display LocalScript: top right corner, UIStroke glow border, coin icon ImageLabel, smooth number tween on change, UIGradient dark bg'},
+    {l:'📊 Leaderboard',p:'create in-game leaderboard GUI: top 10 players by coins, updates every 10s, rank numbers, smooth slide-in animation, UIListLayout'},
+    {l:'⚙️ Settings Menu',p:'create settings GUI: toggle switches for Music SFX Graphics, volume sliders, UICorner everywhere, smooth open/close animation, saves to LocalPlayer attributes'},
+    {l:'🏆 Victory Screen',p:'create victory screen GUI: centered frame slides in with Back easing, player stats, animated fireworks particles, Play Again button'},
+    {l:'📦 Inventory',p:'create inventory GUI: 5x4 UIGridLayout grid, slot frames with UIStroke, item name tooltip on hover, opens with E key LocalScript, smooth animation'},
+    {l:'💬 Custom Chat',p:'create custom chat GUI: dark scrolling message history, rounded input box, send button, LocalScript handles input, server broadcasts via RemoteEvent'},
   ],
   game:[
-    {l:'🎮 Full Obby',p:'obby obstacle course 25 platforms'},
-    {l:'⚔️ Battle Arena',p:'pvp battle arena spawn points'},
-    {l:'📋 List Workspace',p:'list workspace print children'},
-    {l:'🗑 Clear Workspace',p:'clear workspace remove all'},
-    {l:'🧪 Test Connection',p:'test connection print hello'},
+    {l:'🎮 Full Obby',p:'generate complete obby: 30 platforms with varying sizes heights gaps colors materials, 5 moving platforms with TweenService, 3 kill brick sections, checkpoint system, glowing finish platform'},
+    {l:'⚔️ Battle Arena',p:'build complete PvP arena: 100x100 flat concrete floor, 4 walls, 8 cover objects, 4 spawn points, lava kill edges, neon accent lighting'},
+    {l:'🏭 Tycoon Base',p:'build tycoon layout: personal 200x200 plot, dropper that generates parts, conveyor belt, collector that gives coins, upgrade button pad, team color boundary'},
+    {l:'🎯 Shooting Range',p:'build shooting range: 5 moving target dummies on TweenService rails, lane barriers, score GUI LocalScript, reset button'},
+    {l:'🧩 Puzzle Room',p:'build puzzle: 4 pressure plate Parts with Touched scripts, all must be activated to open door via BindableEvent, indicator lights turn green'},
+    {l:'🏎 Race Track',p:'generate oval race track: FillBlock track surface, barrier walls, 8 checkpoint triggers, lap counter LocalScript GUI, start line with countdown'},
   ]
 };
 
 /* ══ Quick fire ══ */
 let activeQF='build';
-function qfTab(el,cat){
-  document.querySelectorAll('.qftab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');activeQF=cat;renderQF();
+function qfTab(el,cat){document.querySelectorAll('.qf-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');activeQF=cat;renderQF();}
+function renderQF(){$('qfgrid').innerHTML=QF[activeQF].map(q=>`<button class="qf-btn" onclick="qfFire(${JSON.stringify(q.p)})">${q.l}</button>`).join('');}
+function qfFire(p){$('cmd-in').value=p;handleMain();}
+
+/* ══ Main flow ══ */
+async function handleMain(){
+  if(codeReady){await sendCode();}
+  else{await generate();}
 }
-function renderQF(){
-  $('qfgrid').innerHTML=QF[activeQF].map(q=>`<button class="qfbtn" onclick="qfFire(${JSON.stringify(q.p)})">${q.l}</button>`).join('');
-}
-function qfFire(p){$('ai-in').value=p;updateCC();handleAI();}
 
-/* ══ Mode ══ */
-function setMode(m){
-  mode=m;
-  if(m==='ai'){
-    $('ai-ui').style.display='block';$('lua-ui').style.display='none';
-    $('chip-ai').classList.add('on','ai');$('chip-lua').classList.remove('on','ai');
-  } else {
-    $('ai-ui').style.display='none';$('lua-ui').style.display='block';
-    $('chip-lua').classList.add('on');$('chip-lua').classList.remove('ai');
-    $('chip-ai').classList.remove('on','ai');
-  }
-}
-function updateCC(){$('charct').textContent=$('ai-in').value.length+' chars';}
-$('ai-in').addEventListener('input',updateCC);
-
-/* ══ Main AI flow ══ */
-async function handleAI(){if(codeReady){await sendCode();}else{await generate();}}
-
-const SYS=`You are NEXUS — the most advanced Roblox Studio AI ever built. You are a world-class expert in every aspect of Roblox development: photorealistic 4K terrain, stunning professional GUIs, complex multi-script game systems, advanced Lua OOP, 3D model construction, cinematic lighting, physics, networking, datastores, animations, and every Roblox API ever released. Your code looks like it was written by a senior Roblox developer with 10 years of experience. Your terrain is breathtaking. Your GUIs are beautiful. Your scripts are clean, efficient, and always 100% complete.
-
-EXECUTION CONTEXT: Code runs in a Roblox Studio plugin executing in command bar context. Direct access to: game, workspace, all services, workspace.Terrain, Instance, Vector3, CFrame, Color3, BrickColor, UDim2, Enum, math, task. You can create Script AND LocalScript instances by setting their .Source property.
-
-ABSOLUTE RULES — NEVER BREAK:
-1. ALWAYS 100% complete code. Zero placeholders. Zero TODOs. Zero "add your code here".
-2. NEVER use deprecated APIs. Always task.wait() never wait(). Always task.spawn() never spawn(). Always game:GetService() never game.ServiceName.
-3. Parent is ALWAYS set LAST when creating any instance.
-4. Scripts: Instance.new("Script"), set full .Source string, set .Parent to ServerScriptService or Part.
-5. LocalScripts: Instance.new("LocalScript"), set full .Source string, set .Parent to StarterPlayerScripts or StarterGui.
-6. NEVER mix server and client code. Server logic in Script. Client/UI logic in LocalScript. Shared in ModuleScript in ReplicatedStorage.
-7. RemoteEvents ALWAYS in ReplicatedStorage. FireServer() from LocalScript. OnServerEvent on Script.
-8. DataStore ALWAYS in pcall. Always handle errors. Key by player.UserId.
-9. For systems needing multiple scripts: generate ALL scripts in sequence, each creating the correct instance with FULL .Source.
-
-PHOTOREALISTIC 4K TERRAIN:
-- Layer multiple materials: LeafyGrass on top, Mud underneath hills, Rock for cliffs, Sand beaches, Snow peaks, Basalt for volcanic areas, Limestone for caves
-- workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.X) for organic landmass
-- workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) for flat areas
-- workspace.Terrain:FillCylinder(CFrame.new(x,y,z), height, radius, Enum.Material.X) for pillars
-- Carve with Enum.Material.Air for caves, craters, rivers
-- ALWAYS add cinematic Lighting: ClockTime, Brightness, Ambient, OutdoorAmbient, FogColor, FogEnd, FogStart
-- ALWAYS add Atmosphere: Density, Offset, Color, Decay, Glare, Haze for realistic sky haze
-- ALWAYS add Sky instance with StarCount for night skies
-- ADD post-processing: Bloom (Intensity, Size, Threshold), ColorCorrection (Brightness, Contrast, Saturation), DepthOfField (FarIntensity, FocusDistance, InFocusRadius, NearIntensity), SunRaysEffect (Intensity, Spread)
-- Use math.random() offsets for natural terrain variation
-- For islands: grass core FillBall + sand ring FillBall + water FillBlock surrounding + rock cliff edges
-- For mountains: stacked FillBall calls, snow cap top, rock mid, grass base, add atmosphere haze
-- For forests: FillCylinder trunks, FillBall canopy, vary heights/positions in loops
-- Available materials: Grass, LeafyGrass, Mud, Rock, Sand, Snow, Ice, Water, Wood, Brick, Concrete, SmoothPlastic, Neon, Ground, Limestone, Pavement, CrackedLava, Basalt, Salt, Sandstone, Slate, Cobblestone, Glacier, WoodPlanks, Marble, Asphalt
-
-STUNNING GUI/UI:
-- ALWAYS UICorner on every Frame and Button for rounded corners
-- ALWAYS UIStroke for glowing borders (Color, Thickness, Transparency)
-- UIGradient on Frames for beautiful gradients (Color ColorSequence, Rotation)
-- TweenService for ALL animations: buttons scale on hover, panels slide in, fades
-- UIListLayout / UIGridLayout for organized content with Padding
-- UIPadding for proper spacing on all containers
-- TextScaled=true with UITextSizeConstraint for responsive text
-- Dark professional theme: bg=Color3.fromRGB(8,10,20), panel=Color3.fromRGB(12,16,28), accent=Color3.fromRGB(0,180,255)
-- Button hover: TweenService scale to 1.05 + color brighten on MouseEnter, revert on MouseLeave
-- ScrollingFrame with AutomaticCanvasSize=Y, ScrollBarThickness=4
-- Slide-in animations: start Position off-screen, tween to final position
-- ViewportFrame with WorldModel for 3D item previews inside GUI
-- Use ImageLabel with rbxthumb:// or rbxassetid:// for player avatars and icons
-- Always ClipsDescendants=true on containers
-- Always ZIndexBehavior=Sibling on ScreenGui
-
-3D MODEL BUILDING:
-- Create Model, set PrimaryPart, parent all parts inside
-- SpecialMesh for custom shapes: MeshType Sphere/Cylinder/Wedge/FileMesh
-- WeldConstraint to permanently join parts
-- SurfaceAppearance for PBR: TextureId, NormalMapId, RoughnessMapId, MetalnessMapId
-- CFrame math: CFrame.new(pos) * CFrame.Angles(rx,ry,rz) for rotated parts
-- ParticleEmitter for magic/fire/smoke effects on parts
-- PointLight / SpotLight / SurfaceLight for glowing models
-- Beam between two Attachments for energy effects
-- Trail on moving parts for motion blur effect
-- BillboardGui attached to parts for floating 3D labels
-
-ADVANCED SCRIPTING:
-Server (Script in ServerScriptService): game logic, data, anti-cheat, economy, rounds. Use Players.PlayerAdded/PlayerRemoving. Validate ALL RemoteEvent inputs server-side.
-Client (LocalScript in StarterPlayerScripts/StarterGui): UI, input, camera, visual FX, prediction. Use Players.LocalPlayer. Use UserInputService. Use RunService.RenderStepped for smooth updates.
-Module (ModuleScript in ReplicatedStorage): shared config, utility functions, OOP classes. Return a table. Require with require(path).
-OOP pattern: local Class={} Class.__index=Class function Class.new(args) local self=setmetatable({},Class) return self end function Class:method() end return Class
-Debounce: local db={} part.Touched:Connect(function(hit) if db[hit] then return end db[hit]=true task.wait(1) db[hit]=nil end)
-Pathfinding: PathfindingService:CreatePath({AgentRadius=2,AgentHeight=5,AgentCanJump=true}), ComputeAsync(start,goal), GetWaypoints(), loop MoveTo each waypoint
-Ragdoll: loop character parts, BallSocketConstraint at each joint, unanchor all
-Camera scripting: workspace.CurrentCamera.CameraType=Enum.CameraType.Scriptable, set CFrame each RenderStepped
-
-SLANG ALWAYS UNDERSTOOD: baseplate=512x512 grass Part, obby=obstacle course, tycoon=plot building game, FE=use RemoteEvents, hitbox=detection Part, god=MaxHealth=math.huge, fly=BodyVelocity+BodyGyro, noclip=CanCollide false loop, speed=WalkSpeed, jump=JumpPower, admin=chat command system, leaderstats=Folder in player, NPC=Model with Humanoid, pet=following model, shop=GUI+RemoteEvent+currency, tool=Tool in StarterPack, badge=BadgeService:AwardBadge, gamepass=MarketplaceService:UserOwnsGamePassAsync, premium=player.MembershipType==Premium
-
-RESPONSE FORMAT — ONLY this exact JSON, nothing else, no markdown, no backticks ever:
-{"lua":"complete 100% executable lua code using \\n for newlines","explanation":"2-3 sentences: what was built, where scripts are placed, important notes.","scripts":"server|client|both|build","complexity":"simple|medium|complex|epic"}`;
-
-const THINKS=['Analyzing your request…','Crafting Lua code…','Building your world…','Generating terrain…','Writing scripts…','Almost ready…','Optimizing code…'];
+const THINKS=['Analyzing your idea…','Crafting expert Lua…','Building your world…','Writing scripts…','Generating terrain…','Polishing code…','Almost done…'];
 
 async function generate(){
-  const prompt=$('ai-in').value.trim();
+  const prompt=$('cmd-in').value.trim();
   if(!prompt){toast('Tell NEXUS what to build!','bad');return;}
-
   $('aistate').classList.add('on');
   $('aithink').style.display='flex';
   $('aiprev').style.display='none';
-  $('aibtn').disabled=true;$('aibtn').textContent='✦ Thinking…';
-  $('regenbtn').style.display='none';
-
+  $('mainbtn').disabled=true;$('mainbtn').textContent='✦ Thinking…';
+  $('retrybtn').style.display='none';
+  $('cmd-hint').textContent='NEXUS is generating your code…';
   let ti=0;
-  const tint=setInterval(()=>{$('thinkttxt').textContent=THINKS[ti++%THINKS.length];},900);
+  const tint=setInterval(()=>{$('thinktxt').textContent=THINKS[ti++%THINKS.length];},800);
   addLog('ai','request',`"${prompt}"`);
-
   try{
     const res=await fetch(BACKEND+'/api/ai',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:prompt, system:SYS})
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt,system:SYS})
     });
     clearInterval(tint);
     const data=await res.json();
-    if(!res.ok) throw new Error(data.error||'Server error');
-
+    if(!res.ok)throw new Error(data.error||'Server error');
     const raw=data.content[0].text;
     let parsed;
-    try{ parsed=JSON.parse(raw.replace(/```json|```/g,'').trim()); }
-    catch{ parsed={lua:raw, explanation:'Generated Lua code.'}; }
-
+    try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{parsed={lua:raw,explanation:'Generated Lua code.'};}
     genCode=parsed.lua;
     $('aithink').style.display='none';
     $('aiprev').style.display='block';
     $('aicode').textContent=genCode;
     $('ainote').textContent='💡 '+parsed.explanation;
     codeReady=true;
-    $('aibtn').disabled=false;$('aibtn').textContent='▶ Send to Studio';
-    $('aibtn').className='xb prim';
-    $('regenbtn').style.display='flex';
+    $('mainbtn').disabled=false;$('mainbtn').textContent='▶ Send to Studio';
+    $('mainbtn').className='btn send';
+    $('retrybtn').style.display='flex';
+    $('cmd-hint').textContent='Code ready! Tap Send to run it in Studio.';
     addLog('ai','generated',parsed.explanation);
-    toast('✦ Code ready — click Send!','ai');
-
+    toast('✦ Ready — tap Send!','ai');
   }catch(e){
     clearInterval(tint);
     $('aithink').style.display='none';
     $('aistate').classList.remove('on');
-    $('aibtn').disabled=false;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb grn';
+    $('mainbtn').disabled=false;$('mainbtn').textContent='✦ Generate & Send';$('mainbtn').className='btn go';
+    $('cmd-hint').textContent='Powered by Groq AI — free & instant ⚡';
     addLog('err','ai-fail',e.message);
     toast('Error: '+e.message,'bad');
   }
@@ -1822,8 +552,8 @@ async function generate(){
 
 async function sendCode(){
   if(!genCode)return;
-  addLog('sent','lua',genCode.substring(0,100)+(genCode.length>100?'…':''));
-  $('aibtn').disabled=true;$('aibtn').textContent='Sending…';
+  addLog('sent','lua',genCode.substring(0,80)+(genCode.length>80?'…':''));
+  $('mainbtn').disabled=true;$('mainbtn').textContent='Sending…';
   try{
     const r=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,type:'run_script',body:genCode})});
     const d=await r.json();
@@ -1836,38 +566,25 @@ async function sendCode(){
       if(rd.ready){result=rd;break;}
     }
     if(result){addLog(result.success?'ok':'err','result',result.output||'Done.');toast(result.success?'✅ Done! Check Studio.':'❌ Studio error.',result.success?'ok':'bad');}
-    else{addLog('err','timeout','No response — is the plugin connected?');toast('No response from Studio.','bad');}
-  }catch(e){addLog('err','send',e.message);toast('Send failed: '+e.message,'bad');}
-  resetAI();
+    else{addLog('err','timeout','No response — is plugin connected?');toast('No response from Studio.','bad');}
+  }catch(e){addLog('err','send',e.message);toast('Failed: '+e.message,'bad');}
+  resetState();
 }
 
-function resetAI(){
-  $('aibtn').disabled=false;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb grn';
-  $('regenbtn').style.display='none';$('aiprev').style.display='none';
-  $('aithink').style.display='none';$('aistate').classList.remove('on');
-  $('ai-in').value='';updateCC();genCode=null;codeReady=false;
+function resetState(){
+  $('mainbtn').disabled=false;$('mainbtn').textContent='✦ Generate & Send';$('mainbtn').className='btn go';
+  $('retrybtn').style.display='none';
+  $('aiprev').style.display='none';$('aithink').style.display='none';
+  $('aistate').classList.remove('on');
+  $('cmd-in').value='';
+  $('cmd-hint').textContent='Powered by Groq AI — free & instant ⚡';
+  genCode=null;codeReady=false;
 }
-async function regen(){codeReady=false;genCode=null;$('aibtn').textContent='✦ Generate & Send';$('aibtn').className='xb grn';await generate();}
-function clearAI(){resetAI();}
-function copyCode(){if(genCode){navigator.clipboard.writeText(genCode);toast('Code copied!','ok');}}
+async function retry(){codeReady=false;genCode=null;$('mainbtn').textContent='✦ Generate & Send';$('mainbtn').className='btn go';await generate();}
+function clearAll(){resetState();}
+function copyCode(){if(genCode){navigator.clipboard.writeText(genCode).catch(()=>{});toast('Copied!','ok');}}
 
-/* ══ Lua mode ══ */
-async function sendLua(){
-  const body=$('lua-in').value.trim(),type=$('luatype').value;
-  if(!body){toast('Enter Lua code.','bad');return;}
-  addLog('sent',type,body);$('luabtn').disabled=true;$('luabtn').textContent='Sending…';
-  try{
-    const r=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,type,body})});
-    const d=await r.json();if(!d.ok)throw new Error(d.error||'Server error');
-    let result=null;
-    for(let i=0;i<15;i++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+token);const rd=await rr.json();if(rd.ready){result=rd;break;}}
-    if(result){addLog(result.success?'ok':'err',type,result.output);}
-    else{addLog('err',type,'No response from Studio.');}
-  }catch(e){addLog('err',type,e.message);toast('Send failed.','bad');}
-  $('luabtn').disabled=false;$('luabtn').textContent='▶ Send to Studio';
-}
-
-/* ══ Auth ══ */
+/* ══ AUTH ══ */
 function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.display='block';return;}$('s1err').style.display='none';vcode='NEXUS-'+rndT();$('vcode').textContent=vcode;goS(2);}
 
 function skipVerify(){
@@ -1876,101 +593,52 @@ function skipVerify(){
   user={username:u,userId:null,avatarUrl:'',av:u[0].toUpperCase()};
   token=rndT()+rndT();
   $('s3t').textContent='Welcome, '+u+'!';
-  $('s3ic').style.background='var(--rblx)';
   $('s3n').textContent=u;
   goS(3);
 }
 
-async function getRobloxUserId(username){
-  try{
-    const r=await fetch(BACKEND+'/api/roblox/user/'+encodeURIComponent(username));
-    const d=await r.json();
-    if(!d.found) return null;
-    return {userId:d.userId, username:d.username, displayName:d.displayName};
-  }catch{return null;}
+async function getRobloxUser(username){
+  try{const r=await fetch(BACKEND+'/api/roblox/user/'+encodeURIComponent(username));const d=await r.json();return d.found?d:null;}catch{return null;}
 }
-
 async function getRobloxAvatar(userId){
-  try{
-    const r=await fetch(BACKEND+'/api/roblox/avatar/'+userId);
-    const d=await r.json();
-    return d.avatarUrl||null;
-  }catch{return null;}
+  try{const r=await fetch(BACKEND+'/api/roblox/avatar/'+userId);const d=await r.json();return d.avatarUrl||null;}catch{return null;}
 }
-
-async function getRobloxDescription(userId){
-  try{
-    const r=await fetch(BACKEND+'/api/roblox/profile/'+userId);
-    const d=await r.json();
-    return d.description||'';
-  }catch{return null;}
+async function getRobloxDesc(userId){
+  try{const r=await fetch(BACKEND+'/api/roblox/profile/'+userId);const d=await r.json();return d.description||'';}catch{return null;}
 }
 
 async function doVerify(){
   const u=$('rbx-user').value.trim();
-  const btn=$('vbtn');
-  const errEl=$('s2err');
-  errEl.style.display='none';
-  btn.textContent='Looking up user…';btn.disabled=true;
-
-  // Step 1: Get user ID via backend
-  const userData=await getRobloxUserId(u);
-  if(!userData){
-    errEl.textContent='Could not find "'+u+'" on Roblox. Try typing your username exactly as shown on your profile page.';
-    errEl.style.display='block';
-    btn.textContent='Verify Account ✓';btn.disabled=false;
-    return;
+  const btn=$('vbtn'),err=$('s2err');
+  err.style.display='none';
+  btn.textContent='Looking up…';btn.disabled=true;
+  const ud=await getRobloxUser(u);
+  if(!ud){
+    err.textContent='User "'+u+'" not found. Check spelling or use Skip.';
+    err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;
   }
-
   btn.textContent='Checking profile…';
-
-  // Step 2: Check description for verify code
-  const desc=await getRobloxDescription(userData.userId);
-  if(desc===null){
-    errEl.textContent='Could not read profile. Try again.';
-    errEl.style.display='block';
-    btn.textContent='Verify Account ✓';btn.disabled=false;
-    return;
-  }
-
-  if(!desc.includes(vcode)){
-    errEl.textContent='Code "'+vcode+'" not found in your profile. Make sure you saved it!';
-    errEl.style.display='block';
-    btn.textContent='Verify Account ✓';btn.disabled=false;
-    return;
-  }
-
+  const desc=await getRobloxDesc(ud.userId);
+  if(desc===null){err.textContent='Could not read profile. Try Skip.';err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;}
+  if(!desc.includes(vcode)){err.textContent='Code not found in your About. Did you save it?';err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;}
   btn.textContent='Fetching avatar…';
-
-  // Step 3: Get real avatar via backend
-  const avatarUrl=await getRobloxAvatar(userData.userId);
-
-  // Step 4: Save user
-  user={username:userData.username||u, userId:userData.userId, avatarUrl:avatarUrl||'', av:(userData.username||u)[0].toUpperCase()};
+  const avatarUrl=await getRobloxAvatar(ud.userId);
+  user={username:ud.username||u,userId:ud.userId,avatarUrl:avatarUrl||'',av:(ud.username||u)[0].toUpperCase()};
   token=rndT()+rndT();
-
-  // Step 5: Update UI with real avatar
-  $('s3t').textContent='Welcome, '+(userData.displayName||u)+'!';
-  if(avatarUrl){
-    $('s3ic').src=avatarUrl;
-    $('s3ic').style.border='2px solid var(--c)';
-  }
-  $('s3n').textContent=userData.username||u;
-  btn.textContent='Verify Account ✓';btn.disabled=false;
+  $('s3t').textContent='Welcome, '+(ud.displayName||u)+'!';
+  if(avatarUrl){$('s3img').src=avatarUrl;}
+  $('s3n').textContent=ud.username||u;
+  btn.textContent='Verify ✓';btn.disabled=false;
   goS(3);
 }
+
 function goS(n){document.querySelectorAll('.astep').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');}
+
 function enterApp(){
   sv();
   $('auth').classList.add('gone');
-  const a=$('app');a.style.display='flex';
-  // Set real avatar image
-  if(user.avatarUrl){
-    $('tav').src=user.avatarUrl;
-  } else {
-    $('tav').style.background='var(--rblx)';
-    $('tav').alt=user.av;
-  }
+  $('app').classList.add('show');
+  if(user.avatarUrl){$('tav').src=user.avatarUrl;}
   $('tuname').textContent=user.username;
   $('tokval').textContent=token;
   $('boott').textContent=ts();
@@ -1978,76 +646,67 @@ function enterApp(){
   renderQF();
   startPoll();
 }
-function logout(){user=null;token=null;localStorage.clear();stopPoll();$('app').style.display='none';$('auth').classList.remove('gone');goS(1);$('rbx-user').value='';}
+
+function logout(){
+  user=null;token=null;localStorage.clear();stopPoll();
+  $('app').classList.remove('show');
+  $('auth').classList.remove('gone');
+  goS(1);$('rbx-user').value='';
+}
 
 /* ══ Boot ══ */
 ld();
 if(user&&token){
   goS(3);
   $('s3t').textContent='Welcome back, '+user.username+'!';
-  if(user.avatarUrl){
-    $('s3ic').src=user.avatarUrl;
-    $('s3ic').style.border='2px solid var(--c)';
-  }
+  if(user.avatarUrl)$('s3img').src=user.avatarUrl;
   $('s3n').textContent=user.username;
-  $('s3s').textContent='Session still active.';
-}
-
-/* ══ Nav ══ */
-function nav(name,btn){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
-  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
-  $('view-'+name).classList.add('on');btn.classList.add('on');
-  if(name==='projects')renderProjects();
+  $('s3s').textContent='Session active — tap to continue.';
 }
 
 /* ══ Log ══ */
 function addLog(kind,lbl,msg){
   const inner=$('loginner'),d=document.createElement('div');
   d.className=`le ${kind}`;
-  d.innerHTML=`<div class="lerow"><span class="letag ${kind}">${kind}</span><span class="lelbl">${lbl}</span><span class="letime">${ts()}</span></div><div class="lebody">${String(msg).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  d.innerHTML=`<div class="le-row"><span class="le-tag ${kind}">${kind}</span><span class="le-time">${ts()}</span></div><div class="le-body">${String(msg).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
   inner.appendChild(d);inner.scrollTop=inner.scrollHeight;
-  entries.push({kind,lbl,msg});$('logcnt').textContent=entries.length+' entr'+(entries.length===1?'y':'ies');
+  entries.push({kind,lbl,msg});
+  $('logcnt').textContent=entries.length+' entr'+(entries.length===1?'y':'ies');
 }
 
 /* ══ Poll ══ */
-function startPoll(){pollInt=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+token);const d=await r.json();if(d.connected&&!connected)setConn(true);if(!d.connected&&connected)setConn(false);}catch{}},2000);}
+function startPoll(){
+  pollInt=setInterval(async()=>{
+    try{
+      const r=await fetch(BACKEND+'/api/ping/'+token);
+      const d=await r.json();
+      if(d.connected&&!connected)setConn(true);
+      if(!d.connected&&connected)setConn(false);
+    }catch{}
+  },2000);
+}
 function stopPoll(){if(pollInt)clearInterval(pollInt);}
 function setConn(v){
   connected=v;
-  $('tdot').className='tdot '+(v?'on':'wait');
-  $('sdot').className='bigdot '+(v?'on':'wait');
-  $('tconntxt').textContent=v?'Studio connected':'Waiting for plugin';
-  $('sname').textContent=v?'Studio connected':'Waiting for plugin';
-  $('sdesc').textContent=v?'Commands will execute in Roblox Studio.':'Open Studio and activate your plugin.';
-  if(v){toast('Studio plugin connected!','ok');addLog('sys','connection','Plugin connected!');}
+  const cls='t-dot '+(v?'on':'wait');
+  $('tdot').className=cls;
+  if($('conn-dot2'))$('conn-dot2').className=cls;
+  $('tconntxt').textContent=v?'Studio connected':'No plugin';
+  if($('conn-txt2'))$('conn-txt2').textContent=v?'Connected':'Waiting';
+  if($('sdot'))$('sdot').className='bigdot '+(v?'on':'wait');
+  if($('sname'))$('sname').textContent=v?'Studio connected':'Waiting for plugin';
+  if($('sdesc'))$('sdesc').textContent=v?'Commands execute in Studio.':'Open Studio and activate plugin.';
+  if(v){toast('Studio connected!','ok');addLog('sys','conn','Plugin connected!');}
 }
 
 /* ══ Projects ══ */
-function seedP(){projects=[{id:rndId(),name:'Obby World',status:'synced',t:Date.now()-7200000},{id:rndId(),name:'Tycoon Empire',status:'offline',t:Date.now()-86400000}];sv();}
-function renderProjects(search=''){
-  const v=$('view-projects');
-  v.style.padding='1.25rem';v.style.overflowY='auto';
-  const total=projects.length,synced=projects.filter(p=>p.status==='synced').length,errs=projects.filter(p=>p.status==='error').length,off=projects.filter(p=>p.status==='offline').length;
-  let list=projects.filter(p=>p.name.toLowerCase().includes((search||'').toLowerCase())||p.id.toLowerCase().includes((search||'').toLowerCase()));
-  v.innerHTML=`
-    <div class="statsrow">
-      <div class="scard"><div class="scardlbl">Total</div><div class="scardnum c">${total}</div></div>
-      <div class="scard"><div class="scardlbl">Synced</div><div class="scardnum g">${synced}</div></div>
-      <div class="scard"><div class="scardlbl">Errors</div><div class="scardnum r">${errs}</div></div>
-      <div class="scard"><div class="scardlbl">Offline</div><div class="scardnum">${off}</div></div>
-    </div>
-    <div class="projhdr"><div class="projhdg">Projects</div><div class="projctrl"><input class="sbox" placeholder="Search…" value="${search||''}" oninput="renderProjects(this.value)"/><button class="xb" onclick="openModal()">+ New</button></div></div>
-    <div class="pgrid">${list.length?list.map(p=>`<div class="pcard"><div class="pname">${p.name}</div><div class="pid">${p.id}</div><span class="ppill ${p.status}">${p.status}</span><div class="pacts"><button class="pact" onclick="syncP('${p.id}')">↻ Sync</button><button class="pact del" onclick="delP('${p.id}')">✕</button></div></div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3)">No projects found.</div>'}</div>`;
-}
-function syncP(id){const p=projects.find(x=>x.id===id);if(!p)return;p.status='synced';sv();renderProjects();toast(`"${p.name}" synced.`,'ok');}
-function delP(id){const p=projects.find(x=>x.id===id);projects=projects.filter(x=>x.id!==id);sv();renderProjects();if(p)toast(`"${p.name}" deleted.`,'info');}
-function createProj(){const name=$('np-name').value.trim();if(!name){toast('Enter a name.','bad');return;}projects.unshift({id:rndId(),name,status:'offline',t:Date.now()});sv();closeModal();renderProjects();$('np-name').value='';toast(`"${name}" created.`,'ok');}
-function openModal(){$('np-id').value=rndId();$('mprojbg').classList.add('open');}
-function closeModal(){$('mprojbg').classList.remove('open');}
+function seedP(){projects=[{id:rndId(),name:'My Game',status:'offline',t:Date.now()}];sv();}
+function createProj(){const n=$('np-name').value.trim();if(!n){toast('Enter a name.','bad');return;}projects.unshift({id:rndId(),name:n,status:'offline',t:Date.now()});sv();closeModal();toast('"'+n+'" created.','ok');}
+function openModal(){$('mproj').classList.add('open');}
+function closeModal(){$('mproj').classList.remove('open');}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
-function copyTok(){navigator.clipboard.writeText(token);toast('Token copied!','ok');}
-function copyTxt(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
+function copyTok(){navigator.clipboard.writeText(token).catch(()=>{});toast('Token copied!','ok');}
+function copyTxt(t){navigator.clipboard.writeText(t).catch(()=>{});toast('Copied!','ok');}
 </script>
 
 </body>
