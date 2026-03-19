@@ -590,7 +590,7 @@ width:100%;
 background:var(–bg-2);
 border:0.5px solid var(–b2);
 border-radius:var(–r12);
-padding:14px 14px 40px 14px;
+padding:14px;
 font-family:var(–font-mono);
 font-size:14px;
 color:var(–text-0);
@@ -600,8 +600,7 @@ min-height:115px;
 max-height:200px;
 line-height:1.68;
 transition:border-color .25s,box-shadow .25s;
-position:relative;
-z-index:1;
+display:block;
 }
 .cmd-textarea:focus{
 border-color:var(–orange);
@@ -614,13 +613,10 @@ line-height:1.75;
 
 /* Textarea bottom bar */
 .cmd-bottom-bar{
-position:absolute;
-bottom:0;left:0;right:0;
 display:flex;align-items:center;
 justify-content:space-between;
-padding:6px 12px 9px;
+padding:5px 4px 2px;
 pointer-events:none;
-z-index:2;
 }
 .cmd-char-count{font-size:10px;color:var(–text-3)}
 .cmd-status-text{
@@ -1600,13 +1596,13 @@ letter-spacing:.1em;text-transform:uppercase;
 ✦ humanoid NPC with PathfindingService that hunts and attacks players
 ✦ obby with 30 platforms moving parts kill bricks and checkpoint system
 ✦ complete tycoon with plot dropper conveyor belt and upgrade system”></textarea>
+</div>
 <div class="cmd-bottom-bar">
 <span class="cmd-char-count" id="char-count">0 chars</span>
 <span class="cmd-status-text">
 <span class="cmd-status-pip"></span>
 <span id="cmd-status-label">Ready — free & instant via Groq</span>
 </span>
-</div>
 </div>
 </div>
 
