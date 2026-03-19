@@ -220,25 +220,17 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <div class="auth-sub">Roblox AI Studio</div>
   <div class="auth-card">
     <div class="astep on" id="s1">
-      <h2>Connect</h2>
-      <p>Enter your Roblox username to get started.</p>
-      <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourUsername" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/></div>
+      <h2>Enter your username</h2>
+      <p>Type your Roblox username to get started. No verification needed.</p>
+      <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourRobloxName" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/></div>
       <div class="aerr" id="s1err">Please enter your username.</div>
-      <button class="abtn" onclick="s1next()">Continue →</button>
-    </div>
-    <div class="astep" id="s2">
-      <h2>Verify</h2>
-      <p>Add this code to your Roblox profile to prove it's yours.</p>
-      <div class="anote">1. Go to <strong>roblox.com</strong> → Edit Profile<br/>2. Paste in <strong>About</strong>: <code id="vcode">NEXUS-XXXXXX</code><br/>3. Save, then tap Verify.</div>
-      <div class="aerr" id="s2err"></div>
-      <div style="display:flex;gap:8px"><button class="abtn ghost" style="flex:.38" onclick="goS(1)">← Back</button><button class="abtn rblx" style="flex:1" id="vbtn" onclick="doVerify()">Verify ✓</button></div>
-      <button class="skip-link" onclick="skipVerify()">Skip verification</button>
+      <button class="abtn" id="s1btn" onclick="s1next()">Let's Go →</button>
     </div>
     <div class="astep" id="s3">
-      <h2 id="s3t">Welcome!</h2><p id="s3s">You're in.</p>
+      <h2 id="s3t">Welcome!</h2><p id="s3s">Profile loaded.</p>
       <div class="rbxrow">
         <img class="s3img" id="s3img" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''"/>
-        <div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:3px;font-size:15px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account ✓</span></div>
+        <div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:3px;font-size:15px">—</strong><span style="font-size:11px;color:var(--text2)">✓ Ready to use NEXUS</span></div>
       </div>
       <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
     </div>
@@ -561,15 +553,32 @@ function clearAll(){resetState();}
 function copyCode(){if(genCode){navigator.clipboard.writeText(genCode).catch(()=>{});toast('Copied!','ok');}}
 
 /* ══ AUTH ══ */
-function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.display='block';return;}$('s1err').style.display='none';vcode='NEXUS-'+rndT();$('vcode').textContent=vcode;goS(2);}
-
-function skipVerify(){
+async function s1next(){
   const u=$('rbx-user').value.trim();
-  if(!u){goS(1);return;}
-  user={username:u,userId:null,avatarUrl:'',av:u[0].toUpperCase()};
+  if(!u){$('s1err').style.display='block';return;}
+  $('s1err').style.display='none';
+  const btn=$('s1btn');
+  btn.textContent='Loading profile…';btn.disabled=true;
+
+  // Try to fetch real Roblox profile — no verification needed
+  let username=u, displayName=u, avatarUrl='', userId=null;
+  try{
+    const ud=await getRobloxUser(u);
+    if(ud){
+      userId=ud.userId;
+      username=ud.username||u;
+      displayName=ud.displayName||u;
+      const av=await getRobloxAvatar(ud.userId);
+      if(av)avatarUrl=av;
+    }
+  }catch{}
+
+  user={username,userId,avatarUrl,av:username[0].toUpperCase()};
   token=rndT()+rndT();
-  $('s3t').textContent='Welcome, '+u+'!';
-  $('s3n').textContent=u;
+  $('s3t').textContent='Welcome, '+displayName+'!';
+  $('s3n').textContent=username;
+  if(avatarUrl){try{$('s3img').src=avatarUrl;}catch{}}
+  btn.textContent='Let\'s Go →';btn.disabled=false;
   goS(3);
 }
 
@@ -578,34 +587,6 @@ async function getRobloxUser(username){
 }
 async function getRobloxAvatar(userId){
   try{const r=await fetch(BACKEND+'/api/roblox/avatar/'+userId);const d=await r.json();return d.avatarUrl||null;}catch{return null;}
-}
-async function getRobloxDesc(userId){
-  try{const r=await fetch(BACKEND+'/api/roblox/profile/'+userId);const d=await r.json();return d.description||'';}catch{return null;}
-}
-
-async function doVerify(){
-  const u=$('rbx-user').value.trim();
-  const btn=$('vbtn'),err=$('s2err');
-  err.style.display='none';
-  btn.textContent='Looking up…';btn.disabled=true;
-  const ud=await getRobloxUser(u);
-  if(!ud){
-    err.textContent='User "'+u+'" not found. Check spelling or use Skip.';
-    err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;
-  }
-  btn.textContent='Checking profile…';
-  const desc=await getRobloxDesc(ud.userId);
-  if(desc===null){err.textContent='Could not read profile. Try Skip.';err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;}
-  if(!desc.includes(vcode)){err.textContent='Code not found in your About. Did you save it?';err.style.display='block';btn.textContent='Verify ✓';btn.disabled=false;return;}
-  btn.textContent='Fetching avatar…';
-  const avatarUrl=await getRobloxAvatar(ud.userId);
-  user={username:ud.username||u,userId:ud.userId,avatarUrl:avatarUrl||'',av:(ud.username||u)[0].toUpperCase()};
-  token=rndT()+rndT();
-  $('s3t').textContent='Welcome, '+(ud.displayName||u)+'!';
-  if(avatarUrl){$('s3img').src=avatarUrl;}
-  $('s3n').textContent=ud.username||u;
-  btn.textContent='Verify ✓';btn.disabled=false;
-  goS(3);
 }
 
 function goS(n){document.querySelectorAll('.astep').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');}
@@ -674,7 +655,20 @@ function setConn(v){
   if($('sdot'))$('sdot').className='bigdot '+(v?'on':'wait');
   if($('sname'))$('sname').textContent=v?'Studio connected':'Waiting for plugin';
   if($('sdesc'))$('sdesc').textContent=v?'Commands execute in Studio.':'Open Studio and activate plugin.';
-  if(v){toast('Studio connected!','ok');addLog('sys','conn','Plugin connected!');}
+  if(v){
+    toast('Studio connected!','ok');
+    addLog('sys','conn','Plugin connected! Running as: '+user.username);
+    // Refresh avatar when plugin connects
+    if(user&&user.userId&&!user.avatarUrl){
+      getRobloxAvatar(user.userId).then(url=>{
+        if(url){
+          user.avatarUrl=url;
+          try{$('tav').src=url;}catch{}
+          try{sv();}catch{}
+        }
+      });
+    }
+  }
 }
 
 /* ══ Projects ══ */
