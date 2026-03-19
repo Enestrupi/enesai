@@ -271,7 +271,7 @@ body{min-height:100vh;overflow:hidden}
       </div>
       <div class="astep" id="s3">
         <h2 id="s3t">Welcome!</h2><p id="s3s">Account verified.</p>
-        <div class="rbxrow"><div class="rbxic" id="s3ic">?</div><div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:2px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account verified ✓</span></div></div>
+        <div class="rbxrow"><img id="s3ic" src="" style="width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--bg3);flex-shrink:0"/><div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:2px">—</strong><span style="font-size:11px;color:var(--text2)">Roblox account verified ✓</span></div></div>
         <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
       </div>
     </div>
@@ -285,7 +285,7 @@ body{min-height:100vh;overflow:hidden}
     <div class="tlogo"><span class="tlogo-pip"></span>NEXUS</div>
     <div class="tdiv"></div><div class="ttag">Roblox Studio — Free AI Engine</div>
     <div class="tconn"><span class="tdot wait" id="tdot"></span><span id="tconntxt">Waiting for plugin</span></div>
-    <div class="tuser"><div class="tav" id="tav">?</div><span class="tuname" id="tuname">—</span><span class="tlogout" onclick="logout()" title="Sign out">⏻</span></div>
+    <div class="tuser"><img id="tav" src="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;background:var(--rblx);flex-shrink:0"/><span class="tuname" id="tuname">—</span><span class="tlogout" onclick="logout()" title="Sign out">⏻</span></div>
   </div>
   <div class="appbody">
     <aside class="sidebar">
@@ -1868,14 +1868,123 @@ async function sendLua(){
 
 /* ══ Auth ══ */
 function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.display='block';return;}$('s1err').style.display='none';vcode='NEXUS-'+rndT();$('vcode').textContent=vcode;goS(2);}
-async function doVerify(){const btn=$('vbtn');btn.textContent='Checking…';btn.disabled=true;await new Promise(r=>setTimeout(r,1400));btn.textContent='Verify Account ✓';btn.disabled=false;const u=$('rbx-user').value.trim();user={username:u,av:u[0].toUpperCase()};token=rndT()+rndT();$('s3t').textContent='Welcome, '+u+'!';$('s3ic').textContent=u[0].toUpperCase();$('s3n').textContent=u;goS(3);}
+
+async function getRobloxUserId(username){
+  try{
+    const r=await fetch('https://users.roblox.com/v1/usernames/users',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({usernames:[username],excludeBannedUsers:true})
+    });
+    const d=await r.json();
+    return d.data&&d.data[0]?d.data[0].id:null;
+  }catch{return null;}
+}
+
+async function getRobloxAvatar(userId){
+  try{
+    const r=await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+    const d=await r.json();
+    return d.data&&d.data[0]?d.data[0].imageUrl:null;
+  }catch{return null;}
+}
+
+async function getRobloxDescription(userId){
+  try{
+    const r=await fetch(`https://users.roblox.com/v1/users/${userId}`);
+    const d=await r.json();
+    return d.description||'';
+  }catch{return null;}
+}
+
+async function doVerify(){
+  const u=$('rbx-user').value.trim();
+  const btn=$('vbtn');
+  const errEl=$('s2err');
+  errEl.style.display='none';
+  btn.textContent='Looking up user…';btn.disabled=true;
+
+  // Step 1: Get user ID
+  const userId=await getRobloxUserId(u);
+  if(!userId){
+    errEl.textContent='Roblox user "'+u+'" not found. Check your username.';
+    errEl.style.display='block';
+    btn.textContent='Verify Account ✓';btn.disabled=false;
+    return;
+  }
+
+  btn.textContent='Checking profile…';
+
+  // Step 2: Check description for verify code
+  const desc=await getRobloxDescription(userId);
+  if(desc===null){
+    errEl.textContent='Could not read profile. Try again.';
+    errEl.style.display='block';
+    btn.textContent='Verify Account ✓';btn.disabled=false;
+    return;
+  }
+
+  if(!desc.includes(vcode)){
+    errEl.textContent='Code "'+vcode+'" not found in your profile description. Make sure you saved it!';
+    errEl.style.display='block';
+    btn.textContent='Verify Account ✓';btn.disabled=false;
+    return;
+  }
+
+  btn.textContent='Fetching avatar…';
+
+  // Step 3: Get avatar
+  const avatarUrl=await getRobloxAvatar(userId);
+
+  // Step 4: Save user data
+  user={username:u,userId,avatarUrl:avatarUrl||'',av:u[0].toUpperCase()};
+  token=rndT()+rndT();
+
+  // Step 5: Update UI
+  $('s3t').textContent='Welcome, '+u+'!';
+  if(avatarUrl){
+    $('s3ic').src=avatarUrl;
+    $('s3ic').style.border='2px solid var(--c)';
+  } else {
+    $('s3ic').style.background='var(--rblx)';
+  }
+  $('s3n').textContent=u;
+  btn.textContent='Verify Account ✓';btn.disabled=false;
+  goS(3);
+}
 function goS(n){document.querySelectorAll('.astep').forEach(s=>s.classList.remove('on'));$('s'+n).classList.add('on');}
-function enterApp(){sv();$('auth').classList.add('gone');const a=$('app');a.style.display='flex';$('tav').textContent=user.av;$('tuname').textContent=user.username;$('tokval').textContent=token;$('boott').textContent=ts();if(projects.length===0)seedP();renderQF();startPoll();}
+function enterApp(){
+  sv();
+  $('auth').classList.add('gone');
+  const a=$('app');a.style.display='flex';
+  // Set real avatar image
+  if(user.avatarUrl){
+    $('tav').src=user.avatarUrl;
+  } else {
+    $('tav').style.background='var(--rblx)';
+    $('tav').alt=user.av;
+  }
+  $('tuname').textContent=user.username;
+  $('tokval').textContent=token;
+  $('boott').textContent=ts();
+  if(projects.length===0)seedP();
+  renderQF();
+  startPoll();
+}
 function logout(){user=null;token=null;localStorage.clear();stopPoll();$('app').style.display='none';$('auth').classList.remove('gone');goS(1);$('rbx-user').value='';}
 
 /* ══ Boot ══ */
 ld();
-if(user&&token){goS(3);$('s3t').textContent='Welcome back, '+user.username+'!';$('s3ic').textContent=user.av;$('s3n').textContent=user.username;$('s3s').textContent='Session still active.';}
+if(user&&token){
+  goS(3);
+  $('s3t').textContent='Welcome back, '+user.username+'!';
+  if(user.avatarUrl){
+    $('s3ic').src=user.avatarUrl;
+    $('s3ic').style.border='2px solid var(--c)';
+  }
+  $('s3n').textContent=user.username;
+  $('s3s').textContent='Session still active.';
+}
 
 /* ══ Nav ══ */
 function nav(name,btn){
