@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -30,17 +29,17 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 /* ══ WELCOME SCREEN ══ */
 #welcome{position:fixed;inset:0;z-index:200;background:#010306;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fade .3s ease}
 #welcome.gone{display:none}
-.w-logo{font-family:‘Syne’,sans-serif;font-size:52px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44,#ff8c00);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;animation:shimmer 3s linear infinite}
+.w-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44,#ff8c00);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;animation:shimmer 3s linear infinite}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 .w-sub{font-size:12px;color:#7a5c44;letter-spacing:.12em;text-transform:uppercase;margin-bottom:40px}
 .w-card{background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:16px;padding:22px;width:100%;max-width:380px;position:relative;overflow:hidden;animation:scale-in .4s ease}
-.w-card::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
-.w-card-title{font-family:‘Syne’,sans-serif;font-size:17px;font-weight:900;margin-bottom:5px}
+.w-card::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
+.w-card-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:900;margin-bottom:5px}
 .w-card-desc{font-size:12px;color:#7a5c44;margin-bottom:20px;line-height:1.7}
 .w-features{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
 .w-feat{display:flex;align-items:center;gap:10px;font-size:12px;color:#c8a888}
 .w-feat-dot{width:7px;height:7px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
-.w-enter-btn{width:100%;background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border:none;border-radius:10px;padding:14px;font-family:‘Syne’,sans-serif;font-weight:900;font-size:14px;cursor:pointer;letter-spacing:.04em;transition:all .2s;box-shadow:0 4px 20px rgba(255,140,0,.3)}
+.w-enter-btn{width:100%;background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border:none;border-radius:10px;padding:14px;font-family:'Syne',sans-serif;font-weight:900;font-size:14px;cursor:pointer;letter-spacing:.04em;transition:all .2s;box-shadow:0 4px 20px rgba(255,140,0,.3)}
 .w-enter-btn:hover{box-shadow:0 6px 28px rgba(255,140,0,.5);transform:translateY(-1px)}
 .w-enter-btn:active{transform:scale(.97)}
 .w-returning{margin-top:12px;font-size:11px;color:#3a2518;text-align:center}
@@ -51,8 +50,8 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 
 /* TOPBAR */
 .bar{height:54px;background:rgba(1,3,6,.95);backdrop-filter:blur(16px);border-bottom:0.5px solid rgba(255,140,0,.1);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;position:relative;z-index:10}
-.bar::after{content:’’;position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,rgba(255,140,0,.3),transparent);opacity:.5}
-.logo{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px}
+.bar::after{content:'';position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,rgba(255,140,0,.3),transparent);opacity:.5}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px}
 .logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#ff8c00,#ffcc44);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#010306;animation:glow 3s ease-in-out infinite;flex-shrink:0;-webkit-text-fill-color:#010306}
 .cpill{display:flex;align-items:center;gap:6px;padding:5px 11px;background:#07101e;border:0.5px solid rgba(255,140,0,.1);border-radius:20px;font-size:10px;color:#7a5c44;margin-left:auto;transition:all .3s}
 .cpill.live{border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.04);color:#00ffaa}
@@ -64,7 +63,7 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 
 /* TABS */
 .tabs{display:flex;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.08);flex-shrink:0}
-.tab{flex:1;padding:10px 6px;font-size:11px;font-weight:700;color:#3a2518;cursor:pointer;border:none;background:none;transition:all .2s;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;font-family:‘JetBrains Mono’,monospace;position:relative}
+.tab{flex:1;padding:10px 6px;font-size:11px;font-weight:700;color:#3a2518;cursor:pointer;border:none;background:none;transition:all .2s;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;font-family:'JetBrains Mono',monospace;position:relative}
 .tab.on{color:#ff8c00;border-bottom-color:#ff8c00;background:rgba(255,140,0,.03)}
 .tab:hover{color:#7a5c44}
 .tab-badge{background:rgba(255,140,0,.15);color:#ff8c00;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700}
@@ -77,7 +76,7 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 /* ══ COMMAND VIEW ══ */
 .izone{padding:12px 14px 10px;flex-shrink:0;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.06)}
 .ihead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.ititle{font-family:‘Syne’,sans-serif;font-size:15px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
+.ititle{font-family:'Syne',sans-serif;font-size:15px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
 .ititle-dot{width:7px;height:7px;border-radius:50%;background:#ff8c00;box-shadow:0 0 10px #ff8c00;animation:glow 2.5s ease-in-out infinite;flex-shrink:0}
 .model-tag{display:flex;align-items:center;gap:5px;padding:4px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.12);border-radius:20px;font-size:10px;color:#7a5c44}
 .model-tag-dot{width:5px;height:5px;border-radius:50%;background:#00ffaa}
@@ -92,7 +91,7 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 .aiwrap{display:none;flex-direction:column;gap:6px;margin:8px 0 0;animation:up .2s ease}
 .aiwrap.show{display:flex}
 .think{display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(255,140,0,.06);border:0.5px solid rgba(255,140,0,.18);border-radius:10px;font-size:12px;color:#ff8c00;position:relative;overflow:hidden}
-.think::after{content:’’;position:absolute;bottom:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,#ffcc44,transparent);animation:sl 1.8s ease-in-out infinite}
+.think::after{content:'';position:absolute;bottom:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,#ffcc44,transparent);animation:sl 1.8s ease-in-out infinite}
 @keyframes sl{0%{left:-100%}100%{left:100%}}
 .tdots{display:flex;gap:4px}
 .tdots span{width:5px;height:5px;background:#ff8c00;border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
@@ -101,7 +100,7 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 .prev{background:#07101e;border:0.5px solid rgba(255,140,0,.22);border-radius:10px;overflow:hidden;animation:up .2s ease}
 .prev-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,140,0,.07);border-bottom:0.5px solid rgba(255,140,0,.1)}
 .prev-lbl{font-size:10px;color:#ff8c00;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
-.prev-lbl::before{content:’’;width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
+.prev-lbl::before{content:'';width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
 .cpybtn{padding:3px 8px;background:#101828;border:0.5px solid rgba(255,140,0,.18);border-radius:4px;font-size:10px;color:#7a5c44;cursor:pointer;transition:all .15s}
 .cpybtn:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
 .prev-code{padding:10px 12px;font-size:11px;color:#c8a888;white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
@@ -190,14 +189,14 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 .sh-bg.open{opacity:1;pointer-events:all}
 .sh{background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:20px 20px 0 0;padding:18px 18px 36px;width:100%;max-width:520px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative;max-height:90vh;overflow-y:auto}
 .sh-bg.open .sh{transform:translateY(0)}
-.sh::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
+.sh::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
 .sh-handle{width:40px;height:4px;background:#101828;border-radius:2px;margin:0 auto 16px}
 .sh-x{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:#101828;border:0.5px solid rgba(255,140,0,.15);display:flex;align-items:center;justify-content:center;font-size:12px;color:#7a5c44;cursor:pointer;transition:all .15s}
 .sh-x:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
-.sh-title{font-family:‘Syne’,sans-serif;font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.sh-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
 .sh-sub{font-size:12px;color:#7a5c44;margin-bottom:16px;line-height:1.6}
 .sh-sec{font-size:9px;font-weight:700;color:#3a2518;letter-spacing:.12em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
-.sh-sec::after{content:’’;flex:1;height:0.5px;background:linear-gradient(90deg,rgba(255,140,0,.15),transparent)}
+.sh-sec::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,rgba(255,140,0,.15),transparent)}
 .tok-box{background:#101828;border:0.5px solid rgba(255,140,0,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .tok-lbl{font-size:9px;color:#3a2518;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
 .tok-val{font-size:12px;color:#ff8c00;font-weight:700;word-break:break-all}
@@ -217,7 +216,7 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 .conn-card-dot{width:10px;height:10px;border-radius:50%;background:#3a2518;flex-shrink:0;transition:all .3s}
 .conn-card-dot.on{background:#00ffaa;box-shadow:0 0 10px rgba(0,255,170,.5)}
 .conn-card-dot.wait{background:#ff8c00;animation:blink 1.3s ease-in-out infinite}
-.conn-card-name{font-family:‘Syne’,sans-serif;font-size:13px;font-weight:800;margin-bottom:2px}
+.conn-card-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;margin-bottom:2px}
 .conn-card-desc{font-size:11px;color:#7a5c44;line-height:1.4}
 
 /* TOASTS */
@@ -228,13 +227,11 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 .toast.info{border-left:2px solid #00aaff}
 .toast.ai{border-left:2px solid #ff8c00;background:rgba(255,140,0,.04)}
 </style>
-
 </head>
 <body>
 <div class="bg"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div></div>
 
 <!-- ══ WELCOME SCREEN ══ -->
-
 <div id="welcome">
   <div class="w-logo">ENES AI</div>
   <div class="w-sub">Roblox Studio Intelligence</div>
@@ -254,11 +251,9 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 </div>
 
 <!-- ══ APP ══ -->
-
 <div id="app">
 
   <!-- TOPBAR -->
-
   <div class="bar">
     <div class="logo"><div class="logo-icon">E</div>ENES AI</div>
     <div class="cpill" id="cpill"><span class="cdot wait" id="cdot"></span><span id="ctxt">No plugin</span></div>
@@ -266,7 +261,6 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
   </div>
 
   <!-- TABS -->
-
   <div class="tabs">
     <button class="tab on" id="tab-cmd" onclick="switchTab('cmd')">⌨ Command</button>
     <button class="tab" id="tab-hist" onclick="switchTab('hist')">📋 History <span class="tab-badge" id="hist-badge">0</span></button>
@@ -274,66 +268,60 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
   </div>
 
   <!-- ── COMMAND VIEW ── -->
-
   <div class="view on" id="view-cmd">
 
-```
-<div class="izone">
-  <div class="ihead">
-    <div class="ititle"><span class="ititle-dot"></span>ENES AI</div>
-    <div class="model-tag"><span class="model-tag-dot"></span>Groq · Llama 3.3</div>
-  </div>
+    <div class="izone">
+      <div class="ihead">
+        <div class="ititle"><span class="ititle-dot"></span>ENES AI</div>
+        <div class="model-tag"><span class="model-tag-dot"></span>Groq · Llama 3.3</div>
+      </div>
 
-  <textarea class="txtarea" id="txta" rows="4" spellcheck="false" autocomplete="off" autocorrect="off"
-    placeholder="Type anything — ENES AI knows everything:
-```
+      <textarea class="txtarea" id="txta" rows="4" spellcheck="false" autocomplete="off" autocorrect="off"
+        placeholder="Type anything — ENES AI knows everything:
 
 ✦ photorealistic 4K island terrain cinematic sunset
 ✦ beautiful animated main menu GUI with glow
 ✦ complete admin system server and client scripts
 ✦ shop GUI coins RemoteEvents datastore full system
 ✦ NPC PathfindingService hunts and attacks players
-✦ full obby 30 platforms moving parts kill bricks”></textarea>
+✦ full obby 30 platforms moving parts kill bricks"></textarea>
 
-```
-  <div class="txt-foot">
-    <span id="ccount">0 chars</span>
-    <span class="txt-foot-r"><span class="txt-pip"></span><span id="hlabel">Free &amp; instant via Groq</span></span>
-  </div>
-
-  <div class="aiwrap" id="aiwrap">
-    <div class="think" id="tbar">
-      <div class="tdots"><span></span><span></span><span></span></div>
-      <span id="tmsg">Analyzing…</span>
-      <div class="tspinner"></div>
-    </div>
-    <div class="prev" id="prevbox" style="display:none">
-      <div class="prev-head">
-        <span class="prev-lbl">Generated Lua</span>
-        <button class="cpybtn" onclick="copyCode()">copy</button>
+      <div class="txt-foot">
+        <span id="ccount">0 chars</span>
+        <span class="txt-foot-r"><span class="txt-pip"></span><span id="hlabel">Free &amp; instant via Groq</span></span>
       </div>
-      <div class="prev-code" id="pcode"></div>
-      <div class="prev-note"><span>💡</span><span id="pnote"></span></div>
+
+      <div class="aiwrap" id="aiwrap">
+        <div class="think" id="tbar">
+          <div class="tdots"><span></span><span></span><span></span></div>
+          <span id="tmsg">Analyzing…</span>
+          <div class="tspinner"></div>
+        </div>
+        <div class="prev" id="prevbox" style="display:none">
+          <div class="prev-head">
+            <span class="prev-lbl">Generated Lua</span>
+            <button class="cpybtn" onclick="copyCode()">copy</button>
+          </div>
+          <div class="prev-code" id="pcode"></div>
+          <div class="prev-note"><span>💡</span><span id="pnote"></span></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-x" onclick="clearAll()">✕</button>
+        <button class="btn btn-retry" id="retrybtn" onclick="retryGen()">↻</button>
+        <button class="btn btn-go" id="mainbtn" onclick="go()">✦ Generate &amp; Send</button>
+      </div>
     </div>
-  </div>
 
-  <div class="actions">
-    <button class="btn btn-x" onclick="clearAll()">✕</button>
-    <button class="btn btn-retry" id="retrybtn" onclick="retryGen()">↻</button>
-    <button class="btn btn-go" id="mainbtn" onclick="go()">✦ Generate &amp; Send</button>
-  </div>
-</div>
-
-<div class="ex-wrap">
-  <div class="ex-lbl">Quick examples</div>
-  <div class="ex-scroll" id="exscroll"></div>
-</div>
-```
+    <div class="ex-wrap">
+      <div class="ex-lbl">Quick examples</div>
+      <div class="ex-scroll" id="exscroll"></div>
+    </div>
 
   </div><!-- /view-cmd -->
 
   <!-- ── HISTORY VIEW ── -->
-
   <div class="view" id="view-hist">
     <div class="hist-toolbar">
       <div class="hist-title"><span style="font-size:13px">📋</span>Command History</div>
@@ -348,7 +336,6 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
   </div>
 
   <!-- ── LOG VIEW ── -->
-
   <div class="view" id="view-log">
     <div class="log-toolbar">
       <div class="log-title-row"><span class="log-pip"></span>Execution Log</div>
@@ -368,7 +355,6 @@ button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:
 </div><!-- /app -->
 
 <!-- SETUP SHEET -->
-
 <div class="sh-bg" id="shbg" onclick="shClick(event)">
   <div class="sh">
     <div class="sh-handle"></div>
@@ -1231,6 +1217,5 @@ function enterApp(){
   }catch(e){console.error('Boot:',e);}
 })();
 </script>
-
 </body>
 </html>
