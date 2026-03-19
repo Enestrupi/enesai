@@ -268,6 +268,7 @@ body{min-height:100vh;overflow:hidden}
         <div class="anote">1. Go to <strong>roblox.com</strong> → Edit profile<br/>2. Paste in <strong>About</strong>: <code id="vcode">NEXUS-XXXXXX</code><br/>3. Save, then click Verify below.</div>
         <div class="aerr" id="s2err"></div>
         <div style="display:flex;gap:8px"><button class="abtn ghost" style="flex:.38" onclick="goS(1)">← Back</button><button class="abtn rblx" style="flex:1" id="vbtn" onclick="doVerify()">Verify Account ✓</button></div>
+        <div style="margin-top:10px;text-align:center"><button onclick="skipVerify()" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:var(--ff)">Skip verification (use if stuck)</button></div>
       </div>
       <div class="astep" id="s3">
         <h2 id="s3t">Welcome!</h2><p id="s3s">Account verified.</p>
@@ -1869,6 +1870,17 @@ async function sendLua(){
 /* ══ Auth ══ */
 function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.display='block';return;}$('s1err').style.display='none';vcode='NEXUS-'+rndT();$('vcode').textContent=vcode;goS(2);}
 
+function skipVerify(){
+  const u=$('rbx-user').value.trim();
+  if(!u){goS(1);return;}
+  user={username:u,userId:null,avatarUrl:'',av:u[0].toUpperCase()};
+  token=rndT()+rndT();
+  $('s3t').textContent='Welcome, '+u+'!';
+  $('s3ic').style.background='var(--rblx)';
+  $('s3n').textContent=u;
+  goS(3);
+}
+
 async function getRobloxUserId(username){
   try{
     const r=await fetch(BACKEND+'/api/roblox/user/'+encodeURIComponent(username));
@@ -1904,7 +1916,7 @@ async function doVerify(){
   // Step 1: Get user ID via backend
   const userData=await getRobloxUserId(u);
   if(!userData){
-    errEl.textContent='Roblox user "'+u+'" not found. Check your username.';
+    errEl.textContent='Could not find "'+u+'" on Roblox. Try typing your username exactly as shown on your profile page.';
     errEl.style.display='block';
     btn.textContent='Verify Account ✓';btn.disabled=false;
     return;
