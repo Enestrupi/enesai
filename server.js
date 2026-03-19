@@ -99,6 +99,52 @@ res.status(500).json({ error: “Failed to reach Groq: “ + err.message });
 }
 });
 
+// ── Roblox: lookup user by username ──
+// GET /api/roblox/user/:username
+app.get(”/api/roblox/user/:username”, async (req, res) => {
+const { username } = req.params;
+try {
+const r = await fetch(“https://users.roblox.com/v1/usernames/users”, {
+method: “POST”,
+headers: { “Content-Type”: “application/json” },
+body: JSON.stringify({ usernames: [username], excludeBannedUsers: false })
+});
+const d = await r.json();
+const user = d.data?.[0];
+if (!user) return res.json({ found: false });
+res.json({ found: true, userId: user.id, username: user.name, displayName: user.displayName });
+} catch(e) {
+res.status(500).json({ found: false, error: e.message });
+}
+});
+
+// ── Roblox: get profile description ──
+// GET /api/roblox/profile/:userId
+app.get(”/api/roblox/profile/:userId”, async (req, res) => {
+const { userId } = req.params;
+try {
+const r = await fetch(`https://users.roblox.com/v1/users/${userId}`);
+const d = await r.json();
+res.json({ description: d.description || “”, displayName: d.displayName || “”, username: d.name || “” });
+} catch(e) {
+res.status(500).json({ description: “”, error: e.message });
+}
+});
+
+// ── Roblox: get avatar headshot ──
+// GET /api/roblox/avatar/:userId
+app.get(”/api/roblox/avatar/:userId”, async (req, res) => {
+const { userId } = req.params;
+try {
+const r = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+const d = await r.json();
+const url = d.data?.[0]?.imageUrl || null;
+res.json({ avatarUrl: url });
+} catch(e) {
+res.status(500).json({ avatarUrl: null, error: e.message });
+}
+});
+
 // ── Verify Roblox username ──
 app.post(”/api/verify”, async (req, res) => {
 const { username, code } = req.body;
