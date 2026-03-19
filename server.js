@@ -23,8 +23,19 @@ const cors = require(“cors”);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
+// ── CORS — allow everything ──
+app.use(cors({
+origin: “*”,
+methods: [“GET”, “POST”, “PUT”, “DELETE”, “OPTIONS”],
+allowedHeaders: [“Content-Type”, “Authorization”, “Accept”],
+credentials: false
+}));
+
+// Handle preflight OPTIONS requests for all routes
+app.options(”*”, cors());
+
+app.use(express.json({ limit: “10mb” }));
+app.use(express.urlencoded({ extended: true }));
 
 // ── In-memory store ──
 const pendingCommands = {};
@@ -102,18 +113,29 @@ res.status(500).json({ error: “Failed to reach Groq: “ + err.message });
 // ── Roblox: lookup user by username ──
 // GET /api/roblox/user/:username
 app.get(”/api/roblox/user/:username”, async (req, res) => {
-const { username } = req.params;
+const username = req.params.username;
 try {
+// Try exact lookup first
 const r = await fetch(“https://users.roblox.com/v1/usernames/users”, {
 method: “POST”,
 headers: { “Content-Type”: “application/json” },
 body: JSON.stringify({ usernames: [username], excludeBannedUsers: false })
 });
 const d = await r.json();
+console.log(”[roblox/user] Response:”, JSON.stringify(d));
 const user = d.data?.[0];
-if (!user) return res.json({ found: false });
+if (!user) {
+// Try alternate lookup via search
+const r2 = await fetch(`https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=10`);
+const d2 = await r2.json();
+console.log(”[roblox/user] Search response:”, JSON.stringify(d2));
+const match = d2.data?.find(u => u.name.toLowerCase() === username.toLowerCase());
+if (!match) return res.json({ found: false, debug: d });
+return res.json({ found: true, userId: match.id, username: match.name, displayName: match.displayName });
+}
 res.json({ found: true, userId: user.id, username: user.name, displayName: user.displayName });
 } catch(e) {
+console.error(”[roblox/user] Error:”, e.message);
 res.status(500).json({ found: false, error: e.message });
 }
 });
