@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>NEXUS — Roblox AI Studio</title>
+<title>ENES — Roblox AI Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -35,69 +36,69 @@ body{min-height:100vh;overflow:hidden}
 #root{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
 
 /* AUTH */
-#auth{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+#auth{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(–bg)}
 #auth.gone{display:none}
 .aw{width:420px}
-.alogo{font-family:var(--ffd);font-size:30px;font-weight:900;color:var(--c);margin-bottom:4px;display:flex;align-items:center;gap:10px}
-.alogo-dot{width:11px;height:11px;background:var(--c);border-radius:50%;box-shadow:0 0 20px var(--c),0 0 40px var(--cglow2);animation:pd 2s ease-in-out infinite}
-@keyframes pd{0%,100%{box-shadow:0 0 20px var(--c),0 0 40px var(--cglow2)}50%{box-shadow:0 0 30px var(--c),0 0 60px var(--cglow2)}}
-.asub{font-size:11px;color:var(--text2);margin-bottom:2rem;letter-spacing:.06em;text-transform:uppercase}
-.acard{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radlg);padding:2rem;position:relative;overflow:hidden}
-.acard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.4}
-.acard::after{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--cglow) 0%,transparent 70%);pointer-events:none}
-.acard h2{font-family:var(--ffd);font-size:16px;font-weight:800;margin-bottom:.25rem}
-.acard p{font-size:11px;color:var(--text2);margin-bottom:1.5rem;line-height:1.7}
+.alogo{font-family:var(–ffd);font-size:30px;font-weight:900;color:var(–c);margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.alogo-dot{width:11px;height:11px;background:var(–c);border-radius:50%;box-shadow:0 0 20px var(–c),0 0 40px var(–cglow2);animation:pd 2s ease-in-out infinite}
+@keyframes pd{0%,100%{box-shadow:0 0 20px var(–c),0 0 40px var(–cglow2)}50%{box-shadow:0 0 30px var(–c),0 0 60px var(–cglow2)}}
+.asub{font-size:11px;color:var(–text2);margin-bottom:2rem;letter-spacing:.06em;text-transform:uppercase}
+.acard{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–radlg);padding:2rem;position:relative;overflow:hidden}
+.acard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.4}
+.acard::after{content:’’;position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(–cglow) 0%,transparent 70%);pointer-events:none}
+.acard h2{font-family:var(–ffd);font-size:16px;font-weight:800;margin-bottom:.25rem}
+.acard p{font-size:11px;color:var(–text2);margin-bottom:1.5rem;line-height:1.7}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase}
-.field input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:11px 13px;font-family:var(--ff);font-size:13px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
-.field input:focus{border-color:var(--c);box-shadow:0 0 0 2px var(--cglow)}
-.field input::placeholder{color:var(--text3)}
-.anote{font-size:11px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rad);padding:11px 13px;margin-bottom:1rem;line-height:1.7}
-.anote code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 6px;color:var(--c);font-size:10px}
-.abtn{width:100%;background:var(--c);color:#020408;border:none;border-radius:var(--rad);padding:12px;font-family:var(--ffd);font-weight:800;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .15s;text-transform:uppercase}
-.abtn:hover{background:var(--c2);box-shadow:0 0 24px var(--cglow2)}
-.abtn.rblx{background:var(--rblx);color:white}
+.field label{display:block;font-size:10px;color:var(–text2);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase}
+.field input{width:100%;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:11px 13px;font-family:var(–ff);font-size:13px;color:var(–text);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(–c);box-shadow:0 0 0 2px var(–cglow)}
+.field input::placeholder{color:var(–text3)}
+.anote{font-size:11px;color:var(–text2);background:var(–bg3);border:0.5px solid var(–border);border-radius:var(–rad);padding:11px 13px;margin-bottom:1rem;line-height:1.7}
+.anote code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 6px;color:var(–c);font-size:10px}
+.abtn{width:100%;background:var(–c);color:#020408;border:none;border-radius:var(–rad);padding:12px;font-family:var(–ffd);font-weight:800;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.abtn:hover{background:var(–c2);box-shadow:0 0 24px var(–cglow2)}
+.abtn.rblx{background:var(–rblx);color:white}
 .abtn.rblx:hover{box-shadow:0 0 24px rgba(227,30,37,0.4);background:#c01920}
-.abtn.ghost{background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)}
-.abtn.ghost:hover{border-color:var(--c);color:var(--c);box-shadow:none}
+.abtn.ghost{background:var(–bg3);color:var(–text2);border:0.5px solid var(–border2)}
+.abtn.ghost:hover{border-color:var(–c);color:var(–c);box-shadow:none}
 .astep{display:none}.astep.on{display:block}
-.aerr{color:var(--r);font-size:11px;margin-top:8px;display:none}
-.rbxrow{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:.875rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
-.rbxic{width:38px;height:38px;border-radius:var(--rad);background:var(--rblx);display:flex;align-items:center;justify-content:center;font-family:var(--ffd);font-weight:900;font-size:16px;color:white;flex-shrink:0}
+.aerr{color:var(–r);font-size:11px;margin-top:8px;display:none}
+.rbxrow{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:.875rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.rbxic{width:38px;height:38px;border-radius:var(–rad);background:var(–rblx);display:flex;align-items:center;justify-content:center;font-family:var(–ffd);font-weight:900;font-size:16px;color:white;flex-shrink:0}
 
 /* TOPBAR */
-.topbar{height:50px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:rgba(2,4,8,0.95);backdrop-filter:blur(12px);flex-shrink:0;z-index:10;position:relative}
-.topbar::after{content:'';position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
-.tlogo{font-family:var(--ffd);font-size:16px;font-weight:900;color:var(--c);display:flex;align-items:center;gap:8px}
-.tlogo-pip{width:8px;height:8px;background:var(--c);border-radius:50%;box-shadow:0 0 12px var(--c);animation:pd 2s ease-in-out infinite}
-.tdiv{width:1px;height:20px;background:var(--border2)}
-.ttag{font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
-.tconn{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;font-size:11px;color:var(--text2);margin-left:auto}
-.tdot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:all .3s;flex-shrink:0}
-.tdot.on{background:var(--g);box-shadow:0 0 8px var(--gglow)}
-.tdot.wait{background:var(--o);animation:blink 1.2s ease-in-out infinite}
+.topbar{height:50px;border-bottom:0.5px solid var(–border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:rgba(2,4,8,0.95);backdrop-filter:blur(12px);flex-shrink:0;z-index:10;position:relative}
+.topbar::after{content:’’;position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–border2),transparent)}
+.tlogo{font-family:var(–ffd);font-size:16px;font-weight:900;color:var(–c);display:flex;align-items:center;gap:8px}
+.tlogo-pip{width:8px;height:8px;background:var(–c);border-radius:50%;box-shadow:0 0 12px var(–c);animation:pd 2s ease-in-out infinite}
+.tdiv{width:1px;height:20px;background:var(–border2)}
+.ttag{font-size:10px;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
+.tconn{display:flex;align-items:center;gap:7px;padding:5px 11px;background:var(–bg3);border:0.5px solid var(–border);border-radius:20px;font-size:11px;color:var(–text2);margin-left:auto}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(–text3);transition:all .3s;flex-shrink:0}
+.tdot.on{background:var(–g);box-shadow:0 0 8px var(–gglow)}
+.tdot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.tuser{display:flex;align-items:center;gap:8px;padding:5px 11px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);cursor:pointer}
-.tuser:hover{border-color:var(--border3)}
-.tav{width:22px;height:22px;border-radius:50%;background:var(--rblx);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.tuser{display:flex;align-items:center;gap:8px;padding:5px 11px;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);cursor:pointer}
+.tuser:hover{border-color:var(–border3)}
+.tav{width:22px;height:22px;border-radius:50%;background:var(–rblx);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
 .tuname{font-size:12px}
-.tlogout{color:var(--text3);font-size:11px;margin-left:2px;cursor:pointer}
-.tlogout:hover{color:var(--r)}
+.tlogout{color:var(–text3);font-size:11px;margin-left:2px;cursor:pointer}
+.tlogout:hover{color:var(–r)}
 
 /* LAYOUT */
 .appbody{flex:1;display:flex;overflow:hidden}
-.sidebar{width:210px;min-width:210px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:rgba(2,4,8,0.8);overflow-y:auto;flex-shrink:0}
-.ngrp{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)}
-.nbtn{display:flex;align-items:center;gap:9px;padding:8px .875rem;margin:1px .5rem;border-radius:var(--rad);cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(--ff)}
-.nbtn:hover{background:var(--bg3);color:var(--text)}
-.nbtn.on{background:rgba(0,200,255,0.08);color:var(--c);border:0.5px solid rgba(0,200,255,.15)}
+.sidebar{width:210px;min-width:210px;border-right:0.5px solid var(–border);display:flex;flex-direction:column;background:rgba(2,4,8,0.8);overflow-y:auto;flex-shrink:0}
+.ngrp{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(–text3)}
+.nbtn{display:flex;align-items:center;gap:9px;padding:8px .875rem;margin:1px .5rem;border-radius:var(–rad);cursor:pointer;color:var(–text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(–ff)}
+.nbtn:hover{background:var(–bg3);color:var(–text)}
+.nbtn.on{background:rgba(0,200,255,0.08);color:var(–c);border:0.5px solid rgba(0,200,255,.15)}
 .nico{font-size:13px;width:16px;text-align:center;flex-shrink:0}
-.npill{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:3px;background:var(--gdim);color:var(--g);font-weight:700}
-.ai-box{margin:.75rem .75rem 0;background:linear-gradient(135deg,rgba(0,200,255,0.04),rgba(204,68,255,0.05));border:0.5px solid rgba(0,200,255,0.14);border-radius:var(--rad);padding:.75rem;position:relative;overflow:hidden}
-.ai-box::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,var(--c),var(--p));opacity:.25}
-.ai-box-title{font-family:var(--ffd);font-size:11px;font-weight:800;background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
-.ai-box-desc{font-size:10px;color:var(--text2);line-height:1.6}
-.aiorb{width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--gglow);display:inline-block;margin-right:5px;animation:pd 2s ease-in-out infinite}
+.npill{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:3px;background:var(–gdim);color:var(–g);font-weight:700}
+.ai-box{margin:.75rem .75rem 0;background:linear-gradient(135deg,rgba(0,200,255,0.04),rgba(204,68,255,0.05));border:0.5px solid rgba(0,200,255,0.14);border-radius:var(–rad);padding:.75rem;position:relative;overflow:hidden}
+.ai-box::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,var(–c),var(–p));opacity:.25}
+.ai-box-title{font-family:var(–ffd);font-size:11px;font-weight:800;background:linear-gradient(90deg,var(–c),var(–p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.ai-box-desc{font-size:10px;color:var(–text2);line-height:1.6}
+.aiorb{width:6px;height:6px;border-radius:50%;background:var(–g);box-shadow:0 0 10px var(–gglow);display:inline-block;margin-right:5px;animation:pd 2s ease-in-out infinite}
 
 .carea{flex:1;overflow:hidden;display:flex;flex-direction:column}
 .view{display:none;flex:1;overflow:hidden}
@@ -105,148 +106,150 @@ body{min-height:100vh;overflow:hidden}
 
 /* COMMAND VIEW */
 .clayout{flex:1;display:grid;grid-template-columns:1fr 310px;overflow:hidden}
-.cmain{display:flex;flex-direction:column;overflow:hidden;border-right:0.5px solid var(--border)}
+.cmain{display:flex;flex-direction:column;overflow:hidden;border-right:0.5px solid var(–border)}
 .cside{display:flex;flex-direction:column;overflow:hidden}
 
-.inzone{padding:1.1rem;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.inzone{padding:1.1rem;border-bottom:0.5px solid var(–border);flex-shrink:0}
 .inhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
-.intitle{font-family:var(--ffd);font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
-.intitle-pip{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 12px var(--gglow);animation:pd 2s ease-in-out infinite}
-.chips{display:flex;gap:4px;background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;padding:3px}
-.chip{padding:4px 12px;border-radius:14px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(--text2);font-family:var(--ff);transition:all .2s}
-.chip.on{background:var(--bg4);color:var(--c);border:0.5px solid rgba(0,200,255,0.2)}
-.chip.on.ai{color:var(--g);border-color:rgba(0,255,170,0.2);background:var(--gdim)}
+.intitle{font-family:var(–ffd);font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+.intitle-pip{width:8px;height:8px;border-radius:50%;background:var(–g);box-shadow:0 0 12px var(–gglow);animation:pd 2s ease-in-out infinite}
+.chips{display:flex;gap:4px;background:var(–bg3);border:0.5px solid var(–border);border-radius:20px;padding:3px}
+.chip{padding:4px 12px;border-radius:14px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(–text2);font-family:var(–ff);transition:all .2s}
+.chip.on{background:var(–bg4);color:var(–c);border:0.5px solid rgba(0,200,255,0.2)}
+.chip.on.ai{color:var(–g);border-color:rgba(0,255,170,0.2);background:var(–gdim)}
 .biwrap{position:relative;margin-bottom:.75rem}
-.biinput{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:13px;font-family:var(--ff);font-size:13px;color:var(--text);outline:none;resize:none;transition:border-color .25s,box-shadow .25s;min-height:95px;line-height:1.6}
-.biinput:focus{border-color:var(--g);box-shadow:0 0 0 2px var(--gdim)}
-.biinput.lua:focus{border-color:var(--c);box-shadow:0 0 0 2px var(--cglow)}
-.biinput::placeholder{color:var(--text3)}
-.bi-corner{position:absolute;bottom:9px;right:10px;font-size:10px;color:var(--text3)}
+.biinput{width:100%;background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:13px;font-family:var(–ff);font-size:13px;color:var(–text);outline:none;resize:none;transition:border-color .25s,box-shadow .25s;min-height:95px;line-height:1.6}
+.biinput:focus{border-color:var(–g);box-shadow:0 0 0 2px var(–gdim)}
+.biinput.lua:focus{border-color:var(–c);box-shadow:0 0 0 2px var(–cglow)}
+.biinput::placeholder{color:var(–text3)}
+.bi-corner{position:absolute;bottom:9px;right:10px;font-size:10px;color:var(–text3)}
 
 .aistate{margin-bottom:.75rem;display:none;flex-direction:column;gap:6px}
 .aistate.on{display:flex}
-.aithink{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--gdim);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(--rad);font-size:11px;color:var(--g)}
+.aithink{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(–gdim);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–rad);font-size:11px;color:var(–g)}
 .dots{display:flex;gap:3px}
-.dots i{width:5px;height:5px;background:var(--g);border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
+.dots i{width:5px;height:5px;background:var(–g);border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
 .dots i:nth-child(2){animation-delay:.18s}
 .dots i:nth-child(3){animation-delay:.36s}
 @keyframes dot{0%,100%{transform:scale(.5);opacity:.4}50%{transform:scale(1);opacity:1}}
-.aipreview{background:var(--bg3);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(--rad);overflow:hidden}
-.aipreview-head{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(--gdim);border-bottom:0.5px solid rgba(0,255,170,0.15)}
-.aipreview-lbl{font-size:10px;color:var(--g);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.aipreview-code{padding:10px 11px;font-size:11px;color:var(--text2);white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
-.aipreview-note{padding:7px 11px;border-top:0.5px solid var(--border);font-size:11px;color:var(--text2);line-height:1.5;background:rgba(0,0,0,0.2)}
+.aipreview{background:var(–bg3);border:0.5px solid rgba(0,255,170,0.2);border-radius:var(–rad);overflow:hidden}
+.aipreview-head{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;background:var(–gdim);border-bottom:0.5px solid rgba(0,255,170,0.15)}
+.aipreview-lbl{font-size:10px;color:var(–g);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.aipreview-code{padding:10px 11px;font-size:11px;color:var(–text2);white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
+.aipreview-note{padding:7px 11px;border-top:0.5px solid var(–border);font-size:11px;color:var(–text2);line-height:1.5;background:rgba(0,0,0,0.2)}
 
 .actbar{display:flex;gap:7px;align-items:center}
-.xb{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);border-radius:var(--rad);padding:8px 13px;font-family:var(--ff);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.xb:hover{border-color:var(--c);color:var(--c)}
-.xb.d:hover{border-color:var(--r);color:var(--r)}
-.xb.prim{background:var(--c);color:#020408;border-color:var(--c);font-weight:700;margin-left:auto}
-.xb.prim:hover{background:var(--c2);box-shadow:0 0 20px var(--cglow2)}
-.xb.grn{background:var(--g);color:#020408;border-color:var(--g);font-weight:700;margin-left:auto}
-.xb.grn:hover{background:#00dd88;box-shadow:0 0 20px var(--gglow)}
-.xb.grn:disabled,.xb.prim:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none}
-.ltype{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:8px 10px;font-family:var(--ff);font-size:11px;color:var(--text2);outline:none}
+.xb{background:var(–bg3);border:0.5px solid var(–border2);color:var(–text2);border-radius:var(–rad);padding:8px 13px;font-family:var(–ff);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.xb:hover{border-color:var(–c);color:var(–c)}
+.xb.d:hover{border-color:var(–r);color:var(–r)}
+.xb.prim{background:var(–c);color:#020408;border-color:var(–c);font-weight:700;margin-left:auto}
+.xb.prim:hover{background:var(–c2);box-shadow:0 0 20px var(–cglow2)}
+.xb.grn{background:var(–g);color:#020408;border-color:var(–g);font-weight:700;margin-left:auto}
+.xb.grn:hover{background:#00dd88;box-shadow:0 0 20px var(–gglow)}
+.xb.grn:disabled,.xb.prim:disabled{background:var(–bg4);color:var(–text3);border-color:var(–border);cursor:not-allowed;box-shadow:none}
+.ltype{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:8px 10px;font-family:var(–ff);font-size:11px;color:var(–text2);outline:none}
 
-.qfire{border-bottom:0.5px solid var(--border);flex-shrink:0}
+.qfire{border-bottom:0.5px solid var(–border);flex-shrink:0}
 .qftabs{display:flex;padding:.5rem .875rem 0;gap:2px;overflow-x:auto}
-.qftab{padding:5px 11px;font-size:10px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--ff)}
-.qftab.on{color:var(--c);border-bottom-color:var(--c)}
+.qftab{padding:5px 11px;font-size:10px;color:var(–text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(–ff)}
+.qftab.on{color:var(–c);border-bottom-color:var(–c)}
 .qfgrid{padding:.625rem .875rem;display:flex;flex-wrap:wrap;gap:5px;max-height:80px;overflow-y:auto}
-.qfbtn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:20px;padding:4px 11px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--ff);white-space:nowrap}
-.qfbtn:hover{border-color:var(--g);color:var(--g);background:var(--gdim)}
+.qfbtn{background:var(–bg3);border:0.5px solid var(–border);color:var(–text2);border-radius:20px;padding:4px 11px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(–ff);white-space:nowrap}
+.qfbtn:hover{border-color:var(–g);color:var(–g);background:var(–gdim)}
 
 .logzone{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
-.loghead{padding:.6rem 1rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.logtitle{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
+.loghead{padding:.6rem 1rem;border-bottom:0.5px solid var(–border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logtitle{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
 .loginner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:5px}
-.le{padding:8px 10px;border-radius:var(--rad);font-size:12px;border-left:2px solid var(--text3);background:var(--bg3);animation:lein .15s ease}
+.le{padding:8px 10px;border-radius:var(–rad);font-size:12px;border-left:2px solid var(–text3);background:var(–bg3);animation:lein .15s ease}
 @keyframes lein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.le.ai{border-left-color:var(--g)}.le.sent{border-left-color:var(--c)}.le.ok{border-left-color:var(--g)}.le.err{border-left-color:var(--r)}.le.sys{border-left-color:var(--text3)}
+.le.ai{border-left-color:var(–g)}.le.sent{border-left-color:var(–c)}.le.ok{border-left-color:var(–g)}.le.err{border-left-color:var(–r)}.le.sys{border-left-color:var(–text3)}
 .lerow{display:flex;align-items:center;gap:7px;margin-bottom:3px}
 .letag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
-.letag.ai{background:var(--gdim);color:var(--g)}.letag.sent{background:rgba(0,200,255,0.08);color:var(--c)}.letag.ok{background:var(--gdim);color:var(--g)}.letag.err{background:var(--rdim);color:var(--r)}.letag.sys{background:var(--bg4);color:var(--text3)}
-.lelbl{font-size:10px;color:var(--text3)}.letime{font-size:10px;color:var(--text3);margin-left:auto}
-.lebody{color:var(--text2);font-size:11px;line-height:1.5;word-break:break-all}
+.letag.ai{background:var(–gdim);color:var(–g)}.letag.sent{background:rgba(0,200,255,0.08);color:var(–c)}.letag.ok{background:var(–gdim);color:var(–g)}.letag.err{background:var(–rdim);color:var(–r)}.letag.sys{background:var(–bg4);color:var(–text3)}
+.lelbl{font-size:10px;color:var(–text3)}.letime{font-size:10px;color:var(–text3);margin-left:auto}
+.lebody{color:var(–text2);font-size:11px;line-height:1.5;word-break:break-all}
 
-.sconn{padding:1rem;border-bottom:0.5px solid var(--border);flex-shrink:0}
+.sconn{padding:1rem;border-bottom:0.5px solid var(–border);flex-shrink:0}
 .sconnrow{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
-.bigdot{width:11px;height:11px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:all .3s}
-.bigdot.on{background:var(--g);box-shadow:0 0 12px var(--gglow)}
-.bigdot.wait{background:var(--o);animation:blink 1.2s ease-in-out infinite}
-.connname{font-family:var(--ffd);font-size:13px;font-weight:800}
-.conndesc{font-size:11px;color:var(--text2);line-height:1.5}
-.tokrow{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--rad);padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.toklbl{font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
-.tokval{font-size:12px;color:var(--c);letter-spacing:.06em}
-.cpybtn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 7px;border:0.5px solid var(--border);border-radius:3px;transition:all .15s;white-space:nowrap;background:none}
-.cpybtn:hover{border-color:var(--c);color:var(--c)}
+.bigdot{width:11px;height:11px;border-radius:50%;background:var(–text3);flex-shrink:0;transition:all .3s}
+.bigdot.on{background:var(–g);box-shadow:0 0 12px var(–gglow)}
+.bigdot.wait{background:var(–o);animation:blink 1.2s ease-in-out infinite}
+.connname{font-family:var(–ffd);font-size:13px;font-weight:800}
+.conndesc{font-size:11px;color:var(–text2);line-height:1.5}
+.tokrow{background:var(–bg3);border:0.5px solid var(–border2);border-radius:var(–rad);padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.toklbl{font-size:9px;color:var(–text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.tokval{font-size:12px;color:var(–c);letter-spacing:.06em}
+.cpybtn{font-size:10px;color:var(–text3);cursor:pointer;padding:2px 7px;border:0.5px solid var(–border);border-radius:3px;transition:all .15s;white-space:nowrap;background:none}
+.cpybtn:hover{border-color:var(–c);color:var(–c)}
 .ssetup{flex:1;overflow-y:auto;padding:1rem}
-.setuptitle{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
+.setuptitle{font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem}
 .ss{display:flex;gap:10px;margin-bottom:.875rem;align-items:flex-start}
-.ssnum{width:20px;height:20px;border-radius:50%;background:var(--bg4);border:0.5px solid var(--border2);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.sstitle{font-size:12px;color:var(--text);font-weight:700;margin-bottom:2px}
-.ssdesc{font-size:11px;color:var(--text2);line-height:1.5}
-.ssdesc code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--c);font-size:10px}
-.sscode{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--rad);padding:7px 9px;margin-top:5px;font-size:10px;color:var(--c);font-family:var(--ff);word-break:break-all;position:relative;padding-right:52px}
+.ssnum{width:20px;height:20px;border-radius:50%;background:var(–bg4);border:0.5px solid var(–border2);font-size:10px;color:var(–text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.sstitle{font-size:12px;color:var(–text);font-weight:700;margin-bottom:2px}
+.ssdesc{font-size:11px;color:var(–text2);line-height:1.5}
+.ssdesc code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 5px;color:var(–c);font-size:10px}
+.sscode{background:var(–bg3);border:0.5px solid var(–border);border-radius:var(–rad);padding:7px 9px;margin-top:5px;font-size:10px;color:var(–c);font-family:var(–ff);word-break:break-all;position:relative;padding-right:52px}
 
 .projview{flex:1;overflow-y:auto;padding:1.25rem;flex-direction:column}
 .statsrow{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem}
-.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);padding:.875rem 1rem;position:relative;overflow:hidden}
-.scard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
-.scardlbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
-.scardnum{font-family:var(--ffd);font-size:24px;font-weight:900;line-height:1}
-.scardnum.c{color:var(--c)}.scardnum.g{color:var(--g)}.scardnum.r{color:var(--r)}
+.scard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);padding:.875rem 1rem;position:relative;overflow:hidden}
+.scard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–border2),transparent)}
+.scardlbl{font-size:9px;color:var(–text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.scardnum{font-family:var(–ffd);font-size:24px;font-weight:900;line-height:1}
+.scardnum.c{color:var(–c)}.scardnum.g{color:var(–g)}.scardnum.r{color:var(–r)}
 .projhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.projhdg{font-family:var(--ffd);font-size:14px;font-weight:800}
+.projhdg{font-family:var(–ffd);font-size:14px;font-weight:800}
 .projctrl{display:flex;gap:7px}
-.sbox{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:6px 11px;font-family:var(--ff);font-size:12px;color:var(--text);outline:none;width:180px}
-.sbox:focus{border-color:var(--c)}
-.sbox::placeholder{color:var(--text3)}
+.sbox{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–rad);padding:6px 11px;font-family:var(–ff);font-size:12px;color:var(–text);outline:none;width:180px}
+.sbox:focus{border-color:var(–c)}
+.sbox::placeholder{color:var(–text3)}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem}
-.pcard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);padding:.875rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.pcard::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--cglow),transparent);opacity:0;transition:opacity .2s}
-.pcard:hover{border-color:var(--border2);transform:translateY(-2px)}.pcard:hover::before{opacity:1}
-.pname{font-family:var(--ffd);font-size:12px;font-weight:700;margin-bottom:3px}
-.pid{font-size:10px;color:var(--text3);margin-bottom:8px}
+.pcard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);padding:.875rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pcard::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–cglow),transparent);opacity:0;transition:opacity .2s}
+.pcard:hover{border-color:var(–border2);transform:translateY(-2px)}.pcard:hover::before{opacity:1}
+.pname{font-family:var(–ffd);font-size:12px;font-weight:700;margin-bottom:3px}
+.pid{font-size:10px;color:var(–text3);margin-bottom:8px}
 .ppill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
-.ppill.synced{background:var(--gdim);color:var(--g)}.ppill.offline{background:var(--bg4);color:var(--text3)}.ppill.error{background:var(--rdim);color:var(--r)}
+.ppill.synced{background:var(–gdim);color:var(–g)}.ppill.offline{background:var(–bg4);color:var(–text3)}.ppill.error{background:var(–rdim);color:var(–r)}
 .pacts{display:flex;gap:5px;margin-top:9px}
-.pact{flex:1;background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--rad);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--ff)}
-.pact:hover{border-color:var(--c);color:var(--c)}.pact.del:hover{border-color:var(--r);color:var(--r)}
+.pact{flex:1;background:var(–bg3);border:0.5px solid var(–border);color:var(–text2);border-radius:var(–rad);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(–ff)}
+.pact:hover{border-color:var(–c);color:var(–c)}.pact.del:hover{border-color:var(–r);color:var(–r)}
 
 .setupview{flex:1;overflow-y:auto;padding:1.25rem}
 .setup-inner{max-width:580px}
-.setup-h{font-family:var(--ffd);font-size:16px;font-weight:800;margin-bottom:1.25rem}
-.icard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radlg);overflow:hidden;margin-bottom:.875rem}
-.icardh{padding:.75rem 1rem;border-bottom:0.5px solid var(--border);font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase}
-.icardb{padding:1rem;font-size:12px;color:var(--text2);line-height:1.8}
-.icardb code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 6px;color:var(--c);font-size:11px}
-.icardb strong{color:var(--text)}
+.setup-h{font-family:var(–ffd);font-size:16px;font-weight:800;margin-bottom:1.25rem}
+.icard{background:var(–bg2);border:0.5px solid var(–border);border-radius:var(–radlg);overflow:hidden;margin-bottom:.875rem}
+.icardh{padding:.75rem 1rem;border-bottom:0.5px solid var(–border);font-size:10px;font-weight:700;color:var(–text2);letter-spacing:.1em;text-transform:uppercase}
+.icardb{padding:1rem;font-size:12px;color:var(–text2);line-height:1.8}
+.icardb code{background:var(–bg4);border:0.5px solid var(–border2);border-radius:3px;padding:1px 6px;color:var(–c);font-size:11px}
+.icardb strong{color:var(–text)}
 
 .overlay{position:fixed;inset:0;background:rgba(2,4,8,0.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radlg);padding:1.5rem;width:400px;position:relative;transform:scale(.97) translateY(6px);transition:transform .2s}
+.modal{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–radlg);padding:1.5rem;width:400px;position:relative;transform:scale(.97) translateY(6px);transition:transform .2s}
 .overlay.open .modal{transform:none}
-.modal::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.4}
-.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
-.modal-x:hover{color:var(--r)}
-.modal-title{font-family:var(--ffd);font-size:15px;font-weight:800;margin-bottom:.25rem}
-.modal-sub{font-size:11px;color:var(--text2);margin-bottom:1.25rem}
+.modal::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,var(–c),transparent);opacity:.4}
+.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(–text3);cursor:pointer;font-size:14px}
+.modal-x:hover{color:var(–r)}
+.modal-title{font-family:var(–ffd);font-size:15px;font-weight:800;margin-bottom:.25rem}
+.modal-sub{font-size:11px;color:var(–text2);margin-bottom:1.25rem}
 .modal-btns{display:flex;gap:7px;margin-top:1rem}
 .modal-btns .xb{flex:1;justify-content:center}
 
 #toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999;pointer-events:none}
-.toast{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rad);padding:9px 14px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:210px;pointer-events:auto}
-.toast.ok{border-left:2px solid var(--g)}.toast.bad{border-left:2px solid var(--r)}.toast.info{border-left:2px solid var(--c)}.toast.ai{border-left:2px solid var(--g)}
+.toast{background:var(–bg2);border:0.5px solid var(–border2);border-radius:var(–rad);padding:9px 14px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:210px;pointer-events:auto}
+.toast.ok{border-left:2px solid var(–g)}.toast.bad{border-left:2px solid var(–r)}.toast.info{border-left:2px solid var(–c)}.toast.ai{border-left:2px solid var(–g)}
 @keyframes tin{from{opacity:0;transform:translateX(10px) scale(.97)}to{opacity:1;transform:none}}
 @media(max-width:900px){.clayout{grid-template-columns:1fr}.cside{display:none}.statsrow{grid-template-columns:1fr 1fr}}
 </style>
+
 </head>
 <body>
 <div class="bg-canvas"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div><div class="scanline"></div></div>
 
 <!-- AUTH -->
+
 <div id="auth">
   <div class="aw">
     <div class="alogo"><span class="alogo-dot"></span>NEXUS</div>
@@ -276,6 +279,7 @@ body{min-height:100vh;overflow:hidden}
 </div>
 
 <!-- APP -->
+
 <div id="app" style="display:none;height:100vh;flex-direction:column">
   <div class="topbar">
     <div class="tlogo"><span class="tlogo-pip"></span>NEXUS</div>
@@ -311,77 +315,79 @@ body{min-height:100vh;overflow:hidden}
                 <div class="biwrap">
                   <textarea class="biinput" id="ai-in" rows="4" placeholder="Describe what you want — plain English, anything:
 
-✦ 'grass base with fog and sunset sky'
-✦ 'kill brick and spawn point'
-✦ 'admin system with leaderstats and datastore'
-✦ 'obby with 20 platforms and kill bricks'
-✦ 'shop GUI with coins and buy buttons'
-✦ 'tropical island with water trees and beach'"></textarea>
-                  <span class="bi-corner" id="charct">0</span>
-                </div>
-                <div class="aistate" id="aistate">
-                  <div class="aithink" id="aithink"><div class="dots"><i></i><i></i><i></i></div><span id="thinkttxt">Processing…</span></div>
-                  <div class="aipreview" id="aiprev" style="display:none">
-                    <div class="aipreview-head"><span class="aipreview-lbl">✦ Generated Lua</span><button class="cpybtn" onclick="copyCode()">copy</button></div>
-                    <div class="aipreview-code" id="aicode"></div>
-                    <div class="aipreview-note" id="ainote"></div>
-                  </div>
-                </div>
-                <div class="actbar">
-                  <button class="xb d" onclick="clearAI()">✕ Clear</button>
-                  <button class="xb" id="regenbtn" style="display:none" onclick="regen()">↻ Retry</button>
-                  <button class="xb grn" id="aibtn" onclick="handleAI()">✦ Generate &amp; Send</button>
-                </div>
-              </div>
-              <div id="lua-ui" style="display:none">
-                <div class="biwrap"><textarea class="biinput lua" id="lua-in" rows="4" placeholder="Write raw Lua…"></textarea></div>
-                <div class="actbar">
-                  <button class="xb d" onclick="$('lua-in').value=''">✕ Clear</button>
-                  <select class="ltype" id="luatype"><option value="run_script">Run Script</option><option value="eval">Eval Lua</option><option value="insert_part">Insert Part</option><option value="set_property">Set Property</option><option value="delete_instance">Delete Instance</option><option value="get_children">Get Children</option></select>
-                  <button class="xb prim" id="luabtn" onclick="sendLua()">▶ Send to Studio</button>
-                </div>
-              </div>
-            </div>
-            <div class="qfire">
-              <div class="qftabs">
-                <button class="qftab on" onclick="qfTab(this,'build')">🏗 Build</button>
-                <button class="qftab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
-                <button class="qftab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
-                <button class="qftab" onclick="qfTab(this,'lighting')">🌅 Lighting</button>
-                <button class="qftab" onclick="qfTab(this,'gui')">📱 GUI</button>
-                <button class="qftab" onclick="qfTab(this,'game')">🎮 Game</button>
-              </div>
-              <div class="qfgrid" id="qfgrid"></div>
-            </div>
-            <div class="logzone">
-              <div class="loghead"><span class="logtitle">Execution Log</span><span style="font-size:10px;color:var(--text3)" id="logcnt">0 entries</span></div>
-              <div class="loginner" id="loginner"><div class="le sys"><div class="lerow"><span class="letag sys">sys</span><span class="letime" id="boott"></span></div><div class="lebody">NEXUS ready — Free local engine active. No API needed.</div></div></div>
-            </div>
-          </div>
-          <div class="cside">
-            <div class="sconn">
-              <div class="sconnrow"><div class="bigdot wait" id="sdot"></div><div><div class="connname" id="sname">Waiting for plugin</div><div class="conndesc" id="sdesc">Open Studio and activate your plugin.</div></div></div>
-              <div class="tokrow"><div><div class="toklbl">Session Token</div><div class="tokval" id="tokval">—</div></div><button class="cpybtn" onclick="copyTok()">copy</button></div>
-            </div>
-            <div class="ssetup">
-              <div class="setuptitle">Plugin Setup</div>
-              <div class="ss"><div class="ssnum">1</div><div><div class="sstitle">Download plugin</div><div class="ssdesc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in your Studio plugins folder.</div></div></div>
-              <div class="ss"><div class="ssnum">2</div><div><div class="sstitle">Set backend URL</div><div class="ssdesc">Replace <code>YOUR_BACKEND_URL</code> in the plugin.</div><div class="sscode">https://enesai-production.up.railway.app<button class="cpybtn" style="position:absolute;top:6px;right:6px" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
-              <div class="ss"><div class="ssnum">3</div><div><div class="sstitle">Enter session token</div><div class="ssdesc">Copy your token above into the plugin's token field in Studio.</div></div></div>
-              <div class="ss"><div class="ssnum">4</div><div><div class="sstitle">Activate plugin</div><div class="ssdesc">Click NEXUS in your toolbar. Dot turns <span style="color:var(--g)">green</span> when connected.</div></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="view-projects" class="view projview"></div>
-      <div id="view-setup" class="view setupview">
-        <div class="setup-inner">
-          <div class="setup-h">Setup Guide</div>
-          <div class="icard"><div class="icardh">How NEXUS works</div><div class="icardb"><strong>100% Free — No API keys ever.</strong> NEXUS uses a built-in local rule engine with 150+ Roblox templates. It reads your plain English command, detects every keyword, and combines matching templates into complete working Lua.<br/><br/><strong>Files needed:</strong><br/><code>dashboard.html</code> — this file<br/><code>server.js</code> — Node.js backend<br/><code>studio-plugin.lua</code> — Roblox plugin</div></div>
-          <div class="icard"><div class="icardh">API Endpoints</div><div class="icardb"><code>POST /api/command</code> — send Lua<br/><code>GET /api/poll/:token</code> — plugin polls<br/><code>POST /api/result</code> — plugin posts result<br/><code>GET /api/result/:token</code> — check result<br/><code>GET /api/ping/:token</code> — heartbeat</div></div>
-        </div>
-      </div>
-    </div>
+✦ ‘photorealistic tropical island with 4K terrain, water, fog and sunset’
+✦ ‘beautiful main menu GUI with animations and blur effect’
+✦ ‘full admin system with server and localscript’
+✦ ‘complete shop system with GUI, RemoteEvents, and datastore’
+✦ ‘realistic mountain range with snow peaks and cinematic lighting’
+✦ ‘NPC with pathfinding that follows and attacks players’
+✦ ‘full round system with intermission, timer, and leaderboard GUI’”></textarea>
+<span class="bi-corner" id="charct">0</span>
+</div>
+<div class="aistate" id="aistate">
+<div class="aithink" id="aithink"><div class="dots"><i></i><i></i><i></i></div><span id="thinkttxt">Processing…</span></div>
+<div class="aipreview" id="aiprev" style="display:none">
+<div class="aipreview-head"><span class="aipreview-lbl">✦ Generated Lua</span><button class="cpybtn" onclick="copyCode()">copy</button></div>
+<div class="aipreview-code" id="aicode"></div>
+<div class="aipreview-note" id="ainote"></div>
+</div>
+</div>
+<div class="actbar">
+<button class="xb d" onclick="clearAI()">✕ Clear</button>
+<button class="xb" id="regenbtn" style="display:none" onclick="regen()">↻ Retry</button>
+<button class="xb grn" id="aibtn" onclick="handleAI()">✦ Generate & Send</button>
+</div>
+</div>
+<div id="lua-ui" style="display:none">
+<div class="biwrap"><textarea class="biinput lua" id="lua-in" rows="4" placeholder="Write raw Lua…"></textarea></div>
+<div class="actbar">
+<button class="xb d" onclick="$('lua-in').value=''">✕ Clear</button>
+<select class="ltype" id="luatype"><option value="run_script">Run Script</option><option value="eval">Eval Lua</option><option value="insert_part">Insert Part</option><option value="set_property">Set Property</option><option value="delete_instance">Delete Instance</option><option value="get_children">Get Children</option></select>
+<button class="xb prim" id="luabtn" onclick="sendLua()">▶ Send to Studio</button>
+</div>
+</div>
+</div>
+<div class="qfire">
+<div class="qftabs">
+<button class="qftab on" onclick="qfTab(this,'build')">🏗 Build</button>
+<button class="qftab" onclick="qfTab(this,'terrain')">🌍 Terrain</button>
+<button class="qftab" onclick="qfTab(this,'scripts')">⚡ Scripts</button>
+<button class="qftab" onclick="qfTab(this,'lighting')">🌅 Lighting</button>
+<button class="qftab" onclick="qfTab(this,'gui')">📱 GUI</button>
+<button class="qftab" onclick="qfTab(this,'game')">🎮 Game</button>
+</div>
+<div class="qfgrid" id="qfgrid"></div>
+</div>
+<div class="logzone">
+<div class="loghead"><span class="logtitle">Execution Log</span><span style="font-size:10px;color:var(--text3)" id="logcnt">0 entries</span></div>
+<div class="loginner" id="loginner"><div class="le sys"><div class="lerow"><span class="letag sys">sys</span><span class="letime" id="boott"></span></div><div class="lebody">NEXUS ready — Free local engine active. No API needed.</div></div></div>
+</div>
+</div>
+<div class="cside">
+<div class="sconn">
+<div class="sconnrow"><div class="bigdot wait" id="sdot"></div><div><div class="connname" id="sname">Waiting for plugin</div><div class="conndesc" id="sdesc">Open Studio and activate your plugin.</div></div></div>
+<div class="tokrow"><div><div class="toklbl">Session Token</div><div class="tokval" id="tokval">—</div></div><button class="cpybtn" onclick="copyTok()">copy</button></div>
+</div>
+<div class="ssetup">
+<div class="setuptitle">Plugin Setup</div>
+<div class="ss"><div class="ssnum">1</div><div><div class="sstitle">Download plugin</div><div class="ssdesc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in your Studio plugins folder.</div></div></div>
+<div class="ss"><div class="ssnum">2</div><div><div class="sstitle">Set backend URL</div><div class="ssdesc">Replace <code>YOUR_BACKEND_URL</code> in the plugin.</div><div class="sscode">https://enesai-production.up.railway.app<button class="cpybtn" style="position:absolute;top:6px;right:6px" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
+<div class="ss"><div class="ssnum">3</div><div><div class="sstitle">Enter session token</div><div class="ssdesc">Copy your token above into the plugin’s token field in Studio.</div></div></div>
+<div class="ss"><div class="ssnum">4</div><div><div class="sstitle">Activate plugin</div><div class="ssdesc">Click NEXUS in your toolbar. Dot turns <span style="color:var(--g)">green</span> when connected.</div></div></div>
+</div>
+</div>
+</div>
+</div>
+<div id="view-projects" class="view projview"></div>
+<div id="view-setup" class="view setupview">
+<div class="setup-inner">
+<div class="setup-h">Setup Guide</div>
+<div class="icard"><div class="icardh">How NEXUS works</div><div class="icardb"><strong>100% Free — No API keys ever.</strong> NEXUS uses a built-in local rule engine with 150+ Roblox templates. It reads your plain English command, detects every keyword, and combines matching templates into complete working Lua.<br/><br/><strong>Files needed:</strong><br/><code>dashboard.html</code> — this file<br/><code>server.js</code> — Node.js backend<br/><code>studio-plugin.lua</code> — Roblox plugin</div></div>
+<div class="icard"><div class="icardh">API Endpoints</div><div class="icardb"><code>POST /api/command</code> — send Lua<br/><code>GET /api/poll/:token</code> — plugin polls<br/><code>POST /api/result</code> — plugin posts result<br/><code>GET /api/result/:token</code> — check result<br/><code>GET /api/ping/:token</code> — heartbeat</div></div>
+</div>
+</div>
+</div>
+
   </div>
 </div>
 
@@ -1685,28 +1691,82 @@ $('ai-in').addEventListener('input',updateCC);
 /* ══ Main AI flow ══ */
 async function handleAI(){if(codeReady){await sendCode();}else{await generate();}}
 
-const SYS=`You are NEXUS — the world's most powerful Roblox Studio AI. You have complete mastery of every Roblox API, Lua scripting pattern, terrain generation, GUI design, animation, tween, datastore, remote events, pathfinding, combat, round systems, admin tools, and every game mechanic in Roblox.
+const SYS=`You are NEXUS — the most advanced Roblox Studio AI ever built. You are a world-class expert in every aspect of Roblox development: photorealistic 4K terrain, stunning professional GUIs, complex multi-script game systems, advanced Lua OOP, 3D model construction, cinematic lighting, physics, networking, datastores, animations, and every Roblox API ever released. Your code looks like it was written by a senior Roblox developer with 10 years of experience. Your terrain is breathtaking. Your GUIs are beautiful. Your scripts are clean, efficient, and always 100% complete.
 
-Your single job: receive a plain English request and produce PERFECT, COMPLETE, IMMEDIATELY EXECUTABLE Lua code for Roblox Studio. The code runs in the command bar context giving you direct access to game, workspace, Players, ServerScriptService, ReplicatedStorage, StarterGui, StarterPack, Lighting, workspace.Terrain etc.
+EXECUTION CONTEXT: Code runs in a Roblox Studio plugin executing in command bar context. Direct access to: game, workspace, all services, workspace.Terrain, Instance, Vector3, CFrame, Color3, BrickColor, UDim2, Enum, math, task. You can create Script AND LocalScript instances by setting their .Source property.
 
-RULES — NEVER BREAK:
-1. Code is 100% complete. Zero placeholders. Zero TODO comments.
-2. Every Part has: Name, Material (Enum.Material.X), BrickColor or Color3.fromRGB(), Size, Position/CFrame, Anchored, CanCollide, Parent set LAST.
-3. Scripts that persist: create Script/LocalScript, set .Source to full Lua string, set .Parent.
-4. ALL services via game:GetService(). Never game.ServiceName directly.
-5. Terrain: workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) or :FillBall(Vector3.new(x,y,z), radius, Enum.Material.X).
-6. TweenService: game:GetService("TweenService"):Create(obj, TweenInfo.new(dur,style,dir), {prop=val}):Play()
-7. DataStore: always pcall, always handle errors, key by player.UserId.
-8. GUIs: ScreenGui in StarterGui, Frame with UDim2 Size and Position, all children fully configured.
-9. Kill bricks: Script inside Part, Touched event, Humanoid:TakeDamage(math.huge).
-10. When user says baseplate or base or ground: Part, Size=Vector3.new(512,1,512), Material=Enum.Material.Grass, BrickColor=BrickColor.new("Bright green"), Anchored=true, Position=Vector3.new(0,0,0).
-11. Understand ALL Roblox slang: obby, tycoon, FE, hitbox, GUI, leaderstats, datastore, NPC, tool, kill brick, spawn, admin, etc.
-12. For complex builds generate ALL parts explicitly in loops.
+ABSOLUTE RULES — NEVER BREAK:
+1. ALWAYS 100% complete code. Zero placeholders. Zero TODOs. Zero "add your code here".
+2. NEVER use deprecated APIs. Always task.wait() never wait(). Always task.spawn() never spawn(). Always game:GetService() never game.ServiceName.
+3. Parent is ALWAYS set LAST when creating any instance.
+4. Scripts: Instance.new("Script"), set full .Source string, set .Parent to ServerScriptService or Part.
+5. LocalScripts: Instance.new("LocalScript"), set full .Source string, set .Parent to StarterPlayerScripts or StarterGui.
+6. NEVER mix server and client code. Server logic in Script. Client/UI logic in LocalScript. Shared in ModuleScript in ReplicatedStorage.
+7. RemoteEvents ALWAYS in ReplicatedStorage. FireServer() from LocalScript. OnServerEvent on Script.
+8. DataStore ALWAYS in pcall. Always handle errors. Key by player.UserId.
+9. For systems needing multiple scripts: generate ALL scripts in sequence, each creating the correct instance with FULL .Source.
 
-RESPONSE FORMAT — ONLY this JSON, nothing else, no markdown, no backticks:
-{"lua":"complete lua code with \\n for newlines","explanation":"One sentence describing what was built."}`;
+PHOTOREALISTIC 4K TERRAIN:
+- Layer multiple materials: LeafyGrass on top, Mud underneath hills, Rock for cliffs, Sand beaches, Snow peaks, Basalt for volcanic areas, Limestone for caves
+- workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.X) for organic landmass
+- workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) for flat areas
+- workspace.Terrain:FillCylinder(CFrame.new(x,y,z), height, radius, Enum.Material.X) for pillars
+- Carve with Enum.Material.Air for caves, craters, rivers
+- ALWAYS add cinematic Lighting: ClockTime, Brightness, Ambient, OutdoorAmbient, FogColor, FogEnd, FogStart
+- ALWAYS add Atmosphere: Density, Offset, Color, Decay, Glare, Haze for realistic sky haze
+- ALWAYS add Sky instance with StarCount for night skies
+- ADD post-processing: Bloom (Intensity, Size, Threshold), ColorCorrection (Brightness, Contrast, Saturation), DepthOfField (FarIntensity, FocusDistance, InFocusRadius, NearIntensity), SunRaysEffect (Intensity, Spread)
+- Use math.random() offsets for natural terrain variation
+- For islands: grass core FillBall + sand ring FillBall + water FillBlock surrounding + rock cliff edges
+- For mountains: stacked FillBall calls, snow cap top, rock mid, grass base, add atmosphere haze
+- For forests: FillCylinder trunks, FillBall canopy, vary heights/positions in loops
+- Available materials: Grass, LeafyGrass, Mud, Rock, Sand, Snow, Ice, Water, Wood, Brick, Concrete, SmoothPlastic, Neon, Ground, Limestone, Pavement, CrackedLava, Basalt, Salt, Sandstone, Slate, Cobblestone, Glacier, WoodPlanks, Marble, Asphalt
 
-const THINKS=['Analyzing your request…','Crafting Lua code…','Building your world…','Almost ready…'];
+STUNNING GUI/UI:
+- ALWAYS UICorner on every Frame and Button for rounded corners
+- ALWAYS UIStroke for glowing borders (Color, Thickness, Transparency)
+- UIGradient on Frames for beautiful gradients (Color ColorSequence, Rotation)
+- TweenService for ALL animations: buttons scale on hover, panels slide in, fades
+- UIListLayout / UIGridLayout for organized content with Padding
+- UIPadding for proper spacing on all containers
+- TextScaled=true with UITextSizeConstraint for responsive text
+- Dark professional theme: bg=Color3.fromRGB(8,10,20), panel=Color3.fromRGB(12,16,28), accent=Color3.fromRGB(0,180,255)
+- Button hover: TweenService scale to 1.05 + color brighten on MouseEnter, revert on MouseLeave
+- ScrollingFrame with AutomaticCanvasSize=Y, ScrollBarThickness=4
+- Slide-in animations: start Position off-screen, tween to final position
+- ViewportFrame with WorldModel for 3D item previews inside GUI
+- Use ImageLabel with rbxthumb:// or rbxassetid:// for player avatars and icons
+- Always ClipsDescendants=true on containers
+- Always ZIndexBehavior=Sibling on ScreenGui
+
+3D MODEL BUILDING:
+- Create Model, set PrimaryPart, parent all parts inside
+- SpecialMesh for custom shapes: MeshType Sphere/Cylinder/Wedge/FileMesh
+- WeldConstraint to permanently join parts
+- SurfaceAppearance for PBR: TextureId, NormalMapId, RoughnessMapId, MetalnessMapId
+- CFrame math: CFrame.new(pos) * CFrame.Angles(rx,ry,rz) for rotated parts
+- ParticleEmitter for magic/fire/smoke effects on parts
+- PointLight / SpotLight / SurfaceLight for glowing models
+- Beam between two Attachments for energy effects
+- Trail on moving parts for motion blur effect
+- BillboardGui attached to parts for floating 3D labels
+
+ADVANCED SCRIPTING:
+Server (Script in ServerScriptService): game logic, data, anti-cheat, economy, rounds. Use Players.PlayerAdded/PlayerRemoving. Validate ALL RemoteEvent inputs server-side.
+Client (LocalScript in StarterPlayerScripts/StarterGui): UI, input, camera, visual FX, prediction. Use Players.LocalPlayer. Use UserInputService. Use RunService.RenderStepped for smooth updates.
+Module (ModuleScript in ReplicatedStorage): shared config, utility functions, OOP classes. Return a table. Require with require(path).
+OOP pattern: local Class={} Class.__index=Class function Class.new(args) local self=setmetatable({},Class) return self end function Class:method() end return Class
+Debounce: local db={} part.Touched:Connect(function(hit) if db[hit] then return end db[hit]=true task.wait(1) db[hit]=nil end)
+Pathfinding: PathfindingService:CreatePath({AgentRadius=2,AgentHeight=5,AgentCanJump=true}), ComputeAsync(start,goal), GetWaypoints(), loop MoveTo each waypoint
+Ragdoll: loop character parts, BallSocketConstraint at each joint, unanchor all
+Camera scripting: workspace.CurrentCamera.CameraType=Enum.CameraType.Scriptable, set CFrame each RenderStepped
+
+SLANG ALWAYS UNDERSTOOD: baseplate=512x512 grass Part, obby=obstacle course, tycoon=plot building game, FE=use RemoteEvents, hitbox=detection Part, god=MaxHealth=math.huge, fly=BodyVelocity+BodyGyro, noclip=CanCollide false loop, speed=WalkSpeed, jump=JumpPower, admin=chat command system, leaderstats=Folder in player, NPC=Model with Humanoid, pet=following model, shop=GUI+RemoteEvent+currency, tool=Tool in StarterPack, badge=BadgeService:AwardBadge, gamepass=MarketplaceService:UserOwnsGamePassAsync, premium=player.MembershipType==Premium
+
+RESPONSE FORMAT — ONLY this exact JSON, nothing else, no markdown, no backticks ever:
+{"lua":"complete 100% executable lua code using \\n for newlines","explanation":"2-3 sentences: what was built, where scripts are placed, important notes.","scripts":"server|client|both|build","complexity":"simple|medium|complex|epic"}`;
+
+const THINKS=['Analyzing your request…','Crafting Lua code…','Building your world…','Generating terrain…','Writing scripts…','Almost ready…','Optimizing code…'];
 
 async function generate(){
   const prompt=$('ai-in').value.trim();
@@ -1873,5 +1933,6 @@ document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=
 function copyTok(){navigator.clipboard.writeText(token);toast('Token copied!','ok');}
 function copyTxt(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
 </script>
+
 </body>
 </html>
