@@ -3,1839 +3,230 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<title>ENES AI — Roblox Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>ENES AI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Syne:wght@800;900&display=swap" rel="stylesheet"/>
 <style>
-/* ════════════════════════════════════════════════════════
-   ENES AI — COMPLETE STYLESHEET
-   The most powerful Roblox Studio AI dashboard ever built
-════════════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#010306;color:#e8d5c0;font-family:'JetBrains Mono',monospace;font-size:13px;overflow:hidden}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:rgba(255,140,0,0.3)}
 
-/* ── RESET ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-button,input,textarea,select{font-family:inherit;-webkit-appearance:none;appearance:none}
-img{display:block;max-width:100%}
-
-/* ── CSS VARIABLES ── */
-:root{
-/* Backgrounds */
-–bg-0:#010306;
-–bg-1:#040810;
-–bg-2:#07101e;
-–bg-3:#0b1828;
-–bg-4:#101f32;
-–bg-5:#16273e;
-–bg-6:#1c2f4a;
-
-/* Orange/Gold accent (ENES brand) */
-–orange:#ff8c00;
-–orange-light:#ffaa33;
-–orange-dark:#cc6e00;
-–orange-dim:rgba(255,140,0,0.08);
-–orange-glow:rgba(255,140,0,0.18);
-–orange-glow2:rgba(255,140,0,0.36);
-–orange-glow3:rgba(255,140,0,0.55);
-
-/* Gold */
-–gold:#ffcc44;
-–gold-dim:rgba(255,204,68,0.1);
-
-/* Green (success) */
-–green:#00ffaa;
-–green-dim:rgba(0,255,170,0.08);
-–green-glow:rgba(0,255,170,0.28);
-
-/* Red (error) */
-–red:#ff3355;
-–red-dim:rgba(255,51,85,0.08);
-–red-glow:rgba(255,51,85,0.28);
-
-/* Blue (info) */
-–blue:#00aaff;
-–blue-dim:rgba(0,170,255,0.08);
-–blue-glow:rgba(0,170,255,0.28);
-
-/* Purple (AI) */
-–purple:#cc44ff;
-–purple-dim:rgba(204,68,255,0.08);
-–purple-glow:rgba(204,68,255,0.28);
-
-/* Yellow */
-–yellow:#ffee44;
-–yellow-dim:rgba(255,238,68,0.08);
-
-/* Text */
-–text-0:#f0e0cc;
-–text-1:#c8a888;
-–text-2:#7a5c44;
-–text-3:#3a2518;
-–text-4:#1e1208;
-
-/* Borders */
-–b0:rgba(255,140,0,0.05);
-–b1:rgba(255,140,0,0.10);
-–b2:rgba(255,140,0,0.18);
-–b3:rgba(255,140,0,0.30);
-–b4:rgba(255,140,0,0.50);
-
-/* Typography */
-–font-mono:‘JetBrains Mono’,monospace;
-–font-display:‘Syne’,sans-serif;
-
-/* Border radius */
-–r4:4px;–r6:6px;–r8:8px;–r10:10px;
-–r12:12px;–r16:16px;–r20:20px;–r24:24px;–r32:32px;
-
-/* Shadows */
-–shadow-sm:0 2px 8px rgba(0,0,0,0.4);
-–shadow-md:0 4px 16px rgba(0,0,0,0.5);
-–shadow-lg:0 8px 32px rgba(0,0,0,0.6);
-–shadow-orange:0 4px 20px var(–orange-glow),0 0 40px var(–orange-dim);
-–shadow-green:0 4px 20px var(–green-glow);
-–shadow-red:0 4px 20px var(–red-glow);
-}
-
-/* ── BASE STYLES ── */
-body{
-background:var(–bg-0);
-color:var(–text-0);
-font-family:var(–font-mono);
-font-size:13px;
-line-height:1.6;
-}
-
-/* ── SCROLLBARS ── */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(–b2);border-radius:2px}
-::-webkit-scrollbar-thumb:hover{background:var(–b3)}
-
-/* ════════════════════════════════════════════════════════
-ANIMATED BACKGROUND SYSTEM
-════════════════════════════════════════════════════════ */
-.bg-system{
-position:fixed;inset:0;
-z-index:0;
-overflow:hidden;
-pointer-events:none;
-}
-
-/* Grid pattern */
-.bg-grid{
-position:absolute;inset:0;
-background-image:
-linear-gradient(rgba(255,140,0,0.035) 1px,transparent 1px),
-linear-gradient(90deg,rgba(255,140,0,0.035) 1px,transparent 1px);
-background-size:44px 44px;
-}
-
-/* Dot grid overlay */
-.bg-dots{
-position:absolute;inset:0;
-background-image:radial-gradient(rgba(255,140,0,0.12) 1px,transparent 1px);
-background-size:44px 44px;
-background-position:22px 22px;
-opacity:.4;
-}
-
-/* Animated glows */
-.bg-glow-orange{
-position:absolute;
-top:-40%;left:-30%;
-width:90%;height:90%;
-background:radial-gradient(ellipse,rgba(255,140,0,0.055) 0%,transparent 55%);
-animation:bg-float-1 24s ease-in-out infinite alternate;
-}
-.bg-glow-blue{
-position:absolute;
-bottom:-40%;right:-30%;
-width:80%;height:80%;
-background:radial-gradient(ellipse,rgba(0,170,255,0.04) 0%,transparent 55%);
-animation:bg-float-2 30s ease-in-out infinite alternate;
-}
-.bg-glow-purple{
-position:absolute;
-top:30%;left:20%;
-width:60%;height:60%;
-background:radial-gradient(ellipse,rgba(204,68,255,0.035) 0%,transparent 55%);
-animation:bg-float-3 20s ease-in-out infinite alternate;
-}
-.bg-glow-center{
-position:absolute;
-top:50%;left:50%;
-transform:translate(-50%,-50%);
-width:40%;height:40%;
-background:radial-gradient(ellipse,rgba(255,140,0,0.02) 0%,transparent 60%);
-animation:bg-pulse-center 8s ease-in-out infinite;
-}
-
-/* Scanlines */
-.bg-scanlines{
-position:absolute;inset:0;
-background:repeating-linear-gradient(
-0deg,
-transparent,
-transparent 3px,
-rgba(0,0,0,0.018) 3px,
-rgba(0,0,0,0.018) 6px
-);
-}
-
-/* Vignette */
-.bg-vignette{
-position:absolute;inset:0;
-background:radial-gradient(
-ellipse at center,
-transparent 40%,
-rgba(1,3,6,0.6) 100%
-);
-}
-
-/* Corner accents */
-.bg-corner{
-position:absolute;
-width:120px;height:120px;
-opacity:.3;
-}
-.bg-corner.tl{top:0;left:0;border-top:1px solid var(–orange);border-left:1px solid var(–orange)}
-.bg-corner.tr{top:0;right:0;border-top:1px solid var(–orange);border-right:1px solid var(–orange)}
-.bg-corner.bl{bottom:0;left:0;border-bottom:1px solid var(–orange);border-left:1px solid var(–orange)}
-.bg-corner.br{bottom:0;right:0;border-bottom:1px solid var(–orange);border-right:1px solid var(–orange)}
-
-@keyframes bg-float-1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(8%,6%) scale(1.15)}}
-@keyframes bg-float-2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-7%,-9%) scale(1.2)}}
-@keyframes bg-float-3{0%{transform:translate(0,0) scale(1)}100%{transform:translate(5%,-6%) scale(1.1)}}
-@keyframes bg-pulse-center{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}}
-
-/* ════════════════════════════════════════════════════════
-GLOBAL ANIMATIONS
-════════════════════════════════════════════════════════ */
-@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
-@keyframes pulse-fast{0%,100%{opacity:.5}50%{opacity:1}}
-
-@keyframes glow-orange{
-0%,100%{box-shadow:0 0 8px var(–orange),0 0 16px var(–orange-glow)}
-50%{box-shadow:0 0 16px var(–orange),0 0 32px var(–orange-glow2),0 0 48px var(–orange-glow)}
-}
-
-@keyframes glow-green{
-0%,100%{box-shadow:0 0 6px var(–green),0 0 12px var(–green-glow)}
-50%{box-shadow:0 0 12px var(–green),0 0 24px var(–green-glow)}
-}
-
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,140,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,140,0,0.04) 1px,transparent 1px);background-size:44px 44px}
+.bg-g1{position:absolute;top:-30%;left:-20%;width:80%;height:80%;background:radial-gradient(ellipse,rgba(255,140,0,0.07) 0%,transparent 60%);animation:f1 22s ease-in-out infinite alternate}
+.bg-g2{position:absolute;bottom:-30%;right:-20%;width:70%;height:70%;background:radial-gradient(ellipse,rgba(0,170,255,0.05) 0%,transparent 60%);animation:f2 28s ease-in-out infinite alternate}
+@keyframes f1{to{transform:translate(6%,4%) scale(1.12)}}
+@keyframes f2{to{transform:translate(-5%,-7%) scale(1.18)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px #ff8c00,0 0 16px rgba(255,140,0,.2)}50%{box-shadow:0 0 18px #ff8c00,0 0 36px rgba(255,140,0,.4)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes dot{0%,100%{transform:scale(.4);opacity:.3}50%{transform:scale(1);opacity:1}}
+@keyframes slide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 
-@keyframes slide-up{
-from{opacity:0;transform:translateY(12px)}
-to{opacity:1;transform:translateY(0)}
-}
-@keyframes slide-down{
-from{opacity:0;transform:translateY(-12px)}
-to{opacity:1;transform:translateY(0)}
-}
-@keyframes slide-left{
-from{opacity:0;transform:translateX(16px)}
-to{opacity:1;transform:translateX(0)}
-}
-@keyframes slide-right{
-from{opacity:0;transform:translateX(-16px)}
-to{opacity:1;transform:translateX(0)}
-}
-@keyframes fade-in{from{opacity:0}to{opacity:1}}
-@keyframes scale-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+/* ROOT */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
 
-@keyframes dot-pop{
-0%,100%{transform:translateY(0) scale(.5);opacity:.3}
-50%{transform:translateY(-5px) scale(1.1);opacity:1}
-}
+/* TOPBAR */
+.bar{height:54px;background:rgba(1,3,6,.95);backdrop-filter:blur(16px);border-bottom:0.5px solid rgba(255,140,0,.1);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;position:relative}
+.bar::after{content:’’;position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,rgba(255,140,0,.3),transparent);opacity:.5}
+.logo{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#ff8c00,#ffcc44);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#010306;animation:glow 3s ease-in-out infinite;flex-shrink:0;-webkit-text-fill-color:#010306}
+.conn-pill{display:flex;align-items:center;gap:6px;padding:5px 11px;background:#07101e;border:0.5px solid rgba(255,140,0,.1);border-radius:20px;font-size:10px;color:#7a5c44;margin-left:auto;transition:all .3s}
+.conn-pill.live{border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.04);color:#00ffaa}
+.cdot{width:6px;height:6px;border-radius:50%;background:#3a2518;flex-shrink:0;transition:all .3s}
+.cdot.on{background:#00ffaa;box-shadow:0 0 8px rgba(0,255,170,.5)}
+.cdot.wait{background:#ff8c00;animation:blink 1.3s ease-in-out infinite}
+.setup-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.15);border-radius:8px;font-size:11px;color:#7a5c44;cursor:pointer;font-family:‘JetBrains Mono’,monospace;font-weight:700;transition:all .15s}
+.setup-btn:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
 
-@keyframes progress{
-0%{transform:translateX(-100%)}
-100%{transform:translateX(100%)}
-}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-@keyframes shimmer{
-0%{background-position:-200% center}
-100%{background-position:200% center}
-}
+/* INPUT ZONE */
+.izone{padding:12px 14px 10px;flex-shrink:0;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.06)}
+.ihead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ititle{font-family:‘Syne’,sans-serif;font-size:15px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
+.ititle-dot{width:7px;height:7px;border-radius:50%;background:#ff8c00;box-shadow:0 0 10px #ff8c00;animation:glow 2.5s ease-in-out infinite;flex-shrink:0}
+.model-tag{display:flex;align-items:center;gap:5px;padding:4px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.12);border-radius:20px;font-size:10px;color:#7a5c44}
+.model-tag-dot{width:5px;height:5px;border-radius:50%;background:#00ffaa}
 
-@keyframes type-cursor{
-0%,100%{opacity:1}
-50%{opacity:0}
-}
+/* TEXTAREA */
+.txtarea{width:100%;background:#07101e;border:0.5px solid rgba(255,140,0,.18);border-radius:10px;padding:13px;font-family:‘JetBrains Mono’,monospace;font-size:14px;color:#e8d5c0;outline:none;resize:none;min-height:110px;max-height:180px;line-height:1.65;transition:border-color .25s,box-shadow .25s;display:block;-webkit-appearance:none}
+.txtarea:focus{border-color:#ff8c00;box-shadow:0 0 0 2px rgba(255,140,0,.18),0 0 24px rgba(255,140,0,.12)}
+.txtarea::placeholder{color:#3a2518;line-height:1.7}
+.txt-footer{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 0;font-size:10px;color:#3a2518}
+.txt-footer-right{display:flex;align-items:center;gap:4px}
+.txt-pip{width:4px;height:4px;border-radius:50%;background:#00ffaa}
 
-@keyframes float-up-down{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-6px)}
-}
+/* AI STATE */
+.ai-wrap{display:none;flex-direction:column;gap:6px;margin:8px 0 0;animation:up .2s ease}
+.ai-wrap.show{display:flex}
+.think{display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(255,140,0,.06);border:0.5px solid rgba(255,140,0,.18);border-radius:10px;font-size:12px;color:#ff8c00;position:relative;overflow:hidden}
+.think::after{content:’’;position:absolute;bottom:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,#ffcc44,transparent);animation:slide-line 1.8s ease-in-out infinite}
+@keyframes slide-line{0%{left:-100%}100%{left:100%}}
+.tdots{display:flex;gap:4px}
+.tdots span{width:5px;height:5px;background:#ff8c00;border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
+.tdots span:nth-child(2){animation-delay:.17s}.tdots span:nth-child(3){animation-delay:.34s}
+.tspinner{width:14px;height:14px;border:1.5px solid rgba(255,140,0,.2);border-top-color:#ff8c00;border-radius:50%;animation:spin .75s linear infinite;margin-left:auto;flex-shrink:0}
+.preview{background:#07101e;border:0.5px solid rgba(255,140,0,.22);border-radius:10px;overflow:hidden;animation:up .2s ease}
+.prev-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,140,0,.07);border-bottom:0.5px solid rgba(255,140,0,.1)}
+.prev-lbl{font-size:10px;color:#ff8c00;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
+.prev-lbl::before{content:’’;width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
+.cpybtn{padding:3px 8px;background:#101828;border:0.5px solid rgba(255,140,0,.18);border-radius:4px;font-size:10px;color:#7a5c44;cursor:pointer;transition:all .15s;font-family:‘JetBrains Mono’,monospace}
+.cpybtn:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
+.prev-code{padding:10px 12px;font-size:11px;color:#c8a888;white-space:pre-wrap;word-break:break-all;max-height:140px;overflow-y:auto;line-height:1.6}
+.prev-note{padding:8px 12px;border-top:0.5px solid rgba(255,140,0,.07);font-size:11px;color:#7a5c44;line-height:1.55;background:rgba(0,0,0,.2);display:flex;gap:6px}
 
-@keyframes rotate-border{
-from{transform:rotate(0deg)}
-to{transform:rotate(360deg)}
-}
-
-/* ════════════════════════════════════════════════════════
-ROOT LAYOUT
-════════════════════════════════════════════════════════ */
-#root{
-position:relative;
-z-index:1;
-height:100vh;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-
-#app{
-display:flex;
-flex-direction:column;
-height:100vh;
-overflow:hidden;
-}
-
-/* ════════════════════════════════════════════════════════
-TOPBAR
-════════════════════════════════════════════════════════ */
-.topbar{
-height:58px;
-background:rgba(1,3,6,0.95);
-backdrop-filter:blur(20px);
--webkit-backdrop-filter:blur(20px);
-border-bottom:0.5px solid var(–b1);
-display:flex;
-align-items:center;
-padding:0 16px;
-gap:10px;
-flex-shrink:0;
-position:relative;
-z-index:100;
-}
-
-/* Topbar accent line */
-.topbar::before{
-content:’’;
-position:absolute;
-bottom:0;inset-x:0;
-height:1px;
-background:linear-gradient(
-90deg,
-transparent 0%,
-var(–orange-dark) 20%,
-var(–orange) 50%,
-var(–orange-dark) 80%,
-transparent 100%
-);
-opacity:.5;
-}
-
-/* Top edge glow */
-.topbar::after{
-content:’’;
-position:absolute;
-top:0;inset-x:0;
-height:1px;
-background:linear-gradient(
-90deg,
-transparent,
-rgba(255,140,0,0.15),
-transparent
-);
-}
-
-/* Brand */
-.brand{
-display:flex;
-align-items:center;
-gap:10px;
-flex-shrink:0;
-}
-
-.brand-mark{
-width:32px;height:32px;
-border-radius:var(–r10);
-background:linear-gradient(135deg,var(–orange) 0%,var(–gold) 100%);
-display:flex;align-items:center;justify-content:center;
-font-family:var(–font-display);
-font-size:16px;font-weight:900;
-color:var(–bg-0);
-animation:glow-orange 3s ease-in-out infinite;
-flex-shrink:0;
-position:relative;
-overflow:hidden;
-}
-.brand-mark::after{
-content:’’;
-position:absolute;inset:0;
-background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);
-}
-
-.brand-name{
-font-family:var(–font-display);
-font-size:20px;
-font-weight:900;
-letter-spacing:-.01em;
-background:linear-gradient(135deg,var(–orange) 0%,var(–gold) 60%,var(–orange) 100%);
-background-size:200% 100%;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-background-clip:text;
-animation:shimmer 4s linear infinite;
-}
-
-.brand-tag{
-font-size:9px;
-color:var(–text-2);
-letter-spacing:.12em;
-text-transform:uppercase;
-border:0.5px solid var(–b1);
-border-radius:var(–r4);
-padding:2px 6px;
-display:none;
-}
-@media(min-width:420px){.brand-tag{display:block}}
-
-/* Status pill */
-.conn-pill{
-display:flex;
-align-items:center;
-gap:6px;
-padding:6px 12px;
-background:var(–bg-2);
-border:0.5px solid var(–b1);
-border-radius:var(–r20);
-font-size:10px;
-color:var(–text-2);
-transition:all .3s;
-margin-left:auto;
-cursor:default;
-}
-.conn-pill.live{
-border-color:rgba(0,255,170,0.2);
-background:rgba(0,255,170,0.04);
-color:var(–green);
-}
-
-.conn-dot{
-width:7px;height:7px;
-border-radius:50%;
-background:var(–text-3);
-flex-shrink:0;
-transition:all .3s;
-}
-.conn-dot.on{
-background:var(–green);
-animation:glow-green 2.5s ease-in-out infinite;
-}
-.conn-dot.wait{
-background:var(–orange);
-animation:blink 1.3s ease-in-out infinite;
-}
-.conn-dot.err{background:var(–red)}
-
-/* Topbar actions */
-.topbar-actions{
-display:flex;
-align-items:center;
-gap:6px;
-flex-shrink:0;
-}
-
-.tb-btn{
-display:flex;align-items:center;gap:5px;
-padding:6px 11px;
-background:var(–bg-2);
-border:0.5px solid var(–b1);
-border-radius:var(–r8);
-font-size:11px;
-color:var(–text-2);
-cursor:pointer;
-transition:all .18s;
-font-family:var(–font-mono);
-font-weight:700;
-}
-.tb-btn:hover{
-border-color:var(–b3);
-color:var(–orange);
-background:var(–orange-dim);
-}
-.tb-btn:active{transform:scale(.95)}
-
-.tb-btn .tb-icon{font-size:13px}
-
-/* ════════════════════════════════════════════════════════
-MAIN LAYOUT
-════════════════════════════════════════════════════════ */
-.app-body{
-flex:1;
-display:flex;
-overflow:hidden;
-}
-
-.main-col{
-flex:1;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-min-width:0;
-}
-
-/* ════════════════════════════════════════════════════════
-INPUT ZONE
-════════════════════════════════════════════════════════ */
-.input-zone{
-padding:14px 14px 10px;
-flex-shrink:0;
-background:var(–bg-0);
-position:relative;
-}
-
-.input-zone::after{
-content:’’;
-position:absolute;
-bottom:0;inset-x:0;
-height:0.5px;
-background:linear-gradient(90deg,transparent,var(–b2),transparent);
-}
-
-/* Input header */
-.input-head{
-display:flex;
-align-items:center;
-justify-content:space-between;
-margin-bottom:10px;
-}
-
-.input-title{
-display:flex;align-items:center;gap:8px;
-font-family:var(–font-display);
-font-size:15px;font-weight:900;
-}
-
-.input-title-text{
-background:linear-gradient(135deg,var(–orange),var(–gold));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-background-clip:text;
-}
-
-.input-title-pip{
-width:8px;height:8px;
-border-radius:50%;
-background:var(–orange);
-box-shadow:0 0 10px var(–orange);
-animation:glow-orange 2.5s ease-in-out infinite;
-flex-shrink:0;
-}
-
-/* Model badge */
-.model-badge{
-display:flex;align-items:center;gap:5px;
-padding:4px 10px;
-background:var(–bg-2);
-border:0.5px solid var(–b1);
-border-radius:var(–r20);
-font-size:10px;
-color:var(–text-2);
-cursor:pointer;
-transition:all .15s;
-}
-.model-badge:hover{border-color:var(–b3);color:var(–orange)}
-.model-badge-dot{
-width:5px;height:5px;
-border-radius:50%;
-background:var(–green);
-animation:pulse 2s ease-in-out infinite;
-}
-
-/* ════════════════════════════════════════════════════════
-COMMAND TEXTAREA
-════════════════════════════════════════════════════════ */
-.cmd-container{
-position:relative;
-margin-bottom:10px;
-}
-
-/* Animated gradient border */
-.cmd-border-glow{
-position:absolute;
-inset:-1px;
-border-radius:calc(var(–r12) + 1px);
-background:conic-gradient(
-from var(–angle, 0deg),
-var(–orange),
-var(–gold),
-var(–orange-light),
-var(–orange)
-);
-opacity:0;
-transition:opacity .3s;
-pointer-events:none;
-z-index:0;
-}
-.cmd-container:focus-within .cmd-border-glow{opacity:.7}
-
-.cmd-inner{
-position:relative;
-z-index:1;
-border-radius:var(–r12);
-overflow:hidden;
-}
-
-.cmd-textarea{
-width:100%;
-background:var(–bg-2);
-border:0.5px solid var(–b2);
-border-radius:var(–r12);
-padding:14px;
-font-family:var(–font-mono);
-font-size:14px;
-color:var(–text-0);
-outline:none;
-resize:none;
-min-height:115px;
-max-height:200px;
-line-height:1.68;
-transition:border-color .25s,box-shadow .25s;
-display:block;
-}
-.cmd-textarea:focus{
-border-color:var(–orange);
-box-shadow:0 0 0 2px var(–orange-glow),0 0 28px var(–orange-glow);
-}
-.cmd-textarea::placeholder{
-color:var(–text-3);
-line-height:1.75;
-}
-
-/* Textarea bottom bar */
-.cmd-bottom-bar{
-display:flex;align-items:center;
-justify-content:space-between;
-padding:5px 4px 2px;
-pointer-events:none;
-}
-.cmd-char-count{font-size:10px;color:var(–text-3)}
-.cmd-status-text{
-font-size:10px;color:var(–text-3);
-display:flex;align-items:center;gap:4px;
-}
-.cmd-status-pip{
-width:4px;height:4px;
-border-radius:50%;
-background:var(–green);
-animation:pulse 2s ease-in-out infinite;
-}
-
-/* ════════════════════════════════════════════════════════
-AI GENERATION STATE
-════════════════════════════════════════════════════════ */
-.ai-state-wrap{
-display:none;
-flex-direction:column;
-gap:7px;
-margin-bottom:10px;
-animation:slide-up .2s ease;
-}
-.ai-state-wrap.visible{display:flex}
-
-/* Thinking bar */
-.thinking-bar{
-display:flex;
-align-items:center;
-gap:10px;
-padding:11px 14px;
-background:linear-gradient(
-135deg,
-rgba(255,140,0,0.07),
-rgba(204,68,255,0.04)
-);
-border:0.5px solid var(–b2);
-border-radius:var(–r10);
-font-size:12px;
-color:var(–orange);
-position:relative;
-overflow:hidden;
-}
-
-/* Progress line */
-.thinking-bar::after{
-content:’’;
-position:absolute;
-bottom:0;left:-100%;
-width:100%;height:1px;
-background:linear-gradient(90deg,transparent,var(–orange),var(–gold),transparent);
-animation:progress 1.8s ease-in-out infinite;
-}
-
-.thinking-dots{display:flex;gap:4px;flex-shrink:0}
-.thinking-dots span{
-width:6px;height:6px;
-background:var(–orange);
-border-radius:50%;
-animation:dot-pop 1s ease-in-out infinite;
-display:block;
-}
-.thinking-dots span:nth-child(2){animation-delay:.18s}
-.thinking-dots span:nth-child(3){animation-delay:.36s}
-
-.thinking-msg{flex:1;font-size:12px;color:var(–orange)}
-
-.thinking-spinner{
-width:15px;height:15px;
-border:1.5px solid var(–b2);
-border-top-color:var(–orange);
-border-radius:50%;
-animation:spin .75s linear infinite;
-flex-shrink:0;
-}
-
-/* Code preview */
-.code-preview-wrap{
-background:var(–bg-2);
-border:0.5px solid rgba(255,140,0,0.22);
-border-radius:var(–r12);
-overflow:hidden;
-animation:scale-in .2s ease;
-}
-
-.code-preview-head{
-display:flex;align-items:center;justify-content:space-between;
-padding:9px 13px;
-background:linear-gradient(
-135deg,
-rgba(255,140,0,0.09),
-rgba(204,68,255,0.04)
-);
-border-bottom:0.5px solid var(–b1);
-}
-
-.code-preview-badge{
-display:flex;align-items:center;gap:7px;
-font-size:10px;color:var(–orange);
-font-weight:700;text-transform:uppercase;
-letter-spacing:.1em;
-}
-.code-preview-badge::before{
-content:’’;
-width:6px;height:6px;
-border-radius:50%;
-background:var(–orange);
-box-shadow:0 0 8px var(–orange);
-flex-shrink:0;
-}
-
-.code-preview-actions{display:flex;gap:6px}
-
-.code-action-btn{
-padding:3px 9px;
-background:var(–bg-3);
-border:0.5px solid var(–b2);
-border-radius:var(–r4);
-font-size:10px;color:var(–text-2);
-cursor:pointer;transition:all .15s;
-font-family:var(–font-mono);
-}
-.code-action-btn:hover{border-color:var(–b3);color:var(–orange)}
-
-.code-preview-body{
-padding:12px 13px;
-font-size:11px;
-color:var(–text-2);
-font-family:var(–font-mono);
-white-space:pre-wrap;
-word-break:break-all;
-max-height:160px;
-overflow-y:auto;
-line-height:1.65;
-}
-
-/* Syntax-highlight-like colors */
-.code-preview-body .kw{color:var(–purple)}
-.code-preview-body .fn{color:var(–blue)}
-.code-preview-body .str{color:var(–green)}
-.code-preview-body .num{color:var(–orange)}
-.code-preview-body .cm{color:var(–text-3)}
-
-.code-preview-note{
-padding:9px 13px;
-border-top:0.5px solid var(–b0);
-font-size:11px;
-color:var(–text-2);
-line-height:1.6;
-background:rgba(0,0,0,0.2);
-display:flex;align-items:flex-start;gap:7px;
-}
-.code-note-icon{
-font-size:13px;flex-shrink:0;margin-top:1px;
-}
-
-/* Complexity badge */
-.complexity-badge{
-display:inline-flex;align-items:center;gap:4px;
-padding:2px 8px;
-border-radius:var(–r4);
-font-size:9px;font-weight:700;
-text-transform:uppercase;
-letter-spacing:.08em;
-margin-left:auto;
-flex-shrink:0;
-}
-.complexity-badge.simple{background:var(–blue-dim);color:var(–blue)}
-.complexity-badge.medium{background:var(–orange-dim);color:var(–orange)}
-.complexity-badge.complex{background:var(–purple-dim);color:var(–purple)}
-.complexity-badge.epic{
-background:linear-gradient(135deg,var(–orange-dim),var(–gold-dim));
-color:var(–gold);
-animation:pulse 2s ease-in-out infinite;
-}
-
-/* ════════════════════════════════════════════════════════
-ACTION BUTTONS
-════════════════════════════════════════════════════════ */
-.action-bar{
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-/* Base button */
-.btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-gap:7px;
-padding:11px 16px;
-border-radius:var(–r10);
-font-family:var(–font-mono);
-font-size:12px;
-font-weight:700;
-cursor:pointer;
-transition:all .18s cubic-bezier(.4,0,.2,1);
-border:0.5px solid var(–b2);
-position:relative;
-overflow:hidden;
-white-space:nowrap;
-flex-shrink:0;
-}
-.btn::before{
-content:’’;
-position:absolute;inset:0;
-background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);
-opacity:0;
-transition:opacity .2s;
-}
-.btn:hover::before{opacity:1}
+/* ACTIONS */
+.actions{display:flex;gap:8px;margin-top:10px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:10px;font-family:‘JetBrains Mono’,monospace;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;border:0.5px solid rgba(255,140,0,.18);-webkit-appearance:none}
 .btn:active{transform:scale(.95)}
-.btn:disabled{
-opacity:.45 !important;
-cursor:not-allowed !important;
-transform:none !important;
-box-shadow:none !important;
-}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-x{background:#07101e;color:#7a5c44}
+.btn-x:hover{border-color:rgba(255,51,85,.5);color:#ff3355}
+.btn-retry{background:#07101e;color:#7a5c44;display:none}
+.btn-retry:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
+.btn-go{background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border-color:transparent;font-weight:800;flex:1;font-size:13px;box-shadow:0 2px 16px rgba(255,140,0,.25)}
+.btn-go:hover{box-shadow:0 4px 28px rgba(255,140,0,.45);transform:translateY(-1px)}
+.btn-go.send{background:linear-gradient(135deg,#00aaff,#44ccff);box-shadow:0 2px 16px rgba(0,170,255,.25)}
 
-/* Clear button */
-.btn-clear{
-background:var(–bg-2);
-color:var(–text-2);
-}
-.btn-clear:hover{
-border-color:var(–red);
-color:var(–red);
-background:var(–red-dim);
-}
+/* EXAMPLES */
+.ex-wrap{border-top:0.5px solid rgba(255,140,0,.06);flex-shrink:0;padding:7px 0 5px}
+.ex-lbl{font-size:9px;color:#3a2518;letter-spacing:.12em;text-transform:uppercase;padding:0 14px;margin-bottom:6px}
+.ex-scroll{display:flex;gap:6px;overflow-x:auto;padding:0 14px 2px;-webkit-overflow-scrolling:touch}
+.ex-scroll::-webkit-scrollbar{display:none}
+.ex-chip{display:inline-flex;align-items:center;padding:6px 12px;background:#07101e;border:0.5px solid rgba(255,140,0,.1);border-radius:20px;font-size:11px;color:#7a5c44;cursor:pointer;font-family:‘JetBrains Mono’,monospace;font-weight:700;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.ex-chip:active{transform:scale(.93)}
+.ex-chip:hover{border-color:rgba(255,140,0,.35);color:#ff8c00;background:rgba(255,140,0,.06)}
 
-/* Retry button */
-.btn-retry{
-background:var(–bg-2);
-color:var(–text-2);
-display:none;
-}
-.btn-retry:hover{
-border-color:var(–b3);
-color:var(–orange);
-}
+/* LOG */
+.log-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.log-head{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-top:0.5px solid rgba(255,140,0,.06);flex-shrink:0;background:#010306}
+.log-title{font-size:10px;font-weight:700;color:#7a5c44;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.log-pip{width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;animation:blink 2s ease-in-out infinite}
+.log-cnt{font-size:10px;color:#3a2518}
+.log-clr{padding:2px 7px;background:none;border:0.5px solid rgba(255,140,0,.1);border-radius:4px;font-size:10px;color:#3a2518;cursor:pointer;font-family:‘JetBrains Mono’,monospace;transition:all .15s}
+.log-clr:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
+.log-body{flex:1;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:5px;-webkit-overflow-scrolling:touch}
+.le{padding:8px 10px;border-radius:10px;border-left:2px solid #3a2518;background:#07101e;animation:up .15s ease}
+.le.ai{border-left-color:#ff8c00}
+.le.sent{border-left-color:#00aaff}
+.le.ok{border-left-color:#00ffaa}
+.le.err{border-left-color:#ff3355}
+.le.sys{border-left-color:#3a2518}
+.le-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.le-tag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.le-tag.ai{background:rgba(255,140,0,.1);color:#ff8c00}
+.le-tag.sent{background:rgba(0,170,255,.08);color:#00aaff}
+.le-tag.ok{background:rgba(0,255,170,.08);color:#00ffaa}
+.le-tag.err{background:rgba(255,51,85,.08);color:#ff3355}
+.le-tag.sys{background:#101828;color:#3a2518}
+.le-time{font-size:10px;color:#3a2518;margin-left:auto}
+.le-msg{font-size:11px;color:#7a5c44;line-height:1.55;word-break:break-all}
 
-/* Main action button */
-.btn-action{
-flex:1;
-background:linear-gradient(135deg,var(–orange) 0%,var(–gold) 100%);
-color:var(–bg-0);
-border-color:transparent;
-font-weight:800;
-font-size:13px;
-margin-left:auto;
-box-shadow:var(–shadow-orange);
-letter-spacing:.02em;
-}
-.btn-action:hover{
-box-shadow:0 4px 28px var(–orange-glow2),0 0 50px var(–orange-glow);
-transform:translateY(-2px);
-background:linear-gradient(135deg,var(–orange-light) 0%,var(–gold) 100%);
-}
-.btn-action:active{transform:scale(.96) translateY(0)}
+/* SHEET */
+.sh-bg{position:fixed;inset:0;background:rgba(1,3,6,.9);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .25s}
+.sh-bg.open{opacity:1;pointer-events:all}
+.sh{background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:20px 20px 0 0;padding:18px 18px 36px;width:100%;max-width:520px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative;max-height:90vh;overflow-y:auto}
+.sh-bg.open .sh{transform:translateY(0)}
+.sh::before{content:’’;position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,rgba(255,140,0,.3),transparent);opacity:.5}
+.sh-handle{width:40px;height:4px;background:#101828;border-radius:2px;margin:0 auto 16px}
+.sh-x{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:#101828;border:0.5px solid rgba(255,140,0,.15);display:flex;align-items:center;justify-content:center;font-size:12px;color:#7a5c44;cursor:pointer;transition:all .15s}
+.sh-x:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
+.sh-title{font-family:‘Syne’,sans-serif;font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.sh-sub{font-size:12px;color:#7a5c44;margin-bottom:16px;line-height:1.6}
+.sh-sec{font-size:9px;font-weight:700;color:#3a2518;letter-spacing:.12em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
+.sh-sec::after{content:’’;flex:1;height:0.5px;background:linear-gradient(90deg,rgba(255,140,0,.15),transparent)}
+.tok-box{background:#101828;border:0.5px solid rgba(255,140,0,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tok-lbl{font-size:9px;color:#3a2518;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+.tok-val{font-size:12px;color:#ff8c00;font-weight:700;word-break:break-all}
+.tok-copy{padding:6px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.18);border-radius:6px;font-size:10px;color:#7a5c44;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;font-family:‘JetBrains Mono’,monospace}
+.tok-copy:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
+.step{display:flex;gap:9px;margin-bottom:10px;align-items:flex-start}
+.step-n{width:20px;height:20px;border-radius:50%;background:#101828;border:0.5px solid rgba(255,140,0,.15);font-size:10px;color:#3a2518;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-t{font-size:12px;color:#e8d5c0;font-weight:700;margin-bottom:2px}
+.step-d{font-size:11px;color:#7a5c44;line-height:1.5}
+.step-d code{background:#101828;border-radius:3px;padding:1px 5px;color:#ff8c00;font-size:10px}
+.step-code{background:#101828;border:0.5px solid rgba(255,140,0,.12);border-radius:6px;padding:6px 40px 6px 9px;margin-top:4px;font-size:10px;color:#ff8c00;word-break:break-all;position:relative}
+.step-cp{position:absolute;top:4px;right:5px;padding:2px 6px;background:none;border:0.5px solid rgba(255,140,0,.15);border-radius:3px;font-size:9px;color:#3a2518;cursor:pointer;font-family:‘JetBrains Mono’,monospace;transition:all .15s}
+.step-cp:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
 
-/* Send variant */
-.btn-action.send-mode{
-background:linear-gradient(135deg,var(–blue) 0%,#44ccff 100%);
-box-shadow:0 4px 20px var(–blue-glow);
-}
-.btn-action.send-mode:hover{
-box-shadow:0 4px 28px var(–blue-glow),0 0 50px var(–blue-dim);
-}
-
-/* Button icon */
-.btn-icon{font-size:14px;flex-shrink:0}
-
-/* ════════════════════════════════════════════════════════
-EXAMPLES STRIP
-════════════════════════════════════════════════════════ */
-.examples-wrap{
-flex-shrink:0;
-background:var(–bg-0);
-padding:8px 0 6px;
-position:relative;
-}
-
-.examples-wrap::before{
-content:’’;
-position:absolute;
-top:0;inset-x:0;height:0.5px;
-background:linear-gradient(90deg,transparent,var(–b2),transparent);
-}
-
-.examples-header{
-display:flex;align-items:center;gap:8px;
-padding:0 14px;
-margin-bottom:7px;
-}
-
-.examples-label{
-font-size:9px;
-color:var(–text-3);
-letter-spacing:.13em;
-text-transform:uppercase;
-flex-shrink:0;
-}
-
-.examples-line{
-flex:1;height:0.5px;
-background:linear-gradient(90deg,var(–b1),transparent);
-}
-
-.examples-count{
-font-size:9px;
-color:var(–text-3);
-flex-shrink:0;
-}
-
-.examples-track{
-display:flex;
-gap:6px;
-overflow-x:auto;
-padding:0 14px 2px;
--webkit-overflow-scrolling:touch;
-scroll-behavior:smooth;
-}
-.examples-track::-webkit-scrollbar{display:none}
-
-/* Example chip */
-.ex-chip{
-display:inline-flex;
-align-items:center;
-gap:5px;
-padding:7px 13px;
-background:var(–bg-2);
-border:0.5px solid var(–b1);
-border-radius:var(–r20);
-font-size:11px;
-color:var(–text-2);
-cursor:pointer;
-font-family:var(–font-mono);
-font-weight:700;
-white-space:nowrap;
-flex-shrink:0;
-transition:all .18s;
-line-height:1;
-}
-.ex-chip:hover{
-border-color:var(–b3);
-color:var(–orange);
-background:var(–orange-dim);
-box-shadow:0 0 12px var(–orange-glow);
-transform:translateY(-1px);
-}
-.ex-chip:active{transform:scale(.93) translateY(0)}
-
-/* Category colors */
-.ex-chip.cat-terrain:hover{color:var(–green);border-color:rgba(0,255,170,0.3);background:var(–green-dim);box-shadow:0 0 12px var(–green-glow)}
-.ex-chip.cat-scripts:hover{color:var(–blue);border-color:rgba(0,170,255,0.3);background:var(–blue-dim);box-shadow:0 0 12px var(–blue-glow)}
-.ex-chip.cat-gui:hover{color:var(–purple);border-color:rgba(204,68,255,0.3);background:var(–purple-dim);box-shadow:0 0 12px var(–purple-glow)}
-.ex-chip.cat-game:hover{color:var(–gold);border-color:rgba(255,204,68,0.3);background:var(–gold-dim)}
-
-/* ════════════════════════════════════════════════════════
-EXECUTION LOG
-════════════════════════════════════════════════════════ */
-.log-wrap{
-flex:1;
-overflow:hidden;
-display:flex;
-flex-direction:column;
-min-height:0;
-}
-
-.log-header{
-display:flex;align-items:center;justify-content:space-between;
-padding:8px 14px;
-flex-shrink:0;
-background:var(–bg-0);
-position:relative;
-}
-.log-header::before{
-content:’’;
-position:absolute;
-top:0;inset-x:0;height:0.5px;
-background:linear-gradient(90deg,transparent,var(–b1),transparent);
-}
-
-.log-title-row{
-display:flex;align-items:center;gap:7px;
-font-size:10px;font-weight:700;
-color:var(–text-2);
-letter-spacing:.1em;text-transform:uppercase;
-}
-
-.log-title-indicator{
-width:7px;height:7px;
-border-radius:50%;
-background:var(–orange);
-box-shadow:0 0 8px var(–orange);
-animation:pulse 2s ease-in-out infinite;
-}
-
-.log-right{display:flex;align-items:center;gap:8px}
-
-.log-entry-count{
-font-size:10px;
-color:var(–text-3);
-padding:2px 7px;
-background:var(–bg-2);
-border:0.5px solid var(–b0);
-border-radius:var(–r4);
-}
-
-.log-clear-btn{
-padding:3px 8px;
-background:none;
-border:0.5px solid var(–b1);
-border-radius:var(–r4);
-font-size:10px;
-color:var(–text-3);
-cursor:pointer;
-transition:all .15s;
-font-family:var(–font-mono);
-}
-.log-clear-btn:hover{border-color:var(–red);color:var(–red)}
-
-/* Log body */
-.log-body{
-flex:1;
-overflow-y:auto;
-padding:8px 14px;
-display:flex;
-flex-direction:column;
-gap:5px;
--webkit-overflow-scrolling:touch;
-}
-
-/* Log entry */
-.log-entry{
-padding:9px 11px;
-border-radius:var(–r10);
-border-left:2px solid var(–b1);
-background:var(–bg-2);
-animation:slide-up .15s ease;
-position:relative;
-overflow:hidden;
-transition:background .15s;
-}
-.log-entry:hover{background:var(–bg-3)}
-
-/* Entry top gradient */
-.log-entry::before{
-content:’’;
-position:absolute;
-top:0;left:0;right:0;height:1px;
-opacity:.12;
-}
-.log-entry.ai{border-left-color:var(–orange)}
-.log-entry.ai::before{background:var(–orange)}
-.log-entry.sent{border-left-color:var(–blue)}
-.log-entry.sent::before{background:var(–blue)}
-.log-entry.ok{border-left-color:var(–green)}
-.log-entry.ok::before{background:var(–green)}
-.log-entry.err{border-left-color:var(–red)}
-.log-entry.err::before{background:var(–red)}
-.log-entry.sys{border-left-color:var(–text-3)}
-.log-entry.warn{border-left-color:var(–yellow)}
-.log-entry.warn::before{background:var(–yellow)}
-
-/* Entry meta */
-.log-entry-meta{
-display:flex;align-items:center;gap:6px;
-margin-bottom:4px;
-}
-
-.log-tag{
-font-size:9px;
-padding:2px 7px;
-border-radius:var(–r4);
-font-weight:700;
-text-transform:uppercase;
-letter-spacing:.07em;
-flex-shrink:0;
-}
-.log-tag.ai{background:rgba(255,140,0,0.12);color:var(–orange)}
-.log-tag.sent{background:var(–blue-dim);color:var(–blue)}
-.log-tag.ok{background:var(–green-dim);color:var(–green)}
-.log-tag.err{background:var(–red-dim);color:var(–red)}
-.log-tag.sys{background:var(–bg-4);color:var(–text-3)}
-.log-tag.warn{background:var(–yellow-dim);color:var(–yellow)}
-
-.log-entry-time{
-font-size:10px;
-color:var(–text-3);
-margin-left:auto;
-flex-shrink:0;
-}
-
-.log-entry-msg{
-font-size:11px;
-color:var(–text-2);
-line-height:1.6;
-word-break:break-all;
-}
-
-/* ════════════════════════════════════════════════════════
-SIDE PANEL (desktop)
-════════════════════════════════════════════════════════ */
-.side-panel{
-display:none;
-width:280px;
-flex-shrink:0;
-flex-direction:column;
-overflow-y:auto;
-border-left:0.5px solid var(–b1);
-background:var(–bg-0);
-}
-@media(min-width:860px){.side-panel{display:flex}}
-
-.side-section{
-padding:14px;
-border-bottom:0.5px solid var(–b0);
-}
-
-.side-section-title{
-font-size:9px;font-weight:700;
-color:var(–text-3);
-letter-spacing:.14em;
-text-transform:uppercase;
-margin-bottom:10px;
-display:flex;align-items:center;gap:7px;
-}
-.side-section-title::after{
-content:’’;flex:1;height:0.5px;
-background:linear-gradient(90deg,var(–b1),transparent);
-}
-
-/* Connection card */
-.conn-card{
-background:var(–bg-2);
-border:0.5px solid var(–b1);
-border-radius:var(–r12);
-padding:12px;
-margin-bottom:10px;
-}
-
-.conn-card-status{
-display:flex;align-items:center;gap:9px;
-margin-bottom:8px;
-}
-
-.conn-card-dot{
-width:11px;height:11px;
-border-radius:50%;
-background:var(–text-3);
-flex-shrink:0;
-transition:all .3s;
-}
-.conn-card-dot.on{
-background:var(–green);
-animation:glow-green 2.5s ease-in-out infinite;
-}
-.conn-card-dot.wait{
-background:var(–orange);
-animation:blink 1.3s ease-in-out infinite;
-}
-
-.conn-card-name{
-font-family:var(–font-display);
-font-size:13px;font-weight:800;
-}
-.conn-card-desc{
-font-size:11px;color:var(–text-2);line-height:1.5;
-}
-
-/* Token display */
-.token-display{
-background:var(–bg-3);
-border:0.5px solid var(–b1);
-border-radius:var(–r8);
-padding:9px 11px;
-display:flex;align-items:center;
-justify-content:space-between;gap:8px;
-}
-.token-display-inner{flex:1;min-width:0}
-.token-label{
-font-size:9px;color:var(–text-3);
-letter-spacing:.1em;text-transform:uppercase;
-margin-bottom:2px;
-}
-.token-value{
-font-size:12px;color:var(–orange);
-font-weight:700;letter-spacing:.04em;
-word-break:break-all;
-}
-.token-copy-btn{
-padding:5px 9px;
-background:var(–bg-4);
-border:0.5px solid var(–b1);
-border-radius:var(–r6);
-font-size:10px;color:var(–text-2);
-cursor:pointer;transition:all .15s;
-white-space:nowrap;flex-shrink:0;
-font-family:var(–font-mono);
-}
-.token-copy-btn:hover{border-color:var(–b3);color:var(–orange)}
-
-/* Setup steps */
-.setup-list{display:flex;flex-direction:column;gap:10px}
-.setup-item{display:flex;gap:9px;align-items:flex-start}
-
-.setup-step-num{
-width:20px;height:20px;
-border-radius:50%;
-background:var(–bg-4);
-border:0.5px solid var(–b1);
-font-size:10px;color:var(–text-3);
-display:flex;align-items:center;justify-content:center;
-flex-shrink:0;margin-top:1px;
-}
-
-.setup-step-body .step-title{
-font-size:12px;color:var(–text-0);
-font-weight:700;margin-bottom:2px;
-}
-.setup-step-body .step-desc{
-font-size:11px;color:var(–text-2);line-height:1.5;
-}
-.setup-step-body .step-desc code{
-background:var(–bg-4);border-radius:var(–r4);
-padding:1px 5px;color:var(–orange);font-size:10px;
-}
-
-.setup-code-block{
-background:var(–bg-4);
-border:0.5px solid var(–b1);
-border-radius:var(–r6);
-padding:7px 40px 7px 9px;
-margin-top:5px;
-font-size:10px;color:var(–orange);
-word-break:break-all;
-position:relative;
-}
-.setup-code-copy{
-position:absolute;top:5px;right:6px;
-padding:2px 6px;
-background:none;
-border:0.5px solid var(–b1);
-border-radius:var(–r4);
-font-size:9px;color:var(–text-3);
-cursor:pointer;transition:all .15s;
-font-family:var(–font-mono);
-}
-.setup-code-copy:hover{border-color:var(–b3);color:var(–orange)}
-
-/* ════════════════════════════════════════════════════════
-BOTTOM SHEET (mobile)
-════════════════════════════════════════════════════════ */
-.sheet-backdrop{
-position:fixed;inset:0;
-background:rgba(1,3,6,0.88);
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-display:flex;align-items:flex-end;justify-content:center;
-z-index:500;
-opacity:0;pointer-events:none;
-transition:opacity .25s;
-}
-.sheet-backdrop.open{opacity:1;pointer-events:all}
-
-.sheet-panel{
-background:var(–bg-2);
-border:0.5px solid var(–b2);
-border-radius:var(–r24) var(–r24) 0 0;
-padding:20px 20px 40px;
-width:100%;max-width:520px;
-transform:translateY(100%);
-transition:transform .32s cubic-bezier(.4,0,.2,1);
-position:relative;
-max-height:90vh;
-overflow-y:auto;
-}
-.sheet-backdrop.open .sheet-panel{transform:translateY(0)}
-
-/* Sheet top accent */
-.sheet-panel::before{
-content:’’;
-position:absolute;top:0;inset-x:0;height:1px;
-background:linear-gradient(90deg,transparent,var(–orange),rgba(255,140,0,0.3),transparent);
-opacity:.6;
-}
-
-.sheet-handle{
-width:44px;height:4px;
-background:var(–bg-5);
-border-radius:2px;
-margin:0 auto 18px;
-}
-
-.sheet-close-btn{
-position:absolute;
-top:16px;right:16px;
-width:30px;height:30px;
-border-radius:50%;
-background:var(–bg-3);
-border:0.5px solid var(–b1);
-display:flex;align-items:center;justify-content:center;
-font-size:13px;color:var(–text-2);
-cursor:pointer;transition:all .15s;
-}
-.sheet-close-btn:hover{border-color:var(–red);color:var(–red)}
-
-.sheet-title{
-font-family:var(–font-display);
-font-size:20px;font-weight:900;
-margin-bottom:4px;
-background:linear-gradient(135deg,var(–orange),var(–gold));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-background-clip:text;
-}
-.sheet-subtitle{font-size:12px;color:var(–text-2);margin-bottom:18px;line-height:1.6}
-
-.sheet-section-title{
-font-size:10px;font-weight:700;
-color:var(–text-3);
-letter-spacing:.12em;text-transform:uppercase;
-margin-bottom:10px;margin-top:18px;
-display:flex;align-items:center;gap:7px;
-}
-.sheet-section-title::after{
-content:’’;flex:1;height:0.5px;
-background:linear-gradient(90deg,var(–b1),transparent);
-}
-
-/* ════════════════════════════════════════════════════════
-TOAST NOTIFICATIONS
-════════════════════════════════════════════════════════ */
-#toast-container{
-position:fixed;
-bottom:20px;left:12px;right:12px;
-display:flex;flex-direction:column;gap:7px;
-z-index:9999;
-pointer-events:none;
-}
-
-.toast-item{
-display:flex;align-items:center;gap:10px;
-padding:11px 15px;
-background:var(–bg-2);
-border:0.5px solid var(–b2);
-border-radius:var(–r12);
-font-size:12px;
-animation:slide-up .22s ease;
-pointer-events:auto;
-box-shadow:0 8px 28px rgba(0,0,0,0.5);
-max-width:420px;
-width:100%;
-}
-.toast-item.toast-ok{border-left:2px solid var(–green)}
-.toast-item.toast-err{border-left:2px solid var(–red)}
-.toast-item.toast-info{border-left:2px solid var(–blue)}
-.toast-item.toast-ai{
-border-left:2px solid var(–orange);
-background:rgba(255,140,0,0.05);
-}
-.toast-item.toast-warn{border-left:2px solid var(–yellow)}
-
-.toast-icon{font-size:16px;flex-shrink:0}
-.toast-text{flex:1;color:var(–text-1)}
-.toast-dismiss{
-font-size:12px;color:var(–text-3);
-cursor:pointer;padding:2px 5px;
-transition:color .15s;
-flex-shrink:0;
-}
-.toast-dismiss:hover{color:var(–red)}
-
-/* ════════════════════════════════════════════════════════
-STATS BAR
-════════════════════════════════════════════════════════ */
-.stats-bar{
-display:none;
-align-items:center;
-gap:12px;
-padding:5px 14px;
-background:var(–bg-1);
-border-bottom:0.5px solid var(–b0);
-font-size:10px;
-color:var(–text-3);
-flex-shrink:0;
-}
-@media(min-width:600px){.stats-bar{display:flex}}
-
-.stat-item{
-display:flex;align-items:center;gap:4px;
-}
-.stat-dot{
-width:4px;height:4px;
-border-radius:50%;
-background:var(–text-3);
-}
-.stat-dot.orange{background:var(–orange)}
-.stat-dot.green{background:var(–green)}
-.stat-dot.blue{background:var(–blue)}
-
-/* ════════════════════════════════════════════════════════
-RESPONSIVE OVERRIDES
-════════════════════════════════════════════════════════ */
-@media(max-width:400px){
-.topbar{padding:0 12px;gap:8px}
-.brand-name{font-size:18px}
-.brand-mark{width:28px;height:28px;font-size:14px}
-.input-zone{padding:10px 12px 8px}
-.cmd-textarea{font-size:13px;min-height:100px}
-.btn{padding:10px 14px;font-size:11px}
-.log-body{padding:6px 12px}
-}
-
-@media(min-width:860px){
-.examples-track{flex-wrap:wrap}
-.ex-chip{font-size:10px;padding:5px 11px}
-}
-
-/* ════════════════════════════════════════════════════════
-LOADING SCREEN
-════════════════════════════════════════════════════════ */
-#loading-screen{
-position:fixed;inset:0;z-index:9999;
-background:var(–bg-0);
-display:flex;flex-direction:column;
-align-items:center;justify-content:center;
-gap:20px;
-transition:opacity .4s;
-}
-#loading-screen.hidden{
-opacity:0;pointer-events:none;
-}
-.loading-logo{
-font-family:var(–font-display);
-font-size:48px;font-weight:900;
-background:linear-gradient(135deg,var(–orange),var(–gold));
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-background-clip:text;
-animation:pulse 1.5s ease-in-out infinite;
-}
-.loading-bar-wrap{
-width:200px;height:2px;
-background:var(–bg-3);
-border-radius:1px;
-overflow:hidden;
-}
-.loading-bar{
-height:100%;
-background:linear-gradient(90deg,var(–orange),var(–gold));
-border-radius:1px;
-animation:progress 1.2s ease-in-out infinite;
-}
-.loading-text{
-font-size:11px;color:var(–text-3);
-letter-spacing:.1em;text-transform:uppercase;
-}
+/* TOASTS */
+#toasts{position:fixed;bottom:18px;left:12px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:9999;pointer-events:none}
+.toast{display:flex;align-items:center;gap:9px;padding:10px 14px;background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:10px;font-size:12px;animation:up .2s ease;pointer-events:auto;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.toast.ok{border-left:2px solid #00ffaa}.toast.err{border-left:2px solid #ff3355}.toast.info{border-left:2px solid #00aaff}.toast.ai{border-left:2px solid #ff8c00;background:rgba(255,140,0,.04)}
 </style>
 
 </head>
 <body>
+<div class="bg"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div></div>
 
-<!-- ════════════ BACKGROUND SYSTEM ════════════ -->
-
-<div class="bg-system">
-  <div class="bg-grid"></div>
-  <div class="bg-dots"></div>
-  <div class="bg-glow-orange"></div>
-  <div class="bg-glow-blue"></div>
-  <div class="bg-glow-purple"></div>
-  <div class="bg-glow-center"></div>
-  <div class="bg-scanlines"></div>
-  <div class="bg-vignette"></div>
-  <div class="bg-corner tl"></div>
-  <div class="bg-corner tr"></div>
-  <div class="bg-corner bl"></div>
-  <div class="bg-corner br"></div>
-</div>
-
-<!-- ════════════ LOADING SCREEN ════════════ -->
-
-<div id="loading-screen">
-  <div class="loading-logo">ENES AI</div>
-  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
-  <div class="loading-text">Initializing…</div>
-</div>
-
-<!-- ════════════ ROOT APP ════════════ -->
-
-<div id="root">
 <div id="app">
-
-  <!-- ════════════ TOPBAR ════════════ -->
-
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-mark">E</div>
-      <div class="brand-name">ENES AI</div>
-      <div class="brand-tag">Roblox Studio</div>
-    </div>
-
-```
-<div class="conn-pill" id="conn-pill">
-  <span class="conn-dot wait" id="conn-dot-top"></span>
-  <span id="conn-text-top">No plugin</span>
-</div>
-
-<div class="topbar-actions">
-  <button class="tb-btn" onclick="openSheet()" title="Setup & Token">
-    <span class="tb-icon">⚙</span>
-    <span>Setup</span>
-  </button>
-</div>
-```
-
+  <!-- TOPBAR -->
+  <div class="bar">
+    <div class="logo"><div class="logo-icon">E</div>ENES AI</div>
+    <div class="conn-pill" id="cpill"><span class="cdot wait" id="cdot"></span><span id="ctxt">No plugin</span></div>
+    <button class="setup-btn" onclick="openSheet()">⚙ Setup</button>
   </div>
 
-  <!-- ════════════ STATS BAR ════════════ -->
+  <div class="main">
+    <!-- INPUT -->
+    <div class="izone">
+      <div class="ihead">
+        <div class="ititle"><span class="ititle-dot"></span>ENES AI</div>
+        <div class="model-tag"><span class="model-tag-dot"></span>Groq · Llama 3.3</div>
+      </div>
 
-  <div class="stats-bar">
-    <div class="stat-item">
-      <span class="stat-dot orange"></span>
-      <span id="stat-model">Groq · Llama 3.3 70B</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-dot green"></span>
-      <span id="stat-requests">0 requests</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-dot blue"></span>
-      <span id="stat-token-short">Token: —</span>
-    </div>
+```
+  <textarea class="txtarea" id="txta" rows="4" spellcheck="false" autocomplete="off" autocorrect="off" placeholder="Type anything — ENES AI knows everything:
+```
+
+✦ photorealistic island 4K terrain cinematic sunset
+✦ beautiful animated main menu GUI with glow effects
+✦ complete admin system server and client scripts
+✦ shop GUI coins RemoteEvents datastore full system
+✦ NPC PathfindingService hunts and attacks players
+✦ full obby 30 platforms moving parts kill bricks”></textarea>
+
+```
+  <div class="txt-footer">
+    <span id="ccount">0 chars</span>
+    <span class="txt-footer-right"><span class="txt-pip"></span><span id="hlabel">Free &amp; instant via Groq</span></span>
   </div>
 
-  <!-- ════════════ MAIN BODY ════════════ -->
-
-  <div class="app-body">
-
-```
-<!-- MAIN COLUMN -->
-<div class="main-col">
-
-  <!-- ════ INPUT ZONE ════ -->
-  <div class="input-zone">
-    <div class="input-head">
-      <div class="input-title">
-        <span class="input-title-pip"></span>
-        <span class="input-title-text">ENES AI</span>
-      </div>
-      <div class="model-badge" id="model-badge">
-        <span class="model-badge-dot"></span>
-        <span id="model-label">Groq · Llama 3.3</span>
-      </div>
-    </div>
-
-    <!-- TEXTAREA -->
-    <div class="cmd-container">
-      <div class="cmd-border-glow" id="cmd-border"></div>
-      <div class="cmd-inner">
-        <textarea
-          class="cmd-textarea"
-          id="cmd-textarea"
-          rows="4"
-          spellcheck="false"
-          autocomplete="off"
-          autocorrect="off"
-          placeholder="Type anything — ENES AI is an expert at everything:
-```
-
-✦ photorealistic 4K tropical island with layered terrain and cinematic sunset
-✦ beautiful animated main menu GUI with glow effects and smooth animations
-✦ complete admin system with server Script and client LocalScript
-✦ full shop GUI with RemoteEvents coins datastore and purchase history
-✦ humanoid NPC with PathfindingService that hunts and attacks players
-✦ obby with 30 platforms moving parts kill bricks and checkpoint system
-✦ complete tycoon with plot dropper conveyor belt and upgrade system”></textarea>
-</div>
-<div class="cmd-bottom-bar">
-<span class="cmd-char-count" id="char-count">0 chars</span>
-<span class="cmd-status-text">
-<span class="cmd-status-pip"></span>
-<span id="cmd-status-label">Ready — free & instant via Groq</span>
-</span>
-</div>
-</div>
-
-```
-    <!-- AI STATE -->
-    <div class="ai-state-wrap" id="ai-state">
-
-      <!-- Thinking -->
-      <div class="thinking-bar" id="thinking-bar">
-        <div class="thinking-dots">
-          <span></span><span></span><span></span>
-        </div>
-        <span class="thinking-msg" id="thinking-msg">Analyzing your request…</span>
-        <div class="thinking-spinner"></div>
-      </div>
-
-      <!-- Code preview -->
-      <div class="code-preview-wrap" id="code-preview" style="display:none">
-        <div class="code-preview-head">
-          <div class="code-preview-badge">
-            Generated Lua
-            <span class="complexity-badge" id="complexity-badge">medium</span>
-          </div>
-          <div class="code-preview-actions">
-            <button class="code-action-btn" onclick="copyGeneratedCode()">copy</button>
-            <button class="code-action-btn" onclick="expandCode()">expand</button>
-          </div>
-        </div>
-        <div class="code-preview-body" id="code-preview-body"></div>
-        <div class="code-preview-note">
-          <span class="code-note-icon">💡</span>
-          <span id="code-preview-note-text">Generated successfully.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ACTION BUTTONS -->
-    <div class="action-bar">
-      <button class="btn btn-clear" id="clear-btn" onclick="clearAll()">
-        <span class="btn-icon">✕</span>
-        Clear
-      </button>
-      <button class="btn btn-retry" id="retry-btn" onclick="retryGeneration()">
-        <span class="btn-icon">↻</span>
-        Retry
-      </button>
-      <button class="btn btn-action" id="main-btn" onclick="handleMainAction()">
-        <span class="btn-icon" id="main-btn-icon">✦</span>
-        <span id="main-btn-text">Generate &amp; Send</span>
-      </button>
-    </div>
-  </div><!-- /input-zone -->
-
-  <!-- ════ EXAMPLES ════ -->
-  <div class="examples-wrap">
-    <div class="examples-header">
-      <span class="examples-label">Examples</span>
-      <div class="examples-line"></div>
-      <span class="examples-count" id="examples-count">0 examples</span>
-    </div>
-    <div class="examples-track" id="examples-track"></div>
-  </div>
-
-  <!-- ════ LOG ════ -->
-  <div class="log-wrap">
-    <div class="log-header">
-      <div class="log-title-row">
-        <span class="log-title-indicator"></span>
-        Execution Log
-      </div>
-      <div class="log-right">
-        <span class="log-entry-count" id="log-entry-count">0</span>
-        <button class="log-clear-btn" onclick="clearLog()">clear</button>
-      </div>
-    </div>
-    <div class="log-body" id="log-body">
-      <div class="log-entry sys">
-        <div class="log-entry-meta">
-          <span class="log-tag sys">sys</span>
-          <span class="log-entry-time" id="boot-time-el"></span>
-        </div>
-        <div class="log-entry-msg">ENES AI initialized. Type anything and tap Generate &amp; Send.</div>
-      </div>
-    </div>
-  </div><!-- /log-wrap -->
-
-</div><!-- /main-col -->
-
-<!-- ════ SIDE PANEL (desktop) ════ -->
-<div class="side-panel">
-
-  <!-- Connection -->
-  <div class="side-section">
-    <div class="side-section-title">Connection</div>
-    <div class="conn-card">
-      <div class="conn-card-status">
-        <div class="conn-card-dot wait" id="side-conn-dot"></div>
-        <div>
-          <div class="conn-card-name" id="side-conn-name">Waiting for plugin</div>
-          <div class="conn-card-desc" id="side-conn-desc">Open Studio &amp; activate the plugin.</div>
-        </div>
-      </div>
-    </div>
-    <div class="token-display">
-      <div class="token-display-inner">
-        <div class="token-label">Session Token</div>
-        <div class="token-value" id="side-token-val">—</div>
-      </div>
-      <button class="token-copy-btn" onclick="copyToken()">copy</button>
+  <div class="ai-wrap" id="aiwrap">
+    <div class="think" id="tbar"><div class="tdots"><span></span><span></span><span></span></div><span id="tmsg">Analyzing…</span><div class="tspinner"></div></div>
+    <div class="preview" id="prev" style="display:none">
+      <div class="prev-head"><span class="prev-lbl">Generated Lua</span><button class="cpybtn" onclick="copyCode()">copy</button></div>
+      <div class="prev-code" id="pcode"></div>
+      <div class="prev-note"><span>💡</span><span id="pnote"></span></div>
     </div>
   </div>
 
-  <!-- Setup -->
-  <div class="side-section">
-    <div class="side-section-title">Plugin Setup</div>
-    <div class="setup-list">
-      <div class="setup-item">
-        <div class="setup-step-num">1</div>
-        <div class="setup-step-body">
-          <div class="step-title">Download plugin</div>
-          <div class="step-desc">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in Studio plugins folder.</div>
-        </div>
-      </div>
-      <div class="setup-item">
-        <div class="setup-step-num">2</div>
-        <div class="setup-step-body">
-          <div class="step-title">Set backend URL</div>
-          <div class="setup-code-block">
-            https://enesai-production.up.railway.app
-            <button class="setup-code-copy" onclick="copyText('https://enesai-production.up.railway.app')">copy</button>
-          </div>
-        </div>
-      </div>
-      <div class="setup-item">
-        <div class="setup-step-num">3</div>
-        <div class="setup-step-body">
-          <div class="step-title">Paste token into plugin</div>
-          <div class="step-desc">Copy the session token above into the plugin token field.</div>
-        </div>
-      </div>
-      <div class="setup-item">
-        <div class="setup-step-num">4</div>
-        <div class="setup-step-body">
-          <div class="step-title">Activate</div>
-          <div class="step-desc">Click ENES AI in Studio toolbar. Dot turns <span style="color:var(--green)">green</span> when live.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Info -->
-  <div class="side-section">
-    <div class="side-section-title">About</div>
-    <div style="font-size:11px;color:var(--text-2);line-height:1.7">
-      ENES AI is the most powerful Roblox Studio AI ever built. It generates photorealistic terrain, stunning GUIs, complex multi-script systems, and expert Lua code — all from plain English descriptions.<br/><br/>
-      <span style="color:var(--orange)">Powered by Groq</span> — 100% free, no API keys needed on the dashboard side.
-    </div>
-  </div>
-
-</div><!-- /side-panel -->
-```
-
-  </div><!-- /app-body -->
-</div><!-- /app -->
-</div><!-- /root -->
-
-<!-- ════════════ SETUP SHEET ════════════ -->
-
-<div class="sheet-backdrop" id="sheet-backdrop" onclick="handleSheetBackdropClick(event)">
-  <div class="sheet-panel" id="sheet-panel">
-    <div class="sheet-handle"></div>
-    <button class="sheet-close-btn" onclick="closeSheet()">✕</button>
-
-```
-<div class="sheet-title">ENES AI Setup</div>
-<div class="sheet-subtitle">Connect Roblox Studio to start generating and executing code instantly.</div>
-
-<!-- Connection status -->
-<div class="sheet-section-title">Connection Status</div>
-<div class="conn-card">
-  <div class="conn-card-status">
-    <div class="conn-card-dot wait" id="sheet-conn-dot"></div>
-    <div>
-      <div class="conn-card-name" id="sheet-conn-name">Waiting for plugin</div>
-      <div class="conn-card-desc" id="sheet-conn-desc">Open Studio and activate your plugin.</div>
-    </div>
+  <div class="actions">
+    <button class="btn btn-x" onclick="clearAll()">✕</button>
+    <button class="btn btn-retry" id="retrybtn" onclick="retryGen()">↻</button>
+    <button class="btn btn-go" id="mainbtn" onclick="go()">✦ Generate &amp; Send</button>
   </div>
 </div>
 
-<!-- Token -->
-<div class="sheet-section-title">Session Token</div>
-<div class="token-display" style="margin-bottom:4px">
-  <div class="token-display-inner">
-    <div class="token-label">Your Token</div>
-    <div class="token-value" id="sheet-token-val">—</div>
-  </div>
-  <button class="token-copy-btn" onclick="copyToken()">copy</button>
+<!-- EXAMPLES -->
+<div class="ex-wrap">
+  <div class="ex-lbl">Quick examples</div>
+  <div class="ex-scroll" id="exscroll"></div>
 </div>
-<div style="font-size:10px;color:var(--text-3);margin-bottom:16px">Paste this into the plugin token field in Studio.</div>
 
-<!-- Setup steps -->
-<div class="sheet-section-title">Plugin Setup Steps</div>
-<div class="setup-list">
-  <div class="setup-item">
-    <div class="setup-step-num">1</div>
-    <div class="setup-step-body">
-      <div class="step-title">Get the plugin file</div>
-      <div class="step-desc">Save <code>studio-plugin.lua</code> as a <code>.rbxm</code> file in your Roblox Studio plugins folder.</div>
-    </div>
+<!-- LOG -->
+<div class="log-wrap">
+  <div class="log-head">
+    <div class="log-title"><span class="log-pip"></span>Log</div>
+    <div style="display:flex;gap:7px;align-items:center"><span class="log-cnt" id="lcnt">0</span><button class="log-clr" onclick="clearLog()">clear</button></div>
   </div>
-  <div class="setup-item">
-    <div class="setup-step-num">2</div>
-    <div class="setup-step-body">
-      <div class="step-title">Set the backend URL</div>
-      <div class="setup-code-block">
-        https://enesai-production.up.railway.app
-        <button class="setup-code-copy" onclick="copyText('https://enesai-production.up.railway.app')">copy</button>
-      </div>
-    </div>
-  </div>
-  <div class="setup-item">
-    <div class="setup-step-num">3</div>
-    <div class="setup-step-body">
-      <div class="step-title">Enter session token</div>
-      <div class="step-desc">Copy the token above and paste it into the plugin's token field in Studio.</div>
-    </div>
-  </div>
-  <div class="setup-item">
-    <div class="setup-step-num">4</div>
-    <div class="setup-step-body">
-      <div class="step-title">Click ENES AI in Studio toolbar</div>
-      <div class="step-desc">The connection dot turns <span style="color:var(--green)">green</span> when the plugin is connected and ready.</div>
-    </div>
+  <div class="log-body" id="logbody">
+    <div class="le sys"><div class="le-top"><span class="le-tag sys">sys</span><span class="le-time" id="boottime"></span></div><div class="le-msg">ENES AI ready. Type anything and tap Generate &amp; Send.</div></div>
   </div>
 </div>
 ```
@@ -1843,966 +234,247 @@ letter-spacing:.1em;text-transform:uppercase;
   </div>
 </div>
 
-<!-- TOASTS -->
+<!-- SETUP SHEET -->
 
-<div id="toast-container"></div>
+<div class="sh-bg" id="shbg" onclick="shClick(event)">
+  <div class="sh">
+    <div class="sh-handle"></div>
+    <button class="sh-x" onclick="closeSheet()">✕</button>
+    <div class="sh-title">ENES AI Setup</div>
+    <div class="sh-sub">Connect Roblox Studio to generate and run code instantly.</div>
+    <div class="sh-sec">Session Token</div>
+    <div class="tok-box"><div><div class="tok-lbl">Your Token</div><div class="tok-val" id="shtok">—</div></div><button class="tok-copy" onclick="copyToken()">copy</button></div>
+    <div class="sh-sec">Plugin Setup</div>
+    <div class="step"><div class="step-n">1</div><div><div class="step-t">Save plugin file</div><div class="step-d">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in Studio plugins folder.</div></div></div>
+    <div class="step"><div class="step-n">2</div><div><div class="step-t">Set backend URL</div><div class="step-code">https://enesai-production.up.railway.app<button class="step-cp" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
+    <div class="step"><div class="step-n">3</div><div><div class="step-t">Paste token in plugin</div><div class="step-d">Copy token above into the plugin token field in Studio.</div></div></div>
+    <div class="step"><div class="step-n">4</div><div><div class="step-t">Activate</div><div class="step-d">Click ENES AI in Studio toolbar. Dot turns <span style="color:#00ffaa">green</span> when live.</div></div></div>
+  </div>
+</div>
 
-<!-- ════════════════════════════════════════════════════════
-     JAVASCRIPT — ENES AI ENGINE
-════════════════════════════════════════════════════════ -->
+<div id="toasts"></div>
 
 <script>
-'use strict';
+const B='https://enesai-production.up.railway.app';
+let tok=null,connected=false,pollInt=null,genCode=null,ready=false,gen=false,send=false,lc=0,rc=0;
+const $=id=>document.getElementById(id);
+const ts=()=>new Date().toLocaleTimeString('en-US',{hour12:false});
 
-/* ════════════════════════════════════════
-   CONSTANTS & CONFIG
-════════════════════════════════════════ */
-const BACKEND = 'https://enesai-production.up.railway.app';
-const POLL_INTERVAL_MS = 2000;
-const RESULT_POLL_INTERVAL_MS = 1000;
-const RESULT_MAX_POLLS = 15;
-const TOKEN_STORAGE_KEY = 'enes_ai_token_v2';
-
-/* ════════════════════════════════════════
-   STATE
-════════════════════════════════════════ */
-const STATE = {
-  token: null,
-  connected: false,
-  pollInterval: null,
-  generatedCode: null,
-  codeIsReady: false,
-  requestCount: 0,
-  isGenerating: false,
-  isSending: false,
-};
-
-/* ════════════════════════════════════════
-   DOM HELPERS
-════════════════════════════════════════ */
-const el = id => document.getElementById(id);
-const ts = () => new Date().toLocaleTimeString('en-US', { hour12: false });
-
-/* ════════════════════════════════════════
-   TOAST SYSTEM
-════════════════════════════════════════ */
-const TOAST_ICONS = {
-  ok: '✅',
-  err: '❌',
-  info: 'ℹ️',
-  ai: '✦',
-  warn: '⚠️',
-};
-
-function showToast(message, type = 'info', duration = 3500) {
-  const container = el('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast-item toast-${type}`;
-
-  const icon = TOAST_ICONS[type] || '●';
-  toast.innerHTML = `
-    <span class="toast-icon">${icon}</span>
-    <span class="toast-text">${message}</span>
-    <span class="toast-dismiss" onclick="this.parentElement.remove()">✕</span>
-  `;
-
-  container.appendChild(toast);
-
-  // Auto remove
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(10px)';
-    toast.style.transition = 'all .3s';
-    setTimeout(() => toast.remove(), 320);
-  }, duration);
+function toast(m,t='info'){
+  const c=$('toasts'),e=document.createElement('div');
+  e.className='toast '+t;e.textContent=m;c.appendChild(e);
+  setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),320)},3200);
 }
 
-/* ════════════════════════════════════════
-   LOG SYSTEM
-════════════════════════════════════════ */
-let logCount = 0;
+function copyTxt(t){navigator.clipboard.writeText(t).catch(()=>{});toast('Copied!','ok')}
+function copyToken(){if(tok)copyTxt(tok)}
+function copyCode(){if(genCode)copyTxt(genCode)}
 
-function addLogEntry(type, message) {
-  const body = el('log-body');
-  const entry = document.createElement('div');
-  entry.className = `log-entry ${type}`;
-
-  entry.innerHTML = `
-    <div class="log-entry-meta">
-      <span class="log-tag ${type}">${type}</span>
-      <span class="log-entry-time">${ts()}</span>
-    </div>
-    <div class="log-entry-msg">${String(message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-  `;
-
-  body.appendChild(entry);
-  body.scrollTop = body.scrollHeight;
-
-  logCount++;
-  el('log-entry-count').textContent = logCount;
+function log(type,msg){
+  const b=$('logbody'),e=document.createElement('div');
+  e.className='le '+type;
+  e.innerHTML=`<div class="le-top"><span class="le-tag ${type}">${type}</span><span class="le-time">${ts()}</span></div><div class="le-msg">${String(msg).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  b.appendChild(e);b.scrollTop=b.scrollHeight;
+  lc++;$('lcnt').textContent=lc;
 }
 
-function clearLog() {
-  const body = el('log-body');
-  body.innerHTML = `
-    <div class="log-entry sys">
-      <div class="log-entry-meta">
-        <span class="log-tag sys">sys</span>
-        <span class="log-entry-time">${ts()}</span>
-      </div>
-      <div class="log-entry-msg">Log cleared.</div>
-    </div>
-  `;
-  logCount = 0;
-  el('log-entry-count').textContent = '0';
+function clearLog(){
+  $('logbody').innerHTML=`<div class="le sys"><div class="le-top"><span class="le-tag sys">sys</span><span class="le-time">${ts()}</span></div><div class="le-msg">Log cleared.</div></div>`;
+  lc=0;$('lcnt').textContent='0';
 }
 
-/* ════════════════════════════════════════
-   CHARACTER COUNT
-════════════════════════════════════════ */
-el('cmd-textarea').addEventListener('input', function() {
-  el('char-count').textContent = this.value.length + ' chars';
-});
+$('txta').addEventListener('input',function(){$('ccount').textContent=this.value.length+' chars'});
 
-/* ════════════════════════════════════════
-   COPY UTILITIES
-════════════════════════════════════════ */
-function copyText(text) {
-  navigator.clipboard.writeText(text).catch(() => {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-  });
-  showToast('Copied to clipboard!', 'ok', 2000);
-}
-
-function copyToken() {
-  if (STATE.token) copyText(STATE.token);
-}
-
-function copyGeneratedCode() {
-  if (STATE.generatedCode) {
-    copyText(STATE.generatedCode);
-    showToast('Lua code copied!', 'ok', 2000);
-  }
-}
-
-function expandCode() {
-  const body = el('code-preview-body');
-  if (body.style.maxHeight === 'none') {
-    body.style.maxHeight = '160px';
-  } else {
-    body.style.maxHeight = 'none';
-  }
-}
-
-/* ════════════════════════════════════════
-   EXAMPLES DATABASE — 100+ examples
-════════════════════════════════════════ */
-const EXAMPLES_DB = [
-  // ── TERRAIN ──
-  { label: '🌿 Grass Base', cat: 'terrain', prompt: 'create a perfect 512x512 LeafyGrass baseplate anchored at 0,0,0 bright green smooth' },
-  { label: '🌴 Tropical Island', cat: 'terrain', prompt: 'photorealistic tropical island LeafyGrass terrain multiple FillBall core sand FillBall beach ring ocean water FillBlock palm trees FillCylinder trunks FillBall canopy rock cliff FillBall edges sunset ClockTime 19 warm Atmosphere Bloom ColorCorrection SunRaysEffect DepthOfField cinematic' },
-  { label: '🏔 Mountains', cat: 'terrain', prompt: 'realistic mountain range 5 large stacked FillBall rock formations varying sizes and positions snow cap FillBall on peaks grass FillBall base misty Atmosphere Density fog DepthOfField dramatic Bloom dark lighting' },
-  { label: '🌋 Volcano', cat: 'terrain', prompt: 'dramatic active volcano CrackedLava Basalt Rock terrain FillBall cone shape carved crater Air FillBall top neon lava red glow Parts PointLight ash dense dark Atmosphere red Bloom ColorCorrection apocalyptic dark ClockTime' },
-  { label: '❄️ Arctic', cat: 'terrain', prompt: 'arctic frozen landscape Glacier Snow Ice terrain FillBall landmass FillBlock frozen lake Ice frozen water ice pillar FillCylinder blizzard dense white Atmosphere DepthOfField cold blue ColorCorrection dim Brightness' },
-  { label: '🌿 Forest', cat: 'terrain', prompt: 'dense forest 20 varied FillCylinder Wood trunks different heights FillBall Grass canopy morning light Atmosphere SunRaysEffect Bloom god rays low fog Density green tint ColorCorrection' },
-  { label: '🏜 Desert', cat: 'terrain', prompt: 'rolling sand dune desert Sand terrain multiple FillBall dune shapes Sandstone Rock formations scorching bright ClockTime Lighting high Brightness heat haze Atmosphere Glare warm yellow ColorCorrection' },
-  { label: '🕳 Cave', cat: 'terrain', prompt: 'underground cave system carved Air FillBall multiple cave chambers Limestone Rock Basalt terrain stalagmite Parts FillCylinder dim atmospheric PointLight green mysterious eerie lighting inside dark Atmosphere' },
-  { label: '🌊 Ocean', cat: 'terrain', prompt: 'massive deep ocean water terrain FillBlock 1000x20x1000 sandy island FillBall LeafyGrass core coral reef Rock FillBall formations tropical sunset Atmosphere warm Bloom SunRaysEffect' },
-  { label: '🌸 Cherry Forest', cat: 'terrain', prompt: 'beautiful cherry blossom forest pink FillBall canopy white FillCylinder trunks rolling Grass hills FillBall soft pink Atmosphere Bloom spring ClockTime warm gentle pink ColorCorrection' },
-  { label: '🌑 Moon Surface', cat: 'terrain', prompt: 'alien moon surface gray Rock Slate terrain FillBall craters multiple Air carved holes meteor impact sites dim Atmosphere no fog black sky ClockTime 2 Stars Sky cold blue ColorCorrection' },
-  { label: '🔥 Lava World', cat: 'terrain', prompt: 'lava world CrackedLava terrain everywhere glowing neon orange Parts lava rivers between rock formations PointLight glow Atmosphere dense red orange Bloom ColorCorrection extreme dark sky ClockTime 0' },
-
-  // ── BUILD ──
-  { label: '☠️ Kill Brick', cat: 'build', prompt: 'glowing neon red kill brick Part anchored size 10x1x10 server Script inside Touched event debounce kills Humanoid TakeDamage math.huge instantly' },
-  { label: '🚪 Tween Door', cat: 'build', prompt: 'working door model Part TweenService tweens open 90 degrees CFrame Angles when player Touches it closes after 3 seconds debounce server Script' },
-  { label: '🌀 Teleporters', cat: 'build', prompt: 'two linked glowing neon cyan teleporter pad Parts anchored server Script Touched debounce SetPrimaryPartCFrame teleport players between the two pads' },
-  { label: '💎 Floating Gem', cat: 'build', prompt: 'spinning floating neon diamond gem Part SpecialMesh diamond shape TweenService bob up down sine rotation PointLight glow ParticleEmitter sparkles' },
-  { label: '🚀 Launch Pad', cat: 'build', prompt: 'metallic launch pad platform Part BodyVelocity launches players high into air Y velocity on Touched neon orange ring lights PointLight' },
-  { label: '🏠 Simple House', cat: 'build', prompt: 'complete simple house Model 4 walls Part roof Part door gap window holes Brick SmoothPlastic material proper welds all anchored' },
-  { label: '🧱 Long Wall', cat: 'build', prompt: 'long solid brick wall 60x12x1 studs Brick material medium stone grey anchored' },
-  { label: '🌉 Bridge', cat: 'build', prompt: 'suspension bridge two tall pillar Parts flat walkway Parts diagonal support beam Parts Concrete SmoothPlastic anchored model' },
-  { label: '🏰 Castle Tower', cat: 'build', prompt: 'tall cylindrical castle tower CylinderMesh stacked cylinder Parts crenellated top notch Parts Brick material dark grey anchored model' },
-  { label: '⚓ Anchor Point', cat: 'build', prompt: 'glowing blue neon spawn anchor point Part team color spawn location underneath animated PointLight pulse' },
-
-  // ── SCRIPTS ──
-  { label: '🏆 Leaderstats+DS', cat: 'scripts', prompt: 'complete leaderstats system server Script ServerScriptService Coins Level IntValues PlayerAdded full DataStoreService save pcall GetAsync SetAsync load on join save on leaving key player.UserId' },
-  { label: '👮 Admin System', cat: 'scripts', prompt: 'full admin command system server Script ServerScriptService admin table PlayerAdded Chatted listener commands /kick /ban /kill /heal /god /ungod /speed /jump /tp /tpme /freeze /unfreeze /announce all working complete' },
-  { label: '💀 Round System', cat: 'scripts', prompt: 'complete round system server Script ServerScriptService intermission 15s active round 120s gameover 5s StringValue GameStatus in ReplicatedStorage LocalScript StarterPlayerScripts shows countdown TextLabel GUI live' },
-  { label: '🤖 NPC Pathfinder', cat: 'scripts', prompt: 'humanoid NPC Model PrimaryPart PathfindingService CreatePath AgentRadius ComputeAsync GetWaypoints MoveTo loop chases nearest player within 80 studs attacks Humanoid TakeDamage on reach health bar BillboardGui TextLabel above head' },
-  { label: '🛒 Shop System', cat: 'scripts', prompt: 'complete shop system server Script RemoteEvent ReplicatedStorage LocalScript ScreenGui items grid buy TextButton RemoteEvent FireServer server validates player Coins leaderstats deducts price gives item saves with DataStore' },
-  { label: '⚔️ Sword Tool', cat: 'scripts', prompt: 'sword Tool StarterPack LocalScript Activated event fires RemoteEvent server Script hitbox workspace:GetPartBoundsInBox Region3 30 damage Humanoid swing animation TweenService handle rotation' },
-  { label: '🐣 Pet System', cat: 'scripts', prompt: 'pet system server Script each player spawns glowing colored sphere orb pet Part follows player smooth Lerp position Heartbeat RunService bobs up down offset behind player ParticleEmitter trail' },
-  { label: '🔫 Gun Tool', cat: 'scripts', prompt: 'gun Tool StarterPack LocalScript Activated RemoteEvent fires server Script workspace:Raycast from muzzle barrel attachment direction cast 25 damage Humanoid TakeDamage bullet hit effect PointLight flash' },
-  { label: '🎯 Hitbox Detection', cat: 'scripts', prompt: 'server Script hitbox system Region3 workspace:GetPartsInRegion3 or GetPartBoundsInBox detect players deal damage validate server side prevent exploit RemoteEvent' },
-  { label: '📦 DataStore System', cat: 'scripts', prompt: 'complete DataStoreService system server Script PlayerAdded PlayerRemoving pcall GetAsync SetAsync player data table Coins Level inventory array auto-save every 60 seconds backup on leave' },
-  { label: '🎰 Gamble System', cat: 'scripts', prompt: 'gambling system server Script RemoteEvent LocalScript GUI spin button random outcome win lose multiply Coins leaderstats math.random weighted results animation TweenService' },
-  { label: '🏅 Badge System', cat: 'scripts', prompt: 'badge award system server Script BadgeService:AwardBadge PlayerAdded check UserOwnsGamePassAsync award welcome badge kill count badge milestone badges all with pcall error handling' },
-
-  // ── SKY & LIGHTING ──
-  { label: '🌅 Sunset', cat: 'sky', prompt: 'photorealistic cinematic sunset Lighting ClockTime 19 Brightness 3 warm orange Ambient OutdoorAmbient Atmosphere Density 0.4 Offset 0.1 warm orange Color Decay Glare 1 Haze 2 Bloom Intensity 0.8 Size 24 Threshold 0.95 ColorCorrection Saturation 0.25 SunRaysEffect Intensity 0.25' },
-  { label: '🌙 Night Sky', cat: 'sky', prompt: 'cinematic night sky ClockTime 2 Brightness 0.3 dark blue Ambient Sky StarCount 5000 dense dark blue Atmosphere Density 0.3 DepthOfField FarIntensity 0.4 FocusDistance 60 dim Bloom ColorCorrection cold blue tint' },
-  { label: '☀️ Clear Day', cat: 'sky', prompt: 'bright beautiful clear day ClockTime 14 Brightness 5 blue Ambient light Atmosphere Density 0.1 crisp ColorCorrection slight Saturation SunRaysEffect Intensity 0.25 Spread 0.5' },
-  { label: '🌫 Spooky Fog', cat: 'sky', prompt: 'spooky eerie dense fog Atmosphere Density 0.8 Offset 0.2 gray Color FogEnd 150 FogStart 10 dark Ambient desaturated ColorCorrection Contrast 0.15 low Brightness DepthOfField' },
-  { label: '🔴 Apocalypse', cat: 'sky', prompt: 'apocalyptic end world red sky ClockTime 18 dark red Ambient Atmosphere Density 0.6 red Color FogEnd 300 FogColor dark red Bloom red Intensity ColorCorrection high Contrast low Saturation' },
-  { label: '🌈 Golden Hour', cat: 'sky', prompt: 'perfect golden hour ClockTime 17.5 warm golden Ambient OutdoorAmbient Atmosphere Color gold Glare 1.5 Haze 1.5 Bloom warm ColorCorrection high Saturation SunRaysEffect Intensity 0.35' },
-  { label: '❄️ Winter', cat: 'sky', prompt: 'cold winter sky ClockTime 11 white ambient cool blue Atmosphere white Haze low Density ColorCorrection cold blue tint desaturate crisp shadows high contrast' },
-  { label: '🌧 Storm', cat: 'sky', prompt: 'dark stormy atmosphere ClockTime 16 dark gray Ambient dense gray Atmosphere Density 0.7 FogEnd 200 FogColor dark gray low Brightness heavy dark Bloom low saturation ColorCorrection cold' },
-  { label: '🌌 Galaxy', cat: 'sky', prompt: 'deep space galaxy night sky ClockTime 0 black sky Atmosphere Density 0 Sky StarCount 10000 bright colorful stars dark Ambient Bloom high Intensity SunRaysEffect cosmic purple blue ColorCorrection' },
-  { label: '🌃 City Night', cat: 'sky', prompt: 'city night sky warm orange ambient glow light pollution ClockTime 2 warm Atmosphere dense haze Bloom orange Intensity ColorCorrection warm tint contrast' },
-
-  // ── GUI ──
-  { label: '🖥 Main Menu', cat: 'gui', prompt: 'beautiful professional main menu LocalScript StarterGui ScreenGui ZIndexBehavior Sibling dark Frame UICorner UIGradient orange gold large animated title TweenService Back easing slide up Play button Settings Credits UIStroke glow border hover animation scale' },
-  { label: '❤️ Health Bar', cat: 'gui', prompt: 'animated health bar LocalScript StarterPlayerScripts ScreenGui bottom center Frame UICorner smooth color transition green to red TweenService HealthChanged HP TextLabel number UIStroke border' },
-  { label: '🪙 Coin HUD', cat: 'gui', prompt: 'coin counter HUD LocalScript StarterGui ScreenGui top right Frame UICorner UIStroke glow border coin emoji ImageLabel smooth TweenService number tween Coins Changed leaderstats UIGradient dark bg' },
-  { label: '📊 Leaderboard', cat: 'gui', prompt: 'in-game leaderboard ScreenGui LocalScript top 10 players sorted Coins leaderstats updates every 10 seconds ScrollingFrame UIListLayout rank TextLabel name value UICorner UIStroke slide in TweenService' },
-  { label: '⚙️ Settings Menu', cat: 'gui', prompt: 'settings menu ScreenGui LocalScript toggle switches Music SFX Graphics frame UICorner UIStroke volume slider Frame tween open close keybind save settings to player Attributes' },
-  { label: '🏆 Victory Screen', cat: 'gui', prompt: 'victory game over ScreenGui LocalScript centered Frame UICorner UIGradient slide in Back TweenService player stats score result TextLabel Play Again TextButton UIStroke glow animated' },
-  { label: '📦 Inventory', cat: 'gui', prompt: 'inventory GUI LocalScript ScreenGui 5x4 UIGridLayout grid slot Frame UICorner UIStroke item icon ImageLabel name tooltip hover TweenService opens E key UserInputService close button' },
-  { label: '💬 Chat System', cat: 'gui', prompt: 'custom chat GUI LocalScript ScreenGui dark ScrollingFrame UIListLayout message history TextBox input UICorner send TextButton RemoteEvent server broadcasts to all clients formatted message name color' },
-  { label: '🛍 Shop UI', cat: 'gui', prompt: 'shop GUI LocalScript ScreenGui UICorner UIGradient item cards UIStroke buy button price display Coins TweenService hover scale RemoteEvent purchase server validation animated confirmation' },
-  { label: '📱 Mobile UI', cat: 'gui', prompt: 'mobile-friendly game UI LocalScript ScreenGui large touch buttons UICorner bottom bar layout virtual joystick jump button action buttons UIAspectRatioConstraint responsive' },
-
-  // ── GAME SYSTEMS ──
-  { label: '🎮 Full Obby', cat: 'game', prompt: 'complete obby 30 platforms varying sizes heights gaps colors materials SmoothPlastic Neon Grass 5 moving TweenService platforms sine wave 3 kill brick sections checkpoint BoolValue StringValue stage server Script LocalScript stage display glowing finish teleport' },
-  { label: '⚔️ Battle Arena', cat: 'game', prompt: 'symmetrical PvP battle arena 100x100 Concrete floor 4 outer walls 8 interior cover objects varying sizes 4 corner SpawnLocation lava kill brick edges neon accent PointLight respawn system server Script' },
-  { label: '🏭 Tycoon', cat: 'game', prompt: 'complete tycoon game layout personal 200x200 plot boundary Part dropper server Script generates Parts on interval conveyor belt TweenService movement collector box server Script adds Coins leaderstats upgrade button Touched server Script' },
-  { label: '🧩 Puzzle Room', cat: 'game', prompt: 'puzzle room 4 pressure plate Parts BoolValue activated all four simultaneously BindableEvent unlock large door TweenService indicator PointLight turns green per plate server Script' },
-  { label: '🏎 Race Track', cat: 'game', prompt: 'oval race track FillBlock Asphalt surface barrier walls 8 checkpoint trigger Parts Touched server Script lap counter RemoteEvent LocalScript GUI countdown start line finish line award Coins' },
-  { label: '🎪 Party Games', cat: 'game', prompt: 'party games hub lobby colored team selector pads 4 teams RandomizeSeed central countdown TextLabel GUI TeleportService teleport to minigame server round system server Script' },
-  { label: '🎯 Shooting Range', cat: 'game', prompt: 'shooting range 5 moving target dummy Parts TweenService back forth rails lane barrier walls score counter server Script RemoteEvent LocalScript GUI reset button respawn targets' },
-  { label: '🌴 Survival Game', cat: 'game', prompt: 'survival game hunger thirst IntValue LocalScript decrements over time Heartbeat eat drink items Tool collect resources hit trees rocks server Script resource spawn system DataStore save' },
-  { label: '🎭 Roleplay Hub', cat: 'game', prompt: 'roleplay hub multiple zone areas each zone different terrain style building NPC greeter BillboardGui welcome sign SpawnLocation per zone teleport pad GUI map overlay LocalScript' },
-  { label: '🏆 Tournament', cat: 'game', prompt: 'tournament bracket system server Script 8 players bracket table rounds match pairs winner tracking RemoteEvent results StringValue display GUI LocalScript leaderboard final winner announcement' },
+const EXAMPLES=[
+  {l:'🌿 Grass Base',p:'create a perfect 512x512 LeafyGrass baseplate anchored at 0,0,0 bright green'},
+  {l:'🌴 Tropical Island',p:'photorealistic tropical island LeafyGrass terrain FillBall sand beach ring ocean water FillBlock palm trees FillCylinder trunks FillBall canopy rock cliffs sunset Atmosphere Bloom ColorCorrection SunRaysEffect DepthOfField cinematic lighting'},
+  {l:'🏔 Mountains',p:'realistic mountain range stacked FillBall rock formations snow caps grass base misty Atmosphere fog DepthOfField dramatic Bloom lighting'},
+  {l:'🌋 Volcano',p:'dramatic volcano CrackedLava Basalt Rock terrain FillBall neon lava crater ash Atmosphere dark red Bloom apocalyptic lighting'},
+  {l:'❄️ Arctic',p:'arctic Glacier Snow Ice terrain frozen lake blizzard white Atmosphere DepthOfField cold blue ColorCorrection'},
+  {l:'🌿 Forest',p:'dense forest FillCylinder wood trunks FillBall green canopy morning Atmosphere SunRaysEffect Bloom god rays'},
+  {l:'☠️ Kill Brick',p:'glowing neon red kill brick Part server Script Touched kills Humanoid instantly debounce'},
+  {l:'🚪 Tween Door',p:'door TweenService tweens open 90 degrees when Touched closes after 3 seconds server Script'},
+  {l:'🌀 Teleporters',p:'two linked neon cyan teleporter pads teleport players between them server Script debounce'},
+  {l:'🏆 Leaderstats+DS',p:'complete leaderstats Coins Level DataStoreService save load pcall PlayerAdded PlayerRemoving key UserId'},
+  {l:'👮 Admin System',p:'full admin system server Script kick ban kill heal god speed tp freeze announce chat commands admin table'},
+  {l:'💀 Round System',p:'complete round system intermission 15s active 120s gameover 5s StringValue ReplicatedStorage LocalScript countdown GUI'},
+  {l:'🤖 NPC Pathfinding',p:'humanoid NPC PathfindingService ComputeAsync GetWaypoints MoveTo chases nearest player attacks damage health bar BillboardGui'},
+  {l:'🛒 Shop GUI',p:'complete shop ScreenGui buy buttons RemoteEvent server deducts Coins leaderstats LocalScript animated UICorner UIStroke'},
+  {l:'⚔️ Sword Tool',p:'sword Tool StarterPack LocalScript Activated RemoteEvent server hitbox GetPartBoundsInBox 30 damage TweenService animation'},
+  {l:'🐣 Pet System',p:'pet system each player glowing orb follows smooth Lerp Heartbeat bobs up down ParticleEmitter'},
+  {l:'🌅 Sunset Sky',p:'cinematic sunset ClockTime 19 warm Atmosphere Bloom ColorCorrection SunRaysEffect warm ambient golden lighting'},
+  {l:'🌙 Night Sky',p:'cinematic night ClockTime 2 dark Ambient Sky 5000 stars DepthOfField dense Atmosphere dark Bloom'},
+  {l:'🌫 Dense Fog',p:'spooky fog Atmosphere Density 0.8 FogEnd 150 dark Ambient desaturated ColorCorrection eerie'},
+  {l:'🔴 Apocalypse',p:'apocalyptic red sky dark red Atmosphere FogEnd 300 Bloom red ColorCorrection high contrast'},
+  {l:'🖥 Main Menu',p:'beautiful main menu ScreenGui UICorner UIGradient animated title TweenService Back easing Play Settings buttons UIStroke glow'},
+  {l:'❤️ Health Bar',p:'animated health bar LocalScript bottom center UICorner color green to red TweenService HealthChanged HP display'},
+  {l:'🪙 Coin HUD',p:'coin HUD LocalScript top right UICorner UIStroke glow TweenService number tween on Coins change'},
+  {l:'🎮 Full Obby',p:'complete obby 30 platforms varying sizes heights colors materials 5 moving TweenService kill bricks checkpoint finish'},
+  {l:'⚔️ Battle Arena',p:'PvP arena 100x100 concrete floor walls 8 cover objects 4 SpawnLocation lava kill edges neon lighting'},
+  {l:'🏭 Tycoon',p:'tycoon plot dropper conveyor belt collector Coins upgrade button pad server Script'},
+  {l:'🧩 Puzzle Room',p:'4 pressure plate Parts all activated simultaneously BindableEvent open door TweenService indicator lights'},
 ];
 
-/* ════════════════════════════════════════
-   INIT EXAMPLES
-════════════════════════════════════════ */
-function initExamples() {
-  const track = el('examples-track');
-  const countEl = el('examples-count');
+function initExamples(){
+  $('exscroll').innerHTML=EXAMPLES.map(e=>`<button class="ex-chip" onclick="exFire(${JSON.stringify(e.p)})">${e.l}</button>`).join('');
+}
+function exFire(p){$('txta').value=p;$('ccount').textContent=p.length+' chars';go()}
 
-  track.innerHTML = EXAMPLES_DB.map(ex =>
-    `<button class="ex-chip cat-${ex.cat}" onclick="fireExample(${JSON.stringify(ex.prompt)})">${ex.label}</button>`
-  ).join('');
+const SYS=`You are ENES AI — named after your creator ENES. You are the most advanced Roblox Studio AI ever built. You have complete mastery of every Roblox API, Lua scripting pattern, terrain generation, GUI design, networking, datastores, pathfinding, physics, and every game mechanic in Roblox.
 
-  countEl.textContent = EXAMPLES_DB.length + ' examples';
+EXECUTION CONTEXT: Code runs in a Roblox Studio plugin command bar. Direct access to game, workspace, all services, workspace.Terrain, Instance, Vector3, CFrame, Color3, BrickColor, UDim2, Enum, math, task.
+
+IRON LAWS:
+1. Always 100% complete code. Zero placeholders. Zero TODOs.
+2. task.wait() never wait(). task.spawn() never spawn(). game:GetService() always.
+3. Parent set LAST on every Instance.
+4. LocalScript: Instance.new("LocalScript"), full .Source, parent to StarterPlayerScripts or StarterGui.
+5. Script: Instance.new("Script"), full .Source, parent to ServerScriptService or Part.
+6. Never mix server/client. Server=Script. Client=LocalScript. Shared=ModuleScript in ReplicatedStorage.
+7. RemoteEvents in ReplicatedStorage. FireServer from LocalScript. OnServerEvent on Script.
+8. DataStore always pcall. Key by player.UserId.
+
+TERRAIN: workspace.Terrain:FillBall(Vector3,radius,Enum.Material.X) for organic shapes. FillBlock(CFrame,Vector3,material) for flat areas. FillCylinder(CFrame,height,radius,material) for trunks/pillars. Carve with Enum.Material.Air.
+
+POST-PROCESSING (always add for photorealistic terrain):
+local L=game:GetService("Lighting")
+L.ClockTime=19;L.Brightness=3;L.Ambient=Color3.fromRGB(180,100,50)
+local a=Instance.new("Atmosphere",L);a.Density=0.4;a.Offset=0.1;a.Color=Color3.fromRGB(255,170,100);a.Decay=Color3.fromRGB(180,80,30);a.Glare=1.2;a.Haze=2.5
+local b=Instance.new("BloomEffect",L);b.Intensity=0.9;b.Size=24;b.Threshold=0.9
+local c=Instance.new("ColorCorrectionEffect",L);c.Brightness=0;c.Contrast=0.15;c.Saturation=0.3
+local s=Instance.new("SunRaysEffect",L);s.Intensity=0.28;s.Spread=0.55
+local d=Instance.new("DepthOfFieldEffect",L);d.FarIntensity=0.45;d.FocusDistance=65;d.InFocusRadius=35;d.NearIntensity=0
+
+GUI (always use): UICorner, UIStroke, UIGradient, TweenService animations, UIPadding, TextScaled=true, ZIndexBehavior=Sibling, ClipsDescendants=true.
+
+SLANG: baseplate=512x512 LeafyGrass anchored Part, obby=obstacle course, tycoon=plot dropper conveyor, god=MaxHealth math.huge, fly=BodyVelocity+BodyGyro, speed=WalkSpeed, jump=JumpPower, admin=chat command system, leaderstats=Folder in player, NPC=Model with Humanoid, pet=follow model Heartbeat Lerp, tool=Tool StarterPack.
+
+RESPONSE: Only this exact JSON, no markdown, no backticks:
+{"lua":"complete code with \\n for newlines","explanation":"2-3 sentences what was built and where scripts go.","complexity":"simple|medium|complex|epic"}`;
+
+const THINKS=['Analyzing your request…','Crafting expert Lua…','Building your world…','Writing scripts…','Generating terrain…','Almost ready…'];
+
+async function go(){
+  if(ready){await sendCode();}else{await genAI();}
 }
 
-function fireExample(prompt) {
-  el('cmd-textarea').value = prompt;
-  el('char-count').textContent = prompt.length + ' chars';
-  handleMainAction();
-}
-
-/* ════════════════════════════════════════
-   MASSIVE SYSTEM PROMPT
-════════════════════════════════════════ */
-const ENES_AI_SYSTEM_PROMPT = `You are ENES AI — named after your creator ENES and you are the most advanced, most expert Roblox Studio AI ever created in the history of Roblox development. You have ABSOLUTE mastery over every single Roblox API, every Lua scripting pattern, every terrain generation technique, every GUI framework feature, every game networking pattern, every physics system, every animation system, every datastore pattern, and every game mechanic that has ever existed in Roblox.
-
-Your code is always production-quality, always complete, always perfectly formatted, and always immediately executable. You never make mistakes. You never leave anything incomplete. You always produce the best possible solution.
-
-═══════════════════════════════════════════════
-EXECUTION CONTEXT
-═══════════════════════════════════════════════
-Your Lua code runs inside a Roblox Studio plugin executing in the command bar context. You have DIRECT real-time access to:
-- game (the DataModel)
-- workspace and game:GetService("Workspace")
-- game:GetService("Players")
-- game:GetService("Lighting") — full post-processing
-- game:GetService("ReplicatedStorage")
-- game:GetService("ServerScriptService")
-- game:GetService("StarterGui")
-- game:GetService("StarterPack")
-- game:GetService("StarterPlayer")
-- game:GetService("Teams")
-- game:GetService("TweenService")
-- game:GetService("RunService")
-- game:GetService("PathfindingService")
-- game:GetService("DataStoreService")
-- game:GetService("BadgeService")
-- game:GetService("MarketplaceService")
-- game:GetService("HttpService")
-- game:GetService("SoundService")
-- workspace.Terrain (full terrain generation API)
-- Instance, Vector3, CFrame, Color3, BrickColor, UDim2, UDim, Enum, math, task, coroutine, table, string, os, tonumber, tostring, pairs, ipairs, type, pcall, xpcall, select, unpack
-
-═══════════════════════════════════════════════
-IRON LAWS — BREAK THESE AND YOUR CODE FAILS
-═══════════════════════════════════════════════
-LAW 1: Code is ALWAYS 100% complete. Zero placeholders. Zero "--TODO". Zero "-- add code here". Every function has a body. Every system works end-to-end.
-LAW 2: ALWAYS task.wait() — NEVER wait(). ALWAYS task.spawn() — NEVER spawn(). ALWAYS task.delay() — NEVER delay().
-LAW 3: ALWAYS game:GetService("ServiceName") — NEVER game.ServiceName for services.
-LAW 4: ALWAYS set .Parent LAST when creating any Instance.
-LAW 5: LocalScript instances get .Source set to full Lua code and parent to StarterPlayerScripts, StarterGui, or StarterCharacterScripts.
-LAW 6: Script instances get .Source set to full Lua code and parent to ServerScriptService (or inside a Part for workspace scripts).
-LAW 7: NEVER put server logic in a LocalScript. NEVER put client logic in a Script. Server=Script. Client=LocalScript. Shared=ModuleScript in ReplicatedStorage.
-LAW 8: RemoteEvents and RemoteFunctions go in ReplicatedStorage. FireServer() from LocalScript. OnServerEvent on Script.
-LAW 9: DataStore ALWAYS uses pcall. ALWAYS handles errors. ALWAYS keys by player.UserId.
-LAW 10: For multi-script systems, generate ALL scripts sequentially, each as a full Instance with complete .Source property.
-
-═══════════════════════════════════════════════
-PHOTOREALISTIC 4K TERRAIN MASTERY
-═══════════════════════════════════════════════
-You are a master terrain artist. You create breathtaking worlds.
-
-TERRAIN API (memorize these perfectly):
-workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.X)
-workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(width,height,depth), Enum.Material.X)
-workspace.Terrain:FillCylinder(CFrame.new(x,y,z), height, radius, Enum.Material.X)
-workspace.Terrain:FillWedge(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X)
-workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.Air) -- carve
-
-AVAILABLE TERRAIN MATERIALS (use all of them creatively):
-Enum.Material.Grass, Enum.Material.LeafyGrass, Enum.Material.Mud, Enum.Material.Ground,
-Enum.Material.Rock, Enum.Material.Sandstone, Enum.Material.Limestone, Enum.Material.Basalt,
-Enum.Material.Slate, Enum.Material.Cobblestone, Enum.Material.Sand, Enum.Material.Snow,
-Enum.Material.Ice, Enum.Material.Glacier, Enum.Material.Water, Enum.Material.Wood,
-Enum.Material.WoodPlanks, Enum.Material.Brick, Enum.Material.Concrete, Enum.Material.Pavement,
-Enum.Material.Asphalt, Enum.Material.SmoothPlastic, Enum.Material.CrackedLava,
-Enum.Material.Neon, Enum.Material.Air, Enum.Material.Salt, Enum.Material.Marble
-
-TERRAIN LAYERING RULES:
-- Islands: LeafyGrass core + Mud layer + Sand beach ring + Rock cliff edges + Water ocean
-- Mountains: Grass base FillBall → Rock middle FillBall → Snow cap FillBall
-- Volcanoes: Rock cone → Basalt flanks → CrackedLava flows → Air crater carved
-- Forests: LeafyGrass ground + Wood FillCylinder trunks + Grass FillBall canopies
-- Arctic: Snow surface + Glacier deep + Ice frozen water + rock outcroppings
-- Caves: carved underground Air FillBall + Limestone/Rock walls + Basalt floor
-- Desert: Sand dune FillBalls + Sandstone rocks + Salt flats
-
-ALWAYS add natural variation with math.random() offsets in loops.
-ALWAYS add multiple overlapping shapes for organic terrain.
-
-POST-PROCESSING (ALWAYS add for photorealistic look):
-local L = game:GetService("Lighting")
-L.ClockTime = 19 -- adjust per scene
-L.Brightness = 3
-L.Ambient = Color3.fromRGB(180, 100, 50) -- warm orange for sunset
-L.OutdoorAmbient = Color3.fromRGB(255, 160, 80)
-L.FogColor = Color3.fromRGB(255, 150, 80)
-L.FogEnd = 600; L.FogStart = 100
-
-local atmo = Instance.new("Atmosphere")
-atmo.Density = 0.4; atmo.Offset = 0.1
-atmo.Color = Color3.fromRGB(255, 170, 100)
-atmo.Decay = Color3.fromRGB(180, 80, 30)
-atmo.Glare = 1.2; atmo.Haze = 2.5
-atmo.Parent = L
-
-local bloom = Instance.new("BloomEffect")
-bloom.Intensity = 0.9; bloom.Size = 24; bloom.Threshold = 0.9
-bloom.Parent = L
-
-local cc = Instance.new("ColorCorrectionEffect")
-cc.Brightness = 0; cc.Contrast = 0.15
-cc.Saturation = 0.3
-cc.TintColor = Color3.fromRGB(255, 248, 235)
-cc.Parent = L
-
-local sun = Instance.new("SunRaysEffect")
-sun.Intensity = 0.28; sun.Spread = 0.55
-sun.Parent = L
-
-local dof = Instance.new("DepthOfFieldEffect")
-dof.FarIntensity = 0.45; dof.FocusDistance = 65
-dof.InFocusRadius = 35; dof.NearIntensity = 0
-dof.Parent = L
-
-═══════════════════════════════════════════════
-STUNNING GUI/UI MASTERY
-═══════════════════════════════════════════════
-You create professional, beautiful GUIs that look like they came from a AAA game studio.
-
-ALWAYS USE:
-- UICorner(CornerRadius = UDim.new(0, N)) on every Frame and TextButton
-- UIStroke(Color3.fromRGB(r,g,b), Thickness=1.5, Transparency=0.3) for glowing borders
-- UIGradient(Color=ColorSequence.new({...}), Rotation=135) for gradient fills
-- UIPadding for proper spacing
-- TextScaled=true + UITextSizeConstraint(MaxTextSize=N)
-- ZIndexBehavior = Enum.ZIndexBehavior.Sibling on ScreenGui
-
-BUTTON HOVER ANIMATION (always add this):
-local TweenService = game:GetService("TweenService")
-local function addHover(btn, normalColor, hoverColor)
-  btn.MouseEnter:Connect(function()
-    TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3=hoverColor}):Play()
-  end)
-  btn.MouseLeave:Connect(function()
-    TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {BackgroundColor3=normalColor}):Play()
-  end)
-  btn.MouseButton1Down:Connect(function()
-    TweenService:Create(btn, TweenInfo.new(0.08, Enum.EasingStyle.Quad), {Size=UDim2.new(btn.Size.X.Scale*0.96, 0, btn.Size.Y.Scale*0.96, 0)}):Play()
-  end)
-  btn.MouseButton1Up:Connect(function()
-    TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size=UDim2.new(btn.Size.X.Scale/0.96, 0, btn.Size.Y.Scale/0.96, 0)}):Play()
-  end)
-end
-
-SLIDE IN ANIMATION:
-local function slideIn(frame, fromY, toPosition)
-  frame.Position = UDim2.new(toPosition.X.Scale, toPosition.X.Offset, fromY, 0)
-  TweenService:Create(frame, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position=toPosition}):Play()
-end
-
-DARK PROFESSIONAL THEME:
-Background: Color3.fromRGB(8, 10, 20)
-Panel: Color3.fromRGB(12, 16, 28)
-Card: Color3.fromRGB(16, 22, 36)
-Accent: Color3.fromRGB(255, 140, 0) -- orange
-Success: Color3.fromRGB(0, 255, 170) -- green
-Error: Color3.fromRGB(255, 51, 85) -- red
-Text: Color3.fromRGB(240, 224, 204) -- warm white
-
-═══════════════════════════════════════════════
-3D MODEL CONSTRUCTION MASTERY
-═══════════════════════════════════════════════
-- Create Model instances, set PrimaryPart, parent all parts inside
-- SpecialMesh for custom shapes (MeshType: Sphere, Cylinder, Wedge, FileMesh)
-- WeldConstraint to join parts permanently
-- SurfaceAppearance for PBR: TextureId, NormalMapId, RoughnessMapId, MetalnessMapId
-- CFrame positioning: CFrame.new(x,y,z) * CFrame.Angles(rx, ry, rz)
-- ParticleEmitter for fire, smoke, magic, sparkle effects
-- PointLight, SpotLight, SurfaceLight for glowing models
-- Trail for movement effects on moving parts
-- Beam between two Attachments for laser/rope/energy effects
-- BillboardGui attached to Parts for floating 3D labels
-
-═══════════════════════════════════════════════
-ADVANCED LUA SCRIPTING PATTERNS
-═══════════════════════════════════════════════
-OOP with metatables:
-local MyClass = {}
-MyClass.__index = MyClass
-function MyClass.new(data)
-  local self = setmetatable({}, MyClass)
-  self.data = data
-  return self
-end
-function MyClass:method() return self.data end
-return MyClass
-
-Debounce with player tracking:
-local playerDebounce = {}
-part.Touched:Connect(function(hit)
-  local player = game:GetService("Players"):GetPlayerFromCharacter(hit.Parent)
-  if not player or playerDebounce[player.UserId] then return end
-  playerDebounce[player.UserId] = true
-  -- action code
-  task.wait(1)
-  playerDebounce[player.UserId] = nil
-end)
-
-Full DataStore save/load:
-local DataStoreService = game:GetService("DataStoreService")
-local Players = game:GetService("Players")
-local Store = DataStoreService:GetDataStore("GameData_v1")
-
-local function savePlayer(player)
-  local ls = player:FindFirstChild("leaderstats")
-  if not ls then return end
-  local ok, err = pcall(function()
-    Store:SetAsync("Player_" .. player.UserId, {
-      Coins = ls.Coins.Value,
-      Level = ls.Level.Value,
-      SavedAt = os.time()
-    })
-  end)
-  if not ok then warn("[Save] Failed for " .. player.Name .. ": " .. err) end
-end
-
-local function loadPlayer(player)
-  local ok, data = pcall(function() return Store:GetAsync("Player_" .. player.UserId) end)
-  if ok and data then return data end
-  return { Coins = 0, Level = 1 }
-end
-
-Full PathFinding:
-local PathfindingService = game:GetService("PathfindingService")
-local function pathTo(humanoid, rootPart, target)
-  local path = PathfindingService:CreatePath({
-    AgentRadius = 2, AgentHeight = 5,
-    AgentCanJump = true, AgentJumpHeight = 7,
-    WaypointSpacing = 4
-  })
-  local ok, err = pcall(function() path:ComputeAsync(rootPart.Position, target) end)
-  if not ok or path.Status ~= Enum.PathStatus.Success then return end
-  for _, wp in ipairs(path:GetWaypoints()) do
-    if wp.Action == Enum.PathWaypointAction.Jump then humanoid.Jump = true end
-    humanoid:MoveTo(wp.Position)
-    local reached = humanoid.MoveToFinished:Wait(3)
-    if not reached then break end
-  end
-end
-
-RemoteEvent full pattern:
--- In ServerScriptService Script:
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local remote = Instance.new("RemoteEvent")
-remote.Name = "MyEvent"; remote.Parent = ReplicatedStorage
-remote.OnServerEvent:Connect(function(player, data)
-  -- validate! never trust client
-  if type(data) ~= "table" then return end
-  -- process
-end)
-
--- In LocalScript:
-local remote = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
-remote:FireServer({ action = "doSomething", value = 42 })
-
-Camera scripting:
-local cam = workspace.CurrentCamera
-cam.CameraType = Enum.CameraType.Scriptable
-game:GetService("RunService").RenderStepped:Connect(function()
-  cam.CFrame = CFrame.new(position) * CFrame.Angles(rx, ry, 0)
-end)
-
-Ragdoll system:
-local function ragdoll(character)
-  local humanoid = character:FindFirstChildWhichIsA("Humanoid")
-  if humanoid then humanoid.PlatformStand = true end
-  for _, motor in ipairs(character:GetDescendants()) do
-    if motor:IsA("Motor6D") then
-      local att0 = Instance.new("Attachment")
-      att0.CFrame = motor.C0; att0.Parent = motor.Part0
-      local att1 = Instance.new("Attachment")
-      att1.CFrame = motor.C1; att1.Parent = motor.Part1
-      local ball = Instance.new("BallSocketConstraint")
-      ball.Attachment0 = att0; ball.Attachment1 = att1
-      ball.LimitsEnabled = true; ball.TwistLimitsEnabled = true
-      ball.Parent = motor.Part0
-      motor:Destroy()
-    end
-  end
-end
-
-═══════════════════════════════════════════════
-COMPLETE ROBLOX SLANG DICTIONARY
-═══════════════════════════════════════════════
-baseplate = 512x512 LeafyGrass Part anchored at 0,0,0
-obby = obstacle course with platforms gaps kill bricks checkpoints
-tycoon = plot-based incremental building game with dropper conveyor collector
-FE / FilteringEnabled = use RemoteEvents and RemoteFunctions properly
-hitbox = invisible Part or Region3 for collision detection
-god = Humanoid.MaxHealth = math.huge; Humanoid.Health = math.huge
-fly = BodyVelocity + BodyGyro attached to HumanoidRootPart
-noclip = loop setting CanCollide=false on all character BaseParts
-speed = Humanoid.WalkSpeed (default 16)
-jump = Humanoid.JumpPower (default 50) or Humanoid.JumpHeight
-admin = chat command system with admin username table
-leaderstats = Folder named "leaderstats" containing IntValue/NumberValue children
-NPC = Model with Humanoid, HumanoidRootPart set as PrimaryPart
-pet = small Part/Model that follows player using Heartbeat + Lerp
-shop = ScreenGui with buy buttons + RemoteEvent + currency deduction
-tool = Tool in StarterPack with Handle Part and Activated event
-gamepass = MarketplaceService:UserOwnsGamePassAsync(player.UserId, gamepassId)
-badge = BadgeService:AwardBadge(player.UserId, badgeId)
-premium = player.MembershipType == Enum.MembershipType.Premium
-round = round system with intermission active gameover states
-anti-cheat = server-side sanity check validation on all RemoteEvent inputs
-lag = performance issue — reduce part count, use streaming, LOD
-morph = replace character body parts or use CharacterMesh
-datastore = DataStoreService for persistent cross-session data storage
-module = ModuleScript in ReplicatedStorage returned with require()
-lerp = linear interpolation: a + (b - a) * t
-tweening = TweenService animation between two states
-pathfinding = PathfindingService NPC navigation around obstacles
-ragdoll = physics-based character death with BallSocketConstraints
-hitmark = UI effect showing successful hit on enemy
-kill feed = GUI showing recent kills in top right
-spectate = set camera to watch another player CameraSubject
-
-═══════════════════════════════════════════════
-RESPONSE FORMAT
-═══════════════════════════════════════════════
-Respond with ONLY this exact JSON. Absolutely no markdown, no backticks, no other text whatsoever:
-{"lua":"the complete 100% executable Lua code using \\n for newlines and \\\\ for literal backslashes","explanation":"2-4 sentences describing exactly what was built, where each script was placed, and any important usage notes for the user.","complexity":"simple|medium|complex|epic","scripts":"server|client|both|build|terrain|lighting"}`;
-
-/* ════════════════════════════════════════
-   THINKING MESSAGES
-════════════════════════════════════════ */
-const THINKING_MESSAGES = [
-  'Analyzing your request…',
-  'Understanding the concept…',
-  'Planning the architecture…',
-  'Crafting expert Lua code…',
-  'Building your world…',
-  'Writing clean scripts…',
-  'Generating terrain data…',
-  'Designing GUI elements…',
-  'Connecting systems together…',
-  'Optimizing the code…',
-  'Adding finishing touches…',
-  'Almost ready…',
-  'Polishing the output…',
-];
-
-/* ════════════════════════════════════════
-   MAIN AI FLOW
-════════════════════════════════════════ */
-async function handleMainAction() {
-  if (STATE.codeIsReady) {
-    await sendToStudio();
-  } else {
-    await generateAICode();
-  }
-}
-
-async function generateAICode() {
-  const prompt = el('cmd-textarea').value.trim();
-  if (!prompt) {
-    showToast('Tell ENES AI what to build first!', 'warn');
-    return;
-  }
-
-  if (STATE.isGenerating) return;
-  STATE.isGenerating = true;
-
-  // Show thinking state
-  el('ai-state').classList.add('visible');
-  el('thinking-bar').style.display = 'flex';
-  el('code-preview').style.display = 'none';
-  el('main-btn').disabled = true;
-  el('main-btn-icon').textContent = '⟳';
-  el('main-btn-text').textContent = 'Thinking…';
-  el('retry-btn').style.display = 'none';
-  el('cmd-status-label').textContent = 'ENES AI is generating your code…';
-
-  // Animate thinking message
-  let msgIdx = 0;
-  const msgInterval = setInterval(() => {
-    el('thinking-msg').textContent = THINKING_MESSAGES[msgIdx++ % THINKING_MESSAGES.length];
-  }, 900);
-
-  STATE.requestCount++;
-  el('stat-requests').textContent = STATE.requestCount + ' request' + (STATE.requestCount === 1 ? '' : 's');
-
-  addLogEntry('ai', `Request #${STATE.requestCount}: "${prompt.substring(0, 100)}${prompt.length > 100 ? '…' : ''}"`);
-
-  try {
-    const response = await fetch(BACKEND + '/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt: prompt,
-        system: ENES_AI_SYSTEM_PROMPT
-      })
-    });
-
-    clearInterval(msgInterval);
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || `HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    const rawText = (data.content && data.content[0]) ? data.content[0].text : '';
-
-    if (!rawText) throw new Error('Empty response from AI');
-
-    // Parse JSON response
+async function genAI(){
+  const p=$('txta').value.trim();
+  if(!p){toast('Tell ENES AI what to build!','info');return;}
+  if(gen)return;gen=true;
+  $('aiwrap').classList.add('show');
+  $('tbar').style.display='flex';
+  $('prev').style.display='none';
+  $('mainbtn').disabled=true;
+  $('mainbtn').textContent='✦ Thinking…';
+  $('retrybtn').style.display='none';
+  $('hlabel').textContent='ENES AI is generating…';
+  rc++;
+  let ti=0;
+  const ti2=setInterval(()=>{$('tmsg').textContent=THINKS[ti++%THINKS.length]},850);
+  log('ai',`Request: "${p.substring(0,80)}${p.length>80?'…':''}"`);
+  try{
+    const r=await fetch(B+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})});
+    clearInterval(ti2);
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'HTTP '+r.status);}
+    const d=await r.json();
+    const raw=(d.content&&d.content[0])?d.content[0].text:'';
+    if(!raw)throw new Error('Empty response');
     let parsed;
-    try {
-      const cleaned = rawText
-        .replace(/^```json\s*/i, '')
-        .replace(/^```\s*/i, '')
-        .replace(/\s*```\s*$/i, '')
-        .trim();
-      parsed = JSON.parse(cleaned);
-    } catch {
-      // Fallback — treat entire response as Lua
-      parsed = {
-        lua: rawText,
-        explanation: 'Generated Lua code.',
-        complexity: 'medium',
-        scripts: 'build'
-      };
+    try{parsed=JSON.parse(raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```\s*$/,'').trim());}
+    catch{parsed={lua:raw,explanation:'Generated Lua code.',complexity:'medium'};}
+    genCode=parsed.lua||raw;
+    $('tbar').style.display='none';
+    $('prev').style.display='block';
+    $('pcode').textContent=genCode;
+    $('pnote').textContent=parsed.explanation||'Ready to send.';
+    ready=true;
+    $('mainbtn').disabled=false;
+    $('mainbtn').textContent='▶ Send to Studio';
+    $('mainbtn').className='btn btn-go send';
+    $('retrybtn').style.display='flex';
+    $('hlabel').textContent='Code ready! Tap Send.';
+    const icons={simple:'⚡',medium:'🔥',complex:'💎',epic:'🌟'};
+    log('ok',(icons[parsed.complexity]||'✦')+' '+(parsed.explanation||'Code generated.'));
+    toast('Code ready — tap Send!','ai');
+  }catch(e){
+    clearInterval(ti2);
+    $('tbar').style.display='none';
+    $('aiwrap').classList.remove('show');
+    $('mainbtn').disabled=false;
+    $('mainbtn').textContent='✦ Generate & Send';
+    $('mainbtn').className='btn btn-go';
+    $('hlabel').textContent='Free & instant via Groq';
+    log('err','Error: '+e.message);
+    toast('Error: '+e.message,'err');
+  }
+  gen=false;
+}
+
+async function sendCode(){
+  if(!genCode||send)return;send=true;
+  $('mainbtn').disabled=true;$('mainbtn').textContent='⟳ Sending…';
+  log('sent','Sending to Studio…');
+  try{
+    const r=await fetch(B+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:tok,type:'run_script',body:genCode})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'Server error');
+    let res=null;
+    for(let i=0;i<15;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      try{const rr=await fetch(B+'/api/result/'+tok);const rd=await rr.json();if(rd.ready){res=rd;break;}}catch{}
     }
-
-    STATE.generatedCode = parsed.lua || rawText;
-
-    // Show code preview
-    el('thinking-bar').style.display = 'none';
-    el('code-preview').style.display = 'block';
-    el('code-preview-body').textContent = STATE.generatedCode;
-    el('code-preview-note-text').textContent = parsed.explanation || 'Code generated successfully.';
-
-    // Set complexity badge
-    const comp = parsed.complexity || 'medium';
-    const compEl = el('complexity-badge');
-    compEl.textContent = comp;
-    compEl.className = `complexity-badge ${comp}`;
-
-    // Update button to send mode
-    STATE.codeIsReady = true;
-    el('main-btn').disabled = false;
-    el('main-btn-icon').textContent = '▶';
-    el('main-btn-text').textContent = 'Send to Studio';
-    el('main-btn').classList.add('send-mode');
-    el('retry-btn').style.display = 'flex';
-    el('cmd-status-label').textContent = 'Code ready! Tap Send to execute in Studio.';
-
-    const icons = { simple: '⚡', medium: '🔥', complex: '💎', epic: '🌟' };
-    const icon = icons[comp] || '✦';
-
-    addLogEntry('ok', `${icon} ${comp.toUpperCase()}: ${parsed.explanation}`);
-    showToast(`${icon} Code ready — tap Send!`, 'ai');
-
-  } catch (err) {
-    clearInterval(msgInterval);
-    el('thinking-bar').style.display = 'none';
-    el('ai-state').classList.remove('visible');
-
-    el('main-btn').disabled = false;
-    el('main-btn-icon').textContent = '✦';
-    el('main-btn-text').textContent = 'Generate & Send';
-    el('main-btn').classList.remove('send-mode');
-    el('cmd-status-label').textContent = 'Ready — free & instant via Groq';
-
-    addLogEntry('err', 'AI Error: ' + err.message);
-    showToast('Error: ' + err.message, 'err');
-  }
-
-  STATE.isGenerating = false;
+    if(res){
+      if(res.success){log('ok','✅ '+(res.output||'Done!'));toast('Done! Check Studio.','ok');}
+      else{log('err','❌ '+res.output);toast('Studio error.','err');}
+    }else{log('err','No response — is plugin connected?');toast('No response from Studio.','info');}
+  }catch(e){log('err','Send failed: '+e.message);toast('Failed: '+e.message,'err');}
+  send=false;resetState();
 }
 
-async function sendToStudio() {
-  if (!STATE.generatedCode || STATE.isSending) return;
-  STATE.isSending = true;
+function resetState(){
+  genCode=null;ready=false;
+  $('mainbtn').disabled=false;$('mainbtn').textContent='✦ Generate & Send';$('mainbtn').className='btn btn-go';
+  $('retrybtn').style.display='none';
+  $('prev').style.display='none';$('tbar').style.display='none';
+  $('aiwrap').classList.remove('show');
+  $('txta').value='';$('ccount').textContent='0 chars';
+  $('hlabel').textContent='Free & instant via Groq';
+}
+function clearAll(){resetState();}
+async function retryGen(){genCode=null;ready=false;$('mainbtn').className='btn btn-go';await genAI();}
 
-  el('main-btn').disabled = true;
-  el('main-btn-icon').textContent = '⟳';
-  el('main-btn-text').textContent = 'Sending…';
-  el('cmd-status-label').textContent = 'Sending to Roblox Studio…';
-
-  addLogEntry('sent', 'Sending Lua code to Studio…');
-
-  try {
-    const cmdResponse = await fetch(BACKEND + '/api/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: STATE.token,
-        type: 'run_script',
-        body: STATE.generatedCode
-      })
-    });
-
-    const cmdData = await cmdResponse.json();
-    if (!cmdData.ok) throw new Error(cmdData.error || 'Command rejected by server');
-
-    // Poll for execution result
-    let result = null;
-    for (let poll = 0; poll < RESULT_MAX_POLLS; poll++) {
-      await new Promise(res => setTimeout(res, RESULT_POLL_INTERVAL_MS));
-      try {
-        const resultResponse = await fetch(BACKEND + '/api/result/' + STATE.token);
-        const resultData = await resultResponse.json();
-        if (resultData.ready) {
-          result = resultData;
-          break;
-        }
-      } catch { /* continue polling */ }
-    }
-
-    if (result) {
-      if (result.success) {
-        addLogEntry('ok', '✅ ' + (result.output || 'Script executed successfully in Studio!'));
-        showToast('Done! Check Roblox Studio.', 'ok');
-      } else {
-        addLogEntry('err', '❌ Studio error: ' + (result.output || 'Unknown error'));
-        showToast('Studio returned an error.', 'err');
-      }
-    } else {
-      addLogEntry('warn', '⏱ No response from Studio. Is the plugin connected?');
-      showToast('No response from Studio — check plugin.', 'warn');
-    }
-
-  } catch (err) {
-    addLogEntry('err', 'Send failed: ' + err.message);
-    showToast('Send failed: ' + err.message, 'err');
-  }
-
-  STATE.isSending = false;
-  resetToGenerateState();
+function setConn(v){
+  connected=v;
+  $('cdot').className='cdot '+(v?'on':'wait');
+  $('ctxt').textContent=v?'Studio connected':'No plugin';
+  $('cpill').className='conn-pill'+(v?' live':'');
+  if(v){toast('Studio connected!','ok');log('ok','Plugin connected! ENES AI is live.');}
 }
 
-function resetToGenerateState() {
-  STATE.generatedCode = null;
-  STATE.codeIsReady = false;
-
-  el('main-btn').disabled = false;
-  el('main-btn-icon').textContent = '✦';
-  el('main-btn-text').textContent = 'Generate & Send';
-  el('main-btn').classList.remove('send-mode');
-
-  el('retry-btn').style.display = 'none';
-  el('code-preview').style.display = 'none';
-  el('thinking-bar').style.display = 'none';
-  el('ai-state').classList.remove('visible');
-
-  el('cmd-textarea').value = '';
-  el('char-count').textContent = '0 chars';
-  el('cmd-status-label').textContent = 'Ready — free & instant via Groq';
+function startPoll(){
+  pollInt=setInterval(async()=>{
+    try{const r=await fetch(B+'/api/ping/'+tok);const d=await r.json();
+    if(d.connected&&!connected)setConn(true);
+    if(!d.connected&&connected)setConn(false);}catch{}
+  },2000);
 }
 
-function clearAll() { resetToGenerateState(); }
+function openSheet(){$('shbg').classList.add('open');if($('shtok'))$('shtok').textContent=tok||'—';}
+function closeSheet(){$('shbg').classList.remove('open');}
+function shClick(e){if(e.target===$('shbg'))closeSheet();}
 
-async function retryGeneration() {
-  STATE.generatedCode = null;
-  STATE.codeIsReady = false;
-  el('main-btn-icon').textContent = '✦';
-  el('main-btn-text').textContent = 'Generate & Send';
-  el('main-btn').classList.remove('send-mode');
-  await generateAICode();
-}
-
-/* ════════════════════════════════════════
-   STUDIO POLLING
-════════════════════════════════════════ */
-function startStudioPolling() {
-  STATE.pollInterval = setInterval(async () => {
-    try {
-      const response = await fetch(BACKEND + '/api/ping/' + STATE.token);
-      const data = await response.json();
-
-      if (data.connected && !STATE.connected) {
-        setStudioConnected(true);
-      } else if (!data.connected && STATE.connected) {
-        setStudioConnected(false);
-      }
-    } catch { /* network error, ignore */ }
-  }, POLL_INTERVAL_MS);
-}
-
-function setStudioConnected(isConnected) {
-  STATE.connected = isConnected;
-
-  const dotClass = isConnected ? 'on' : 'wait';
-  const pillClass = isConnected ? 'live' : '';
-
-  // Topbar
-  el('conn-dot-top').className = 'conn-dot ' + dotClass;
-  el('conn-text-top').textContent = isConnected ? 'Studio connected' : 'No plugin';
-  el('conn-pill').className = 'conn-pill ' + pillClass;
-
-  // Side panel
-  if (el('side-conn-dot')) {
-    el('side-conn-dot').className = 'conn-card-dot ' + dotClass;
-    el('side-conn-name').textContent = isConnected ? 'Studio connected' : 'Waiting for plugin';
-    el('side-conn-desc').textContent = isConnected
-      ? 'Commands execute in Roblox Studio.'
-      : 'Open Studio and activate your plugin.';
-  }
-
-  // Sheet
-  if (el('sheet-conn-dot')) {
-    el('sheet-conn-dot').className = 'conn-card-dot ' + dotClass;
-    el('sheet-conn-name').textContent = isConnected ? 'Studio connected' : 'Waiting for plugin';
-    el('sheet-conn-desc').textContent = isConnected
-      ? 'Commands execute in Roblox Studio.'
-      : 'Open Studio and activate your plugin.';
-  }
-
-  if (isConnected) {
-    addLogEntry('ok', '🟢 Plugin connected! ENES AI is live and ready.');
-    showToast('Studio connected!', 'ok');
-  }
-}
-
-/* ════════════════════════════════════════
-   SHEET (mobile setup panel)
-════════════════════════════════════════ */
-function openSheet() {
-  el('sheet-backdrop').classList.add('open');
-  updateSheetToken();
-}
-
-function closeSheet() {
-  el('sheet-backdrop').classList.remove('open');
-}
-
-function handleSheetBackdropClick(e) {
-  if (e.target === el('sheet-backdrop')) closeSheet();
-}
-
-function updateSheetToken() {
-  const t = STATE.token || '—';
-  if (el('sheet-token-val')) el('sheet-token-val').textContent = t;
-}
-
-/* ════════════════════════════════════════
-   TOKEN MANAGEMENT
-════════════════════════════════════════ */
-function generateToken() {
-  return Math.random().toString(36).slice(2, 8).toUpperCase() +
-         Math.random().toString(36).slice(2, 8).toUpperCase();
-}
-
-function loadToken() {
-  let t = localStorage.getItem(TOKEN_STORAGE_KEY);
-  if (!t) {
-    t = generateToken();
-    localStorage.setItem(TOKEN_STORAGE_KEY, t);
-  }
-  return t;
-}
-
-function updateTokenDisplays(token) {
-  const short = token.substring(0, 10) + '…';
-  if (el('side-token-val')) el('side-token-val').textContent = token;
-  if (el('sheet-token-val')) el('sheet-token-val').textContent = token;
-  if (el('stat-token-short')) el('stat-token-short').textContent = 'Token: ' + short;
-}
-
-/* ════════════════════════════════════════
-   INITIALIZATION
-════════════════════════════════════════ */
-(function init() {
-  try {
-    // Initialize token
-    STATE.token = loadToken();
-    updateTokenDisplays(STATE.token);
-
-    // Set boot time
-    el('boot-time-el').textContent = ts();
-
-    // Init examples strip
+// BOOT
+(function(){
+  try{
+    tok=localStorage.getItem('ea_tok');
+    if(!tok){tok=Math.random().toString(36).slice(2,8).toUpperCase()+Math.random().toString(36).slice(2,8).toUpperCase();localStorage.setItem('ea_tok',tok);}
+    $('boottime').textContent=ts();
     initExamples();
-
-    // Start polling Studio connection
-    startStudioPolling();
-
-    // Log init
-    addLogEntry('sys', 'ENES AI v3.0 started. Token: ' + STATE.token.substring(0, 8) + '…');
-    addLogEntry('sys', EXAMPLES_DB.length + ' example prompts loaded across terrain, scripts, GUI, game systems.');
-
-    // Hide loading screen
-    setTimeout(() => {
-      const ls = el('loading-screen');
-      ls.classList.add('hidden');
-      setTimeout(() => ls.remove(), 500);
-    }, 1200);
-
-  } catch(err) {
-    console.error('ENES AI init error:', err);
-    const ls = el('loading-screen');
-    if (ls) {
-      ls.classList.add('hidden');
-      setTimeout(() => ls.remove(), 400);
-    }
-  }
+    startPoll();
+    log('sys','ENES AI v3 ready. '+EXAMPLES.length+' examples loaded.');
+  }catch(e){console.error('Boot:',e);}
 })();
-
 </script>
 
 </body>
