@@ -1,1221 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>ENES AI</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Syne:wght@800;900&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enes's AI — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#010306;color:#e8d5c0;font-family:'JetBrains Mono',monospace;font-size:13px;overflow:hidden}
-::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:rgba(255,140,0,0.3)}
-button,input,textarea{font-family:'JetBrains Mono',monospace;-webkit-appearance:none}
+:root {
+  --bg: #07070e;
+  --panel: #0e0e1c;
+  --panel2: #131324;
+  --cyan: #00d4ff;
+  --pink: #ff0066;
+  --green: #00ff88;
+  --yellow: #ffe600;
+  --white: #e0eaff;
+  --dim: #1e2240;
+  --dim2: #3a4470;
+  --border: rgba(0,212,255,0.1);
+  --border2: rgba(0,212,255,0.2);
+  --glow: 0 0 20px rgba(0,212,255,0.3);
+  --glow-pink: 0 0 20px rgba(255,0,102,0.3);
+  --glow-green: 0 0 20px rgba(0,255,136,0.3);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--white);font-family:'Exo 2',sans-serif;height:100vh;overflow:hidden;}
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);}
+.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg-fx::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 20%,rgba(0,212,255,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(255,0,102,0.04) 0%,transparent 60%);}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:44px 44px;}
 
-/* BG */
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,140,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,140,0,0.04) 1px,transparent 1px);background-size:44px 44px}
-.bg-g1{position:absolute;top:-30%;left:-20%;width:80%;height:80%;background:radial-gradient(ellipse,rgba(255,140,0,0.07) 0%,transparent 60%);animation:f1 22s ease-in-out infinite alternate}
-.bg-g2{position:absolute;bottom:-30%;right:-20%;width:70%;height:70%;background:radial-gradient(ellipse,rgba(0,170,255,0.05) 0%,transparent 60%);animation:f2 28s ease-in-out infinite alternate}
-@keyframes f1{to{transform:translate(6%,4%) scale(1.12)}}
-@keyframes f2{to{transform:translate(-5%,-7%) scale(1.18)}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-@keyframes glow{0%,100%{box-shadow:0 0 8px #ff8c00,0 0 16px rgba(255,140,0,.2)}50%{box-shadow:0 0 18px #ff8c00,0 0 36px rgba(255,140,0,.4)}}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes dot{0%,100%{transform:scale(.4);opacity:.3}50%{transform:scale(1);opacity:1}}
-@keyframes scale-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-
-/* ══ WELCOME SCREEN ══ */
-#welcome{position:fixed;inset:0;z-index:200;background:#010306;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fade .3s ease}
-#welcome.gone{display:none}
-.w-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44,#ff8c00);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;animation:shimmer 3s linear infinite}
-@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-.w-sub{font-size:12px;color:#7a5c44;letter-spacing:.12em;text-transform:uppercase;margin-bottom:40px}
-.w-card{background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:16px;padding:22px;width:100%;max-width:380px;position:relative;overflow:hidden;animation:scale-in .4s ease}
-.w-card::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
-.w-card-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:900;margin-bottom:5px}
-.w-card-desc{font-size:12px;color:#7a5c44;margin-bottom:20px;line-height:1.7}
-.w-features{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
-.w-feat{display:flex;align-items:center;gap:10px;font-size:12px;color:#c8a888}
-.w-feat-dot{width:7px;height:7px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
-.w-enter-btn{width:100%;background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border:none;border-radius:10px;padding:14px;font-family:'Syne',sans-serif;font-weight:900;font-size:14px;cursor:pointer;letter-spacing:.04em;transition:all .2s;box-shadow:0 4px 20px rgba(255,140,0,.3)}
-.w-enter-btn:hover{box-shadow:0 6px 28px rgba(255,140,0,.5);transform:translateY(-1px)}
-.w-enter-btn:active{transform:scale(.97)}
-.w-returning{margin-top:12px;font-size:11px;color:#3a2518;text-align:center}
-.w-pip{display:inline-block;width:5px;height:5px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;margin-right:5px;animation:blink 1.5s ease-in-out infinite;vertical-align:middle}
-
-/* ══ APP ══ */
-#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+/* LAYOUT */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:210px 1fr;grid-template-rows:52px 1fr;height:100vh;overflow:hidden;}
 
 /* TOPBAR */
-.bar{height:54px;background:rgba(1,3,6,.95);backdrop-filter:blur(16px);border-bottom:0.5px solid rgba(255,140,0,.1);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;position:relative;z-index:10}
-.bar::after{content:'';position:absolute;bottom:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,rgba(255,140,0,.3),transparent);opacity:.5}
-.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:8px}
-.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#ff8c00,#ffcc44);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#010306;animation:glow 3s ease-in-out infinite;flex-shrink:0;-webkit-text-fill-color:#010306}
-.cpill{display:flex;align-items:center;gap:6px;padding:5px 11px;background:#07101e;border:0.5px solid rgba(255,140,0,.1);border-radius:20px;font-size:10px;color:#7a5c44;margin-left:auto;transition:all .3s}
-.cpill.live{border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.04);color:#00ffaa}
-.cdot{width:6px;height:6px;border-radius:50%;background:#3a2518;flex-shrink:0;transition:all .3s}
-.cdot.on{background:#00ffaa;box-shadow:0 0 8px rgba(0,255,170,.5)}
-.cdot.wait{background:#ff8c00;animation:blink 1.3s ease-in-out infinite}
-.setup-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.15);border-radius:8px;font-size:11px;color:#7a5c44;cursor:pointer;font-weight:700;transition:all .15s}
-.setup-btn:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
+.topbar{grid-column:1/-1;background:rgba(7,7,14,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);display:flex;align-items:center;padding:0 20px;gap:12px;}
+.top-logo{display:flex;align-items:center;gap:10px;}
+.top-logo-icon{font-size:20px;filter:drop-shadow(0 0 8px var(--cyan));animation:iconPulse 3s ease-in-out infinite;}
+.top-logo-text{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;letter-spacing:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.top-sep{width:1px;height:28px;background:var(--border);flex-shrink:0;}
 
-/* TABS */
-.tabs{display:flex;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.08);flex-shrink:0}
-.tab{flex:1;padding:10px 6px;font-size:11px;font-weight:700;color:#3a2518;cursor:pointer;border:none;background:none;transition:all .2s;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px;font-family:'JetBrains Mono',monospace;position:relative}
-.tab.on{color:#ff8c00;border-bottom-color:#ff8c00;background:rgba(255,140,0,.03)}
-.tab:hover{color:#7a5c44}
-.tab-badge{background:rgba(255,140,0,.15);color:#ff8c00;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700}
-.tab-badge.green{background:rgba(0,255,170,.1);color:#00ffaa}
+/* Status on LEFT side of topbar */
+.connection-status{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--dim2);transition:all 0.3s;}
+.status-dot.online{background:var(--green);box-shadow:0 0 8px var(--green);animation:dotPulse 2s infinite;}
+.status-dot.offline{background:var(--pink);}
+.status-dot.checking{background:var(--yellow);animation:dotPulse 0.8s infinite;}
 
-/* VIEWS */
-.view{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
-.view.on{display:flex}
+/* Token on RIGHT side of topbar */
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.top-token-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--dim2);text-transform:uppercase;white-space:nowrap;}
+.top-token-input{width:240px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:5px 10px;outline:none;transition:all 0.2s;}
+.top-token-input:focus{border-color:var(--cyan);box-shadow:var(--glow);}
+.top-token-input::placeholder{color:var(--dim2);letter-spacing:1px;font-size:10px;}
+.connect-btn{padding:6px 16px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;font-weight:bold;white-space:nowrap;}
+.connect-btn.disconnected{background:linear-gradient(135deg,var(--cyan),#0088bb);color:#000;}
+.connect-btn.connected{background:linear-gradient(135deg,var(--pink),#aa0044);color:#fff;}
+.connect-btn:hover{transform:translateY(-1px);}
 
-/* ══ COMMAND VIEW ══ */
-.izone{padding:12px 14px 10px;flex-shrink:0;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.06)}
-.ihead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.ititle{font-family:'Syne',sans-serif;font-size:15px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:7px}
-.ititle-dot{width:7px;height:7px;border-radius:50%;background:#ff8c00;box-shadow:0 0 10px #ff8c00;animation:glow 2.5s ease-in-out infinite;flex-shrink:0}
-.model-tag{display:flex;align-items:center;gap:5px;padding:4px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.12);border-radius:20px;font-size:10px;color:#7a5c44}
-.model-tag-dot{width:5px;height:5px;border-radius:50%;background:#00ffaa}
-.txtarea{width:100%;background:#07101e;border:0.5px solid rgba(255,140,0,.18);border-radius:10px;padding:13px;font-size:14px;color:#e8d5c0;outline:none;resize:none;min-height:110px;max-height:170px;line-height:1.65;transition:border-color .25s,box-shadow .25s;display:block}
-.txtarea:focus{border-color:#ff8c00;box-shadow:0 0 0 2px rgba(255,140,0,.18),0 0 24px rgba(255,140,0,.1)}
-.txtarea::placeholder{color:#3a2518;line-height:1.7}
-.txt-foot{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 0;font-size:10px;color:#3a2518}
-.txt-foot-r{display:flex;align-items:center;gap:4px}
-.txt-pip{width:4px;height:4px;border-radius:50%;background:#00ffaa}
+/* SIDEBAR */
+.sidebar{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-section{padding:10px 12px 6px;}
+.sb-title{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:4px;color:var(--dim2);text-transform:uppercase;padding:4px 4px 6px;}
+.sb-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all 0.15s;font-size:13px;color:rgba(255,255,255,0.45);background:transparent;border:1px solid transparent;margin-bottom:2px;text-align:left;}
+.sb-btn:hover{background:rgba(0,212,255,0.05);color:rgba(255,255,255,0.75);}
+.sb-btn.active{background:rgba(0,212,255,0.08);color:var(--cyan);border-color:rgba(0,212,255,0.2);}
+.sb-btn-icon{font-size:15px;width:20px;text-align:center;}
+.sb-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+.token-display{padding:10px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:8px;}
+.token-display-title{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.token-display-title::before{content:'//';color:var(--pink);}
+.token-value{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--cyan);word-break:break-all;line-height:1.4;}
+.gen-token-btn{width:100%;margin-top:8px;padding:6px;background:transparent;border:1px solid var(--dim2);border-radius:6px;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.gen-token-btn:hover{border-color:var(--cyan);color:var(--cyan);}
 
-/* AI STATE */
-.aiwrap{display:none;flex-direction:column;gap:6px;margin:8px 0 0;animation:up .2s ease}
-.aiwrap.show{display:flex}
-.think{display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(255,140,0,.06);border:0.5px solid rgba(255,140,0,.18);border-radius:10px;font-size:12px;color:#ff8c00;position:relative;overflow:hidden}
-.think::after{content:'';position:absolute;bottom:0;left:-100%;width:100%;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,#ffcc44,transparent);animation:sl 1.8s ease-in-out infinite}
-@keyframes sl{0%{left:-100%}100%{left:100%}}
-.tdots{display:flex;gap:4px}
-.tdots span{width:5px;height:5px;background:#ff8c00;border-radius:50%;animation:dot 1s ease-in-out infinite;display:block}
-.tdots span:nth-child(2){animation-delay:.17s}.tdots span:nth-child(3){animation-delay:.34s}
-.tspinner{width:14px;height:14px;border:1.5px solid rgba(255,140,0,.2);border-top-color:#ff8c00;border-radius:50%;animation:spin .75s linear infinite;margin-left:auto;flex-shrink:0}
-.prev{background:#07101e;border:0.5px solid rgba(255,140,0,.22);border-radius:10px;overflow:hidden;animation:up .2s ease}
-.prev-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,140,0,.07);border-bottom:0.5px solid rgba(255,140,0,.1)}
-.prev-lbl{font-size:10px;color:#ff8c00;font-weight:700;text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:6px}
-.prev-lbl::before{content:'';width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;flex-shrink:0}
-.cpybtn{padding:3px 8px;background:#101828;border:0.5px solid rgba(255,140,0,.18);border-radius:4px;font-size:10px;color:#7a5c44;cursor:pointer;transition:all .15s}
-.cpybtn:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
-.prev-code{padding:10px 12px;font-size:11px;color:#c8a888;white-space:pre-wrap;word-break:break-all;max-height:130px;overflow-y:auto;line-height:1.6}
-.prev-note{padding:8px 12px;border-top:0.5px solid rgba(255,140,0,.07);font-size:11px;color:#7a5c44;line-height:1.55;background:rgba(0,0,0,.2);display:flex;gap:6px}
+/* MAIN */
+.main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.page{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.page.hidden{display:none;}
 
-/* ACTIONS */
-.actions{display:flex;gap:8px;margin-top:10px}
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;border:0.5px solid rgba(255,140,0,.18)}
-.btn:active{transform:scale(.95)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
-.btn-x{background:#07101e;color:#7a5c44}
-.btn-x:hover{border-color:rgba(255,51,85,.5);color:#ff3355}
-.btn-retry{background:#07101e;color:#7a5c44;display:none}
-.btn-go{background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border-color:transparent;font-weight:800;flex:1;font-size:13px;box-shadow:0 2px 16px rgba(255,140,0,.25)}
-.btn-go:hover{box-shadow:0 4px 28px rgba(255,140,0,.45);transform:translateY(-1px)}
-.btn-go.send{background:linear-gradient(135deg,#00aaff,#44ccff);box-shadow:0 2px 16px rgba(0,170,255,.25)}
+/* CHAT */
+.chat-msgs{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px;}
+.chat-msgs::-webkit-scrollbar{width:3px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px;}
+.msg{display:flex;gap:10px;animation:msgIn 0.3s ease;}
+.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:80%;}
+.msg.ai{align-self:flex-start;max-width:85%;}
+.msg-av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
+.msg.ai .msg-av{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--cyan);}
+.msg.user .msg-av{background:rgba(255,0,102,0.08);border:1px solid rgba(255,0,102,0.2);color:var(--pink);}
+.msg-body{display:flex;flex-direction:column;gap:5px;}
+.msg-bubble{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.65;}
+.msg.ai .msg-bubble{background:var(--panel);border:1px solid var(--border);color:var(--white);border-top-left-radius:2px;}
+.msg.user .msg-bubble{background:rgba(255,0,102,0.08);border:1px solid rgba(255,0,102,0.15);color:var(--white);border-top-right-radius:2px;}
+.msg-code{background:rgba(0,0,0,0.7);border:1px solid rgba(0,255,136,0.2);border-radius:8px;padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.8;color:#7affb2;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;}
+.msg-code::-webkit-scrollbar{width:3px;}
+.msg-code::-webkit-scrollbar-thumb{background:var(--dim);}
+.code-actions{display:flex;gap:8px;margin-top:5px;}
+.code-action-btn{padding:6px 14px;border-radius:5px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;font-weight:bold;}
+.btn-insert{background:linear-gradient(135deg,var(--green),#00aa55);color:#000;}
+.btn-insert:hover{box-shadow:var(--glow-green);transform:translateY(-1px);}
+.btn-insert:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-copy{background:transparent;border:1px solid var(--cyan)!important;border:none;color:var(--cyan);}
+.btn-copy:hover{background:rgba(0,212,255,0.1);}
+.btn-copy.done{color:var(--green);}
+.typing-indicator{display:flex;align-items:center;gap:5px;padding:10px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;border-top-left-radius:2px;width:fit-content;}
+.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:typingBounce 1.2s ease-in-out infinite;}
+.td:nth-child(2){animation-delay:0.2s;}
+.td:nth-child(3){animation-delay:0.4s;}
+.chat-input-area{padding:12px 24px 16px;border-top:1px solid var(--border);background:rgba(7,7,14,0.95);backdrop-filter:blur(10px);flex-shrink:0;}
+.chat-input-wrap{position:relative;}
+.chat-input{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:12px;color:var(--white);font-family:'Exo 2',sans-serif;font-size:14px;padding:13px 52px 13px 18px;outline:none;transition:all 0.2s;resize:none;min-height:48px;max-height:120px;line-height:1.5;}
+.chat-input:focus{border-color:var(--cyan);box-shadow:var(--glow);}
+.chat-input::placeholder{color:var(--dim2);}
+.chat-send-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;background:var(--cyan);border:none;border-radius:8px;color:#000;font-size:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.chat-send-btn:hover{background:var(--pink);box-shadow:var(--glow-pink);}
+.chat-send-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.input-hint{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim2);margin-top:6px;text-align:center;text-transform:uppercase;}
 
-/* EXAMPLES */
-.ex-wrap{border-top:0.5px solid rgba(255,140,0,.06);flex-shrink:0;padding:7px 0 5px}
-.ex-lbl{font-size:9px;color:#3a2518;letter-spacing:.12em;text-transform:uppercase;padding:0 14px;margin-bottom:6px}
-.ex-scroll{display:flex;gap:6px;overflow-x:auto;padding:0 14px 2px;-webkit-overflow-scrolling:touch}
-.ex-scroll::-webkit-scrollbar{display:none}
-.ex-chip{display:inline-flex;align-items:center;padding:6px 12px;background:#07101e;border:0.5px solid rgba(255,140,0,.1);border-radius:20px;font-size:11px;color:#7a5c44;cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0;transition:all .15s}
-.ex-chip:active{transform:scale(.93)}
-.ex-chip:hover{border-color:rgba(255,140,0,.35);color:#ff8c00;background:rgba(255,140,0,.06)}
+/* SCANNER */
+.scanner-wrap{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
+.scanner-wrap::-webkit-scrollbar{width:3px;}
+.scanner-wrap::-webkit-scrollbar-thumb{background:var(--dim);}
+.scan-header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.scan-title{font-family:'Orbitron',monospace;font-weight:700;font-size:16px;letter-spacing:3px;color:var(--white);}
+.scan-btn{padding:8px 20px;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;border-radius:8px;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:bold;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+.scan-btn:hover{transform:translateY(-1px);box-shadow:var(--glow);}
+.scan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.scan-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all 0.2s;}
+.scan-card:hover{border-color:var(--border2);}
+.scan-card-icon{font-size:22px;margin-bottom:6px;}
+.scan-card-value{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--cyan);margin-bottom:3px;}
+.scan-card-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim2);text-transform:uppercase;}
+.scan-list{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.scan-list-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.scan-list-title::before{content:'//';color:var(--pink);}
+.scan-list-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--dim);font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);}
+.scan-list-item:last-child{border-bottom:none;}
+.scan-list-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
 
-/* ══ LOG VIEW ══ */
-.log-view{padding:0;overflow:hidden}
-.log-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.06);flex-shrink:0}
-.log-title-row{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#7a5c44;letter-spacing:.1em;text-transform:uppercase}
-.log-pip{width:6px;height:6px;border-radius:50%;background:#ff8c00;box-shadow:0 0 8px #ff8c00;animation:blink 2s ease-in-out infinite}
-.log-cnt{font-size:10px;color:#3a2518}
-.log-clr{padding:2px 7px;background:none;border:0.5px solid rgba(255,140,0,.1);border-radius:4px;font-size:10px;color:#3a2518;cursor:pointer;transition:all .15s}
-.log-clr:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
-.log-body{flex:1;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:5px;-webkit-overflow-scrolling:touch}
-.le{padding:8px 10px;border-radius:10px;border-left:2px solid #3a2518;background:#07101e;animation:up .15s ease}
-.le.ai{border-left-color:#ff8c00}
-.le.sent{border-left-color:#00aaff}
-.le.ok{border-left-color:#00ffaa}
-.le.err{border-left-color:#ff3355}
-.le.sys{border-left-color:#3a2518}
-.le-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
-.le-tag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
-.le-tag.ai{background:rgba(255,140,0,.1);color:#ff8c00}
-.le-tag.sent{background:rgba(0,170,255,.08);color:#00aaff}
-.le-tag.ok{background:rgba(0,255,170,.08);color:#00ffaa}
-.le-tag.err{background:rgba(255,51,85,.08);color:#ff3355}
-.le-tag.sys{background:#101828;color:#3a2518}
-.le-time{font-size:10px;color:#3a2518;margin-left:auto}
-.le-msg{font-size:11px;color:#7a5c44;line-height:1.55;word-break:break-all}
-
-/* ══ HISTORY VIEW ══ */
-.hist-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#010306;border-bottom:0.5px solid rgba(255,140,0,.06);flex-shrink:0}
-.hist-title{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#7a5c44;letter-spacing:.1em;text-transform:uppercase}
-.hist-clr{padding:2px 7px;background:none;border:0.5px solid rgba(255,140,0,.1);border-radius:4px;font-size:10px;color:#3a2518;cursor:pointer;transition:all .15s}
-.hist-clr:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
-.hist-body{flex:1;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
-.hist-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;color:#3a2518;font-size:12px;text-align:center;padding:20px}
-.hist-empty-icon{font-size:32px;opacity:.5}
-.hist-item{background:#07101e;border:0.5px solid rgba(255,140,0,.12);border-radius:12px;overflow:hidden;animation:up .15s ease;transition:border-color .15s}
-.hist-item:hover{border-color:rgba(255,140,0,.28)}
-.hist-item-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:0.5px solid rgba(255,140,0,.07);cursor:pointer}
-.hist-item-prompt{font-size:12px;color:#c8a888;flex:1;margin-right:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hist-item-meta{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.hist-item-time{font-size:10px;color:#3a2518}
-.hist-item-comp{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700}
-.hist-item-comp.simple{background:rgba(0,170,255,.1);color:#00aaff}
-.hist-item-comp.medium{background:rgba(255,140,0,.1);color:#ff8c00}
-.hist-item-comp.complex{background:rgba(204,68,255,.1);color:#cc44ff}
-.hist-item-comp.epic{background:rgba(255,204,68,.1);color:#ffcc44}
-.hist-item-body{padding:10px 12px;display:none}
-.hist-item-body.open{display:block}
-.hist-item-note{font-size:11px;color:#7a5c44;margin-bottom:8px;line-height:1.55}
-.hist-item-code{font-size:10px;color:#c8a888;background:#101828;border-radius:6px;padding:8px;max-height:100px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;line-height:1.5;margin-bottom:8px}
-.hist-actions{display:flex;gap:6px}
-.hist-btn{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;border:0.5px solid rgba(255,140,0,.18)}
-.hist-btn.run{background:linear-gradient(135deg,#ff8c00,#ffcc44);color:#010306;border-color:transparent}
-.hist-btn.run:hover{box-shadow:0 2px 14px rgba(255,140,0,.35)}
-.hist-btn.copy{background:#07101e;color:#7a5c44}
-.hist-btn.copy:hover{border-color:rgba(255,140,0,.35);color:#ff8c00}
-.hist-btn.del{background:#07101e;color:#7a5c44}
-.hist-btn.del:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
-
-/* SETUP SHEET */
-.sh-bg{position:fixed;inset:0;background:rgba(1,3,6,.9);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .25s}
-.sh-bg.open{opacity:1;pointer-events:all}
-.sh{background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:20px 20px 0 0;padding:18px 18px 36px;width:100%;max-width:520px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative;max-height:90vh;overflow-y:auto}
-.sh-bg.open .sh{transform:translateY(0)}
-.sh::before{content:'';position:absolute;top:0;inset-x:0;height:1px;background:linear-gradient(90deg,transparent,#ff8c00,transparent);opacity:.5}
-.sh-handle{width:40px;height:4px;background:#101828;border-radius:2px;margin:0 auto 16px}
-.sh-x{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:#101828;border:0.5px solid rgba(255,140,0,.15);display:flex;align-items:center;justify-content:center;font-size:12px;color:#7a5c44;cursor:pointer;transition:all .15s}
-.sh-x:hover{border-color:rgba(255,51,85,.4);color:#ff3355}
-.sh-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:900;background:linear-gradient(135deg,#ff8c00,#ffcc44);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
-.sh-sub{font-size:12px;color:#7a5c44;margin-bottom:16px;line-height:1.6}
-.sh-sec{font-size:9px;font-weight:700;color:#3a2518;letter-spacing:.12em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:7px}
-.sh-sec::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,rgba(255,140,0,.15),transparent)}
-.tok-box{background:#101828;border:0.5px solid rgba(255,140,0,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.tok-lbl{font-size:9px;color:#3a2518;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
-.tok-val{font-size:12px;color:#ff8c00;font-weight:700;word-break:break-all}
-.tok-copy{padding:6px 10px;background:#07101e;border:0.5px solid rgba(255,140,0,.18);border-radius:6px;font-size:10px;color:#7a5c44;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
-.tok-copy:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
-.step{display:flex;gap:9px;margin-bottom:10px;align-items:flex-start}
-.step-n{width:20px;height:20px;border-radius:50%;background:#101828;border:0.5px solid rgba(255,140,0,.15);font-size:10px;color:#3a2518;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step-t{font-size:12px;color:#e8d5c0;font-weight:700;margin-bottom:2px}
-.step-d{font-size:11px;color:#7a5c44;line-height:1.5}
-.step-d code{background:#101828;border-radius:3px;padding:1px 5px;color:#ff8c00;font-size:10px}
-.step-code{background:#101828;border:0.5px solid rgba(255,140,0,.12);border-radius:6px;padding:6px 40px 6px 9px;margin-top:4px;font-size:10px;color:#ff8c00;word-break:break-all;position:relative}
-.step-cp{position:absolute;top:4px;right:5px;padding:2px 6px;background:none;border:0.5px solid rgba(255,140,0,.15);border-radius:3px;font-size:9px;color:#3a2518;cursor:pointer;transition:all .15s}
-.step-cp:hover{border-color:rgba(255,140,0,.4);color:#ff8c00}
-
-/* CONN CARD in sheet */
-.conn-card{background:#101828;border:0.5px solid rgba(255,140,0,.1);border-radius:10px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
-.conn-card-dot{width:10px;height:10px;border-radius:50%;background:#3a2518;flex-shrink:0;transition:all .3s}
-.conn-card-dot.on{background:#00ffaa;box-shadow:0 0 10px rgba(0,255,170,.5)}
-.conn-card-dot.wait{background:#ff8c00;animation:blink 1.3s ease-in-out infinite}
-.conn-card-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;margin-bottom:2px}
-.conn-card-desc{font-size:11px;color:#7a5c44;line-height:1.4}
-
-/* TOASTS */
-#toasts{position:fixed;bottom:18px;left:12px;right:12px;display:flex;flex-direction:column;gap:6px;z-index:9999;pointer-events:none}
-.toast{display:flex;align-items:center;gap:9px;padding:10px 14px;background:#07101e;border:0.5px solid rgba(255,140,0,.2);border-radius:10px;font-size:12px;animation:up .2s ease;pointer-events:auto;box-shadow:0 8px 28px rgba(0,0,0,.5)}
-.toast.ok{border-left:2px solid #00ffaa}
-.toast.err{border-left:2px solid #ff3355}
-.toast.info{border-left:2px solid #00aaff}
-.toast.ai{border-left:2px solid #ff8c00;background:rgba(255,140,0,.04)}
+@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 8px var(--cyan))}50%{filter:drop-shadow(0 0 18px var(--cyan)) drop-shadow(0 0 30px var(--pink))}}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 </style>
 </head>
 <body>
-<div class="bg"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div></div>
+<div class="bg-fx"></div>
+<div class="bg-grid"></div>
 
-<!-- ══ WELCOME SCREEN ══ -->
-<div id="welcome">
-  <div class="w-logo">ENES AI</div>
-  <div class="w-sub">Roblox Studio Intelligence</div>
-  <div class="w-card">
-    <div class="w-card-title">Welcome back 👋</div>
-    <div class="w-card-desc">The most powerful Roblox AI ever built. Generate photorealistic terrain, stunning GUIs, complete game systems — all from plain English.</div>
-    <div class="w-features">
-      <div class="w-feat"><span class="w-feat-dot"></span>4K photorealistic terrain generation</div>
-      <div class="w-feat"><span class="w-feat-dot"></span>Complete server + client scripts</div>
-      <div class="w-feat"><span class="w-feat-dot"></span>Beautiful animated GUIs</div>
-      <div class="w-feat"><span class="w-feat-dot"></span>Admin, shops, datastores & more</div>
-      <div class="w-feat"><span class="w-feat-dot"></span>Powered by Groq — 100% free</div>
-    </div>
-    <button class="w-enter-btn" onclick="enterApp()">✦ Open ENES AI</button>
-    <div class="w-returning"><span class="w-pip"></span><span id="w-status-txt">Connecting to Studio…</span></div>
-  </div>
-</div>
-
-<!-- ══ APP ══ -->
-<div id="app">
+<div class="app">
 
   <!-- TOPBAR -->
-  <div class="bar">
-    <div class="logo"><div class="logo-icon">E</div>ENES AI</div>
-    <div class="cpill" id="cpill"><span class="cdot wait" id="cdot"></span><span id="ctxt">No plugin</span></div>
-    <button class="setup-btn" onclick="openSheet()">⚙ Setup</button>
+  <div class="topbar">
+    <div class="top-logo">
+      <span class="top-logo-icon">⚡</span>
+      <span class="top-logo-text">ENES'S AI</span>
+    </div>
+    <div class="top-sep"></div>
+
+<!-- Status removed - website just generates key -->
+
+    <!-- Key on RIGHT - copy and paste into plugin -->
+    <div class="top-right">
+      <span class="top-token-label">Your Key:</span>
+      <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--cyan);" id="keyDisplay">Loading...</div>
+      <button class="connect-btn disconnected" onclick="copyKey(this)" style="background:linear-gradient(135deg,var(--cyan),#0088bb);color:#000;">⎘ Copy Key</button>
+      <button class="connect-btn disconnected" onclick="generateToken()" style="background:transparent;border:1px solid var(--dim2);color:var(--dim2);">↺ New Key</button>
+    </div>
   </div>
 
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab on" id="tab-cmd" onclick="switchTab('cmd')">⌨ Command</button>
-    <button class="tab" id="tab-hist" onclick="switchTab('hist')">📋 History <span class="tab-badge" id="hist-badge">0</span></button>
-    <button class="tab" id="tab-log" onclick="switchTab('log')">📡 Log <span class="tab-badge green" id="log-badge">0</span></button>
-  </div>
-
-  <!-- ── COMMAND VIEW ── -->
-  <div class="view on" id="view-cmd">
-
-    <div class="izone">
-      <div class="ihead">
-        <div class="ititle"><span class="ititle-dot"></span>ENES AI</div>
-        <div class="model-tag"><span class="model-tag-dot"></span>Groq · Llama 3.3</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-title">Pages</div>
+      <button class="sb-btn active" id="nav-chat" onclick="showPage('chat')"><span class="sb-btn-icon">⚡</span> AI Chat</button>
+      <button class="sb-btn" id="nav-scanner" onclick="showPage('scanner')"><span class="sb-btn-icon">🔍</span> Game Scanner</button>
+    </div>
+    <div class="sb-section">
+      <div class="sb-title">Quick Insert</div>
+      <button class="sb-btn" onclick="quickPrompt('create a beautiful neon dark shop GUI with tabs and buy buttons')"><span class="sb-btn-icon">🎨</span> Shop GUI</button>
+      <button class="sb-btn" onclick="quickPrompt('generate a large forest terrain with hills and a river')"><span class="sb-btn-icon">🌍</span> Forest Terrain</button>
+      <button class="sb-btn" onclick="quickPrompt('create an enemy NPC that chases and attacks players')"><span class="sb-btn-icon">🤖</span> Enemy NPC</button>
+      <button class="sb-btn" onclick="quickPrompt('make a beautiful admin console with fly speed god mode kick')"><span class="sb-btn-icon">⚙️</span> Admin Console</button>
+      <button class="sb-btn" onclick="quickPrompt('create a leaderboard with kills coins and deaths using DataStore')"><span class="sb-btn-icon">🏆</span> Leaderboard</button>
+    </div>
+    <div class="sb-bottom">
+      <div class="token-display">
+        <div class="token-display-title">Session Token</div>
+        <div class="token-value" id="sidebarToken">No token yet</div>
+        <button class="gen-token-btn" onclick="generateToken()">↺ Generate Token</button>
       </div>
+    </div>
+  </aside>
 
-      <textarea class="txtarea" id="txta" rows="4" spellcheck="false" autocomplete="off" autocorrect="off"
-        placeholder="Type anything — ENES AI knows everything:
+  <!-- MAIN -->
+  <div class="main">
 
-✦ photorealistic 4K island terrain cinematic sunset
-✦ beautiful animated main menu GUI with glow
-✦ complete admin system server and client scripts
-✦ shop GUI coins RemoteEvents datastore full system
-✦ NPC PathfindingService hunts and attacks players
-✦ full obby 30 platforms moving parts kill bricks"></textarea>
-
-      <div class="txt-foot">
-        <span id="ccount">0 chars</span>
-        <span class="txt-foot-r"><span class="txt-pip"></span><span id="hlabel">Free &amp; instant via Groq</span></span>
-      </div>
-
-      <div class="aiwrap" id="aiwrap">
-        <div class="think" id="tbar">
-          <div class="tdots"><span></span><span></span><span></span></div>
-          <span id="tmsg">Analyzing…</span>
-          <div class="tspinner"></div>
-        </div>
-        <div class="prev" id="prevbox" style="display:none">
-          <div class="prev-head">
-            <span class="prev-lbl">Generated Lua</span>
-            <button class="cpybtn" onclick="copyCode()">copy</button>
+    <!-- AI CHAT -->
+    <div class="page" id="page-chat">
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="msg ai">
+          <div class="msg-av">⚡</div>
+          <div class="msg-body">
+            <div class="msg-bubble">
+              Hey! I'm <strong>Enes's AI</strong> 👋<br><br>
+              Connect your Studio plugin with a session token, then I can insert scripts <strong>directly into Studio</strong> automatically!<br><br>
+              <strong>How to connect:</strong><br>
+              1. Open <strong>Studio Bridge</strong> plugin in Roblox Studio<br>
+              2. Copy your session token<br>
+              3. Paste it in the top right → click <strong>Connect</strong><br><br>
+              Then just describe what you want and click <strong>▶ Insert into Studio</strong>!
+            </div>
           </div>
-          <div class="prev-code" id="pcode"></div>
-          <div class="prev-note"><span>💡</span><span id="pnote"></span></div>
         </div>
       </div>
-
-      <div class="actions">
-        <button class="btn btn-x" onclick="clearAll()">✕</button>
-        <button class="btn btn-retry" id="retrybtn" onclick="retryGen()">↻</button>
-        <button class="btn btn-go" id="mainbtn" onclick="go()">✦ Generate &amp; Send</button>
+      <div class="chat-input-area">
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chatInput" placeholder="Describe what you want to build..." rows="1"></textarea>
+          <button class="chat-send-btn" id="chatSendBtn" onclick="sendChat()">➤</button>
+        </div>
+        <div class="input-hint">Enter to send • Shift+Enter for new line</div>
       </div>
     </div>
 
-    <div class="ex-wrap">
-      <div class="ex-lbl">Quick examples</div>
-      <div class="ex-scroll" id="exscroll"></div>
-    </div>
-
-  </div><!-- /view-cmd -->
-
-  <!-- ── HISTORY VIEW ── -->
-  <div class="view" id="view-hist">
-    <div class="hist-toolbar">
-      <div class="hist-title"><span style="font-size:13px">📋</span>Command History</div>
-      <button class="hist-clr" onclick="clearHistory()">clear all</button>
-    </div>
-    <div class="hist-body" id="hist-body">
-      <div class="hist-empty" id="hist-empty">
-        <div class="hist-empty-icon">📋</div>
-        <div>No history yet.<br/>Generate some code first!</div>
+    <!-- GAME SCANNER -->
+    <div class="page hidden" id="page-scanner">
+      <div class="scanner-wrap">
+        <div class="scan-header">
+          <div class="scan-title">🔍 Game Scanner</div>
+          <button class="scan-btn" onclick="scanGame()">⚡ Scan Game</button>
+        </div>
+        <div class="scan-grid">
+          <div class="scan-card"><div class="scan-card-icon">🧱</div><div class="scan-card-value" id="scan-parts">—</div><div class="scan-card-label">Parts</div></div>
+          <div class="scan-card"><div class="scan-card-icon">📝</div><div class="scan-card-value" id="scan-scripts">—</div><div class="scan-card-label">Scripts</div></div>
+          <div class="scan-card"><div class="scan-card-icon">📱</div><div class="scan-card-value" id="scan-local">—</div><div class="scan-card-label">LocalScripts</div></div>
+          <div class="scan-card"><div class="scan-card-icon">📦</div><div class="scan-card-value" id="scan-models">—</div><div class="scan-card-label">Models</div></div>
+          <div class="scan-card"><div class="scan-card-icon">🖼️</div><div class="scan-card-value" id="scan-guis">—</div><div class="scan-card-label">GUIs</div></div>
+          <div class="scan-card"><div class="scan-card-icon">📡</div><div class="scan-card-value" id="scan-remotes">—</div><div class="scan-card-label">RemoteEvents</div></div>
+        </div>
+        <div class="scan-list">
+          <div class="scan-list-title">Scripts in Game</div>
+          <div id="scanScriptList"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Click "Scan Game" to scan your Studio game</div></div>
+        </div>
+        <div class="scan-list">
+          <div class="scan-list-title">Workspace Objects</div>
+          <div id="scanWorkspaceList"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Click "Scan Game" to scan your Studio game</div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ── LOG VIEW ── -->
-  <div class="view" id="view-log">
-    <div class="log-toolbar">
-      <div class="log-title-row"><span class="log-pip"></span>Execution Log</div>
-      <div style="display:flex;gap:7px;align-items:center">
-        <span class="log-cnt" id="lcnt">0</span>
-        <button class="log-clr" onclick="clearLog()">clear</button>
-      </div>
-    </div>
-    <div class="log-body" id="logbody">
-      <div class="le sys">
-        <div class="le-top"><span class="le-tag sys">sys</span><span class="le-time" id="boottime"></span></div>
-        <div class="le-msg">ENES AI ready. Type anything and tap Generate &amp; Send.</div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- /app -->
-
-<!-- SETUP SHEET -->
-<div class="sh-bg" id="shbg" onclick="shClick(event)">
-  <div class="sh">
-    <div class="sh-handle"></div>
-    <button class="sh-x" onclick="closeSheet()">✕</button>
-    <div class="sh-title">ENES AI Setup</div>
-    <div class="sh-sub">Connect Roblox Studio to generate and run code instantly.</div>
-    <div class="sh-sec">Connection</div>
-    <div class="conn-card" id="sh-conn-card">
-      <div class="conn-card-dot wait" id="sh-cdot"></div>
-      <div>
-        <div class="conn-card-name" id="sh-cname">Waiting for plugin</div>
-        <div class="conn-card-desc" id="sh-cdesc">Open Studio and activate your plugin.</div>
-      </div>
-    </div>
-    <div class="sh-sec">Session Token</div>
-    <div class="tok-box">
-      <div><div class="tok-lbl">Your Token</div><div class="tok-val" id="shtok">—</div></div>
-      <button class="tok-copy" onclick="copyToken()">copy</button>
-    </div>
-    <div class="sh-sec">Plugin Code</div>
-    <div style="font-size:11px;color:#7a5c44;margin-bottom:8px;line-height:1.6">Copy this code, paste it into a new Script in Roblox Studio, save it as <code style="background:#101828;border-radius:3px;padding:1px 5px;color:#ff8c00;font-size:10px">StudioBridge.lua</code> in your plugins folder.</div>
-    <div style="background:#101828;border:0.5px solid rgba(255,140,0,.15);border-radius:10px;overflow:hidden;margin-bottom:10px">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,140,0,.06);border-bottom:0.5px solid rgba(255,140,0,.1)">
-        <span style="font-size:10px;color:#ff8c00;font-weight:700;text-transform:uppercase;letter-spacing:.1em">studio-plugin.lua</span>
-        <button class="cpybtn" onclick="copyPluginCode()">copy all</button>
-      </div>
-      <div style="padding:10px 12px;font-size:10px;color:#c8a888;font-family:'JetBrains Mono',monospace;line-height:1.6;max-height:160px;overflow-y:auto;white-space:pre-wrap" id="plugin-code-preview">local BACKEND = "https://enesai-production.up.railway.app"
-local POLL_INTERVAL = 0.5
--- See full code below (copy button)</div>
-    </div>
-    <div class="sh-sec">Plugin Setup</div>
-    <div class="step"><div class="step-n">1</div><div><div class="step-t">Save plugin file</div><div class="step-d">Save <code>studio-plugin.lua</code> as <code>.rbxm</code> in Studio plugins folder.</div></div></div>
-    <div class="step"><div class="step-n">2</div><div><div class="step-t">Set backend URL</div><div class="step-code">https://enesai-production.up.railway.app<button class="step-cp" onclick="copyTxt('https://enesai-production.up.railway.app')">copy</button></div></div></div>
-    <div class="step"><div class="step-n">3</div><div><div class="step-t">Paste token in plugin</div><div class="step-d">Copy token above into the plugin token field in Studio.</div></div></div>
-    <div class="step"><div class="step-n">4</div><div><div class="step-t">Activate</div><div class="step-d">Click ENES AI in Studio toolbar. Dot turns <span style="color:#00ffaa">green</span> when live.</div></div></div>
   </div>
 </div>
 
-<div id="toasts"></div>
-
 <script>
-const B='https://enesai-production.up.railway.app';
-let tok=null,connected=false,pollInt=null,genCode=null,ready=false,gen=false,send=false,lc=0,rc=0;
-let history=[];
-const $=id=>document.getElementById(id);
-const ts=()=>new Date().toLocaleTimeString('en-US',{hour12:false});
+const BACKEND = 'https://enesai-production.up.railway.app';
+let token = localStorage.getItem('enesai_token') || '';
+let isConnected = false;
+let pingInterval = null;
+let isGenerating = false;
+let gameContext = '';
 
-/* ── TOAST ── */
-function toast(m,t='info'){
-  const c=$('toasts'),e=document.createElement('div');
-  e.className='toast '+t;e.textContent=m;c.appendChild(e);
-  setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),320)},3200);
-}
-
-/* ── COPY ── */
-function copyTxt(t){navigator.clipboard.writeText(t).catch(()=>{});toast('Copied!','ok')}
-function copyToken(){if(tok)copyTxt(tok)}
-function copyCode(){if(genCode)copyTxt(genCode)}
-
-/* ── LOG ── */
-function log(type,msg){
-  const b=$('logbody'),e=document.createElement('div');
-  e.className='le '+type;
-  e.innerHTML=`<div class="le-top"><span class="le-tag ${type}">${type}</span><span class="le-time">${ts()}</span></div><div class="le-msg">${String(msg).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
-  b.appendChild(e);b.scrollTop=b.scrollHeight;
-  lc++;$('lcnt').textContent=lc;
-  $('log-badge').textContent=lc;
-}
-function clearLog(){
-  $('logbody').innerHTML=`<div class="le sys"><div class="le-top"><span class="le-tag sys">sys</span><span class="le-time">${ts()}</span></div><div class="le-msg">Log cleared.</div></div>`;
-  lc=0;$('lcnt').textContent='0';$('log-badge').textContent='0';
+if(token) {
+  document.getElementById('keyDisplay').textContent = token;
+  document.getElementById('sidebarToken').textContent = token;
+} else {
+  generateToken();
 }
 
-/* ── HISTORY ── */
-function saveToHistory(prompt,code,note,comp){
-  const item={id:Date.now(),prompt,code,note,comp,time:ts(),date:new Date().toLocaleDateString()};
-  history.unshift(item);
-  if(history.length>50)history.pop();
-  try{localStorage.setItem('ea_hist',JSON.stringify(history));}catch{}
-  $('hist-badge').textContent=history.length;
-  renderHistory();
-}
-function loadHistory(){
-  try{const h=localStorage.getItem('ea_hist');if(h)history=JSON.parse(h);}catch{}
-  $('hist-badge').textContent=history.length;
-}
-function clearHistory(){
-  history=[];
-  try{localStorage.removeItem('ea_hist');}catch{}
-  $('hist-badge').textContent='0';
-  renderHistory();
-  toast('History cleared.','info');
-}
-function renderHistory(){
-  const b=$('hist-body'),empty=$('hist-empty');
-  if(history.length===0){
-    b.innerHTML='';b.appendChild(empty);empty.style.display='flex';
-    return;
-  }
-  empty.style.display='none';
-  b.innerHTML='';
-  history.forEach(item=>{
-    const d=document.createElement('div');
-    d.className='hist-item';
-    d.innerHTML=`
-      <div class="hist-item-head" onclick="toggleHistItem(this)">
-        <div class="hist-item-prompt">${item.prompt.substring(0,60)}${item.prompt.length>60?'…':''}</div>
-        <div class="hist-item-meta">
-          <span class="hist-item-time">${item.time}</span>
-          <span class="hist-item-comp ${item.comp||'medium'}">${item.comp||'medium'}</span>
-        </div>
-      </div>
-      <div class="hist-item-body" id="hib-${item.id}">
-        <div class="hist-item-note">${item.note||''}</div>
-        <div class="hist-item-code">${String(item.code||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').substring(0,400)}${(item.code||'').length>400?'\n…':''}</div>
-        <div class="hist-actions">
-          <button class="hist-btn run" onclick="rerunHistItem(${item.id})">▶ Run Again</button>
-          <button class="hist-btn copy" onclick="copyTxt(${JSON.stringify(item.code)})">copy code</button>
-          <button class="hist-btn del" onclick="deleteHistItem(${item.id})">✕ Delete</button>
-        </div>
-      </div>`;
-    b.appendChild(d);
+function copyKey(btn) {
+  navigator.clipboard.writeText(token).catch(()=>{
+    const t=document.createElement('textarea');t.value=token;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
   });
-}
-function toggleHistItem(head){
-  const body=head.nextElementSibling;
-  body.classList.toggle('open');
-}
-function rerunHistItem(id){
-  const item=history.find(h=>h.id===id);
-  if(!item)return;
-  genCode=item.code;ready=true;
-  $('txta').value=item.prompt;
-  $('ccount').textContent=item.prompt.length+' chars';
-  $('pcode').textContent=item.code;
-  $('pnote').textContent=item.note||'';
-  $('prevbox').style.display='block';
-  $('aiwrap').classList.add('show');
-  $('mainbtn').textContent='▶ Send to Studio';
-  $('mainbtn').className='btn btn-go send';
-  $('retrybtn').style.display='flex';
-  switchTab('cmd');
-  toast('Loaded from history — tap Send!','ai');
-}
-function deleteHistItem(id){
-  history=history.filter(h=>h.id!==id);
-  try{localStorage.setItem('ea_hist',JSON.stringify(history));}catch{}
-  $('hist-badge').textContent=history.length;
-  renderHistory();
+  btn.textContent='✓ Copied!';
+  setTimeout(()=>{ btn.textContent='⎘ Copy Key'; },2000);
 }
 
-/* ── TABS ── */
-function switchTab(name){
-  ['cmd','hist','log'].forEach(t=>{
-    $('view-'+t).classList.remove('on');
-    $('tab-'+t).classList.remove('on');
-  });
-  $('view-'+name).classList.add('on');
-  $('tab-'+name).classList.add('on');
-  if(name==='hist')renderHistory();
+function generateToken() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  token = Array.from({length:16}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
+  document.getElementById('keyDisplay').textContent = token;
+  document.getElementById('sidebarToken').textContent = token;
+  localStorage.setItem('enesai_token', token);
 }
 
-/* ── CHAR COUNT ── */
-$('txta').addEventListener('input',function(){$('ccount').textContent=this.value.length+' chars'});
+document.getElementById('tokenInput') && document.getElementById('tokenInput').addEventListener('input', function() {
+  token = this.value.trim();
+  document.getElementById('sidebarToken').textContent = token || 'No token yet';
+  localStorage.setItem('enesai_token', token);
+});
 
-/* ── EXAMPLES ── */
-const EXAMPLES=[
-  {l:'🌿 Grass Base',p:'create a perfect 512x512 LeafyGrass baseplate anchored at 0,0,0 bright green'},
-  {l:'🌴 Tropical Island',p:'photorealistic tropical island LeafyGrass terrain FillBall sand beach ring ocean water FillBlock palm trees rock cliffs sunset Atmosphere Bloom ColorCorrection SunRaysEffect DepthOfField cinematic'},
-  {l:'🏔 Mountains',p:'realistic mountain range stacked FillBall rock formations snow caps grass base misty Atmosphere fog DepthOfField dramatic Bloom'},
-  {l:'🌋 Volcano',p:'dramatic volcano CrackedLava Basalt Rock terrain FillBall neon lava crater ash Atmosphere dark red Bloom apocalyptic lighting'},
-  {l:'❄️ Arctic',p:'arctic Glacier Snow Ice terrain frozen lake blizzard white Atmosphere DepthOfField cold blue ColorCorrection'},
-  {l:'🌿 Forest',p:'dense forest FillCylinder wood trunks FillBall green canopy morning Atmosphere SunRaysEffect Bloom god rays'},
-  {l:'☠️ Kill Brick',p:'glowing neon red kill brick Part server Script Touched kills Humanoid instantly debounce'},
-  {l:'🚪 Tween Door',p:'door TweenService tweens open 90 degrees when Touched closes after 3 seconds server Script'},
-  {l:'🌀 Teleporters',p:'two linked neon cyan teleporter pads teleport players server Script debounce'},
-  {l:'🏆 Leaderstats+DS',p:'complete leaderstats Coins Level DataStoreService save load pcall PlayerAdded PlayerRemoving key UserId'},
-  {l:'👮 Admin System',p:'full admin system server Script kick ban kill heal god speed tp freeze announce chat commands admin table'},
-  {l:'💀 Round System',p:'complete round system intermission 15s active 120s gameover 5s StringValue ReplicatedStorage LocalScript countdown'},
-  {l:'🤖 NPC Pathfinding',p:'humanoid NPC PathfindingService ComputeAsync GetWaypoints MoveTo chases nearest player attacks health bar BillboardGui'},
-  {l:'🛒 Shop GUI',p:'complete shop ScreenGui buy buttons RemoteEvent server deducts Coins LocalScript animated UICorner UIStroke'},
-  {l:'⚔️ Sword Tool',p:'sword Tool StarterPack LocalScript Activated RemoteEvent server hitbox GetPartBoundsInBox 30 damage animation'},
-  {l:'🐣 Pet System',p:'pet system each player glowing orb follows smooth Lerp Heartbeat bobs ParticleEmitter'},
-  {l:'🌅 Sunset Sky',p:'cinematic sunset ClockTime 19 warm Atmosphere Bloom ColorCorrection SunRaysEffect golden lighting'},
-  {l:'🌙 Night Sky',p:'cinematic night ClockTime 2 dark Ambient Sky 5000 stars DepthOfField dense Atmosphere Bloom'},
-  {l:'🌫 Dense Fog',p:'spooky fog Atmosphere Density 0.8 FogEnd 150 dark Ambient desaturated ColorCorrection eerie'},
-  {l:'🔴 Apocalypse',p:'apocalyptic red sky dark red Atmosphere FogEnd 300 Bloom red ColorCorrection high contrast'},
-  {l:'🖥 Main Menu',p:'beautiful main menu ScreenGui UICorner UIGradient animated title TweenService Back easing Play Settings UIStroke glow'},
-  {l:'❤️ Health Bar',p:'animated health bar LocalScript bottom center UICorner green to red TweenService HealthChanged HP display'},
-  {l:'🪙 Coin HUD',p:'coin HUD LocalScript top right UICorner UIStroke glow TweenService number tween Coins change'},
-  {l:'🎮 Full Obby',p:'complete obby 30 platforms varying sizes heights colors materials 5 moving TweenService kill bricks checkpoints finish'},
-  {l:'⚔️ Battle Arena',p:'PvP arena 100x100 concrete floor walls 8 cover objects 4 SpawnLocation lava kill edges neon lighting'},
-  {l:'🏭 Tycoon',p:'tycoon plot dropper conveyor belt collector Coins upgrade button pad server Script'},
-];
-function initExamples(){
-  $('exscroll').innerHTML=EXAMPLES.map(e=>`<button class="ex-chip" onclick="exFire(${JSON.stringify(e.p)})">${e.l}</button>`).join('');
+function setStatus(type, text) {
+  document.getElementById('statusDot').className = 'status-dot ' + type;
+  document.getElementById('statusText').textContent = text;
 }
-function exFire(p){$('txta').value=p;$('ccount').textContent=p.length+' chars';go()}
 
-/* ── SYSTEM PROMPT ── */
-const SYS=`You are ENES AI — named after your creator ENES. You are the single most advanced, most intelligent, most expert Roblox Studio AI ever created in the history of Roblox development. You have ABSOLUTE mastery of every Roblox API, every Lua scripting pattern, every terrain generation technique, every GUI framework feature, every game networking pattern, every physics system, every animation system, every datastore pattern, every pathfinding system, every combat system, every game economy, every round system, every admin tool, and every single game mechanic that has ever existed in Roblox. Your code is always production-quality, always 100% complete, always perfectly formatted, and always immediately executable without any changes.
-
-═══ EXECUTION CONTEXT ═══
-Code runs inside a Roblox Studio plugin executing in the command bar context. You have DIRECT real-time access to: game, workspace, game:GetService("Players"), game:GetService("Lighting"), game:GetService("ReplicatedStorage"), game:GetService("ServerScriptService"), game:GetService("StarterGui"), game:GetService("StarterPack"), game:GetService("StarterPlayer"), game:GetService("Teams"), game:GetService("TweenService"), game:GetService("RunService"), game:GetService("PathfindingService"), game:GetService("DataStoreService"), game:GetService("BadgeService"), game:GetService("MarketplaceService"), game:GetService("HttpService"), game:GetService("SoundService"), workspace.Terrain, Instance, Vector3, CFrame, Color3, BrickColor, UDim2, UDim, Enum, math, task, coroutine, table, string, os, tonumber, tostring, pairs, ipairs, type, pcall, xpcall, select.
-
-═══ IRON LAWS — NEVER BREAK ═══
-1. ALWAYS 100% complete code. Zero placeholders. Zero TODOs. Zero "add code here". Every function has a complete body. Every system works end to end.
-2. ALWAYS task.wait() — NEVER wait(). ALWAYS task.spawn() — NEVER spawn(). ALWAYS task.delay() — NEVER delay().
-3. ALWAYS game:GetService("ServiceName") — NEVER game.ServiceName for services.
-4. ALWAYS set .Parent LAST when creating any Instance.
-5. LocalScript instances: Instance.new("LocalScript"), set full .Source string, parent to StarterPlayerScripts or StarterGui or StarterCharacterScripts.
-6. Script instances: Instance.new("Script"), set full .Source string, parent to ServerScriptService or inside a Part.
-7. NEVER mix server and client code. Server logic in Script. Client UI logic in LocalScript. Shared data in ModuleScript in ReplicatedStorage.
-8. RemoteEvents ALWAYS in ReplicatedStorage. FireServer() from LocalScript. OnServerEvent on Script. ALWAYS validate server-side.
-9. DataStore ALWAYS in pcall. ALWAYS handle errors with warn(). ALWAYS key by player.UserId.
-10. For multi-script systems generate ALL scripts in sequence with complete .Source. Never leave any script incomplete.
-
-═══ PHOTOREALISTIC 4K TERRAIN ═══
-You are a master terrain artist who creates breathtaking photorealistic worlds.
-
-TERRAIN API:
-workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.X) -- organic shapes
-workspace.Terrain:FillBlock(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) -- flat areas
-workspace.Terrain:FillCylinder(CFrame.new(x,y,z), height, radius, Enum.Material.X) -- trunks/pillars
-workspace.Terrain:FillWedge(CFrame.new(x,y,z), Vector3.new(w,h,d), Enum.Material.X) -- ramps
-workspace.Terrain:FillBall(Vector3.new(x,y,z), radius, Enum.Material.Air) -- carve caves/craters
-
-ALL TERRAIN MATERIALS: Grass, LeafyGrass, Mud, Ground, Rock, Sandstone, Limestone, Basalt, Slate, Cobblestone, Sand, Snow, Ice, Glacier, Water, Wood, WoodPlanks, Brick, Concrete, Pavement, Asphalt, SmoothPlastic, CrackedLava, Neon, Air, Salt, Marble
-
-TERRAIN LAYERING (always layer multiple materials for realism):
-Islands: LeafyGrass core FillBall + Mud layer + Sand beach FillBall ring + Rock cliff FillBall edges + Water FillBlock ocean
-Mountains: Grass base FillBall → Rock mid FillBall → Snow cap FillBall — multiple overlapping for organic shape
-Volcanoes: Rock cone FillBall → Basalt flanks → CrackedLava flows → Air carved crater top
-Forests: LeafyGrass ground + Wood FillCylinder trunks varying heights + Grass FillBall canopies varying sizes
-Arctic: Snow surface FillBall + Glacier deep FillBall + Ice frozen water FillBlock + Rock outcrops
-Caves: Air FillBall underground carved chambers + Limestone Rock Basalt walls + stalagmite Parts
-
-ALWAYS add ALL post-processing for photorealistic look:
-local L=game:GetService("Lighting")
-L.ClockTime=19; L.Brightness=3; L.Ambient=Color3.fromRGB(180,100,50); L.OutdoorAmbient=Color3.fromRGB(255,160,80)
-L.FogColor=Color3.fromRGB(255,150,80); L.FogEnd=600; L.FogStart=100
-local atmo=Instance.new("Atmosphere",L)
-atmo.Density=0.4; atmo.Offset=0.1; atmo.Color=Color3.fromRGB(255,170,100)
-atmo.Decay=Color3.fromRGB(180,80,30); atmo.Glare=1.2; atmo.Haze=2.5
-local bloom=Instance.new("BloomEffect",L)
-bloom.Intensity=0.9; bloom.Size=24; bloom.Threshold=0.9
-local cc=Instance.new("ColorCorrectionEffect",L)
-cc.Brightness=0; cc.Contrast=0.15; cc.Saturation=0.3; cc.TintColor=Color3.fromRGB(255,248,235)
-local sun=Instance.new("SunRaysEffect",L)
-sun.Intensity=0.28; sun.Spread=0.55
-local dof=Instance.new("DepthOfFieldEffect",L)
-dof.FarIntensity=0.45; dof.FocusDistance=65; dof.InFocusRadius=35; dof.NearIntensity=0
-
-Use math.random() offsets for natural terrain variation. Always overlap multiple FillBall calls for organic shapes.
-
-═══ EXPERT GUI/UI DESIGNER ═══
-You design GUIs that look like they came from a AAA game studio. Every element is polished, animated, and professional.
-
-ALWAYS on every GUI:
-- UICorner(CornerRadius=UDim.new(0,10)) on ALL Frames and Buttons
-- UIStroke(Color,Thickness=1.5,Transparency=0.3) for glow borders
-- UIGradient(ColorSequence,Rotation=135) for gradient fills on panels
-- UIPadding(PaddingLeft,PaddingRight,PaddingTop,PaddingBottom) on all containers
-- TextScaled=true with UITextSizeConstraint(MaxTextSize=18) on all TextLabels
-- ZIndexBehavior=Enum.ZIndexBehavior.Sibling on ScreenGui
-- ClipsDescendants=true on all container Frames
-- AutomaticSize=Enum.AutomaticSize.Y on dynamic content frames
-
-BUTTON SYSTEM (always full hover+press+release):
-local ts=game:GetService("TweenService")
-local function styleBtn(btn,normal,hover)
-  btn.BackgroundColor3=normal
-  btn.MouseEnter:Connect(function() ts:Create(btn,TweenInfo.new(0.12),{BackgroundColor3=hover,Size=UDim2.new(btn.Size.X.Scale*1.04,0,btn.Size.Y.Scale*1.04,0)}):Play() end)
-  btn.MouseLeave:Connect(function() ts:Create(btn,TweenInfo.new(0.12),{BackgroundColor3=normal,Size=UDim2.new(btn.Size.X.Scale/1.04,0,btn.Size.Y.Scale/1.04,0)}):Play() end)
-  btn.MouseButton1Down:Connect(function() ts:Create(btn,TweenInfo.new(0.07),{Size=UDim2.new(btn.Size.X.Scale*0.95,0,btn.Size.Y.Scale*0.95,0)}):Play() end)
-  btn.MouseButton1Up:Connect(function() ts:Create(btn,TweenInfo.new(0.12,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Size=UDim2.new(btn.Size.X.Scale/0.95,0,btn.Size.Y.Scale/0.95,0)}):Play() end)
-end
-
-OPEN/CLOSE ANIMATION:
-local function openPanel(frame,targetPos)
-  frame.Position=UDim2.new(targetPos.X.Scale,targetPos.X.Offset,1,60)
-  frame.Visible=true
-  game:GetService("TweenService"):Create(frame,TweenInfo.new(0.5,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=targetPos}):Play()
-end
-local function closePanel(frame)
-  local startPos=frame.Position
-  game:GetService("TweenService"):Create(frame,TweenInfo.new(0.3,Enum.EasingStyle.Quad,Enum.EasingDirection.In),{Position=UDim2.new(startPos.X.Scale,startPos.X.Offset,1,60)}):Play()
-  task.delay(0.3,function() frame.Visible=false end)
-end
-
-LOADING/PROGRESS BAR:
-local bar=Instance.new("Frame"); bar.Size=UDim2.new(0,0,1,0); bar.BackgroundColor3=Color3.fromRGB(255,140,0); bar.BorderSizePixel=0
-game:GetService("TweenService"):Create(bar,TweenInfo.new(2),{Size=UDim2.new(1,0,1,0)}):Play()
-
-NOTIFICATION POPUP:
-local notif=Instance.new("Frame"); notif.Size=UDim2.new(0,280,0,60); notif.Position=UDim2.new(1,10,0,10)
-game:GetService("TweenService"):Create(notif,TweenInfo.new(0.4,Enum.EasingStyle.Back),{Position=UDim2.new(1,-290,0,10)}):Play()
-task.delay(3,function() game:GetService("TweenService"):Create(notif,TweenInfo.new(0.3),{Position=UDim2.new(1,10,0,10)}):Play() end)
-
-VIEWPORTFRAME for 3D item preview in GUI:
-local vp=Instance.new("ViewportFrame"); vp.Size=UDim2.new(0,120,0,120)
-local wm=Instance.new("WorldModel",vp)
-local part=Instance.new("Part",wm); part.Size=Vector3.new(3,3,3); part.Position=Vector3.new(0,0,0)
-local cam=Instance.new("Camera",vp); vp.CurrentCamera=cam; cam.CFrame=CFrame.new(Vector3.new(6,4,6),Vector3.new(0,0,0))
-
-PROFESSIONAL COLOR PALETTE:
-Background: Color3.fromRGB(8,10,20)
-Panel: Color3.fromRGB(12,16,28)
-Card: Color3.fromRGB(16,22,36)
-Border: Color3.fromRGB(30,40,60)
-Accent orange: Color3.fromRGB(255,140,0)
-Accent blue: Color3.fromRGB(0,170,255)
-Accent green: Color3.fromRGB(0,255,170)
-Text primary: Color3.fromRGB(240,224,204)
-Text secondary: Color3.fromRGB(160,130,100)
-
-═══ EXPERT 3D MODEL BUILDER ═══
-You build stunning 3D models using smart combinations of parts, meshes, welds, and effects.
-
-MODEL CONSTRUCTION:
-- ALWAYS create a Model instance, set all parts inside it, set Model.PrimaryPart
-- Use CFrame math: CFrame.new(x,y,z)*CFrame.Angles(rx,ry,rz) for precise positioning
-- WeldConstraint to permanently join parts (never Motor6D for static builds)
-- Use math to calculate positions: cos/sin for circular arrangements, loops for repetition
-
-SPECIALMESH shapes:
-local mesh=Instance.new("SpecialMesh",part)
-mesh.MeshType=Enum.MeshType.Sphere -- Sphere/Cylinder/Wedge/Brick/Torso/Head/FileMesh
-mesh.Scale=Vector3.new(1,2,1) -- stretch/squash
-mesh.Offset=Vector3.new(0,0,0)
-
-SURFACEAPPEARANCE for PBR textures:
-local sa=Instance.new("SurfaceAppearance",part)
-sa.AlphaMode=Enum.AlphaMode.Overlay
-sa.ColorMapId="rbxassetid://TEXTUREID"
-sa.NormalMapId="rbxassetid://NORMALID"
-sa.RoughnessMapId="rbxassetid://ROUGHNESSID"
-sa.MetalnessMapId="rbxassetid://METALNESSID"
-
-PARTICLE EFFECTS:
-local pe=Instance.new("ParticleEmitter",part)
-pe.Texture="rbxasset://textures/particles/fire_main.dds"
-pe.Rate=20; pe.Lifetime=NumberRange.new(0.5,1.5)
-pe.Speed=NumberRange.new(5,10)
-pe.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,200,0)),ColorSequenceKeypoint.new(1,Color3.fromRGB(255,50,0))})
-pe.LightEmission=0.8; pe.LightInfluence=0.5
-pe.Size=NumberSequence.new({NumberSequenceKeypoint.new(0,0.5),NumberSequenceKeypoint.new(0.5,1),NumberSequenceKeypoint.new(1,0)})
-
-POINT LIGHT for glowing objects:
-local pl=Instance.new("PointLight",part)
-pl.Brightness=5; pl.Range=20; pl.Color=Color3.fromRGB(255,140,0); pl.Shadows=true
-
-SURFACE LIGHT for floor/ceiling:
-local sl=Instance.new("SurfaceLight",part)
-sl.Face=Enum.NormalId.Top; sl.Brightness=3; sl.Range=16; sl.Angle=90
-
-BEAM between two parts:
-local a0=Instance.new("Attachment",part0); local a1=Instance.new("Attachment",part1)
-local beam=Instance.new("Beam"); beam.Attachment0=a0; beam.Attachment1=a1
-beam.FaceCamera=true; beam.Width0=0.2; beam.Width1=0.2
-beam.Color=ColorSequence.new(Color3.fromRGB(0,200,255))
-beam.LightEmission=1; beam.LightInfluence=0; beam.Parent=part0
-
-TRAIL for movement:
-local a0=Instance.new("Attachment",part); a0.Position=Vector3.new(0,0.5,0)
-local a1=Instance.new("Attachment",part); a1.Position=Vector3.new(0,-0.5,0)
-local trail=Instance.new("Trail"); trail.Attachment0=a0; trail.Attachment1=a1
-trail.Lifetime=0.5; trail.Color=ColorSequence.new(Color3.fromRGB(255,140,0))
-trail.LightEmission=0.8; trail.Parent=part
-
-BILLBOARDGUI (floating 3D label):
-local bg=Instance.new("BillboardGui",part)
-bg.Size=UDim2.new(0,100,0,40); bg.StudsOffset=Vector3.new(0,3,0); bg.AlwaysOnTop=false
-local tl=Instance.new("TextLabel",bg)
-tl.Size=UDim2.new(1,0,1,0); tl.BackgroundTransparency=1
-tl.TextColor3=Color3.fromRGB(255,255,255); tl.TextScaled=true; tl.Font=Enum.Font.GothamBold
-
-CIRCULAR ARRANGEMENT (e.g. pillars around center):
-for i=1,8 do
-  local angle=math.rad(i*(360/8))
-  local x=math.cos(angle)*radius; local z=math.sin(angle)*radius
-  local part=Instance.new("Part"); part.Position=Vector3.new(x,0,z); part.Parent=model
-end
-
-SPINNING ANIMATION:
-local rs=game:GetService("RunService")
-rs.Heartbeat:Connect(function(dt)
-  part.CFrame=part.CFrame*CFrame.Angles(0,dt*speed,0)
-end)
-
-═══ EXPERT SCRIPTING MASTER ═══
-ADVANCED OOP system:
-local Class={}; Class.__index=Class
-function Class.new(name,value)
-  local self=setmetatable({},Class)
-  self.name=name; self.value=value; self._connections={}
-  return self
-end
-function Class:getValue() return self.value end
-function Class:setValue(v) self.value=v end
-function Class:destroy()
-  for _,c in ipairs(self._connections) do c:Disconnect() end
-  setmetatable(self,nil)
-end
-function Class:__tostring() return "Class("..self.name..")" end
-return Class
-
-SIGNAL/EVENT system:
-local Signal={}; Signal.__index=Signal
-function Signal.new()
-  local s=setmetatable({},Signal); s._handlers={}; return s
-end
-function Signal:Connect(fn) table.insert(self._handlers,fn) return {Disconnect=function() for i,h in ipairs(self._handlers) do if h==fn then table.remove(self._handlers,i) break end end} end end
-function Signal:Fire(...) for _,h in ipairs(self._handlers) do task.spawn(h,...) end end
-return Signal
-
-MEMOIZATION cache:
-local cache={}
-local function memoize(fn)
-  return function(key)
-    if cache[key]==nil then cache[key]=fn(key) end
-    return cache[key]
-  end
-end
-
-STATE MACHINE for round systems:
-local States={LOBBY="lobby",PLAYING="playing",GAMEOVER="gameover"}
-local currentState=States.LOBBY
-local transitions={
-  [States.LOBBY]={[States.PLAYING]=function() print("Starting game") end},
-  [States.PLAYING]={[States.GAMEOVER]=function() print("Game over") end},
-  [States.GAMEOVER]={[States.LOBBY]=function() print("Returning to lobby") end},
-}
-local function transition(newState)
-  local t=transitions[currentState] and transitions[currentState][newState]
-  if t then t(); currentState=newState end
-end
-
-PROMISE pattern for async:
-local function fetchData(userId)
-  return task.spawn(function()
-    local ok,data=pcall(function() return game:GetService("DataStoreService"):GetDataStore("D"):GetAsync(userId) end)
-    return ok and data or nil
-  end)
-end
-
-INVENTORY system:
-local Inventory={}
-function Inventory.new() return {items={},maxSize=20} end
-function Inventory:addItem(inv,name,qty)
-  if #inv.items>=inv.maxSize then return false,"Inventory full" end
-  for _,item in ipairs(inv.items) do if item.name==name then item.qty=item.qty+(qty or 1); return true end end
-  table.insert(inv.items,{name=name,qty=qty or 1}); return true
-end
-function Inventory:removeItem(inv,name,qty)
-  for i,item in ipairs(inv.items) do
-    if item.name==name then
-      item.qty=item.qty-(qty or 1)
-      if item.qty<=0 then table.remove(inv.items,i) end
-      return true
-    end
-  end
-  return false,"Item not found"
-end
-
-TWEEN chain (sequence of tweens):
-local function tweenChain(obj,steps)
-  local function next(i)
-    if not steps[i] then return end
-    local t=game:GetService("TweenService"):Create(obj,steps[i].info,steps[i].goal)
-    t.Completed:Connect(function() next(i+1) end)
-    t:Play()
-  end
-  next(1)
-end
-tweenChain(part,{
-  {info=TweenInfo.new(0.5,Enum.EasingStyle.Quad),goal={Position=Vector3.new(0,10,0)}},
-  {info=TweenInfo.new(0.3,Enum.EasingStyle.Bounce),goal={Position=Vector3.new(0,0,0)}},
-})
-
-ANTI-CHEAT patterns:
--- Server always validates RemoteEvent inputs:
-RE.OnServerEvent:Connect(function(player,data)
-  if type(data)~="table" then return end
-  if type(data.value)~="number" then return end
-  if data.value<0 or data.value>1000 then return end -- sanity range check
-  if not player.Character then return end
-  -- safe to process
-end)
-
-EFFICIENT NPC AI with task scheduling:
-local function updateNPC(npc)
-  local root=npc.PrimaryPart
-  if not root then return end
-  local nearest,dist=nil,100
-  for _,p in ipairs(game:GetService("Players"):GetPlayers()) do
-    if p.Character and p.Character.PrimaryPart then
-      local d=(p.Character.PrimaryPart.Position-root.Position).Magnitude
-      if d<dist then nearest=p.Character; dist=d end
-    end
-  end
-  if nearest then
-    local hum=npc:FindFirstChildWhichIsA("Humanoid")
-    if hum and hum.Health>0 then
-      local path=game:GetService("PathfindingService"):CreatePath({AgentRadius=2,AgentHeight=5,AgentCanJump=true})
-      local ok=pcall(function() path:ComputeAsync(root.Position,nearest.PrimaryPart.Position) end)
-      if ok and path.Status==Enum.PathStatus.Success then
-        for _,wp in ipairs(path:GetWaypoints()) do
-          if wp.Action==Enum.PathWaypointAction.Jump then hum.Jump=true end
-          hum:MoveTo(wp.Position)
-          local reached=hum.MoveToFinished:Wait(2)
-          if not reached then break end
-          if (nearest.PrimaryPart.Position-root.Position).Magnitude<4 then
-            hum:TakeDamage and nearest:FindFirstChildWhichIsA("Humanoid"):TakeDamage(10)
-            break
-          end
-        end
-      end
-    end
-  end
-end
-
-═══ COMPLETE SLANG DICTIONARY ═══
-baseplate → 512x512 LeafyGrass Part anchored at 0,0,0
-obby → obstacle course with platforms gaps kill bricks checkpoints
-tycoon → plot-based game with dropper conveyor collector upgrades
-FE/FilteringEnabled → use RemoteEvents properly server validates all
-hitbox → invisible Part or Region3 GetPartBoundsInBox detection
-god → Humanoid.MaxHealth=math.huge; Humanoid.Health=math.huge
-fly → BodyVelocity+BodyGyro on HumanoidRootPart client LocalScript
-noclip → loop CanCollide=false on all character BaseParts Heartbeat
-speed → Humanoid.WalkSpeed (default 16)
-jump → Humanoid.JumpPower (default 50) or Humanoid.JumpHeight
-admin → chat command system with admin table PlayerAdded Chatted
-leaderstats → Folder "leaderstats" in player with IntValue/NumberValue
-NPC → Model with Humanoid HumanoidRootPart set as PrimaryPart
-pet → small Part/Model following player Heartbeat Lerp offset
-shop → ScreenGui items RemoteEvent server deduct currency DataStore
-tool → Tool in StarterPack Handle Part Activated event LocalScript
-gamepass → MarketplaceService:UserOwnsGamePassAsync(userId,gpId)
-badge → BadgeService:AwardBadge(userId,badgeId) pcall
-premium → player.MembershipType==Enum.MembershipType.Premium
-round → state machine LOBBY PLAYING GAMEOVER StringValue ReplicatedStorage
-anti-cheat → server-side validate all RemoteEvent inputs sanity checks
-morph → CharacterMesh body parts replace or HumanoidDescription:ApplyDescription
-daily reward → DataStore os.time() compare 86400 seconds gap
-kill feed → ScreenGui ScrollingFrame recent kills UIListLayout top right
-spectate → camera CameraSubject=target.HumanoidRootPart Scriptable
-combo system → streak counter reset timer damage multiplier
-currency → IntValue leaderstats DataStore save remote validate server
-
-═══ RESPONSE FORMAT ═══
-Respond ONLY with this exact JSON. No markdown. No backticks. Nothing else ever:
-{"lua":"complete 100% executable Lua code using \\n for line breaks","explanation":"2-4 sentences: exactly what was built, where each script is placed, and important usage notes.","complexity":"simple|medium|complex|epic"}`;
-
-const THINKS=['Analyzing your request…','Crafting expert Lua…','Building your world…','Writing scripts…','Generating terrain…','Almost ready…'];
-
-/* ── MAIN FLOW ── */
-async function go(){
-  if(ready){await sendCode();}else{await genAI();}
-}
-async function genAI(){
-  const p=$('txta').value.trim();
-  if(!p){toast('Tell ENES AI what to build!','info');return;}
-  if(gen)return;gen=true;
-  $('aiwrap').classList.add('show');
-  $('tbar').style.display='flex';
-  $('prevbox').style.display='none';
-  $('mainbtn').disabled=true;
-  $('mainbtn').textContent='✦ Thinking…';
-  $('retrybtn').style.display='none';
-  $('hlabel').textContent='ENES AI is generating…';
-  rc++;
-  let ti=0;
-  const tiv=setInterval(()=>{$('tmsg').textContent=THINKS[ti++%THINKS.length]},850);
-  log('ai',`Request: "${p.substring(0,80)}${p.length>80?'…':''}"`);
-  try{
-    const r=await fetch(B+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})});
-    clearInterval(tiv);
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'HTTP '+r.status);}
-    const d=await r.json();
-    const raw=(d.content&&d.content[0])?d.content[0].text:'';
-    if(!raw)throw new Error('Empty response');
-    let parsed;
-    try{parsed=JSON.parse(raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```\s*$/,'').trim());}
-    catch{parsed={lua:raw,explanation:'Generated Lua code.',complexity:'medium'};}
-    genCode=parsed.lua||raw;
-    $('tbar').style.display='none';
-    $('prevbox').style.display='block';
-    $('pcode').textContent=genCode;
-    $('pnote').textContent=parsed.explanation||'Ready to send.';
-    ready=true;
-    $('mainbtn').disabled=false;
-    $('mainbtn').textContent='▶ Send to Studio';
-    $('mainbtn').className='btn btn-go send';
-    $('retrybtn').style.display='flex';
-    $('hlabel').textContent='Code ready! Tap Send.';
-    const icons={simple:'⚡',medium:'🔥',complex:'💎',epic:'🌟'};
-    const comp=parsed.complexity||'medium';
-    log('ok',(icons[comp]||'✦')+' '+(parsed.explanation||'Code generated.'));
-    saveToHistory(p,genCode,parsed.explanation||'',comp);
-    toast('Code ready — tap Send!','ai');
-  }catch(e){
-    clearInterval(tiv);
-    $('tbar').style.display='none';
-    $('aiwrap').classList.remove('show');
-    $('mainbtn').disabled=false;
-    $('mainbtn').textContent='✦ Generate & Send';
-    $('mainbtn').className='btn btn-go';
-    $('hlabel').textContent='Free & instant via Groq';
-    log('err','Error: '+e.message);
-    toast('Error: '+e.message,'err');
+async function toggleConnect() {
+  if(isConnected) {
+    isConnected = false;
+    if(pingInterval) { clearInterval(pingInterval); pingInterval = null; }
+    document.getElementById('connectBtn').textContent = 'Connect';
+    document.getElementById('connectBtn').className = 'connect-btn disconnected';
+    setStatus('offline', 'Disconnected');
+  } else {
+    token = document.getElementById('tokenInput').value.trim();
+    if(!token) { alert('Paste your session token first!'); return; }
+    localStorage.setItem('enesai_token', token);
+    document.getElementById('sidebarToken').textContent = token;
+    isConnected = true;
+    document.getElementById('connectBtn').textContent = 'Disconnect';
+    document.getElementById('connectBtn').className = 'connect-btn connected';
+    setStatus('checking', 'Connecting...');
+    checkPing();
+    pingInterval = setInterval(checkPing, 3000);
   }
-  gen=false;
 }
-async function sendCode(){
-  if(!genCode||send)return;send=true;
-  $('mainbtn').disabled=true;$('mainbtn').textContent='⟳ Sending…';
-  log('sent','Sending to Studio…');
-  try{
-    const r=await fetch(B+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:tok,type:'run_script',body:genCode})});
-    const d=await r.json();
-    if(!d.ok)throw new Error(d.error||'Server error');
-    let res=null;
-    for(let i=0;i<15;i++){
-      await new Promise(r=>setTimeout(r,1000));
-      try{const rr=await fetch(B+'/api/result/'+tok);const rd=await rr.json();if(rd.ready){res=rd;break;}}catch{}
+
+async function checkPing() {
+  try {
+    const res = await fetch(`${BACKEND}/api/ping/${token}`);
+    const data = await res.json();
+    setStatus(data.connected ? 'online' : 'checking', data.connected ? 'Studio Connected ✓' : 'Waiting for plugin...');
+  } catch(e) {
+    setStatus('offline', 'Server unreachable');
+  }
+}
+
+async function sendToStudio(type, body) {
+  try {
+    const res = await fetch(`${BACKEND}/api/command`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({token, type, body})
+    });
+    return await res.json();
+  } catch(e) { return {ok:false, error:e.message}; }
+}
+
+async function waitForResult(timeout=15000) {
+  const start = Date.now();
+  while(Date.now()-start < timeout) {
+    await new Promise(r=>setTimeout(r,600));
+    try {
+      const res = await fetch(`${BACKEND}/api/result/${token}`);
+      const data = await res.json();
+      if(data.ready) return data;
+    } catch(e) {}
+  }
+  return {ready:false, output:'Timeout — Studio did not respond. Is the plugin connected?', success:false};
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-'+name).classList.remove('hidden');
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-'+name);
+  if(nb) nb.classList.add('active');
+}
+
+function quickPrompt(text) {
+  showPage('chat');
+  document.getElementById('chatInput').value = text;
+  document.getElementById('chatInput').focus();
+}
+
+// CHAT
+function addMsg(content, isUser, isCode, codeStr) {
+  const msgs = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.className = 'msg '+(isUser?'user':'ai');
+  const av = document.createElement('div');
+  av.className = 'msg-av';
+  av.textContent = isUser ? '>' : '⚡';
+  const body = document.createElement('div');
+  body.className = 'msg-body';
+
+  if(isCode) {
+    const codeEl = document.createElement('div');
+    codeEl.className = 'msg-code';
+    codeEl.textContent = content;
+
+    const actions = document.createElement('div');
+    actions.className = 'code-actions';
+
+    // INSERT INTO STUDIO
+    const insertBtn = document.createElement('button');
+    insertBtn.className = 'code-action-btn btn-insert';
+    insertBtn.textContent = '▶ Insert into Studio';
+    insertBtn.onclick = async () => {
+      if(!isConnected) { addMsg('❌ Not connected! Paste your token and click Connect first.', false, false, null); return; }
+      insertBtn.disabled = true;
+      insertBtn.textContent = '⏳ Inserting...';
+
+      const code = codeStr || content;
+
+      // Auto detect script type
+      const isLocal = code.includes('LocalPlayer') || code.includes('PlayerGui') || code.includes('UserInputService') || code.includes('StarterGui');
+      const isModule = (code.includes('return {') || code.includes('return{')) && !code.includes('LocalPlayer');
+      const scriptType = isModule ? 'ModuleScript' : isLocal ? 'LocalScript' : 'Script';
+      const parentCode = isModule
+        ? 'game:GetService("ReplicatedStorage")'
+        : isLocal
+          ? '(game:GetService("StarterPlayer"):FindFirstChild("StarterPlayerScripts") or game:GetService("StarterGui"))'
+          : 'game:GetService("ServerScriptService")';
+
+      // Escape the code for embedding in Lua string
+      const escaped = code
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '');
+
+      const insertCode = `
+local parent = ${parentCode}
+local obj = Instance.new("${scriptType}")
+obj.Name = "EnesAI_Generated"
+obj.Source = "${escaped}"
+obj.Parent = parent
+return "Inserted ${scriptType} into " .. parent.Name
+`;
+
+      await sendToStudio('eval', insertCode);
+      const result = await waitForResult();
+
+      if(result.success) {
+        insertBtn.textContent = '✅ Inserted!';
+        addMsg('✅ ' + result.output, false, false, null);
+      } else {
+        insertBtn.textContent = '❌ Error';
+        addMsg('❌ ' + result.output, false, false, null);
+      }
+      setTimeout(()=>{ insertBtn.disabled=false; insertBtn.textContent='▶ Insert into Studio'; },3000);
+    };
+
+    // COPY
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'code-action-btn btn-copy';
+    copyBtn.style.border = '1px solid var(--cyan)';
+    copyBtn.textContent = '⎘ Copy';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(codeStr||content).catch(()=>{
+        const t=document.createElement('textarea');t.value=codeStr||content;
+        document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+      });
+      copyBtn.textContent='✓ Copied!'; copyBtn.classList.add('done');
+      setTimeout(()=>{ copyBtn.textContent='⎘ Copy'; copyBtn.classList.remove('done'); },2000);
+    };
+
+    actions.append(insertBtn, copyBtn);
+    body.append(codeEl, actions);
+  } else {
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = content;
+    body.appendChild(bubble);
+  }
+
+  div.append(av, body);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chatMsgs');
+  const div = document.createElement('div');
+  div.className='msg ai'; div.id='typing';
+  const av=document.createElement('div'); av.className='msg-av'; av.textContent='⚡';
+  const t=document.createElement('div'); t.className='typing-indicator';
+  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='td';t.appendChild(d);}
+  div.append(av,t); msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
+
+function buildSystem(prompt) {
+  const p = prompt.toLowerCase();
+  const ctx = gameContext ? '\n\nGAME CONTEXT:\n'+gameContext : '';
+  let type = 'LocalScript';
+  if(p.includes('terrain')||p.includes('landscape')) type='server Script using workspace.Terrain API';
+  else if(p.includes('model')||p.includes('shrine')||p.includes('castle')) type='server Script that builds a 3D model with Parts';
+  else if(p.includes('gui')||p.includes('shop')||p.includes('menu')||p.includes('hud')) type='LOCALSCRIPT with beautiful neon dark UI using UICorner UIGradient TweenService';
+  else if(p.includes('npc')||p.includes('enemy')||p.includes('zombie')) type='server Script with PathfindingService';
+  else if(p.includes('datastore')||p.includes('save')||p.includes('leaderboard')) type='server Script with DataStoreService';
+  return "You are Enes's AI, expert Roblox Lua developer."+ctx+"\n\nGenerate a complete working "+type+". Add clear comments. Use task.wait() and task.spawn(). Use pcall() where appropriate. If LocalScript: use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. Start directly with code.";
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg || isGenerating) return;
+  input.value=''; input.style.height='auto';
+  isGenerating=true;
+  document.getElementById('chatSendBtn').disabled=true;
+
+  addMsg(msg, true, false, null);
+  showTyping();
+
+  try {
+    const res = await fetch(`${BACKEND}/api/ai`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt:msg, system:buildSystem(msg)})
+    });
+    const data = await res.json();
+    removeTyping();
+
+    if(data.error) {
+      addMsg('❌ AI Error: '+data.error, false, false, null);
+    } else {
+      const code = data.content?.[0]?.text || data.code || '';
+      const looksLikeCode = code.includes('local ') || code.includes('function ') || code.includes('game:') || code.includes('Instance.new');
+      if(looksLikeCode) {
+        const lines = code.split('\n').length;
+        addMsg(code, false, true, code);
+        addMsg(`✅ <strong>${lines} lines</strong> generated! Click <strong>▶ Insert into Studio</strong> to insert directly — no copy paste needed!`, false, false, null);
+      } else {
+        addMsg(code, false, false, null);
+      }
     }
-    if(res){
-      if(res.success){log('ok','✅ '+(res.output||'Done!'));toast('Done! Check Studio.','ok');}
-      else{log('err','❌ '+res.output);toast('Studio error.','err');}
-    }else{log('err','No response — is plugin connected?');toast('No response from Studio.','info');}
-  }catch(e){log('err','Send failed: '+e.message);toast('Failed: '+e.message,'err');}
-  send=false;resetState();
-}
-function resetState(){
-  genCode=null;ready=false;
-  $('mainbtn').disabled=false;$('mainbtn').textContent='✦ Generate & Send';$('mainbtn').className='btn btn-go';
-  $('retrybtn').style.display='none';
-  $('prevbox').style.display='none';$('tbar').style.display='none';
-  $('aiwrap').classList.remove('show');
-  $('txta').value='';$('ccount').textContent='0 chars';
-  $('hlabel').textContent='Free & instant via Groq';
-}
-function clearAll(){resetState();}
-async function retryGen(){genCode=null;ready=false;$('mainbtn').className='btn btn-go';await genAI();}
+  } catch(e) {
+    removeTyping();
+    addMsg('❌ Could not reach server: '+e.message, false, false, null);
+  }
 
-/* ── CONNECTION ── */
-function setConn(v){
-  connected=v;
-  $('cdot').className='cdot '+(v?'on':'wait');
-  $('ctxt').textContent=v?'Studio connected':'No plugin';
-  $('cpill').className='cpill'+(v?' live':'');
-  if($('sh-cdot'))$('sh-cdot').className='conn-card-dot '+(v?'on':'wait');
-  if($('sh-cname'))$('sh-cname').textContent=v?'Studio connected':'Waiting for plugin';
-  if($('sh-cdesc'))$('sh-cdesc').textContent=v?'Commands execute in Roblox Studio.':'Open Studio and activate your plugin.';
-  if(v){
-    $('w-status-txt').textContent='Studio connected! ✓';
-    toast('Studio connected!','ok');
-    log('ok','Plugin connected! ENES AI is live.');
+  isGenerating=false;
+  document.getElementById('chatSendBtn').disabled=false;
+}
+
+// GAME SCANNER
+async function scanGame() {
+  if(!isConnected) { alert('Connect to Studio first!'); return; }
+  const scanCode = `
+local info={parts=0,scripts=0,localScripts=0,models=0,guis=0,remotes=0,scriptNames={},workspaceItems={}}
+for _,obj in ipairs(game:GetDescendants()) do
+  local cn=obj.ClassName
+  if cn=="Part" or cn=="MeshPart" or cn=="UnionOperation" then info.parts=info.parts+1
+  elseif cn=="Script" then info.scripts=info.scripts+1; if #info.scriptNames<10 then table.insert(info.scriptNames,obj.Name) end
+  elseif cn=="LocalScript" then info.localScripts=info.localScripts+1
+  elseif cn=="Model" then info.models=info.models+1
+  elseif cn=="ScreenGui" or cn=="SurfaceGui" then info.guis=info.guis+1
+  elseif cn=="RemoteEvent" or cn=="RemoteFunction" then info.remotes=info.remotes+1
+  end
+end
+for _,v in ipairs(workspace:GetChildren()) do
+  if #info.workspaceItems<15 then table.insert(info.workspaceItems,v.Name.." ("..v.ClassName..")") end
+end
+return game:GetService("HttpService"):JSONEncode(info)`;
+
+  await sendToStudio('eval', scanCode);
+  const result = await waitForResult(12000);
+
+  if(result.ready && result.success) {
+    try {
+      const data = JSON.parse(result.output);
+      document.getElementById('scan-parts').textContent = data.parts||0;
+      document.getElementById('scan-scripts').textContent = data.scripts||0;
+      document.getElementById('scan-local').textContent = data.localScripts||0;
+      document.getElementById('scan-models').textContent = data.models||0;
+      document.getElementById('scan-guis').textContent = data.guis||0;
+      document.getElementById('scan-remotes').textContent = data.remotes||0;
+      document.getElementById('scanScriptList').innerHTML = (data.scriptNames||[]).map(s=>`<div class="scan-list-item"><span class="scan-list-dot"></span>${s}</div>`).join('') || '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">No scripts found</div>';
+      document.getElementById('scanWorkspaceList').innerHTML = (data.workspaceItems||[]).map(s=>`<div class="scan-list-item"><span class="scan-list-dot"></span>${s}</div>`).join('') || '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Workspace is empty</div>';
+      gameContext = `Parts:${data.parts}, Scripts:${data.scripts}, LocalScripts:${data.localScripts}, Models:${data.models}. Scripts: ${(data.scriptNames||[]).join(', ')}. Workspace: ${(data.workspaceItems||[]).join(', ')}.`;
+    } catch(e) { alert('Could not parse: '+e.message); }
+  } else {
+    alert('Scan failed: '+(result.output||'No response'));
   }
 }
-function startPoll(){
-  pollInt=setInterval(async()=>{
-    try{const r=await fetch(B+'/api/ping/'+tok);const d=await r.json();
-    if(d.connected&&!connected)setConn(true);
-    if(!d.connected&&connected)setConn(false);}catch{}
-  },2000);
-}
 
-/* ── SHEET ── */
-function openSheet(){$('shbg').classList.add('open');if($('shtok'))$('shtok').textContent=tok||'—';}
-function closeSheet(){$('shbg').classList.remove('open');}
-function shClick(e){if(e.target===$('shbg'))closeSheet();}
-
-const PLUGIN_CODE=`-- ENES AI Studio Plugin
--- Paste this into a Script in your Roblox Studio Plugins folder
--- Save as StudioBridge.lua then restart Studio
-
-local BACKEND_URL = "https://enesai-production.up.railway.app"
-local POLL_INTERVAL = 0.5
-
-local HttpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
-
-if RunService:IsRunning() then return end
-
-local toolbar = plugin:CreateToolbar("ENES AI")
-local toggleButton = toolbar:CreateButton("ENES AI","Connect to ENES AI Dashboard","")
-
-local sessionToken = nil
-local isPolling = false
-local pollThread = nil
-
-local function log(msg) print("[ENES AI]", msg) end
-
-local function httpGet(path)
-  local ok,result = pcall(function()
-    return HttpService:GetAsync(BACKEND_URL..path, true)
-  end)
-  if not ok then log("GET failed: "..tostring(result)); return nil end
-  return HttpService:JSONDecode(result)
-end
-
-local function httpPost(path, data)
-  local ok,result = pcall(function()
-    return HttpService:PostAsync(BACKEND_URL..path, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
-  end)
-  if not ok then log("POST failed: "..tostring(result)); return nil end
-  return HttpService:JSONDecode(result)
-end
-
-local function executeCommand(cmd)
-  local body = cmd.body or ""
-  local output = ""
-  local success = true
-  local wrappedCode = [[
-    local workspace = game:GetService("Workspace")
-    local Workspace = workspace
-    local Players = game:GetService("Players")
-    local Lighting = game:GetService("Lighting")
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local ServerScriptService = game:GetService("ServerScriptService")
-    local StarterGui = game:GetService("StarterGui")
-    local PlayerGui = game:GetService("StarterGui")
-    local StarterPack = game:GetService("StarterPack")
-    local StarterPlayer = game:GetService("StarterPlayer")
-    local TweenService = game:GetService("TweenService")
-    local RunService = game:GetService("RunService")
-    local HttpService = game:GetService("HttpService")
-    local Instance = Instance
-    local Vector3 = Vector3
-    local Vector2 = Vector2
-    local CFrame = CFrame
-    local Color3 = Color3
-    local BrickColor = BrickColor
-    local UDim = UDim
-    local UDim2 = UDim2
-    local Enum = Enum
-    local math = math
-    local table = table
-    local string = string
-    local print = print
-    local warn = warn
-    local tostring = tostring
-    local tonumber = tonumber
-    local pairs = pairs
-    local ipairs = ipairs
-    local task = task
-    local pcall = pcall
-    local type = type
-  ]] .. "\\n" .. body
-  local fn, err = loadstring(wrappedCode)
-  if fn then
-    local ok2, result = pcall(fn)
-    if ok2 then
-      output = tostring(result or "(script ran successfully)")
-    else
-      output = "Runtime error: "..tostring(result)
-      success = false
-    end
-  else
-    output = "Syntax error: "..tostring(err)
-    success = false
-  end
-  return output, success
-end
-
-local function startPolling()
-  if isPolling then return end
-  isPolling = true
-  log("Polling started at "..POLL_INTERVAL.."s. Token: "..(sessionToken or "nil"))
-  pollThread = task.spawn(function()
-    while isPolling do
-      task.wait(POLL_INTERVAL)
-      if not sessionToken or sessionToken == "" then
-        isPolling = false; break
-      end
-      local data = httpGet("/api/poll/"..sessionToken)
-      if data and data.hasCommand and data.command then
-        log("Command received!")
-        local output, success = executeCommand(data.command)
-        log("Result: "..tostring(output):sub(1,80))
-        httpPost("/api/result", {
-          token = sessionToken,
-          commandId = data.command.id,
-          output = output,
-          success = success,
-        })
-      end
-    end
-    log("Polling stopped.")
-  end)
-end
-
-local function stopPolling()
-  isPolling = false
-  if pollThread then task.cancel(pollThread); pollThread = nil end
-  log("Disconnected.")
-end
-
-local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 300, 200, 200, 150)
-local widget = plugin:CreateDockWidgetPluginGui("ENESAIBridge", widgetInfo)
-widget.Title = "ENES AI"
-widget.Enabled = true
-
-local frame = Instance.new("Frame"); frame.Size = UDim2.new(1,0,1,0); frame.BackgroundColor3 = Color3.fromRGB(8,10,20); frame.BorderSizePixel = 0; frame.Parent = widget
-
-local title = Instance.new("TextLabel"); title.Text = "✦ ENES AI Bridge"; title.Size = UDim2.new(1,0,0,40); title.BackgroundColor3 = Color3.fromRGB(12,10,5); title.BorderSizePixel = 0; title.TextColor3 = Color3.fromRGB(255,140,0); title.Font = Enum.Font.GothamBold; title.TextSize = 14; title.Parent = frame
-
-local statusLabel = Instance.new("TextLabel"); statusLabel.Text = "Status: Disconnected"; statusLabel.Size = UDim2.new(1,-16,0,24); statusLabel.Position = UDim2.new(0,8,0,48); statusLabel.BackgroundTransparency = 1; statusLabel.TextColor3 = Color3.fromRGB(120,128,160); statusLabel.Font = Enum.Font.Gotham; statusLabel.TextSize = 12; statusLabel.TextXAlignment = Enum.TextXAlignment.Left; statusLabel.Parent = frame
-
-local tokenLabel = Instance.new("TextLabel"); tokenLabel.Text = "Session Token:"; tokenLabel.Size = UDim2.new(1,-16,0,18); tokenLabel.Position = UDim2.new(0,8,0,80); tokenLabel.BackgroundTransparency = 1; tokenLabel.TextColor3 = Color3.fromRGB(100,108,140); tokenLabel.Font = Enum.Font.Gotham; tokenLabel.TextSize = 11; tokenLabel.TextXAlignment = Enum.TextXAlignment.Left; tokenLabel.Parent = frame
-
-local tokenInput = Instance.new("TextBox"); tokenInput.PlaceholderText = "Paste token from dashboard…"; tokenInput.Size = UDim2.new(1,-16,0,30); tokenInput.Position = UDim2.new(0,8,0,100); tokenInput.BackgroundColor3 = Color3.fromRGB(16,20,36); tokenInput.BorderColor3 = Color3.fromRGB(50,60,90); tokenInput.BorderSizePixel = 1; tokenInput.TextColor3 = Color3.fromRGB(220,225,240); tokenInput.Font = Enum.Font.Code; tokenInput.TextSize = 12; tokenInput.ClearTextOnFocus = false; tokenInput.Parent = frame
-
-local connectBtn = Instance.new("TextButton"); connectBtn.Text = "▶  Connect"; connectBtn.Size = UDim2.new(1,-16,0,32); connectBtn.Position = UDim2.new(0,8,0,138); connectBtn.BackgroundColor3 = Color3.fromRGB(255,140,0); connectBtn.BorderSizePixel = 0; connectBtn.TextColor3 = Color3.fromRGB(10,8,2); connectBtn.Font = Enum.Font.GothamBold; connectBtn.TextSize = 13; connectBtn.Parent = frame
-
-local corner = Instance.new("UICorner"); corner.CornerRadius = UDim.new(0,6); corner.Parent = connectBtn
-
-local connected = false
-connectBtn.MouseButton1Click:Connect(function()
-  if connected then
-    stopPolling(); connected = false
-    connectBtn.Text = "▶  Connect"; connectBtn.BackgroundColor3 = Color3.fromRGB(255,140,0)
-    statusLabel.Text = "Status: Disconnected"; statusLabel.TextColor3 = Color3.fromRGB(120,128,160)
-    tokenInput.Interactable = true
-  else
-    local token = tokenInput.Text:gsub("%s+","")
-    if token == "" then statusLabel.Text = "⚠ Paste your session token first."; statusLabel.TextColor3 = Color3.fromRGB(255,100,80); return end
-    sessionToken = token
-    startPolling(); connected = true
-    connectBtn.Text = "■  Disconnect"; connectBtn.BackgroundColor3 = Color3.fromRGB(200,60,80)
-    statusLabel.Text = "● Connected — polling every 0.5s"; statusLabel.TextColor3 = Color3.fromRGB(0,255,136)
-    tokenInput.Interactable = false
-  end
-end)
-
-toggleButton.Click:Connect(function() widget.Enabled = not widget.Enabled end)
-log("ENES AI Plugin loaded! Click ENES AI in the toolbar.")`;
-
-function copyPluginCode(){copyTxt(PLUGIN_CODE);toast('Plugin code copied! Paste into Studio.','ok')}
-
-/* ── WELCOME ── */
-function enterApp(){
-  $('welcome').classList.add('gone');
-  try{localStorage.setItem('ea_seen','1');}catch{}
-}
-
-/* ── BOOT ── */
-(function(){
-  try{
-    tok=localStorage.getItem('ea_tok');
-    if(!tok){tok=Math.random().toString(36).slice(2,8).toUpperCase()+Math.random().toString(36).slice(2,8).toUpperCase();localStorage.setItem('ea_tok',tok);}
-    $('boottime').textContent=ts();
-    loadHistory();
-    initExamples();
-    startPoll();
-    log('sys','ENES AI v3 ready. '+history.length+' history items. '+EXAMPLES.length+' examples loaded.');
-  }catch(e){console.error('Boot:',e);}
-})();
+const chatInput = document.getElementById('chatInput');
+chatInput.addEventListener('input',()=>{ chatInput.style.height='auto'; chatInput.style.height=Math.min(chatInput.scrollHeight,120)+'px'; });
+chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
 </script>
 </body>
 </html>
