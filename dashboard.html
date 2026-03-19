@@ -65,7 +65,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .skip-link{display:block;text-align:center;margin-top:12px;font-size:11px;color:var(–text2);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:var(–ff);width:100%}
 
 /* APP */
-#app{display:none;height:100vh;flex-direction:column}
+#app{display:flex;height:100vh;flex-direction:column}
 #app.show{display:flex}
 
 /* TOPBAR */
@@ -85,6 +85,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.left-col{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
 /* INPUT ZONE */
 .input-zone{padding:14px 14px 10px;flex-shrink:0;background:var(–bg)}
