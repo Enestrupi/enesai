@@ -213,37 +213,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 <body>
 <div class="bg"><div class="bg-grid"></div><div class="bg-g1"></div><div class="bg-g2"></div></div>
 
-<!-- AUTH -->
-
-<div id="auth">
-  <div class="auth-logo"><span class="auth-pip"></span>NEXUS</div>
-  <div class="auth-sub">Roblox AI Studio</div>
-  <div class="auth-card">
-    <div class="astep on" id="s1">
-      <h2>Enter your username</h2>
-      <p>Type your Roblox username to get started. No verification needed.</p>
-      <div class="field"><label>Roblox Username</label><input type="text" id="rbx-user" placeholder="YourRobloxName" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/></div>
-      <div class="aerr" id="s1err">Please enter your username.</div>
-      <button class="abtn" id="s1btn" onclick="s1next()">Let's Go →</button>
-    </div>
-    <div class="astep" id="s3">
-      <h2 id="s3t">Welcome!</h2><p id="s3s">Profile loaded.</p>
-      <div class="rbxrow">
-        <img class="s3img" id="s3img" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''"/>
-        <div><strong id="s3n" style="color:var(--text);display:block;margin-bottom:3px;font-size:15px">—</strong><span style="font-size:11px;color:var(--text2)">✓ Ready to use NEXUS</span></div>
-      </div>
-      <button class="abtn" onclick="enterApp()">Open NEXUS →</button>
-    </div>
-  </div>
-</div>
+<!-- AUTH removed - goes straight to app -->
 
 <!-- APP -->
 
-<div id="app">
+<div id="app" style="display:flex">
   <div class="topbar">
     <div class="t-logo"><span class="t-pip"></span>NEXUS</div>
     <div class="t-conn"><span class="t-dot wait" id="tdot"></span><span id="tconntxt">No plugin</span></div>
-    <div class="t-user"><img class="t-avatar" id="tav" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''" /><span class="t-uname" id="tuname">—</span><span class="t-logout" onclick="logout()">⏻</span></div>
+    <div class="t-user"><img class="t-avatar" id="tav" src="" alt="" onerror="this.style.background='var(--rblx)';this.src=''" /><span class="t-uname" id="tuname">NEXUS</span></div>
   </div>
 
   <div class="main">
@@ -611,17 +589,17 @@ function logout(){
   goS(1);$('rbx-user').value='';
 }
 
-/* ══ Boot ══ */
+/* ══ Boot — no auth, straight in ══ */
 try{
-  ld();
-  if(user&&token){
-    goS(3);
-    $('s3t').textContent='Welcome back, '+user.username+'!';
-    try{if(user.avatarUrl&&user.avatarUrl!='')$('s3img').src=user.avatarUrl;}catch{}
-    $('s3n').textContent=user.username;
-    $('s3s').textContent='Session active — tap to continue.';
-  }
-}catch(e){console.log('Boot error:',e);goS(1);}
+  token=localStorage.getItem('nx_t')||rndT()+rndT();
+  localStorage.setItem('nx_t',token);
+  try{projects=JSON.parse(localStorage.getItem('nx_p')||'[]');}catch{projects=[];}
+  if(projects.length===0)seedP();
+  try{$('tokval').textContent=token;}catch{}
+  $('boott').textContent=ts();
+  initExamples();
+  startPoll();
+}catch(e){console.log('Boot:',e);}
 
 /* ══ Log ══ */
 function addLog(kind,lbl,msg){
@@ -657,17 +635,7 @@ function setConn(v){
   if($('sdesc'))$('sdesc').textContent=v?'Commands execute in Studio.':'Open Studio and activate plugin.';
   if(v){
     toast('Studio connected!','ok');
-    addLog('sys','conn','Plugin connected! Running as: '+user.username);
-    // Refresh avatar when plugin connects
-    if(user&&user.userId&&!user.avatarUrl){
-      getRobloxAvatar(user.userId).then(url=>{
-        if(url){
-          user.avatarUrl=url;
-          try{$('tav').src=url;}catch{}
-          try{sv();}catch{}
-        }
-      });
-    }
+    addLog('sys','conn','Plugin connected!');
   }
 }
 
