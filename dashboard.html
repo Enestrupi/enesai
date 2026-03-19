@@ -1871,27 +1871,24 @@ function s1next(){const u=$('rbx-user').value.trim();if(!u){$('s1err').style.dis
 
 async function getRobloxUserId(username){
   try{
-    const r=await fetch('https://users.roblox.com/v1/usernames/users',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({usernames:[username],excludeBannedUsers:true})
-    });
+    const r=await fetch(BACKEND+'/api/roblox/user/'+encodeURIComponent(username));
     const d=await r.json();
-    return d.data&&d.data[0]?d.data[0].id:null;
+    if(!d.found) return null;
+    return {userId:d.userId, username:d.username, displayName:d.displayName};
   }catch{return null;}
 }
 
 async function getRobloxAvatar(userId){
   try{
-    const r=await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=true`);
+    const r=await fetch(BACKEND+'/api/roblox/avatar/'+userId);
     const d=await r.json();
-    return d.data&&d.data[0]?d.data[0].imageUrl:null;
+    return d.avatarUrl||null;
   }catch{return null;}
 }
 
 async function getRobloxDescription(userId){
   try{
-    const r=await fetch(`https://users.roblox.com/v1/users/${userId}`);
+    const r=await fetch(BACKEND+'/api/roblox/profile/'+userId);
     const d=await r.json();
     return d.description||'';
   }catch{return null;}
@@ -1904,9 +1901,9 @@ async function doVerify(){
   errEl.style.display='none';
   btn.textContent='Looking up user…';btn.disabled=true;
 
-  // Step 1: Get user ID
-  const userId=await getRobloxUserId(u);
-  if(!userId){
+  // Step 1: Get user ID via backend
+  const userData=await getRobloxUserId(u);
+  if(!userData){
     errEl.textContent='Roblox user "'+u+'" not found. Check your username.';
     errEl.style.display='block';
     btn.textContent='Verify Account ✓';btn.disabled=false;
@@ -1916,7 +1913,7 @@ async function doVerify(){
   btn.textContent='Checking profile…';
 
   // Step 2: Check description for verify code
-  const desc=await getRobloxDescription(userId);
+  const desc=await getRobloxDescription(userData.userId);
   if(desc===null){
     errEl.textContent='Could not read profile. Try again.';
     errEl.style.display='block';
@@ -1925,7 +1922,7 @@ async function doVerify(){
   }
 
   if(!desc.includes(vcode)){
-    errEl.textContent='Code "'+vcode+'" not found in your profile description. Make sure you saved it!';
+    errEl.textContent='Code "'+vcode+'" not found in your profile. Make sure you saved it!';
     errEl.style.display='block';
     btn.textContent='Verify Account ✓';btn.disabled=false;
     return;
@@ -1933,22 +1930,20 @@ async function doVerify(){
 
   btn.textContent='Fetching avatar…';
 
-  // Step 3: Get avatar
-  const avatarUrl=await getRobloxAvatar(userId);
+  // Step 3: Get real avatar via backend
+  const avatarUrl=await getRobloxAvatar(userData.userId);
 
-  // Step 4: Save user data
-  user={username:u,userId,avatarUrl:avatarUrl||'',av:u[0].toUpperCase()};
+  // Step 4: Save user
+  user={username:userData.username||u, userId:userData.userId, avatarUrl:avatarUrl||'', av:(userData.username||u)[0].toUpperCase()};
   token=rndT()+rndT();
 
-  // Step 5: Update UI
-  $('s3t').textContent='Welcome, '+u+'!';
+  // Step 5: Update UI with real avatar
+  $('s3t').textContent='Welcome, '+(userData.displayName||u)+'!';
   if(avatarUrl){
     $('s3ic').src=avatarUrl;
     $('s3ic').style.border='2px solid var(--c)';
-  } else {
-    $('s3ic').style.background='var(--rblx)';
   }
-  $('s3n').textContent=u;
+  $('s3n').textContent=userData.username||u;
   btn.textContent='Verify Account ✓';btn.disabled=false;
   goS(3);
 }
