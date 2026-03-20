@@ -1,575 +1,757 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enes's AI — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Studio Bridge — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@400;600;800;900&display=swap" rel="stylesheet" />
 <style>
-:root {
-  --bg: #07070e;
-  --panel: #0e0e1c;
-  --panel2: #131324;
-  --cyan: #00d4ff;
-  --pink: #ff0066;
-  --green: #00ff88;
-  --yellow: #ffe600;
-  --white: #e0eaff;
-  --dim: #1e2240;
-  --dim2: #3a4470;
-  --border: rgba(0,212,255,0.1);
-  --border2: rgba(0,212,255,0.2);
-  --glow: 0 0 20px rgba(0,212,255,0.3);
-  --glow-pink: 0 0 20px rgba(255,0,102,0.3);
-  --glow-green: 0 0 20px rgba(0,255,136,0.3);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;--bg2:#0c0f1a;--bg3:#131726;--bg4:#1a1f30;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border3:rgba(255,255,255,0.16);
+  --accent:#00d4ff;--accent2:#0099cc;--accent-dim:rgba(0,212,255,0.1);--accent-glow:rgba(0,212,255,0.2);
+  --green:#00ff88;--green-dim:rgba(0,255,136,0.1);
+  --red:#ff4466;--red-dim:rgba(255,68,102,0.1);
+  --orange:#ffaa00;--orange-dim:rgba(255,170,0,0.1);
+  --text:#e8eaf2;--text2:#7880a0;--text3:#3a3f55;
+  --roblox:#e31e25;
+  --font-display:'Unbounded',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --r:6px;--rlg:10px;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{background:var(--bg);color:var(--white);font-family:'Exo 2',sans-serif;height:100vh;overflow:hidden;}
-body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);}
-.bg-fx{position:fixed;inset:0;z-index:0;pointer-events:none;}
-.bg-fx::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 20%,rgba(0,212,255,0.05) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(255,0,102,0.04) 0%,transparent 60%);}
-.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:44px 44px;}
+html{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6}
+body{min-height:100vh}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-/* LAYOUT */
-.app{position:relative;z-index:1;display:grid;grid-template-columns:210px 1fr;grid-template-rows:52px 1fr;height:100vh;overflow:hidden;}
+/* ── BG grid ── */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+#root{position:relative;z-index:1}
 
-/* TOPBAR */
-.topbar{grid-column:1/-1;background:rgba(7,7,14,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);display:flex;align-items:center;padding:0 20px;gap:12px;}
-.top-logo{display:flex;align-items:center;gap:10px;}
-.top-logo-icon{font-size:20px;filter:drop-shadow(0 0 8px var(--cyan));animation:iconPulse 3s ease-in-out infinite;}
-.top-logo-text{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;letter-spacing:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.top-sep{width:1px;height:28px;background:var(--border);flex-shrink:0;}
+/* ── Auth ── */
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;background:var(--bg)}
+#auth.gone{display:none}
 
-/* Status on LEFT side of topbar */
-.connection-status{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--dim2);transition:all 0.3s;}
-.status-dot.online{background:var(--green);box-shadow:0 0 8px var(--green);animation:dotPulse 2s infinite;}
-.status-dot.offline{background:var(--pink);}
-.status-dot.checking{background:var(--yellow);animation:dotPulse 0.8s infinite;}
+.auth-wrap{width:400px}
+.auth-logo{font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
+.auth-logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
 
-/* Token on RIGHT side of topbar */
-.top-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
-.top-token-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--dim2);text-transform:uppercase;white-space:nowrap;}
-.top-token-input{width:240px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:5px 10px;outline:none;transition:all 0.2s;}
-.top-token-input:focus{border-color:var(--cyan);box-shadow:var(--glow);}
-.top-token-input::placeholder{color:var(--dim2);letter-spacing:1px;font-size:10px;}
-.connect-btn{padding:6px 16px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;font-weight:bold;white-space:nowrap;}
-.connect-btn.disconnected{background:linear-gradient(135deg,var(--cyan),#0088bb);color:#000;}
-.connect-btn.connected{background:linear-gradient(135deg,var(--pink),#aa0044);color:#fff;}
-.connect-btn:hover{transform:translateY(-1px);}
+.auth-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative;overflow:hidden}
+.auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none}
 
-/* SIDEBAR */
-.sidebar{background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-.sb-section{padding:10px 12px 6px;}
-.sb-title{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:4px;color:var(--dim2);text-transform:uppercase;padding:4px 4px 6px;}
-.sb-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all 0.15s;font-size:13px;color:rgba(255,255,255,0.45);background:transparent;border:1px solid transparent;margin-bottom:2px;text-align:left;}
-.sb-btn:hover{background:rgba(0,212,255,0.05);color:rgba(255,255,255,0.75);}
-.sb-btn.active{background:rgba(0,212,255,0.08);color:var(--cyan);border-color:rgba(0,212,255,0.2);}
-.sb-btn-icon{font-size:15px;width:20px;text-align:center;}
-.sb-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
-.token-display{padding:10px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:8px;}
-.token-display-title{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
-.token-display-title::before{content:'//';color:var(--pink);}
-.token-value{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--cyan);word-break:break-all;line-height:1.4;}
-.gen-token-btn{width:100%;margin-top:8px;padding:6px;background:transparent;border:1px solid var(--dim2);border-radius:6px;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.gen-token-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.auth-box h2{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text);margin-bottom:0.25rem}
+.auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
 
-/* MAIN */
-.main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
-.page{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.page.hidden{display:none;}
+.rbx-verify-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px}
+.rbx-icon{width:36px;height:36px;border-radius:var(--r);background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:900;color:white;font-family:var(--font-display)}
+.rbx-label{font-size:11px;color:var(--text2)}
+.rbx-label strong{display:block;color:var(--text);font-size:13px;margin-bottom:1px}
 
-/* CHAT */
-.chat-msgs{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px;}
-.chat-msgs::-webkit-scrollbar{width:3px;}
-.chat-msgs::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px;}
-.msg{display:flex;gap:10px;animation:msgIn 0.3s ease;}
-.msg.user{flex-direction:row-reverse;align-self:flex-end;max-width:80%;}
-.msg.ai{align-self:flex-start;max-width:85%;}
-.msg-av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-family:'Share Tech Mono',monospace;}
-.msg.ai .msg-av{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--cyan);}
-.msg.user .msg-av{background:rgba(255,0,102,0.08);border:1px solid rgba(255,0,102,0.2);color:var(--pink);}
-.msg-body{display:flex;flex-direction:column;gap:5px;}
-.msg-bubble{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.65;}
-.msg.ai .msg-bubble{background:var(--panel);border:1px solid var(--border);color:var(--white);border-top-left-radius:2px;}
-.msg.user .msg-bubble{background:rgba(255,0,102,0.08);border:1px solid rgba(255,0,102,0.15);color:var(--white);border-top-right-radius:2px;}
-.msg-code{background:rgba(0,0,0,0.7);border:1px solid rgba(0,255,136,0.2);border-radius:8px;padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.8;color:#7affb2;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;}
-.msg-code::-webkit-scrollbar{width:3px;}
-.msg-code::-webkit-scrollbar-thumb{background:var(--dim);}
-.code-actions{display:flex;gap:8px;margin-top:5px;}
-.code-action-btn{padding:6px 14px;border-radius:5px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;border:none;font-weight:bold;}
-.btn-insert{background:linear-gradient(135deg,var(--green),#00aa55);color:#000;}
-.btn-insert:hover{box-shadow:var(--glow-green);transform:translateY(-1px);}
-.btn-insert:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-.btn-copy{background:transparent;border:1px solid var(--cyan)!important;border:none;color:var(--cyan);}
-.btn-copy:hover{background:rgba(0,212,255,0.1);}
-.btn-copy.done{color:var(--green);}
-.typing-indicator{display:flex;align-items:center;gap:5px;padding:10px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;border-top-left-radius:2px;width:fit-content;}
-.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:typingBounce 1.2s ease-in-out infinite;}
-.td:nth-child(2){animation-delay:0.2s;}
-.td:nth-child(3){animation-delay:0.4s;}
-.chat-input-area{padding:12px 24px 16px;border-top:1px solid var(--border);background:rgba(7,7,14,0.95);backdrop-filter:blur(10px);flex-shrink:0;}
-.chat-input-wrap{position:relative;}
-.chat-input{width:100%;background:var(--panel2);border:1px solid var(--border2);border-radius:12px;color:var(--white);font-family:'Exo 2',sans-serif;font-size:14px;padding:13px 52px 13px 18px;outline:none;transition:all 0.2s;resize:none;min-height:48px;max-height:120px;line-height:1.5;}
-.chat-input:focus{border-color:var(--cyan);box-shadow:var(--glow);}
-.chat-input::placeholder{color:var(--dim2);}
-.chat-send-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;background:var(--cyan);border:none;border-radius:8px;color:#000;font-size:16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
-.chat-send-btn:hover{background:var(--pink);box-shadow:var(--glow-pink);}
-.chat-send-btn:disabled{opacity:0.4;cursor:not-allowed;}
-.input-hint{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim2);margin-top:6px;text-align:center;text-transform:uppercase;}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:0.1em;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--text3)}
 
-/* SCANNER */
-.scanner-wrap{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
-.scanner-wrap::-webkit-scrollbar{width:3px;}
-.scanner-wrap::-webkit-scrollbar-thumb{background:var(--dim);}
-.scan-header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.scan-title{font-family:'Orbitron',monospace;font-weight:700;font-size:16px;letter-spacing:3px;color:var(--white);}
-.scan-btn{padding:8px 20px;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;border-radius:8px;color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:bold;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.scan-btn:hover{transform:translateY(-1px);box-shadow:var(--glow);}
-.scan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.scan-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all 0.2s;}
-.scan-card:hover{border-color:var(--border2);}
-.scan-card-icon{font-size:22px;margin-bottom:6px;}
-.scan-card-value{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--cyan);margin-bottom:3px;}
-.scan-card-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim2);text-transform:uppercase;}
-.scan-list{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;}
-.scan-list-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.scan-list-title::before{content:'//';color:var(--pink);}
-.scan-list-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--dim);font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);}
-.scan-list-item:last-child{border-bottom:none;}
-.scan-list-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);flex-shrink:0;}
+.auth-note{font-size:11px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:1rem;line-height:1.6}
+.auth-note code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono)}
 
-@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 8px var(--cyan))}50%{filter:drop-shadow(0 0 18px var(--cyan)) drop-shadow(0 0 30px var(--pink))}}
-@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.3}}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.btn-main{width:100%;background:var(--accent);color:#06080f;border:none;border-radius:var(--r);padding:11px;font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:0.05em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn-main:hover{background:var(--accent2);box-shadow:0 0 20px var(--accent-glow)}
+.btn-main:active{transform:scale(0.98)}
+.btn-main.roblox{background:var(--roblox);color:white}
+.btn-main.roblox:hover{background:#c01920}
+
+.auth-err{color:var(--red);font-size:11px;margin-top:8px;display:none}
+.auth-step{display:none}
+.auth-step.active{display:block}
+
+/* ── App ── */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+/* ── Topbar ── */
+.topbar{height:52px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;background:var(--bg);flex-shrink:0}
+.topbar-logo{font-family:var(--font-display);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.plugin-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);margin-left:auto}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .3s}
+.status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--green)}
+.status-dot.waiting{background:var(--orange);animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.topbar-user{display:flex;align-items:center;gap:8px;padding:4px 10px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);cursor:pointer;transition:border-color .15s}
+.topbar-user:hover{border-color:var(--border3)}
+.rbx-avatar{width:24px;height:24px;border-radius:50%;background:var(--roblox);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0}
+.topbar-uname{font-size:12px;color:var(--text)}
+.logout-x{color:var(--text3);font-size:11px;margin-left:4px;cursor:pointer}
+.logout-x:hover{color:var(--red)}
+
+/* ── Main layout ── */
+.main-layout{flex:1;display:flex;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:200px;min-width:200px;border-right:0.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg);overflow-y:auto}
+.nav-section{padding:.75rem .75rem .25rem;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px .875rem;margin:1px .5rem;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left;font-family:var(--font-mono)}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);border:0.5px solid rgba(0,212,255,.18)}
+.nav-item .ico{font-size:13px;width:14px;text-align:center}
+
+/* ── Content ── */
+.content{flex:1;overflow-y:auto;padding:1.25rem}
+.view{display:none}
+.view.active{display:block}
+
+/* ── Command panel ── */
+.cmd-panel{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;height:calc(100vh - 52px - 2.5rem)}
+
+.cmd-left{display:flex;flex-direction:column;gap:1rem}
+
+.panel-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);overflow:hidden}
+.panel-header{padding:.75rem 1rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+
+/* Command input */
+.cmd-input-wrap{padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.cmd-textarea{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:12px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;resize:none;transition:border-color .2s;min-height:100px}
+.cmd-textarea:focus{border-color:var(--accent)}
+.cmd-textarea::placeholder{color:var(--text3)}
+.cmd-actions{display:flex;gap:8px;align-items:center}
+.cmd-type-select{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text2);outline:none;transition:border-color .2s}
+.cmd-type-select:focus{border-color:var(--accent)}
+.btn{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);border-radius:var(--r);padding:7px 14px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.send{background:var(--accent);color:#06080f;border-color:var(--accent);font-weight:700;margin-left:auto}
+.btn.send:hover{background:var(--accent2);box-shadow:0 0 16px var(--accent-glow)}
+.btn.send:active{transform:scale(.98)}
+.btn.send:disabled{background:var(--bg4);color:var(--text3);border-color:var(--border);cursor:not-allowed;box-shadow:none}
+
+/* Quick commands */
+.quick-cmds{padding:.75rem 1rem;display:flex;flex-wrap:wrap;gap:6px}
+.qcmd{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--font-mono)}
+.qcmd:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Command log */
+.cmd-log{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.cmd-log-inner{flex:1;overflow-y:auto;padding:.75rem 1rem;display:flex;flex-direction:column;gap:6px}
+.log-entry{padding:8px 10px;border-radius:var(--r);font-size:12px;border-left:2px solid transparent;background:var(--bg3)}
+.log-entry.sent{border-left-color:var(--accent)}
+.log-entry.result{border-left-color:var(--green)}
+.log-entry.err{border-left-color:var(--red)}
+.log-entry.sys{border-left-color:var(--text3)}
+.log-entry .le-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.log-tag{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.log-tag.sent{background:var(--accent-dim);color:var(--accent)}
+.log-tag.result{background:var(--green-dim);color:var(--green)}
+.log-tag.err{background:var(--red-dim);color:var(--red)}
+.log-tag.sys{background:var(--bg4);color:var(--text3)}
+.le-time{font-size:10px;color:var(--text3);margin-left:auto}
+.le-body{color:var(--text2);font-size:12px;word-break:break-all}
+.le-body code{color:var(--text);font-family:var(--font-mono)}
+
+/* Right panel */
+.cmd-right{display:flex;flex-direction:column;gap:1rem}
+
+/* Connection status card */
+.conn-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem}
+.conn-indicator{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.conn-big-dot{width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0;transition:background .3s}
+.conn-big-dot.on{background:var(--green);box-shadow:0 0 10px var(--green)}
+.conn-big-dot.wait{background:var(--orange);animation:blink 1.2s infinite}
+.conn-label{font-family:var(--font-display);font-size:12px;font-weight:700}
+.conn-sub{font-size:11px;color:var(--text2);line-height:1.5}
+.conn-id-box{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 10px;margin-top:.75rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.conn-id-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.conn-id-val{font-size:12px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em}
+.copy-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 6px;border:0.5px solid var(--border);border-radius:3px;transition:all .15s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Plugin setup card */
+.setup-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);flex:1;overflow:hidden;display:flex;flex-direction:column}
+.setup-steps{padding:1rem;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1}
+.setup-step{display:flex;gap:10px;align-items:flex-start}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--bg4);border:0.5px solid var(--border2);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1}
+.step-title{font-size:12px;color:var(--text);font-weight:700;margin-bottom:2px}
+.step-desc{font-size:11px;color:var(--text2);line-height:1.5}
+.step-desc code{background:var(--bg4);border:0.5px solid var(--border2);border-radius:3px;padding:1px 5px;color:var(--accent);font-family:var(--font-mono);font-size:10px}
+.step-code{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:8px 10px;margin-top:6px;font-size:11px;color:var(--text2);font-family:var(--font-mono);word-break:break-all;position:relative}
+.step-code .copy-btn{position:absolute;top:6px;right:6px}
+
+/* Projects view */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.875rem;margin-top:1rem}
+.proj-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:1rem;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dim),transparent);opacity:0;transition:opacity .2s}
+.proj-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.proj-card:hover::before{opacity:1}
+.proj-name{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.proj-id{font-size:10px;color:var(--text3);margin-bottom:8px}
+.proj-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700}
+.proj-pill.synced{background:var(--green-dim);color:var(--green)}
+.proj-pill.offline{background:var(--bg4);color:var(--text3)}
+.proj-pill.error{background:var(--red-dim);color:var(--red)}
+.proj-actions{display:flex;gap:6px;margin-top:10px}
+.pact{flex:1;background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:5px;font-size:11px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font-mono)}
+.pact:hover{border-color:var(--accent);color:var(--accent)}
+.pact.del:hover{border-color:var(--red);color:var(--red)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.25rem}
+.scard{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--rlg);padding:.875rem 1rem}
+.scard-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.scard-val{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--text);line-height:1}
+.scard-val.c{color:var(--accent)}
+.scard-val.g{color:var(--green)}
+.scard-val.r{color:var(--red)}
+
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(6,8,15,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--rlg);padding:1.5rem;width:420px;transform:translateY(8px);transition:transform .2s;position:relative}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-title{font-family:var(--font-display);font-size:14px;font-weight:800;margin-bottom:.25rem}
+.modal-sub{font-size:11px;color:var(--text2);margin-bottom:1.25rem}
+.modal-x{position:absolute;top:1.25rem;right:1.25rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
+.modal-x:hover{color:var(--text)}
+.mbtns{display:flex;gap:8px;margin-top:1rem}
+.mbtns .btn{flex:1;justify-content:center}
+
+/* Toast */
+#toasts{position:fixed;bottom:1.25rem;right:1.25rem;display:flex;flex-direction:column;gap:6px;z-index:999}
+.toast{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:9px 13px;font-size:12px;display:flex;align-items:center;gap:8px;animation:tin .2s ease;min-width:200px}
+.toast.ok{border-left:2px solid var(--green)}
+.toast.bad{border-left:2px solid var(--red)}
+.toast.info{border-left:2px solid var(--accent)}
+@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+
+/* Section header */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.sec-title{font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--text)}
+.search-input{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--r);padding:6px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;transition:border-color .2s;width:200px}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+
+@media(max-width:900px){.cmd-panel{grid-template-columns:1fr}.cmd-right{display:none}.stats-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<div class="bg-fx"></div>
-<div class="bg-grid"></div>
+<div id="root">
 
-<div class="app">
+<!-- AUTH -->
+<div id="auth">
+  <div class="auth-wrap">
+    <div class="auth-logo"><span class="auth-logo-dot"></span>Studio Bridge</div>
+    <div class="auth-box">
+      <!-- Step 1: enter username -->
+      <div class="auth-step active" id="step1">
+        <h2>Connect with Roblox</h2>
+        <p>Enter your Roblox username to get started. We'll verify it in the next step.</p>
+        <div class="field">
+          <label>Roblox username</label>
+          <input type="text" id="rbx-username" placeholder="YourRobloxName" autocomplete="off" />
+        </div>
+        <div id="step1-err" class="auth-err">Please enter your Roblox username.</div>
+        <button class="btn-main" onclick="step1Next()">Continue →</button>
+      </div>
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="top-logo">
-      <span class="top-logo-icon">⚡</span>
-      <span class="top-logo-text">ENES'S AI</span>
+      <!-- Step 2: verify via description -->
+      <div class="auth-step" id="step2">
+        <h2>Verify your account</h2>
+        <p>Add this code to your Roblox <strong>profile description</strong>, then click Verify. You can remove it after.</p>
+        <div class="auth-note">
+          1. Go to <strong>roblox.com/home</strong> → Edit profile<br/>
+          2. Paste this code in your <strong>About / description</strong> field:<br/><br/>
+          <code id="verify-code">BRIDGE-XXXXXX</code><br/><br/>
+          3. Save, then click <strong>Verify</strong> below.
+        </div>
+        <div id="step2-err" class="auth-err"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-main" style="flex:.4;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)" onclick="goStep(1)">← Back</button>
+          <button class="btn-main roblox" style="flex:1" onclick="step2Verify()">Verify ✓</button>
+        </div>
+      </div>
+
+      <!-- Step 3: verified -->
+      <div class="auth-step" id="step3">
+        <h2 id="step3-title">Welcome!</h2>
+        <p id="step3-sub">You're signed in. Enter the dashboard.</p>
+        <div class="rbx-verify-box">
+          <div class="rbx-icon" id="step3-icon">?</div>
+          <div class="rbx-label"><strong id="step3-name">—</strong>Roblox account verified ✓</div>
+        </div>
+        <button class="btn-main" onclick="enterApp()">Open Dashboard →</button>
+      </div>
     </div>
-    <div class="top-sep"></div>
+  </div>
+</div>
 
-<!-- Status removed - website just generates key -->
-
-    <!-- Key on RIGHT - copy and paste into plugin -->
-    <div class="top-right">
-      <span class="top-token-label">Your Key:</span>
-      <div style="background:var(--panel2);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--cyan);" id="keyDisplay">Loading...</div>
-      <button class="connect-btn disconnected" onclick="copyKey(this)" style="background:linear-gradient(135deg,var(--cyan),#0088bb);color:#000;">⎘ Copy Key</button>
-      <button class="connect-btn disconnected" onclick="generateToken()" style="background:transparent;border:1px solid var(--dim2);color:var(--dim2);">↺ New Key</button>
+<!-- APP -->
+<div id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-logo"><span style="width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);display:inline-block"></span>Studio Bridge</div>
+    <div class="plugin-status">
+      <span class="status-dot" id="plugin-dot"></span>
+      <span id="plugin-status-text">Plugin not connected</span>
+    </div>
+    <div class="topbar-user">
+      <div class="rbx-avatar" id="top-avatar">?</div>
+      <span class="topbar-uname" id="top-uname">—</span>
+      <span class="logout-x" onclick="logout()" title="Sign out">⏻</span>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sb-section">
-      <div class="sb-title">Pages</div>
-      <button class="sb-btn active" id="nav-chat" onclick="showPage('chat')"><span class="sb-btn-icon">⚡</span> AI Chat</button>
-      <button class="sb-btn" id="nav-scanner" onclick="showPage('scanner')"><span class="sb-btn-icon">🔍</span> Game Scanner</button>
-    </div>
-    <div class="sb-section">
-      <div class="sb-title">Quick Insert</div>
-      <button class="sb-btn" onclick="quickPrompt('create a beautiful neon dark shop GUI with tabs and buy buttons')"><span class="sb-btn-icon">🎨</span> Shop GUI</button>
-      <button class="sb-btn" onclick="quickPrompt('generate a large forest terrain with hills and a river')"><span class="sb-btn-icon">🌍</span> Forest Terrain</button>
-      <button class="sb-btn" onclick="quickPrompt('create an enemy NPC that chases and attacks players')"><span class="sb-btn-icon">🤖</span> Enemy NPC</button>
-      <button class="sb-btn" onclick="quickPrompt('make a beautiful admin console with fly speed god mode kick')"><span class="sb-btn-icon">⚙️</span> Admin Console</button>
-      <button class="sb-btn" onclick="quickPrompt('create a leaderboard with kills coins and deaths using DataStore')"><span class="sb-btn-icon">🏆</span> Leaderboard</button>
-    </div>
-    <div class="sb-bottom">
-      <div class="token-display">
-        <div class="token-display-title">Session Token</div>
-        <div class="token-value" id="sidebarToken">No token yet</div>
-        <button class="gen-token-btn" onclick="generateToken()">↺ Generate Token</button>
-      </div>
-    </div>
-  </aside>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-section">Workspace</div>
+      <button class="nav-item active" onclick="nav('commands',this)"><span class="ico">▸</span>Commands</button>
+      <button class="nav-item" onclick="nav('projects',this)"><span class="ico">⬡</span>Projects</button>
+      <div class="nav-section">System</div>
+      <button class="nav-item" onclick="nav('setup',this)"><span class="ico">⚙</span>Setup guide</button>
+    </aside>
 
-  <!-- MAIN -->
-  <div class="main">
+    <!-- Content -->
+    <div class="content">
 
-    <!-- AI CHAT -->
-    <div class="page" id="page-chat">
-      <div class="chat-msgs" id="chatMsgs">
-        <div class="msg ai">
-          <div class="msg-av">⚡</div>
-          <div class="msg-body">
-            <div class="msg-bubble">
-              Hey! I'm <strong>Enes's AI</strong> 👋<br><br>
-              Connect your Studio plugin with a session token, then I can insert scripts <strong>directly into Studio</strong> automatically!<br><br>
-              <strong>How to connect:</strong><br>
-              1. Open <strong>Studio Bridge</strong> plugin in Roblox Studio<br>
-              2. Copy your session token<br>
-              3. Paste it in the top right → click <strong>Connect</strong><br><br>
-              Then just describe what you want and click <strong>▶ Insert into Studio</strong>!
+      <!-- COMMANDS VIEW -->
+      <div id="view-commands" class="view active">
+        <div class="cmd-panel">
+          <div class="cmd-left">
+
+            <!-- Input -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <span class="panel-title">Send command to Studio</span>
+                <select class="cmd-type-select" id="cmd-type">
+                  <option value="run_script">Run script</option>
+                  <option value="insert_part">Insert part</option>
+                  <option value="set_property">Set property</option>
+                  <option value="delete_instance">Delete instance</option>
+                  <option value="get_children">Get children</option>
+                  <option value="eval">Eval Lua</option>
+                </select>
+              </div>
+              <div class="cmd-input-wrap">
+                <textarea class="cmd-textarea" id="cmd-input" placeholder="Type a command or Lua snippet to run in Roblox Studio…&#10;e.g. game.Workspace.Part.Size = Vector3.new(10,10,10)" rows="4"></textarea>
+                <div class="cmd-actions">
+                  <button class="btn" onclick="clearLog()">✕ Clear log</button>
+                  <button class="btn send" id="send-btn" onclick="sendCommand()">▶ Send to Studio</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick commands -->
+            <div class="panel-card">
+              <div class="panel-header"><span class="panel-title">Quick commands</span></div>
+              <div class="quick-cmds">
+                <span class="qcmd" onclick="setCmd('print(game.Name)')">print game name</span>
+                <span class="qcmd" onclick="setCmd('print(#game.Workspace:GetChildren())')">count workspace children</span>
+                <span class="qcmd" onclick="setCmd('game.Lighting.Brightness = 2')">set brightness</span>
+                <span class="qcmd" onclick="setCmd('local p = Instance.new(\"Part\")\np.Parent = game.Workspace\np.Size = Vector3.new(4,4,4)')">insert part</span>
+                <span class="qcmd" onclick="setCmd('for _,v in ipairs(game.Workspace:GetChildren()) do\n  print(v.Name, v.ClassName)\nend')">list workspace</span>
+                <span class="qcmd" onclick="setCmd('game.Workspace:ClearAllChildren()')">clear workspace</span>
+              </div>
+            </div>
+
+            <!-- Log -->
+            <div class="panel-card cmd-log">
+              <div class="panel-header">
+                <span class="panel-title">Command log</span>
+                <span style="font-size:10px;color:var(--text3)" id="log-count">0 entries</span>
+              </div>
+              <div class="cmd-log-inner" id="cmd-log-inner">
+                <div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time" id="boot-time"></span></div><div class="le-body">Dashboard ready. Connect your Studio plugin to begin.</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right -->
+          <div class="cmd-right">
+            <!-- Connection -->
+            <div class="conn-card">
+              <div class="conn-indicator">
+                <div class="conn-big-dot wait" id="conn-dot"></div>
+                <div>
+                  <div class="conn-label" id="conn-label">Waiting for plugin</div>
+                  <div class="conn-sub" id="conn-sub">Open Roblox Studio and activate your plugin.</div>
+                </div>
+              </div>
+              <div class="conn-id-box">
+                <div>
+                  <div class="conn-id-label">Session token</div>
+                  <div class="conn-id-val" id="session-token">—</div>
+                </div>
+                <span class="copy-btn" onclick="copyToken()">copy</span>
+              </div>
+            </div>
+
+            <!-- Setup steps -->
+            <div class="setup-card">
+              <div class="panel-header"><span class="panel-title">Plugin setup</span></div>
+              <div class="setup-steps">
+                <div class="setup-step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Download the plugin</div>
+                    <div class="step-desc">Save <code>studio-plugin.lua</code> (provided in the download) as a <code>.rbxm</code> in your Roblox Studio plugins folder.</div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Set your backend URL</div>
+                    <div class="step-desc">In the plugin script, replace <code>YOUR_BACKEND_URL</code> with your server address.</div>
+                    <div class="step-code">https://your-server.com/api<span class="copy-btn" onclick="copyText('https://your-server.com/api')">copy</span></div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Paste session token</div>
+                    <div class="step-desc">Copy the session token above and paste it into the plugin's token field in Studio. This links your session.</div>
+                  </div>
+                </div>
+                <div class="setup-step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Activate plugin</div>
+                    <div class="step-desc">Click the Studio Bridge button in your Studio toolbar. The dot above will turn <span style="color:var(--green)">green</span> when connected.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="chat-input-area">
-        <div class="chat-input-wrap">
-          <textarea class="chat-input" id="chatInput" placeholder="Describe what you want to build..." rows="1"></textarea>
-          <button class="chat-send-btn" id="chatSendBtn" onclick="sendChat()">➤</button>
-        </div>
-        <div class="input-hint">Enter to send • Shift+Enter for new line</div>
-      </div>
-    </div>
 
-    <!-- GAME SCANNER -->
-    <div class="page hidden" id="page-scanner">
-      <div class="scanner-wrap">
-        <div class="scan-header">
-          <div class="scan-title">🔍 Game Scanner</div>
-          <button class="scan-btn" onclick="scanGame()">⚡ Scan Game</button>
+      <!-- PROJECTS VIEW -->
+      <div id="view-projects" class="view">
+        <div class="stats-row">
+          <div class="scard"><div class="scard-label">Total</div><div class="scard-val c" id="sp-total">0</div></div>
+          <div class="scard"><div class="scard-label">Synced</div><div class="scard-val g" id="sp-synced">0</div></div>
+          <div class="scard"><div class="scard-label">Errors</div><div class="scard-val r" id="sp-err">0</div></div>
+          <div class="scard"><div class="scard-label">Offline</div><div class="scard-val" id="sp-off">0</div></div>
         </div>
-        <div class="scan-grid">
-          <div class="scan-card"><div class="scan-card-icon">🧱</div><div class="scan-card-value" id="scan-parts">—</div><div class="scan-card-label">Parts</div></div>
-          <div class="scan-card"><div class="scan-card-icon">📝</div><div class="scan-card-value" id="scan-scripts">—</div><div class="scan-card-label">Scripts</div></div>
-          <div class="scan-card"><div class="scan-card-icon">📱</div><div class="scan-card-value" id="scan-local">—</div><div class="scan-card-label">LocalScripts</div></div>
-          <div class="scan-card"><div class="scan-card-icon">📦</div><div class="scan-card-value" id="scan-models">—</div><div class="scan-card-label">Models</div></div>
-          <div class="scan-card"><div class="scan-card-icon">🖼️</div><div class="scan-card-value" id="scan-guis">—</div><div class="scan-card-label">GUIs</div></div>
-          <div class="scan-card"><div class="scan-card-icon">📡</div><div class="scan-card-value" id="scan-remotes">—</div><div class="scan-card-label">RemoteEvents</div></div>
+        <div class="sec-head">
+          <div class="sec-title">Projects</div>
+          <div style="display:flex;gap:8px">
+            <input class="search-input" placeholder="Search…" oninput="filterProj(this.value)" />
+            <button class="btn" onclick="openModal('new-proj')">+ New</button>
+          </div>
         </div>
-        <div class="scan-list">
-          <div class="scan-list-title">Scripts in Game</div>
-          <div id="scanScriptList"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Click "Scan Game" to scan your Studio game</div></div>
-        </div>
-        <div class="scan-list">
-          <div class="scan-list-title">Workspace Objects</div>
-          <div id="scanWorkspaceList"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Click "Scan Game" to scan your Studio game</div></div>
+        <div class="proj-grid" id="proj-grid"></div>
+      </div>
+
+      <!-- SETUP VIEW -->
+      <div id="view-setup" class="view">
+        <div style="max-width:600px">
+          <div class="sec-title" style="margin-bottom:1.25rem">Full setup guide</div>
+          <div class="panel-card" style="margin-bottom:1rem">
+            <div class="panel-header"><span class="panel-title">Architecture overview</span></div>
+            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
+              <strong style="color:var(--text)">How it works:</strong><br/>
+              Website → sends command → your Node.js server → stores in queue → Studio plugin polls every 2s → executes → sends result back → server → website shows result.<br/><br/>
+              <strong style="color:var(--text)">Files you need:</strong><br/>
+              <code style="display:block;background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--r);padding:10px;margin:8px 0;color:var(--accent)">dashboard.html      ← this file (website)<br/>server.js           ← Node.js backend<br/>studio-plugin.lua   ← Roblox Studio plugin</code>
+              Download all three from the dashboard. Host <code>server.js</code> on Railway, Render, or any Node host. Load the plugin into Studio.
+            </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header"><span class="panel-title">Backend endpoints used</span></div>
+            <div style="padding:1rem;font-size:12px;color:var(--text2);line-height:1.8">
+              <code style="color:var(--accent)">POST /api/command</code> — website sends command + token<br/>
+              <code style="color:var(--accent)">GET  /api/poll/:token</code> — plugin polls for pending commands<br/>
+              <code style="color:var(--accent)">POST /api/result</code> — plugin posts execution result<br/>
+              <code style="color:var(--accent)">GET  /api/result/:token</code> — website checks for result<br/>
+              <code style="color:var(--accent)">POST /api/verify</code> — verifies Roblox username<br/>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </div>
 
+<!-- NEW PROJECT MODAL -->
+<div class="modal-bg" id="modal-new-proj">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('new-proj')">✕</button>
+    <div class="modal-title">New project</div>
+    <div class="modal-sub">Create a project to organise your Studio sessions.</div>
+    <div class="field"><label>Name</label><input type="text" id="np-name" placeholder="My Game" /></div>
+    <div class="field"><label>Project ID (auto)</label><input type="text" id="np-id" readonly style="opacity:.5" /></div>
+    <div class="mbtns">
+      <button class="btn" onclick="closeModal('new-proj')">Cancel</button>
+      <button class="btn send" onclick="createProj()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
 <script>
-const BACKEND = 'https://enesai-production.up.railway.app';
-let token = localStorage.getItem('enesai_token') || '';
-let isConnected = false;
-let pingInterval = null;
-let isGenerating = false;
-let gameContext = '';
+// ── Config ──
+// CHANGE THIS to your backend URL when you deploy server.js
+const BACKEND = "https://enesai-production.up.railway.app";
 
-if(token) {
-  document.getElementById('keyDisplay').textContent = token;
-  document.getElementById('sidebarToken').textContent = token;
-} else {
-  generateToken();
+// ── State ──
+let user = null;
+let sessionToken = null;
+let projects = [];
+let cmdLog = [];
+let pluginConnected = false;
+let pollInterval = null;
+let verifyCode = null;
+
+// ── Utils ──
+const $ = id => document.getElementById(id);
+function genToken(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
+function genId(){const c="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";let r='';for(let i=0;i<12;i++)r+=c[Math.floor(Math.random()*62)];return r;}
+function ts(){return new Date().toLocaleTimeString();}
+function toast(msg,type='info'){const c=$('toasts');const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
+function save(){localStorage.setItem('sb_user',JSON.stringify(user));localStorage.setItem('sb_token',sessionToken);localStorage.setItem('sb_projects',JSON.stringify(projects));}
+function load(){try{user=JSON.parse(localStorage.getItem('sb_user'));sessionToken=localStorage.getItem('sb_token');projects=JSON.parse(localStorage.getItem('sb_projects')||'[]');}catch{}}
+
+// ── Auth: Step 1 ──
+function step1Next(){
+  const u=$('rbx-username').value.trim();
+  if(!u){$('step1-err').style.display='block';return;}
+  $('step1-err').style.display='none';
+  verifyCode='BRIDGE-'+genToken();
+  $('verify-code').textContent=verifyCode;
+  goStep(2);
 }
 
-function copyKey(btn) {
-  navigator.clipboard.writeText(token).catch(()=>{
-    const t=document.createElement('textarea');t.value=token;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
-  });
-  btn.textContent='✓ Copied!';
-  setTimeout(()=>{ btn.textContent='⎘ Copy Key'; },2000);
-}
+// ── Auth: Step 2 ── (simulated — replace with real Roblox API call in your backend)
+async function step2Verify(){
+  const uname=$('rbx-username').value.trim();
+  const errEl=$('step2-err');
+  errEl.style.display='none';
 
-function generateToken() {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  token = Array.from({length:16}, () => chars[Math.floor(Math.random()*chars.length)]).join('');
-  document.getElementById('keyDisplay').textContent = token;
-  document.getElementById('sidebarToken').textContent = token;
-  localStorage.setItem('enesai_token', token);
-}
+  // In production: call your server which checks Roblox profile description
+  // POST BACKEND + /api/verify { username: uname, code: verifyCode }
+  // For this demo we simulate success after a short wait
+  const btn=document.querySelector('#step2 .btn-main.roblox');
+  btn.textContent='Checking…'; btn.disabled=true;
 
-document.getElementById('tokenInput') && document.getElementById('tokenInput').addEventListener('input', function() {
-  token = this.value.trim();
-  document.getElementById('sidebarToken').textContent = token || 'No token yet';
-  localStorage.setItem('enesai_token', token);
-});
+  await new Promise(r=>setTimeout(r,1400)); // simulate network
 
-function setStatus(type, text) {
-  document.getElementById('statusDot').className = 'status-dot ' + type;
-  document.getElementById('statusText').textContent = text;
-}
+  // DEMO: always passes. Replace with real fetch to your backend.
+  const verified = true;
+  btn.textContent='Verify ✓'; btn.disabled=false;
 
-async function toggleConnect() {
-  if(isConnected) {
-    isConnected = false;
-    if(pingInterval) { clearInterval(pingInterval); pingInterval = null; }
-    document.getElementById('connectBtn').textContent = 'Connect';
-    document.getElementById('connectBtn').className = 'connect-btn disconnected';
-    setStatus('offline', 'Disconnected');
-  } else {
-    token = document.getElementById('tokenInput').value.trim();
-    if(!token) { alert('Paste your session token first!'); return; }
-    localStorage.setItem('enesai_token', token);
-    document.getElementById('sidebarToken').textContent = token;
-    isConnected = true;
-    document.getElementById('connectBtn').textContent = 'Disconnect';
-    document.getElementById('connectBtn').className = 'connect-btn connected';
-    setStatus('checking', 'Connecting...');
-    checkPing();
-    pingInterval = setInterval(checkPing, 3000);
-  }
-}
-
-async function checkPing() {
-  try {
-    const res = await fetch(`${BACKEND}/api/ping/${token}`);
-    const data = await res.json();
-    setStatus(data.connected ? 'online' : 'checking', data.connected ? 'Studio Connected ✓' : 'Waiting for plugin...');
-  } catch(e) {
-    setStatus('offline', 'Server unreachable');
-  }
-}
-
-async function sendToStudio(type, body) {
-  try {
-    const res = await fetch(`${BACKEND}/api/command`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({token, type, body})
-    });
-    return await res.json();
-  } catch(e) { return {ok:false, error:e.message}; }
-}
-
-async function waitForResult(timeout=15000) {
-  const start = Date.now();
-  while(Date.now()-start < timeout) {
-    await new Promise(r=>setTimeout(r,600));
-    try {
-      const res = await fetch(`${BACKEND}/api/result/${token}`);
-      const data = await res.json();
-      if(data.ready) return data;
-    } catch(e) {}
-  }
-  return {ready:false, output:'Timeout — Studio did not respond. Is the plugin connected?', success:false};
-}
-
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-  document.getElementById('page-'+name).classList.remove('hidden');
-  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
-  const nb = document.getElementById('nav-'+name);
-  if(nb) nb.classList.add('active');
-}
-
-function quickPrompt(text) {
-  showPage('chat');
-  document.getElementById('chatInput').value = text;
-  document.getElementById('chatInput').focus();
-}
-
-// CHAT
-function addMsg(content, isUser, isCode, codeStr) {
-  const msgs = document.getElementById('chatMsgs');
-  const div = document.createElement('div');
-  div.className = 'msg '+(isUser?'user':'ai');
-  const av = document.createElement('div');
-  av.className = 'msg-av';
-  av.textContent = isUser ? '>' : '⚡';
-  const body = document.createElement('div');
-  body.className = 'msg-body';
-
-  if(isCode) {
-    const codeEl = document.createElement('div');
-    codeEl.className = 'msg-code';
-    codeEl.textContent = content;
-
-    const actions = document.createElement('div');
-    actions.className = 'code-actions';
-
-    // INSERT INTO STUDIO
-    const insertBtn = document.createElement('button');
-    insertBtn.className = 'code-action-btn btn-insert';
-    insertBtn.textContent = '▶ Insert into Studio';
-    insertBtn.onclick = async () => {
-      if(!isConnected) { addMsg('❌ Not connected! Paste your token and click Connect first.', false, false, null); return; }
-      insertBtn.disabled = true;
-      insertBtn.textContent = '⏳ Inserting...';
-
-      const code = codeStr || content;
-
-      // Auto detect script type
-      const isLocal = code.includes('LocalPlayer') || code.includes('PlayerGui') || code.includes('UserInputService') || code.includes('StarterGui');
-      const isModule = (code.includes('return {') || code.includes('return{')) && !code.includes('LocalPlayer');
-      const scriptType = isModule ? 'ModuleScript' : isLocal ? 'LocalScript' : 'Script';
-      const parentCode = isModule
-        ? 'game:GetService("ReplicatedStorage")'
-        : isLocal
-          ? '(game:GetService("StarterPlayer"):FindFirstChild("StarterPlayerScripts") or game:GetService("StarterGui"))'
-          : 'game:GetService("ServerScriptService")';
-
-      // Escape the code for embedding in Lua string
-      const escaped = code
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '');
-
-      const insertCode = `
-local parent = ${parentCode}
-local obj = Instance.new("${scriptType}")
-obj.Name = "EnesAI_Generated"
-obj.Source = "${escaped}"
-obj.Parent = parent
-return "Inserted ${scriptType} into " .. parent.Name
-`;
-
-      await sendToStudio('eval', insertCode);
-      const result = await waitForResult();
-
-      if(result.success) {
-        insertBtn.textContent = '✅ Inserted!';
-        addMsg('✅ ' + result.output, false, false, null);
-      } else {
-        insertBtn.textContent = '❌ Error';
-        addMsg('❌ ' + result.output, false, false, null);
-      }
-      setTimeout(()=>{ insertBtn.disabled=false; insertBtn.textContent='▶ Insert into Studio'; },3000);
-    };
-
-    // COPY
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'code-action-btn btn-copy';
-    copyBtn.style.border = '1px solid var(--cyan)';
-    copyBtn.textContent = '⎘ Copy';
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(codeStr||content).catch(()=>{
-        const t=document.createElement('textarea');t.value=codeStr||content;
-        document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
-      });
-      copyBtn.textContent='✓ Copied!'; copyBtn.classList.add('done');
-      setTimeout(()=>{ copyBtn.textContent='⎘ Copy'; copyBtn.classList.remove('done'); },2000);
-    };
-
-    actions.append(insertBtn, copyBtn);
-    body.append(codeEl, actions);
-  } else {
-    const bubble = document.createElement('div');
-    bubble.className = 'msg-bubble';
-    bubble.innerHTML = content;
-    body.appendChild(bubble);
+  if(!verified){
+    errEl.textContent='Code not found in profile. Make sure you saved it.';
+    errEl.style.display='block'; return;
   }
 
-  div.append(av, body);
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+  user={username:uname,avatar:uname[0].toUpperCase()};
+  sessionToken=genToken()+genToken();
+  $('step3-title').textContent='Welcome, '+uname+'!';
+  $('step3-icon').textContent=uname[0].toUpperCase();
+  $('step3-name').textContent=uname;
+  goStep(3);
 }
 
-function showTyping() {
-  const msgs = document.getElementById('chatMsgs');
-  const div = document.createElement('div');
-  div.className='msg ai'; div.id='typing';
-  const av=document.createElement('div'); av.className='msg-av'; av.textContent='⚡';
-  const t=document.createElement('div'); t.className='typing-indicator';
-  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='td';t.appendChild(d);}
-  div.append(av,t); msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+function goStep(n){
+  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('active'));
+  $('step'+n).classList.add('active');
 }
 
-function removeTyping(){const el=document.getElementById('typing');if(el)el.remove();}
-
-function buildSystem(prompt) {
-  const p = prompt.toLowerCase();
-  const ctx = gameContext ? '\n\nGAME CONTEXT:\n'+gameContext : '';
-  let type = 'LocalScript';
-  if(p.includes('terrain')||p.includes('landscape')) type='server Script using workspace.Terrain API';
-  else if(p.includes('model')||p.includes('shrine')||p.includes('castle')) type='server Script that builds a 3D model with Parts';
-  else if(p.includes('gui')||p.includes('shop')||p.includes('menu')||p.includes('hud')) type='LOCALSCRIPT with beautiful neon dark UI using UICorner UIGradient TweenService';
-  else if(p.includes('npc')||p.includes('enemy')||p.includes('zombie')) type='server Script with PathfindingService';
-  else if(p.includes('datastore')||p.includes('save')||p.includes('leaderboard')) type='server Script with DataStoreService';
-  return "You are Enes's AI, expert Roblox Lua developer."+ctx+"\n\nGenerate a complete working "+type+". Add clear comments. Use task.wait() and task.spawn(). Use pcall() where appropriate. If LocalScript: use game.Players.LocalPlayer and :WaitForChild('PlayerGui'). CRITICAL: Output ONLY raw Lua code. No markdown. No backticks. Start directly with code.";
+function enterApp(){
+  save();
+  $('auth').classList.add('gone');
+  $('app').classList.add('show');
+  $('top-avatar').textContent=user.avatar;
+  $('top-uname').textContent=user.username;
+  $('session-token').textContent=sessionToken;
+  $('boot-time').textContent=ts();
+  renderProjects();
+  startPolling();
+  if(projects.length===0) seedProjects();
 }
 
-async function sendChat() {
-  const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if(!msg || isGenerating) return;
-  input.value=''; input.style.height='auto';
-  isGenerating=true;
-  document.getElementById('chatSendBtn').disabled=true;
+function logout(){
+  user=null; sessionToken=null;
+  localStorage.clear();
+  stopPolling();
+  $('app').classList.remove('show');
+  $('auth').classList.remove('gone');
+  goStep(1);
+  $('rbx-username').value='';
+}
 
-  addMsg(msg, true, false, null);
-  showTyping();
+// ── Boot ──
+load();
+if(user&&sessionToken){
+  goStep(3);
+  $('step3-title').textContent='Welcome back, '+user.username+'!';
+  $('step3-icon').textContent=user.avatar;
+  $('step3-name').textContent=user.username;
+  $('step3-sub').textContent='Your session is still active.';
+}
+
+// ── Nav ──
+function nav(name, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='projects') renderProjects();
+}
+
+// ── Commands ──
+function setCmd(s){ $('cmd-input').value=s; }
+
+async function sendCommand(){
+  const body=$('cmd-input').value.trim();
+  const type=$('cmd-type').value;
+  if(!body){toast('Enter a command.','bad');return;}
+
+  addLog('sent',type,body);
+  $('cmd-input').value='';
+
+  const btn=$('send-btn');
+  btn.disabled=true; btn.textContent='Sending…';
 
   try {
-    const res = await fetch(`${BACKEND}/api/ai`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt:msg, system:buildSystem(msg)})
+    const res = await fetch(BACKEND+'/api/command',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:sessionToken,type,body})
     });
     const data = await res.json();
-    removeTyping();
-
-    if(data.error) {
-      addMsg('❌ AI Error: '+data.error, false, false, null);
-    } else {
-      const code = data.content?.[0]?.text || data.code || '';
-      const looksLikeCode = code.includes('local ') || code.includes('function ') || code.includes('game:') || code.includes('Instance.new');
-      if(looksLikeCode) {
-        const lines = code.split('\n').length;
-        addMsg(code, false, true, code);
-        addMsg(`✅ <strong>${lines} lines</strong> generated! Click <strong>▶ Insert into Studio</strong> to insert directly — no copy paste needed!`, false, false, null);
-      } else {
-        addMsg(code, false, false, null);
-      }
+    if(!data.ok) throw new Error(data.error||'Server error');
+    // Poll for result up to 15s
+    let result=null;
+    for(let i=0;i<15;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      const rRes=await fetch(BACKEND+'/api/result/'+sessionToken);
+      const rData=await rRes.json();
+      if(rData.ready){result=rData;break;}
     }
-  } catch(e) {
-    removeTyping();
-    addMsg('❌ Could not reach server: '+e.message, false, false, null);
+    if(result){ addLog(result.success?'result':'err',type,result.output); }
+    else { addLog('err',type,'No response from Studio — is the plugin connected?'); }
+  } catch(e){
+    addLog('err',type,'Connection failed: '+e.message);
+    toast('Send failed.','bad');
   }
 
-  isGenerating=false;
-  document.getElementById('chatSendBtn').disabled=false;
+  btn.disabled=false; btn.textContent='▶ Send to Studio';
 }
 
-// GAME SCANNER
-async function scanGame() {
-  if(!isConnected) { alert('Connect to Studio first!'); return; }
-  const scanCode = `
-local info={parts=0,scripts=0,localScripts=0,models=0,guis=0,remotes=0,scriptNames={},workspaceItems={}}
-for _,obj in ipairs(game:GetDescendants()) do
-  local cn=obj.ClassName
-  if cn=="Part" or cn=="MeshPart" or cn=="UnionOperation" then info.parts=info.parts+1
-  elseif cn=="Script" then info.scripts=info.scripts+1; if #info.scriptNames<10 then table.insert(info.scriptNames,obj.Name) end
-  elseif cn=="LocalScript" then info.localScripts=info.localScripts+1
-  elseif cn=="Model" then info.models=info.models+1
-  elseif cn=="ScreenGui" or cn=="SurfaceGui" then info.guis=info.guis+1
-  elseif cn=="RemoteEvent" or cn=="RemoteFunction" then info.remotes=info.remotes+1
-  end
-end
-for _,v in ipairs(workspace:GetChildren()) do
-  if #info.workspaceItems<15 then table.insert(info.workspaceItems,v.Name.." ("..v.ClassName..")") end
-end
-return game:GetService("HttpService"):JSONEncode(info)`;
-
-  await sendToStudio('eval', scanCode);
-  const result = await waitForResult(12000);
-
-  if(result.ready && result.success) {
-    try {
-      const data = JSON.parse(result.output);
-      document.getElementById('scan-parts').textContent = data.parts||0;
-      document.getElementById('scan-scripts').textContent = data.scripts||0;
-      document.getElementById('scan-local').textContent = data.localScripts||0;
-      document.getElementById('scan-models').textContent = data.models||0;
-      document.getElementById('scan-guis').textContent = data.guis||0;
-      document.getElementById('scan-remotes').textContent = data.remotes||0;
-      document.getElementById('scanScriptList').innerHTML = (data.scriptNames||[]).map(s=>`<div class="scan-list-item"><span class="scan-list-dot"></span>${s}</div>`).join('') || '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">No scripts found</div>';
-      document.getElementById('scanWorkspaceList').innerHTML = (data.workspaceItems||[]).map(s=>`<div class="scan-list-item"><span class="scan-list-dot"></span>${s}</div>`).join('') || '<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim2);padding:8px 0;">Workspace is empty</div>';
-      gameContext = `Parts:${data.parts}, Scripts:${data.scripts}, LocalScripts:${data.localScripts}, Models:${data.models}. Scripts: ${(data.scriptNames||[]).join(', ')}. Workspace: ${(data.workspaceItems||[]).join(', ')}.`;
-    } catch(e) { alert('Could not parse: '+e.message); }
-  } else {
-    alert('Scan failed: '+(result.output||'No response'));
-  }
+function clearLog(){
+  $('cmd-log-inner').innerHTML=`<div class="log-entry sys"><div class="le-top"><span class="log-tag sys">sys</span><span class="le-time">${ts()}</span></div><div class="le-body">Log cleared.</div></div>`;
+  cmdLog=[];
+  $('log-count').textContent='0 entries';
 }
 
-const chatInput = document.getElementById('chatInput');
-chatInput.addEventListener('input',()=>{ chatInput.style.height='auto'; chatInput.style.height=Math.min(chatInput.scrollHeight,120)+'px'; });
-chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
+function addLog(kind,label,msg){
+  const inner=$('cmd-log-inner');
+  const div=document.createElement('div');
+  div.className=`log-entry ${kind}`;
+  div.innerHTML=`<div class="le-top"><span class="log-tag ${kind}">${kind}</span><span style="font-size:10px;color:var(--text3);margin-left:6px">${label}</span><span class="le-time">${ts()}</span></div><div class="le-body">${msg}</div>`;
+  inner.appendChild(div);
+  inner.scrollTop=inner.scrollHeight;
+  cmdLog.push({kind,label,msg});
+  $('log-count').textContent=cmdLog.length+' entr'+(cmdLog.length===1?'y':'ies');
+}
+
+// ── Plugin polling (website side) ──
+function startPolling(){
+  pollInterval=setInterval(async()=>{
+    try{
+      const res=await fetch(BACKEND+'/api/ping/'+sessionToken);
+      const data=await res.json();
+      if(data.connected && !pluginConnected) setPluginConnected(true);
+      if(!data.connected && pluginConnected) setPluginConnected(false);
+    }catch(e){}
+  },2000);
+}
+function stopPolling(){ if(pollInterval) clearInterval(pollInterval); }
+
+function setPluginConnected(v){
+  pluginConnected=v;
+  $('plugin-dot').className='status-dot '+(v?'connected':'waiting');
+  $('plugin-status-text').textContent=v?'Studio connected':'Plugin not connected';
+  $('conn-dot').className='conn-big-dot '+(v?'on':'wait');
+  $('conn-label').textContent=v?'Studio connected':'Waiting for plugin';
+  $('conn-sub').textContent=v?'Commands will execute in Roblox Studio.':'Open Roblox Studio and activate your plugin.';
+  if(v){ toast('Studio plugin connected!','ok'); addLog('sys','connection','Plugin connected — session active.'); }
+}
+
+// ── Projects ──
+function seedProjects(){
+  projects=[
+    {id:genId(),name:'Obby Adventure',status:'synced',updated:Date.now()-3600000},
+    {id:genId(),name:'My Tycoon',status:'offline',updated:Date.now()-86400000},
+  ];
+  save();
+}
+
+function renderProjects(search=''){
+  const grid=$('proj-grid');
+  let list=projects.filter(p=>p.name.toLowerCase().includes(search.toLowerCase())||p.id.toLowerCase().includes(search.toLowerCase()));
+  if(!list.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text3)">No projects. Create one.</div>`;return;}
+  grid.innerHTML=list.map(p=>`
+    <div class="proj-card">
+      <div class="proj-name">${p.name}</div>
+      <div class="proj-id">${p.id}</div>
+      <span class="proj-pill ${p.status}">${p.status}</span>
+      <div class="proj-actions">
+        <button class="pact" onclick="syncProj('${p.id}')">↻ Sync</button>
+        <button class="pact del" onclick="deleteProj('${p.id}')">✕</button>
+      </div>
+    </div>`).join('');
+  $('sp-total').textContent=projects.length;
+  $('sp-synced').textContent=projects.filter(p=>p.status==='synced').length;
+  $('sp-err').textContent=projects.filter(p=>p.status==='error').length;
+  $('sp-off').textContent=projects.filter(p=>p.status==='offline').length;
+}
+
+function filterProj(v){renderProjects(v);}
+
+function syncProj(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  p.status='synced'; p.updated=Date.now();
+  save(); renderProjects();
+  toast(`"${p.name}" synced.`,'ok');
+  addLog('sys','sync',`Project "${p.name}" synced.`);
+}
+
+function deleteProj(id){
+  const p=projects.find(x=>x.id===id);
+  projects=projects.filter(x=>x.id!==id);
+  save(); renderProjects();
+  if(p) toast(`"${p.name}" deleted.`,'info');
+}
+
+function createProj(){
+  const name=$('np-name').value.trim();
+  if(!name){toast('Enter a name.','bad');return;}
+  projects.unshift({id:genId(),name,status:'offline',updated:Date.now()});
+  save(); closeModal('new-proj'); renderProjects();
+  $('np-name').value='';
+  toast(`"${name}" created.`,'ok');
+}
+
+// ── Modals ──
+function openModal(n){
+  if(n==='new-proj') $('np-id').value=genId();
+  $('modal-'+n).classList.add('open');
+}
+function closeModal(n){$('modal-'+n).classList.remove('open');}
+document.querySelectorAll('.modal-bg').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ── Copy ──
+function copyToken(){navigator.clipboard.writeText(sessionToken);toast('Token copied!','ok');}
+function copyText(t){navigator.clipboard.writeText(t);toast('Copied!','ok');}
 </script>
 </body>
 </html>
