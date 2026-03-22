@@ -668,10 +668,11 @@ function formatCode(){let lines=$('code-area').value.split('\n');let d=0;const o
 // ── Groq/AI backend ──
 async function callAI(userMsg,sysMsg='You are an expert Roblox Lua developer.'){
   try{
-    const r=await fetch(BACKEND+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sysMsg,message:userMsg,token:sessionToken})});
+    const r=await fetch(BACKEND+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sysMsg,prompt:userMsg})});
     if(!r.ok)throw new Error('AI unavailable');
     const d=await r.json();
-    return d.response||d.content||null;
+    const text=d.content?.[0]?.text||d.response||null;
+    return text;
   }catch{return simulateAI(userMsg);}
 }
 
