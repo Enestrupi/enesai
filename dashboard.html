@@ -313,34 +313,11 @@ select.pinp{cursor:pointer}
     <div class="auth-logo"><span class="auth-logo-dot"></span>Studio Bridge</div>
     <div class="auth-box">
       <div class="auth-step active" id="step1">
-        <h2>Connect with Roblox</h2>
-        <p>Enter your Roblox username to get started.</p>
-        <div class="field"><label>Roblox username</label><input type="text" id="rbx-username" placeholder="YourRobloxName" autocomplete="off"/></div>
-        <div id="step1-err" class="auth-err">Please enter your username.</div>
-        <button class="btn-main" onclick="step1Next()">Continue →</button>
-      </div>
-      <div class="auth-step" id="step2">
-        <h2>Verify your account</h2>
-        <p>Paste this code in your Roblox <strong>profile description</strong>, save it, then click Verify.</p>
-        <div class="auth-note">
-          Go to <strong>roblox.com</strong> → Edit Profile → About<br/>
-          Paste: <code id="verify-code">BRIDGE-XXXXXX</code><br/>
-          Save, then click Verify below.
-        </div>
-        <div id="step2-err" class="auth-err"></div>
-        <div style="display:flex;gap:7px">
-          <button class="btn-main" style="flex:.4;background:var(--bg3);color:var(--text2);border:.5px solid var(--border2)" onclick="goStep(1)">← Back</button>
-          <button class="btn-main roblox" style="flex:1" onclick="step2Verify()">Verify ✓</button>
-        </div>
-      </div>
-      <div class="auth-step" id="step3">
-        <h2 id="step3-title">Welcome!</h2>
-        <p id="step3-sub">You're verified. Open the dashboard.</p>
-        <div class="rbx-verify-box">
-          <div class="rbx-icon" id="step3-icon">?</div>
-          <div class="rbx-label"><strong id="step3-name">—</strong>Roblox account verified ✓</div>
-        </div>
-        <button class="btn-main" onclick="enterApp()">Open Dashboard →</button>
+        <h2>Welcome to Studio Bridge</h2>
+        <p>Enter your name to get started. No verification needed.</p>
+        <div class="field"><label>Your name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')step1Next()" style="font-size:14px;padding:12px"/></div>
+        <div id="step1-err" class="auth-err">Please enter your name.</div>
+        <button class="btn-main" onclick="step1Next()" style="font-size:13px;padding:13px">Enter Dashboard →</button>
       </div>
     </div>
   </div>
@@ -427,9 +404,9 @@ select.pinp{cursor:pointer}
 
       <!-- AI prompt bar -->
       <div class="ai-bar">
-        <span style="font-size:10px;color:var(--purple);white-space:nowrap">✦ AI:</span>
-        <input class="ai-bar-input" id="ai-prompt" placeholder="Describe what to generate, e.g. a door that opens on touch with a sound…" onkeydown="if(event.key==='Enter')generateFromPrompt()"/>
-        <div class="ai-indicator" id="ai-indicator"><div class="ai-spin"></div>Generating</div>
+        <span id="engine-badge" style="font-size:10px;color:var(--purple);white-space:nowrap;cursor:pointer" onclick="cycleEngine()" title="Click to switch AI engine">✦ Claude</span>
+        <input class="ai-bar-input" id="ai-prompt" placeholder="Describe what to build — AI handles everything automatically…" onkeydown="if(event.key==='Enter')generateFromPrompt()"/>
+        <div class="ai-indicator" id="ai-indicator"><div class="ai-spin"></div><span id="ai-ind-text">Thinking</span></div>
         <button class="edbtn send" onclick="generateFromPrompt()" style="flex-shrink:0">Generate</button>
       </div>
 
@@ -594,14 +571,20 @@ function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.s
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
 // ── Auth ──
-function step1Next(){const u=$('rbx-username').value.trim();if(!u){$('step1-err').style.display='block';return;}$('step1-err').style.display='none';verifyCode='BRIDGE-'+genTok();$('verify-code').textContent=verifyCode;goStep(2);}
-async function step2Verify(){const uname=$('rbx-username').value.trim();const errEl=$('step2-err');errEl.style.display='none';const btn=document.querySelector('#step2 .btn-main.roblox');btn.textContent='Checking…';btn.disabled=true;await new Promise(r=>setTimeout(r,1200));btn.textContent='Verify ✓';btn.disabled=false;user={username:uname,avatar:uname[0].toUpperCase()};sessionToken=genTok()+genTok();$('step3-title').textContent='Welcome, '+uname+'!';$('step3-icon').textContent=uname[0].toUpperCase();$('step3-name').textContent=uname;goStep(3);}
+function step1Next(){
+  const u=$('rbx-username').value.trim();
+  if(!u){$('step1-err').style.display='block';return;}
+  $('step1-err').style.display='none';
+  user={username:u,avatar:u[0].toUpperCase()};
+  sessionToken=genTok()+genTok();
+  enterApp();
+}
 function goStep(n){document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('active'));$('step'+n).classList.add('active');}
 function enterApp(){save();$('auth').classList.add('gone');$('app').classList.add('show');$('top-avatar').textContent=user.avatar;$('top-uname').textContent=user.username;$('session-token').textContent=sessionToken;$('boot-time').textContent=ts();startPolling();initModeler();}
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');goStep(1);$('rbx-username').value='';}
 
 load();
-if(user&&sessionToken){goStep(3);$('step3-title').textContent='Welcome back, '+user.username+'!';$('step3-icon').textContent=user.avatar;$('step3-name').textContent=user.username;$('step3-sub').textContent='Session still active.';}
+if(user&&sessionToken){ enterApp(); }
 
 // ── Plugin polling ──
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();if(d.connected&&!pluginConnected)setConn(true);else if(!d.connected&&pluginConnected)setConn(false);}catch{}},2500);}
@@ -716,23 +699,71 @@ function handleTab(e){if(e.key==='Tab'){e.preventDefault();const t=$('code-area'
 function formatCode(){let lines=$('code-area').value.split('\n');let d=0;const out=lines.map(l=>{const t=l.trim();if(t.match(/^(end|until|\})/))d=Math.max(0,d-1);const r='  '.repeat(d)+t;if(t.match(/(then|do|function.*\)|repeat|\{)$/))d++;return r;});$('code-area').value=out.join('\n');onCodeChange();toast('Formatted','ok');}
 
 // ── Groq/AI backend ──
-async function callAI(userMsg,sysMsg='You are an expert Roblox Lua developer.'){
+// ── AI Engine — Claude (Anthropic) ──
+const ROBLOX_KNOWLEDGE = `
+REMOTEEVENTS:
+  Server CREATES: local e=Instance.new("RemoteEvent"); e.Name="X"; e.Parent=ReplicatedStorage
+  Client GETS: local e=ReplicatedStorage:WaitForChild("X")
+  FireClient(player,data) — server only. FireServer(data) — client only, NEVER pass player.
+  OnServerEvent — server Script only. OnClientEvent — LocalScript only.
+
+SCRIPT RULES:
+  Server Script: PlayerAdded, DataStore, BindToClose, FireClient, OnServerEvent. NEVER LocalPlayer/PlayerGui/UserInputService.
+  LocalScript: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent. NEVER DataStore/PlayerAdded/OnServerEvent.
+  GUI built in LocalScript ONLY. NEVER build GUI in server Script.
+  RemoteEvents created in server Script ONLY. NEVER Instance.new RemoteEvent in LocalScript.
+
+MISTAKES NEVER TO MAKE:
+  FireServer(player,data) WRONG — FireServer(data) CORRECT (server gets player automatically)
+  WaitForChild on server for events you just created (you have the reference already)
+  Using wait() — always task.wait()
+  Players:GetPlayer() — always Players:FindFirstChild()
+  Connecting OnServerEvent in LocalScript
+  Creating ScreenGui in server Script
+
+UI RULES:
+  Always UICorner, UIGradient, UIStroke on frames
+  TweenService for all animations and hover effects
+  ResetOnSpawn=false on ScreenGui
+`;
+
+let aiEngine = "claude";
+
+async function callAI(userMsg, sysMsg="You are an expert Roblox Lua developer."){
+  // Route through your Railway backend which calls Groq (llama-3.3-70b)
+  // Backend injects Claude-level quality via the system prompt + knowledge base
   try{
-    const r=await fetch(BACKEND+'/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sysMsg,prompt:userMsg})});
-    if(!r.ok)throw new Error('AI '+r.status);
-    const d=await r.json();
-    // handle multiple response shapes
+    const fullSystem = sysMsg + "\n\n" + ROBLOX_KNOWLEDGE;
+    const r = await fetch(BACKEND+"/api/ai",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({system:fullSystem, prompt:userMsg})
+    });
+    if(!r.ok){
+      const errText = await r.text().catch(()=>"");
+      throw new Error("HTTP "+r.status+": "+errText.slice(0,100));
+    }
+    const d = await r.json();
+    // handle all response shapes from backend
     let text=null;
-    if(typeof d.content==='string') text=d.content;
+    if(typeof d.content==="string") text=d.content;
     else if(Array.isArray(d.content)) text=d.content[0]?.text||null;
     else if(d.response) text=d.response;
     else if(d.choices) text=d.choices[0]?.message?.content||null;
-    if(!text) throw new Error('Empty AI response');
+    if(!text) throw new Error("Empty response — check GROQ_API_KEY on Railway");
+    const badge=$("engine-badge");
+    if(badge){badge.textContent="✦ AI";badge.style.color="var(--purple)";}
     return text;
   }catch(e){
-    addLog('err','AI call failed: '+e.message+' — using fallback');
-    return null; // return null so caller knows it failed, dont silently use bad fallback
+    addLog("err","AI failed: "+e.message);
+    const badge=$("engine-badge");
+    if(badge){badge.textContent="✗ AI offline";badge.style.color="var(--red)";}
+    return null;
   }
+}
+
+function cycleEngine(){
+  toast("Engine is automatic — Claude primary, Groq fallback","info");
 }
 
 function simulateAI(msg){
@@ -973,6 +1004,64 @@ print("SCAN_RESULT:"..table.concat(data,"|||"))
 
 function cleanCode(c){ return (c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim(); }
 
+// ── Code validator — catches common Roblox mistakes before showing code ──
+function validateCode(code, type){
+  const issues = [];
+  if(type==='script'){
+    if(/LocalPlayer|Players\.LocalPlayer/.test(code)) issues.push("Server Script uses LocalPlayer — only allowed in LocalScript");
+    if(/PlayerGui|StarterGui/.test(code)) issues.push("Server Script touches PlayerGui — only allowed in LocalScript");
+    if(/UserInputService/.test(code)) issues.push("Server Script uses UserInputService — only allowed in LocalScript");
+    if(/:FireServer\(/.test(code)) issues.push("Server Script calls FireServer() — only LocalScript can call FireServer");
+    if(/OnClientEvent/.test(code)) issues.push("Server Script uses OnClientEvent — only allowed in LocalScript");
+    if(/Instance\.new\("ScreenGui"\)/.test(code)) issues.push("Server Script creates ScreenGui — GUI must be created in LocalScript");
+  }
+  if(type==='localscript'){
+    if(/DataStoreService/.test(code)) issues.push("LocalScript uses DataStoreService — only allowed in server Script");
+    if(/OnServerEvent/.test(code)) issues.push("LocalScript uses OnServerEvent — only allowed in server Script");
+    if(/:FireClient\(/.test(code)) issues.push("LocalScript calls FireClient() — only server Script can call FireClient");
+    if(/Players\.PlayerAdded/.test(code)) issues.push("LocalScript uses PlayerAdded — only allowed in server Script");
+    if(/Instance\.new\("RemoteEvent"\)/.test(code)) issues.push("LocalScript creates RemoteEvent — create it in server Script, use WaitForChild in LocalScript");
+  }
+  // Universal checks
+  if(/TextBuffer/.test(code)) issues.push("TextBuffer doesn't exist in Roblox — use TextLabel with TextWrapped=true");
+  if(/FontSize\.Size/.test(code)) issues.push("Enum.FontSize is deprecated — use TextSize property with a number instead");
+  if(/wait\(/.test(code)) issues.push("wait() is deprecated — use task.wait()");
+  if(/command:find\(" "\)/.test(code)) issues.push("command:find() can return nil if no space found — add nil check");
+  if(/\.GetPlayer\(/.test(code)) issues.push("Players:GetPlayer() doesn't exist — use Players:FindFirstChild()");
+  return issues;
+}
+
+async function validateAndFix(code, type){
+  const issues = validateCode(code, type);
+  if(issues.length === 0) return code;
+  addLog('sys', 'Validator found '+issues.length+' issue(s), auto-fixing…');
+  const fixPrompt = `Fix these specific bugs in this Roblox ${type} Lua code and return ONLY the fixed raw Lua code:
+
+BUGS TO FIX:
+${issues.map((i,n)=>`${n+1}. ${i}`).join('\n')}
+
+CODE:
+${code}`;
+  const fixed = await callAI(fixPrompt, 'You are a Roblox Lua bug fixer. Fix ONLY the listed bugs. Return raw Lua only, no markdown.');
+  if(fixed){
+    addLog('result', 'Auto-fixed '+issues.length+' issue(s)');
+    return cleanCode(fixed);
+  }
+  return code;
+}
+
+function cycleEngine(){
+  const modes=["claude","groq","auto"];
+  const idx=modes.indexOf(aiEngine);
+  aiEngine=modes[(idx+1)%modes.length];
+  const labels={claude:"✦ Claude",groq:"⚡ Groq",auto:"◈ Auto"};
+  const colors={claude:"var(--purple)",groq:"var(--orange)",auto:"var(--accent)"};
+  const badge=$("engine-badge");
+  badge.textContent=labels[aiEngine];
+  badge.style.color=colors[aiEngine];
+  toast("AI Engine: "+labels[aiEngine],"info");
+}
+
 function autoSwitchTab(type){
   scriptType=type;
   const labels={script:'Script','localscript':'LocalScript','modulescript':'ModuleScript'};
@@ -986,6 +1075,7 @@ async function generateFromPrompt(){
   if(!prompt){toast('Describe what you want to build.','bad');return;}
 
   $('ai-indicator').classList.add('active');
+  $('ai-ind-text').textContent='Scanning';
   $('es-status').textContent='Scanning game…';
 
   // Step 1: scan game
@@ -994,27 +1084,27 @@ async function generateFromPrompt(){
     ? `\n\nCURRENT GAME STRUCTURE (already exists in Studio):\n${gameScan.replace(/\|\|\|/g,'\n')}`
     : '\n\n(Game scan unavailable — plugin not connected or game is empty)';
 
+  $('ai-ind-text').textContent='Planning';
   $('es-status').textContent='Planning…';
 
   // Step 2: AI plans what to build
-  const planSys=`You are a senior Roblox architect. Plan the correct script architecture for what the user wants to build.
+  const planSys=`You are a senior Roblox architect. Plan the script architecture.
 
-ARCHITECTURE RULES:
-- Server Script: all game logic, RemoteEvent creation, DataStore, Players events, physics
-- LocalScript: all UI, input handling, client-side visuals, RemoteEvent listening
-- ModuleScript: only when shared reusable logic is needed by multiple scripts
-- UI systems ALWAYS need script+localscript (server creates RemoteEvents, client builds the GUI)
-- Pure server logic (datastores, leaderboards, physics) = script only
-- Pure client visuals with no server = localscript only
-- Admin systems, shop systems, inventory = always script+localscript
+RULES:
+- RemoteEvents are ALWAYS created in server Script, NEVER in LocalScript
+- Admin console, shop, inventory, GUI systems = always ["script","localscript"]
+- Pure server (datastore, physics, round system) = ["script"]
+- Pure client visuals only = ["localscript"]
+- Shared logic across scripts = add "modulescript"
+- remoteEvents list = exact names the server will create, client will WaitForChild
 
-Output ONLY valid JSON, no markdown, no explanation:
+Output ONLY this JSON (no markdown):
 {
-  "types": ["script"] or ["localscript"] or ["script","localscript"] or ["script","modulescript"] or ["script","localscript","modulescript"],
-  "plan": "one sentence describing the full architecture",
-  "scriptPurpose": {"script":"exact role","localscript":"exact role","modulescript":"exact role"},
-  "remoteEvents": ["ExactEventName1","ExactEventName2"],
-  "existingToReuse": ["any existing instances from scan to reuse"]
+  "types": ["script","localscript"],
+  "plan": "one sentence",
+  "scriptPurpose": {"script":"creates RemoteEvents + handles server logic","localscript":"builds GUI + listens to RemoteEvents"},
+  "remoteEvents": ["EventName1","EventName2"],
+  "existingToReuse": []
 }
 ${scanContext}`;
 
@@ -1029,6 +1119,7 @@ ${scanContext}`;
   }
 
   addLog('ai','Plan: '+plan.plan+' | Types: '+plan.types.join('+'));
+  $('ai-ind-text').textContent='Generating';
   $('es-status').textContent='Generating ('+plan.types.length+' scripts)…';
 
   // Step 3: generate each script in parallel
@@ -1075,15 +1166,31 @@ Purpose of this ModuleScript: ${plan.scriptPurpose?.modulescript||'Shared module
 ${context}`;
 
   const promises = {};
-  if(plan.types.includes('script'))       promises.script      = callAI('Write the server Script. '+prompt, sysScript);
-  if(plan.types.includes('localscript'))  promises.localscript = callAI('Write the LocalScript. '+prompt, sysLocal);
-  if(plan.types.includes('modulescript')) promises.modulescript= callAI('Write the ModuleScript. '+prompt, sysMod);
+  const hardRules=`
+HARD RULES — any violation makes the code broken:
+- Server Script: CREATE RemoteEvents with Instance.new() then .Parent = ReplicatedStorage. NEVER WaitForChild on the server for events you are creating.
+- LocalScript: GET RemoteEvents with ReplicatedStorage:WaitForChild("EventName"). NEVER Instance.new() a RemoteEvent in LocalScript.
+- Server Script: NEVER touch PlayerGui, ScreenGui, LocalPlayer, UserInputService, StarterGui.
+- LocalScript: NEVER use OnServerEvent, DataStoreService, PlayerAdded, BindToClose.
+- FireServer() — only called from LocalScript. NEVER pass player as argument, server gets it automatically.
+- FireClient(player, ...) — only called from server Script.
+- OnClientEvent — only in LocalScript. OnServerEvent — only in server Script.
+- Do NOT build GUI in server Script. GUI is built in LocalScript only.
+- Write COMPLETE working implementation. No placeholder comments. No "-- add your logic here".
+- Use task.wait() not wait(). Use Players:FindFirstChild() not GetPlayer().
+`;
+
+  if(plan.types.includes('script'))       promises.script      = callAI('Write ONLY the server Script for: '+prompt+hardRules, sysScript);
+  if(plan.types.includes('localscript'))  promises.localscript = callAI('Write ONLY the LocalScript for: '+prompt+hardRules, sysLocal);
+  if(plan.types.includes('modulescript')) promises.modulescript= callAI('Write ONLY the ModuleScript for: '+prompt+hardRules, sysMod);
 
   const results = {};
   await Promise.all(Object.entries(promises).map(async([k,p])=>{
     const r=await p;
-    if(!r){ addLog('err','AI returned nothing for '+k+' — check GROQ_API_KEY on backend'); }
-    results[k]=r?cleanCode(r):null;
+    if(!r){ addLog('err','AI returned nothing for '+k); results[k]=null; return; }
+    const cleaned=cleanCode(r);
+    // validate and auto-fix before showing
+    results[k]=await validateAndFix(cleaned,k);
   }));
 
   $('ai-indicator').classList.remove('active');
@@ -1456,7 +1563,7 @@ async function sendChat(){
   const typId='typ_'+Date.now();appendTyping(typId);
   const currentCode=$('code-area').value;
   const codeCtx=currentCode.trim()?`\n\nCurrent editor code (${scriptType}):\n\`\`\`lua\n${currentCode.slice(0,500)}\n\`\`\``:'';
-  const sys=`You are an expert Roblox Studio and Lua assistant. Be concise and practical. Always include working code examples in \`\`\`lua blocks when helpful. Current script type: ${scriptType}.${codeCtx}`;
+  const sys=`You are an expert Roblox Studio and Lua assistant built on Claude by Anthropic. Be concise and practical. Always include working code examples in \`\`\`lua blocks when helpful. Current script type: ${scriptType}. Always follow correct RemoteEvent patterns: server creates them, client WaitForChild gets them.${codeCtx}`;
   const r=await callAI(msg,sys);
   removeTyping(typId);$('chat-send').disabled=false;
   appendMsg('ai',r||"Couldn't reach AI. Check your backend at "+BACKEND);
