@@ -619,21 +619,37 @@ function detectBlockType(block){
 
 // Split multi-script editor content into individual blocks
 function splitScriptBlocks(code){
+  // Find all header positions with their types
+  const headerRegex=/--[^
+]*SCRIPT\s+\d+\s+of\s+\d+[^
+]*(?:Server Script|LocalScript|ModuleScript)[^
+]*/gi;
+  const matches=[...code.matchAll(headerRegex)];
+
+  if(matches.length<=1){
+    // No multi-script headers — single block, detect type
+    return [{code:code.trim(), type:detectBlockType(code)}];
+  }
+
   const blocks=[];
-  const parts=code.split(/--\s*╔[═]+╗[\s\S]*?╚[═]+╝\n?/);
-  const headers=[...code.matchAll(/--\s*╔[═]+╗([\s\S]*?)╚[═]+╝/g)];
-  parts.forEach((part,i)=>{
-    const trimmed=part.trim();
-    if(!trimmed) return;
-    // detect type from header comment or code content
-    const header=headers[i-1]?.[0]||'';
+  for(let i=0;i<matches.length;i++){
+    const header=matches[i][0];
+    const start=matches[i].index+header.length;
+    const end=i+1<matches.length ? matches[i+1].index : code.length;
+    // skip the box border lines after header
+    let blockCode=code.slice(start,end).trim();
+    // remove leading border line if present
+    blockCode=blockCode.replace(/^--\s*[╚╔][═─╗╝]+[^
+]*
+?/,'').trim();
+
     let type='script';
     if(/LocalScript/i.test(header)) type='localscript';
     else if(/ModuleScript/i.test(header)) type='modulescript';
-    else if(/Server Script/i.test(header)) type='script';
-    else type=detectBlockType(trimmed);
-    blocks.push({code:trimmed, type});
-  });
+    else type='script';
+
+    if(blockCode) blocks.push({code:blockCode, type});
+  }
   return blocks.length ? blocks : [{code:code.trim(), type:detectBlockType(code)}];
 }
 
@@ -648,10 +664,9 @@ async function sendToStudio(){
 
   for(let i=0;i<blocks.length;i++){
     const {code:blk, type}=blocks[i];
-    // Decide how to run it
-    let finalCode=blk;
-    const needsInsert = type==='localscript'||type==='modulescript'||needsServerWrap(blk)||needsClientWrap(blk);
-    if(needsInsert) finalCode=wrapInsert(blk,type);
+    // Always insert as proper script type — never run raw
+    const finalCode=wrapInsert(blk,type);
+    addLog('sys',`[${i+1}/${blocks.length}] Inserting ${type}…`);
 
     try{
       const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
@@ -666,8 +681,8 @@ async function sendToStudio(){
       addLog('err',`[${i+1}/${blocks.length}] Failed: `+e.message);
     }
 
-    // small gap between scripts
-    if(i<blocks.length-1) await new Promise(r=>setTimeout(r,800));
+    // gap between scripts so Studio processes each one
+    if(i<blocks.length-1) await new Promise(r=>setTimeout(r,1500));
   }
 
   btn.disabled=false;btn.textContent='▶ Send to Studio';
@@ -1863,4 +1878,4 @@ function openModal(title,sub,body,btns){
 function closeModal(){$('modal-bg').classList.remove('open');}
 </script>
 </body>
-</html>
+</html>\
