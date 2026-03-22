@@ -415,22 +415,14 @@ select.pinp{cursor:pointer}
 
     <!-- ═══ MIDDLE: Code Editor ═══ -->
     <div class="col-mid">
-      <!-- Script type selector + toolbar -->
       <div class="editor-toolbar">
-        <div class="script-type-tabs">
-          <button class="stt active s" id="stt-script" onclick="setScriptType('script',this)">Script</button>
-          <button class="stt ls" id="stt-local" onclick="setScriptType('localscript',this)">LocalScript</button>
-          <button class="stt ms" id="stt-modulescript" onclick="setScriptType('modulescript',this)">ModuleScript</button>
-        </div>
-        <div class="ed-sep"></div>
-        <button class="edbtn purple" onclick="generateFromPrompt()">✦ Generate</button>
-        <button class="edbtn" onclick="aiAction('comment')">💬 Comment</button>
         <button class="edbtn" onclick="aiAction('fix')">🔧 Fix</button>
-        <button class="edbtn" onclick="aiAction('optimize')">⚡ Optimize</button>
-        <div class="ed-sep"></div>
+        <button class="edbtn" onclick="aiAction('comment')">💬 Comment</button>
         <button class="edbtn" onclick="formatCode()">⇥ Format</button>
         <button class="edbtn" onclick="copyCode()">⎘ Copy</button>
-        <button class="edbtn green" onclick="sendToStudio()" id="send-studio-btn">▶ Send to Studio</button>
+        <div class="ed-sep"></div>
+        <span style="font-size:10px;color:var(--text3);margin-right:4px" id="es-type-badge">Auto</span>
+        <button class="edbtn green" onclick="sendToStudio()" id="send-studio-btn" style="margin-left:auto">▶ Send to Studio</button>
       </div>
 
       <!-- AI prompt bar -->
@@ -454,10 +446,9 @@ select.pinp{cursor:pointer}
 
       <!-- Status bar -->
       <div class="editor-status">
-        <span class="estat">Type: <span id="es-type">Script</span></span>
         <span class="estat">Lines: <span id="es-lines">0</span></span>
         <span class="estat">Chars: <span id="es-chars">0</span></span>
-        <span class="estat" style="margin-left:auto" id="es-status"></span>
+        <span class="estat" id="es-status" style="margin-left:auto"></span>
       </div>
 
       <!-- Quick commands bar -->
@@ -974,9 +965,10 @@ print("SCAN_RESULT:"..table.concat(data,"|||"))
 function cleanCode(c){ return (c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim(); }
 
 function autoSwitchTab(type){
-  const tabMap={script:'stt-script',localscript:'stt-local',modulescript:'stt-modulescript'};
-  const btn=$(tabMap[type]);
-  if(btn) setScriptType(type,btn);
+  scriptType=type;
+  const labels={script:'Script','localscript':'LocalScript','modulescript':'ModuleScript'};
+  const badge=$('es-type-badge');
+  if(badge) badge.textContent='AI: '+labels[type];
 }
 
 // ── Main AI Generate — fully automatic ──
