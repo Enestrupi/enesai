@@ -420,7 +420,7 @@ select.pinp{cursor:pointer}
         <div class="script-type-tabs">
           <button class="stt active s" id="stt-script" onclick="setScriptType('script',this)">Script</button>
           <button class="stt ls" id="stt-local" onclick="setScriptType('localscript',this)">LocalScript</button>
-          <button class="stt ms" id="stt-module" onclick="setScriptType('modulescript',this)">ModuleScript</button>
+          <button class="stt ms" id="stt-modulescript" onclick="setScriptType('modulescript',this)">ModuleScript</button>
         </div>
         <div class="ed-sep"></div>
         <button class="edbtn purple" onclick="generateFromPrompt()">✦ Generate</button>
@@ -854,24 +854,108 @@ end)
 print("Script loaded!")`;
 }
 
-// ── AI Generate ──
+// ── AI Generate — smart type detection ──
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Enter a description first.','bad');return;}
-  const sysMap={
-    script:'You are an expert Roblox server Script developer. Write ONLY raw Lua code for a Script (server-side). No markdown. Use proper services, error handling, and comments.',
-    localscript:'You are an expert Roblox developer. Write ONLY raw Lua code for a LocalScript (client-side). No markdown. Use Players.LocalPlayer, client services, and comments.',
-    modulescript:'You are an expert Roblox developer. Write ONLY raw Lua code for a ModuleScript. No markdown. Return a module table. Add helpful comments.'
-  };
+
   $('ai-indicator').classList.add('active');
-  $('es-status').textContent='Generating…';
-  const code=await callAI(prompt,sysMap[scriptType]);
+  $('es-status').textContent='Thinking…';
+
+  // First ask AI whether this needs one or multiple script types
+  const detectSys=`You are a Roblox scripting expert. A user wants to build something. Decide what script type(s) are needed.
+Reply ONLY with one of these exact words:
+- "script" — only a server Script is needed
+- "localscript" — only a LocalScript is needed  
+- "modulescript" — only a ModuleScript is needed
+- "script+localscript" — needs both a server Script AND a LocalScript
+- "script+modulescript" — needs a server Script AND a ModuleScript
+No explanation, just the type.`;
+
+  const detected = await callAI(prompt, detectSys);
+  const typeResult = (detected||'').trim().toLowerCase().replace(/[^a-z+]/g,'');
+
+  const sysScript=`You are an expert Roblox server Script developer. Write ONLY raw Lua code. No markdown fences. Server-side only — use Players.PlayerAdded, OnServerEvent, DataStore etc. Add comments.`;
+  const sysLocal=`You are an expert Roblox LocalScript developer. Write ONLY raw Lua code. No markdown fences. Client-side only — use Players.LocalPlayer, PlayerGui, UserInputService, OnClientEvent etc. Add comments.`;
+  const sysModule=`You are an expert Roblox ModuleScript developer. Write ONLY raw Lua code. No markdown fences. Return a module table. Add comments.`;
+
+  let finalCode='';
+  let detectedType=scriptType;
+
+  if(typeResult==='script+localscript'){
+    // Generate both and combine with clear separator
+    const [serverCode, clientCode] = await Promise.all([
+      callAI('Server Script part of: '+prompt, sysScript),
+      callAI('LocalScript part of: '+prompt, sysLocal)
+    ]);
+    const s=(serverCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
+    const l=(clientCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
+    finalCode=`-- ╔══════════════════════════════════════╗
+-- ║  SCRIPT 1 of 2 — Server Script       ║
+-- ║  Place in: ServerScriptService        ║
+-- ╚══════════════════════════════════════╝
+${s}
+
+
+-- ╔══════════════════════════════════════╗
+-- ║  SCRIPT 2 of 2 — LocalScript         ║
+-- ║  Place in: StarterPlayerScripts       ║
+-- ╚══════════════════════════════════════╝
+${l}`;
+    detectedType='script';
+    toast('Generated 2 scripts (Script + LocalScript)','ok');
+    addLog('ai','Split: Script + LocalScript for: '+prompt.slice(0,40));
+
+  } else if(typeResult==='script+modulescript'){
+    const [serverCode, modCode] = await Promise.all([
+      callAI('Server Script part of: '+prompt, sysScript),
+      callAI('ModuleScript part of: '+prompt, sysModule)
+    ]);
+    const s=(serverCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
+    const m=(modCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
+    finalCode=`-- ╔══════════════════════════════════════╗
+-- ║  SCRIPT 1 of 2 — Server Script       ║
+-- ║  Place in: ServerScriptService        ║
+-- ╚══════════════════════════════════════╝
+${s}
+
+
+-- ╔══════════════════════════════════════╗
+-- ║  SCRIPT 2 of 2 — ModuleScript        ║
+-- ║  Place in: ServerScriptService        ║
+-- ╚══════════════════════════════════════╝
+${m}`;
+    detectedType='script';
+    toast('Generated 2 scripts (Script + ModuleScript)','ok');
+    addLog('ai','Split: Script + ModuleScript for: '+prompt.slice(0,40));
+
+  } else {
+    // Single script — use detected type or fall back to selected
+    const typeToUse = ['script','localscript','modulescript'].includes(typeResult) ? typeResult : scriptType;
+    const sysToUse = typeToUse==='localscript'?sysLocal : typeToUse==='modulescript'?sysModule : sysScript;
+    const code = await callAI(prompt, sysToUse);
+    finalCode=(code||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
+    detectedType=typeToUse;
+    // Auto-switch tab to match
+    if(typeToUse!==scriptType){
+      const tabMap={script:'stt-script',localscript:'stt-local',modulescript:'stt-modulescript'};
+      setScriptType(typeToUse, $(tabMap[typeToUse]));
+      toast('Switched to '+typeToUse+' automatically','info');
+    } else {
+      toast('Generated!','ok');
+    }
+    addLog('ai','Generated '+typeToUse+' for: '+prompt.slice(0,50));
+  }
+
   $('ai-indicator').classList.remove('active');
-  if(code){
-    $('code-area').value=code.replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    onCodeChange();$('es-status').textContent='✓ AI generated';
-    toast('Generated!','ok');addLog('ai','AI generated script from: '+prompt.slice(0,50));
-  }else{$('es-status').textContent='✗ Failed';toast('Generation failed.','bad');}
+  if(finalCode){
+    $('code-area').value=finalCode;
+    onCodeChange();
+    $('es-status').textContent='✓ AI generated';
+  } else {
+    $('es-status').textContent='✗ Failed';
+    toast('Generation failed.','bad');
+  }
 }
 
 async function aiAction(action){
