@@ -988,21 +988,24 @@ async function generateFromPrompt(){
   $('es-status').textContent='Planning…';
 
   // Step 2: AI plans what to build
-  const planSys=`You are a senior Roblox engineer. A user describes what they want to build.
-Your job is to create a detailed build plan.
+  const planSys=`You are a senior Roblox architect. Plan the correct script architecture for what the user wants to build.
 
-RULES:
-- Decide EXACTLY which script types are needed: script, localscript, modulescript, or combinations
-- Consider what already exists in the game (provided below)
-- Output ONLY valid JSON, no markdown, no explanation
+ARCHITECTURE RULES:
+- Server Script: all game logic, RemoteEvent creation, DataStore, Players events, physics
+- LocalScript: all UI, input handling, client-side visuals, RemoteEvent listening
+- ModuleScript: only when shared reusable logic is needed by multiple scripts
+- UI systems ALWAYS need script+localscript (server creates RemoteEvents, client builds the GUI)
+- Pure server logic (datastores, leaderboards, physics) = script only
+- Pure client visuals with no server = localscript only
+- Admin systems, shop systems, inventory = always script+localscript
 
-Output this exact JSON format:
+Output ONLY valid JSON, no markdown, no explanation:
 {
   "types": ["script"] or ["localscript"] or ["script","localscript"] or ["script","modulescript"] or ["script","localscript","modulescript"],
   "plan": "one sentence describing the full architecture",
-  "scriptPurpose": {"script":"what this does","localscript":"what this does","modulescript":"what this does"},
-  "remoteEvents": ["EventName1","EventName2"],
-  "existingToReuse": ["any existing instances to reuse from scan"]
+  "scriptPurpose": {"script":"exact role","localscript":"exact role","modulescript":"exact role"},
+  "remoteEvents": ["ExactEventName1","ExactEventName2"],
+  "existingToReuse": ["any existing instances from scan to reuse"]
 }
 ${scanContext}`;
 
@@ -1028,22 +1031,37 @@ ${scanContext}`;
     : '';
   const context = `\nUser request: ${prompt}${remoteInfo}${reuseInfo}${scanContext}`;
 
+  const STRICT_RULES=`
+STRICT ROBLOX RULES — NEVER BREAK THESE:
+1. RemoteEvents/RemoteFunctions are created ONLY in the server Script, NEVER in LocalScript or ModuleScript.
+2. LocalScript uses :WaitForChild() to get RemoteEvents from ReplicatedStorage — never Instance.new() them.
+3. LocalScript NEVER uses OnServerEvent — only OnClientEvent.
+4. Server Script NEVER uses LocalPlayer, PlayerGui, UserInputService, or StarterGui.
+5. LocalScript NEVER uses Players.PlayerAdded, DataStoreService, or BindToClose.
+6. ModuleScript never connects events — only exposes functions the caller uses.
+7. Always use task.wait() not wait(). Always use Players:FindFirstChild() not Players:GetPlayer().
+8. Never call :FireServer() on a RemoteEvent from a server Script — only from LocalScript.
+9. Never call :FireClient() from a LocalScript — only from server Script.
+10. If building a UI, use UICorner, UIGradient, UIStroke, TweenService hover effects. Never flat basic boxes.
+11. Write COMPLETE working code. Never write placeholders like "-- code here" or "-- add your logic".
+12. All pcall error handling must actually do something (warn or return fallback).
+`;
+
   const sysScript=`You are a senior Roblox server Script engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
-NO markdown. NO basic examples. Use proper error handling (pcall), proper services, RemoteEvents correctly, DataStore with retry logic if needed.
-Write the FULL implementation, not a skeleton. Add clear comments.
+NO markdown fences. Raw Lua only.
+${STRICT_RULES}
 Purpose of this Script: ${plan.scriptPurpose?.script||'Server-side logic'}
 ${context}`;
 
   const sysLocal=`You are a senior Roblox LocalScript engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
-NO markdown. Use Players.LocalPlayer, PlayerGui, TweenService for animations, proper RemoteEvent clients.
-Build REAL advanced UIs with UICorner, UIGradient, UIStroke, animations, hover effects if UI is needed. Not basic flat boxes.
-Write the FULL implementation. Add clear comments.
-Purpose of this LocalScript: ${plan.scriptPurpose?.localscript||'Client-side logic'}
+NO markdown fences. Raw Lua only.
+${STRICT_RULES}
+Purpose of this LocalScript: ${plan.scriptPurpose?.localscript||'Client-side UI and input'}
 ${context}`;
 
   const sysMod=`You are a senior Roblox ModuleScript engineer. Write ADVANCED, COMPLETE, REUSABLE Lua code.
-NO markdown. Return a proper module table with well-structured functions.
-Write the FULL implementation. Add clear comments.
+NO markdown fences. Raw Lua only. Return a proper module table.
+${STRICT_RULES}
 Purpose of this ModuleScript: ${plan.scriptPurpose?.modulescript||'Shared module'}
 ${context}`;
 
