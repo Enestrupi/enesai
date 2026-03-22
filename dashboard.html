@@ -1075,6 +1075,32 @@ async function generateFromPrompt(){
   if(!prompt){toast('Describe what you want to build.','bad');return;}
 
   $('ai-indicator').classList.add('active');
+  $('ai-ind-text').textContent='Expanding prompt';
+  $('es-status').textContent='Expanding prompt…';
+
+  // ── Step 0: Expand vague prompt into detailed spec ──
+  const expandSys=`You are a Roblox game systems architect. A developer gave you a short vague description.
+Expand it into a detailed, specific technical specification that a Lua coder can follow exactly.
+
+Include:
+- Exact feature list (every mechanic, every button, every event)
+- Which script types are needed and why
+- What RemoteEvents are needed and their exact names
+- UI details if applicable (layout, colors, animations)
+- Admin/permission system if applicable
+- Edge cases to handle (player not found, invalid input, nil checks)
+- Any Roblox-specific APIs to use
+
+Output ONLY the expanded specification as plain text. No JSON. No code. Just a detailed description.
+Keep it under 300 words but make every word count.`;
+
+  const expandedPrompt = await callAI('Expand this into a detailed Roblox scripting specification: ' + prompt, expandSys);
+  const finalPrompt = expandedPrompt ? expandedPrompt.trim() : prompt;
+  if(expandedPrompt){
+    addLog('ai', '✦ Expanded: ' + finalPrompt.slice(0,120) + '…');
+    $('ai-prompt').value = finalPrompt; // show user what was expanded to
+  }
+
   $('ai-ind-text').textContent='Scanning';
   $('es-status').textContent='Scanning game…';
 
@@ -1108,7 +1134,7 @@ Output ONLY this JSON (no markdown):
 }
 ${scanContext}`;
 
-  const planRaw = await callAI(prompt, planSys);
+  const planRaw = await callAI(finalPrompt, planSys);
   let plan = null;
   try{
     const cleaned = (planRaw||'').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
@@ -1120,6 +1146,7 @@ ${scanContext}`;
 
   addLog('ai','Plan: '+plan.plan+' | Types: '+plan.types.join('+'));
   $('ai-ind-text').textContent='Generating';
+  $('ai-ind-text').textContent='Generating';
   $('es-status').textContent='Generating ('+plan.types.length+' scripts)…';
 
   // Step 3: generate each script in parallel
@@ -1129,7 +1156,7 @@ ${scanContext}`;
   const reuseInfo = plan.existingToReuse?.length
     ? `\nExisting instances to reuse: ${plan.existingToReuse.join(', ')}`
     : '';
-  const context = `\nUser request: ${prompt}${remoteInfo}${reuseInfo}${scanContext}`;
+  const context = `\nUser request: ${finalPrompt}${remoteInfo}${reuseInfo}${scanContext}`;
 
   const STRICT_RULES=`
 STRICT ROBLOX RULES — NEVER BREAK THESE:
@@ -1180,9 +1207,9 @@ HARD RULES — any violation makes the code broken:
 - Use task.wait() not wait(). Use Players:FindFirstChild() not GetPlayer().
 `;
 
-  if(plan.types.includes('script'))       promises.script      = callAI('Write ONLY the server Script for: '+prompt+hardRules, sysScript);
-  if(plan.types.includes('localscript'))  promises.localscript = callAI('Write ONLY the LocalScript for: '+prompt+hardRules, sysLocal);
-  if(plan.types.includes('modulescript')) promises.modulescript= callAI('Write ONLY the ModuleScript for: '+prompt+hardRules, sysMod);
+  if(plan.types.includes('script'))       promises.script      = callAI('Write ONLY the server Script for: '+finalPrompt+hardRules, sysScript);
+  if(plan.types.includes('localscript'))  promises.localscript = callAI('Write ONLY the LocalScript for: '+finalPrompt+hardRules, sysLocal);
+  if(plan.types.includes('modulescript')) promises.modulescript= callAI('Write ONLY the ModuleScript for: '+finalPrompt+hardRules, sysMod);
 
   const results = {};
   await Promise.all(Object.entries(promises).map(async([k,p])=>{
