@@ -624,41 +624,80 @@ function addLog(kind,msg){const inner=$('log-inner');const d=document.createElem
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-count').textContent='0';}
 
 // ── Detect server/client only APIs ──
-function needsServerWrap(code){
-  return /OnServerEvent|OnServerInvoke|PlayerAdded|PlayerRemoving|DataStoreService|BindToClose/.test(code);
-}
-function needsClientWrap(code){
-  return /LocalPlayer|PlayerGui|OnClientEvent|OnClientInvoke|UserInputService|ContextActionService/.test(code);
-}
-function wrapForInsert(code,type){
+function needsServerWrap(code){ return /OnServerEvent|OnServerInvoke|PlayerAdded|PlayerRemoving|DataStoreService|BindToClose/.test(code); }
+function needsClientWrap(code){ return /LocalPlayer|PlayerGui|OnClientEvent|OnClientInvoke|UserInputService|ContextActionService/.test(code); }
+
+function wrapInsert(code, type){
   const esc=code.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\t/g,'\\t');
   const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
-  const svc=svcMap[type]||'ServerScriptService';
-  const cls=clsMap[type]||'Script';
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeScript"\ns.Source="${esc}"\ns.Parent=game:GetService("${svc}")\nprint("✓ ${cls} inserted into ${svc}")`;
+  const svc=svcMap[type]||'ServerScriptService', cls=clsMap[type]||'Script';
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated"\ns.Source="${esc}"\ns.Parent=game:GetService("${svc}")\nprint("✓ ${cls} → ${svc}")`;
+}
+
+function detectBlockType(block){
+  const b=block.toLowerCase();
+  if(/localplayer|playergui|onclientevent|userinputservice|startergui/.test(b)) return 'localscript';
+  if(/onserverevent|playeradded|datastoreservice|bindtoclose/.test(b)) return 'script';
+  if(/local module|return module|local m =/.test(b)) return 'modulescript';
+  return 'script';
+}
+
+// Split multi-script editor content into individual blocks
+function splitScriptBlocks(code){
+  const blocks=[];
+  const parts=code.split(/--\s*╔[═]+╗[\s\S]*?╚[═]+╝\n?/);
+  const headers=[...code.matchAll(/--\s*╔[═]+╗([\s\S]*?)╚[═]+╝/g)];
+  parts.forEach((part,i)=>{
+    const trimmed=part.trim();
+    if(!trimmed) return;
+    // detect type from header comment or code content
+    const header=headers[i-1]?.[0]||'';
+    let type='script';
+    if(/LocalScript/i.test(header)) type='localscript';
+    else if(/ModuleScript/i.test(header)) type='modulescript';
+    else if(/Server Script/i.test(header)) type='script';
+    else type=detectBlockType(trimmed);
+    blocks.push({code:trimmed, type});
+  });
+  return blocks.length ? blocks : [{code:code.trim(), type:detectBlockType(code)}];
 }
 
 // ── Send to Studio ──
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
-  let finalCode=code, note='';
-  if(scriptType==='script'&&needsServerWrap(code)){finalCode=wrapForInsert(code,'script');note=' → inserted into ServerScriptService';}
-  else if(scriptType==='localscript'&&needsClientWrap(code)){finalCode=wrapForInsert(code,'localscript');note=' → inserted into StarterPlayerScripts';}
-  else if(scriptType==='modulescript'){finalCode=wrapForInsert(code,'modulescript');note=' → inserted into ServerScriptService';}
-  addLog('sent',code.substring(0,80)+(code.length>80?'…':'')+note);
   const btn=$('send-studio-btn');btn.disabled=true;btn.textContent='Sending…';
-  try{
-    const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode,scriptType})});
-    const data=await res.json();
-    if(!data.ok)throw new Error(data.error||'Server error');
-    let result=null;
-    for(let i=0;i<15;i++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+sessionToken);const rd=await rr.json();if(rd.ready){result=rd;break;}}
-    if(result)addLog(result.success?'result':'err',result.output||'Done');
-    else addLog('err','No response — is the plugin connected?');
-  }catch(e){addLog('err','Failed: '+e.message);toast('Send failed.','bad');}
+
+  const blocks=splitScriptBlocks(code);
+  addLog('sent',`Sending ${blocks.length} script(s)…`);
+
+  for(let i=0;i<blocks.length;i++){
+    const {code:blk, type}=blocks[i];
+    // Decide how to run it
+    let finalCode=blk;
+    const needsInsert = type==='localscript'||type==='modulescript'||needsServerWrap(blk)||needsClientWrap(blk);
+    if(needsInsert) finalCode=wrapInsert(blk,type);
+
+    try{
+      const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
+      const d=await res.json();
+      if(!d.ok) throw new Error(d.error||'Server error');
+      let result=null;
+      for(let j=0;j<12;j++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+sessionToken);const rd=await rr.json();if(rd.ready){result=rd;break;}}
+      const label=`[${i+1}/${blocks.length}] ${type}`;
+      if(result) addLog(result.success?'result':'err', label+': '+result.output);
+      else addLog('err', label+': No response');
+    }catch(e){
+      addLog('err',`[${i+1}/${blocks.length}] Failed: `+e.message);
+    }
+
+    // small gap between scripts
+    if(i<blocks.length-1) await new Promise(r=>setTimeout(r,800));
+  }
+
   btn.disabled=false;btn.textContent='▶ Send to Studio';
+  if(blocks.length>1) toast(`All ${blocks.length} scripts sent!`,'ok');
 }
 
 // ── Script type ──
@@ -854,104 +893,202 @@ end)
 print("Script loaded!")`;
 }
 
-// ── AI Generate — smart type detection ──
+// ── Game scanner — sends scan script to Studio, waits for result ──
+let lastGameScan = null;
+let lastScanTime = 0;
+
+async function scanGame(){
+  // Only rescan if older than 30s or never scanned
+  if(lastGameScan && Date.now()-lastScanTime < 30000) return lastGameScan;
+
+  if(!pluginConnected){ addLog('sys','Scanner: plugin not connected, skipping scan'); return null; }
+
+  $('es-status').textContent='Scanning game…';
+  addLog('sys','Scanning game structure…');
+
+  const scanScript=`
+local data = {}
+
+-- Services present
+local services = {"ServerScriptService","StarterGui","StarterPack","StarterPlayer","ReplicatedStorage","Workspace","Lighting","Teams"}
+local foundServices = {}
+for _,name in ipairs(services) do
+  local ok,svc = pcall(function() return game:GetService(name) end)
+  if ok and svc then
+    local children = {}
+    for _,c in ipairs(svc:GetChildren()) do
+      table.insert(children, c.Name.."("..c.ClassName..")")
+    end
+    table.insert(foundServices, name..": ["..table.concat(children,", ").."]")
+  end
+end
+table.insert(data, "SERVICES:\\n"..table.concat(foundServices,"\\n"))
+
+-- Workspace parts
+local parts = {}
+for _,v in ipairs(game.Workspace:GetDescendants()) do
+  if v:IsA("BasePart") or v:IsA("Model") or v:IsA("Script") or v:IsA("LocalScript") then
+    table.insert(parts, v.Name.."("..v.ClassName..")")
+    if #parts >= 30 then table.insert(parts,"...more") break end
+  end
+end
+table.insert(data, "WORKSPACE: ["..table.concat(parts,", ").."]")
+
+-- Existing RemoteEvents
+local remotes = {}
+local ok,rs = pcall(function() return game:GetService("ReplicatedStorage") end)
+if ok then
+  for _,v in ipairs(rs:GetDescendants()) do
+    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+      table.insert(remotes, v.Name.."("..v.ClassName..")")
+    end
+  end
+end
+table.insert(data, "REMOTES: ["..table.concat(remotes,", ").."]")
+
+print("SCAN_RESULT:"..table.concat(data,"|||"))
+`;
+
+  try{
+    const res = await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:scanScript})});
+    const d = await res.json();
+    if(!d.ok) return null;
+    let scanResult = null;
+    for(let i=0;i<8;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      const rr = await fetch(BACKEND+'/api/result/'+sessionToken);
+      const rd = await rr.json();
+      if(rd.ready){ scanResult=rd.output; break; }
+    }
+    if(scanResult && scanResult.includes('SCAN_RESULT:')){
+      const raw = scanResult.split('SCAN_RESULT:')[1];
+      lastGameScan = raw;
+      lastScanTime = Date.now();
+      addLog('sys','Game scanned ✓');
+      return raw;
+    }
+  }catch(e){ addLog('err','Scan failed: '+e.message); }
+  return null;
+}
+
+function cleanCode(c){ return (c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim(); }
+
+function autoSwitchTab(type){
+  const tabMap={script:'stt-script',localscript:'stt-local',modulescript:'stt-modulescript'};
+  const btn=$(tabMap[type]);
+  if(btn) setScriptType(type,btn);
+}
+
+// ── Main AI Generate — fully automatic ──
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
-  if(!prompt){toast('Enter a description first.','bad');return;}
+  if(!prompt){toast('Describe what you want to build.','bad');return;}
 
   $('ai-indicator').classList.add('active');
-  $('es-status').textContent='Thinking…';
+  $('es-status').textContent='Scanning game…';
 
-  // First ask AI whether this needs one or multiple script types
-  const detectSys=`You are a Roblox scripting expert. A user wants to build something. Decide what script type(s) are needed.
-Reply ONLY with one of these exact words:
-- "script" — only a server Script is needed
-- "localscript" — only a LocalScript is needed  
-- "modulescript" — only a ModuleScript is needed
-- "script+localscript" — needs both a server Script AND a LocalScript
-- "script+modulescript" — needs a server Script AND a ModuleScript
-No explanation, just the type.`;
+  // Step 1: scan game
+  const gameScan = await scanGame();
+  const scanContext = gameScan
+    ? `\n\nCURRENT GAME STRUCTURE (already exists in Studio):\n${gameScan.replace(/\|\|\|/g,'\n')}`
+    : '\n\n(Game scan unavailable — plugin not connected or game is empty)';
 
-  const detected = await callAI(prompt, detectSys);
-  const typeResult = (detected||'').trim().toLowerCase().replace(/[^a-z+]/g,'');
+  $('es-status').textContent='Planning…';
 
-  const sysScript=`You are an expert Roblox server Script developer. Write ONLY raw Lua code. No markdown fences. Server-side only — use Players.PlayerAdded, OnServerEvent, DataStore etc. Add comments.`;
-  const sysLocal=`You are an expert Roblox LocalScript developer. Write ONLY raw Lua code. No markdown fences. Client-side only — use Players.LocalPlayer, PlayerGui, UserInputService, OnClientEvent etc. Add comments.`;
-  const sysModule=`You are an expert Roblox ModuleScript developer. Write ONLY raw Lua code. No markdown fences. Return a module table. Add comments.`;
+  // Step 2: AI plans what to build
+  const planSys=`You are a senior Roblox engineer. A user describes what they want to build.
+Your job is to create a detailed build plan.
 
-  let finalCode='';
-  let detectedType=scriptType;
+RULES:
+- Decide EXACTLY which script types are needed: script, localscript, modulescript, or combinations
+- Consider what already exists in the game (provided below)
+- Output ONLY valid JSON, no markdown, no explanation
 
-  if(typeResult==='script+localscript'){
-    // Generate both and combine with clear separator
-    const [serverCode, clientCode] = await Promise.all([
-      callAI('Server Script part of: '+prompt, sysScript),
-      callAI('LocalScript part of: '+prompt, sysLocal)
-    ]);
-    const s=(serverCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    const l=(clientCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    finalCode=`-- ╔══════════════════════════════════════╗
--- ║  SCRIPT 1 of 2 — Server Script       ║
--- ║  Place in: ServerScriptService        ║
--- ╚══════════════════════════════════════╝
-${s}
+Output this exact JSON format:
+{
+  "types": ["script"] or ["localscript"] or ["script","localscript"] or ["script","modulescript"] or ["script","localscript","modulescript"],
+  "plan": "one sentence describing the full architecture",
+  "scriptPurpose": {"script":"what this does","localscript":"what this does","modulescript":"what this does"},
+  "remoteEvents": ["EventName1","EventName2"],
+  "existingToReuse": ["any existing instances to reuse from scan"]
+}
+${scanContext}`;
 
-
--- ╔══════════════════════════════════════╗
--- ║  SCRIPT 2 of 2 — LocalScript         ║
--- ║  Place in: StarterPlayerScripts       ║
--- ╚══════════════════════════════════════╝
-${l}`;
-    detectedType='script';
-    toast('Generated 2 scripts (Script + LocalScript)','ok');
-    addLog('ai','Split: Script + LocalScript for: '+prompt.slice(0,40));
-
-  } else if(typeResult==='script+modulescript'){
-    const [serverCode, modCode] = await Promise.all([
-      callAI('Server Script part of: '+prompt, sysScript),
-      callAI('ModuleScript part of: '+prompt, sysModule)
-    ]);
-    const s=(serverCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    const m=(modCode||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    finalCode=`-- ╔══════════════════════════════════════╗
--- ║  SCRIPT 1 of 2 — Server Script       ║
--- ║  Place in: ServerScriptService        ║
--- ╚══════════════════════════════════════╝
-${s}
-
-
--- ╔══════════════════════════════════════╗
--- ║  SCRIPT 2 of 2 — ModuleScript        ║
--- ║  Place in: ServerScriptService        ║
--- ╚══════════════════════════════════════╝
-${m}`;
-    detectedType='script';
-    toast('Generated 2 scripts (Script + ModuleScript)','ok');
-    addLog('ai','Split: Script + ModuleScript for: '+prompt.slice(0,40));
-
-  } else {
-    // Single script — use detected type or fall back to selected
-    const typeToUse = ['script','localscript','modulescript'].includes(typeResult) ? typeResult : scriptType;
-    const sysToUse = typeToUse==='localscript'?sysLocal : typeToUse==='modulescript'?sysModule : sysScript;
-    const code = await callAI(prompt, sysToUse);
-    finalCode=(code||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();
-    detectedType=typeToUse;
-    // Auto-switch tab to match
-    if(typeToUse!==scriptType){
-      const tabMap={script:'stt-script',localscript:'stt-local',modulescript:'stt-modulescript'};
-      setScriptType(typeToUse, $(tabMap[typeToUse]));
-      toast('Switched to '+typeToUse+' automatically','info');
-    } else {
-      toast('Generated!','ok');
-    }
-    addLog('ai','Generated '+typeToUse+' for: '+prompt.slice(0,50));
+  const planRaw = await callAI(prompt, planSys);
+  let plan = null;
+  try{
+    const cleaned = (planRaw||'').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    plan = JSON.parse(cleaned);
+  }catch(e){
+    // fallback plan
+    plan = {types:['script','localscript'],plan:'Full system',scriptPurpose:{script:'Server logic',localscript:'Client UI'},remoteEvents:[],existingToReuse:[]};
   }
 
+  addLog('ai','Plan: '+plan.plan+' | Types: '+plan.types.join('+'));
+  $('es-status').textContent='Generating ('+plan.types.length+' scripts)…';
+
+  // Step 3: generate each script in parallel
+  const remoteInfo = plan.remoteEvents?.length
+    ? `\nRemoteEvents to create/use: ${plan.remoteEvents.join(', ')}`
+    : '';
+  const reuseInfo = plan.existingToReuse?.length
+    ? `\nExisting instances to reuse: ${plan.existingToReuse.join(', ')}`
+    : '';
+  const context = `\nUser request: ${prompt}${remoteInfo}${reuseInfo}${scanContext}`;
+
+  const sysScript=`You are a senior Roblox server Script engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
+NO markdown. NO basic examples. Use proper error handling (pcall), proper services, RemoteEvents correctly, DataStore with retry logic if needed.
+Write the FULL implementation, not a skeleton. Add clear comments.
+Purpose of this Script: ${plan.scriptPurpose?.script||'Server-side logic'}
+${context}`;
+
+  const sysLocal=`You are a senior Roblox LocalScript engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
+NO markdown. Use Players.LocalPlayer, PlayerGui, TweenService for animations, proper RemoteEvent clients.
+Build REAL advanced UIs with UICorner, UIGradient, UIStroke, animations, hover effects if UI is needed. Not basic flat boxes.
+Write the FULL implementation. Add clear comments.
+Purpose of this LocalScript: ${plan.scriptPurpose?.localscript||'Client-side logic'}
+${context}`;
+
+  const sysMod=`You are a senior Roblox ModuleScript engineer. Write ADVANCED, COMPLETE, REUSABLE Lua code.
+NO markdown. Return a proper module table with well-structured functions.
+Write the FULL implementation. Add clear comments.
+Purpose of this ModuleScript: ${plan.scriptPurpose?.modulescript||'Shared module'}
+${context}`;
+
+  const promises = {};
+  if(plan.types.includes('script'))       promises.script      = callAI('Write the server Script. '+prompt, sysScript);
+  if(plan.types.includes('localscript'))  promises.localscript = callAI('Write the LocalScript. '+prompt, sysLocal);
+  if(plan.types.includes('modulescript')) promises.modulescript= callAI('Write the ModuleScript. '+prompt, sysMod);
+
+  const results = {};
+  await Promise.all(Object.entries(promises).map(async([k,p])=>{ results[k]=cleanCode(await p); }));
+
   $('ai-indicator').classList.remove('active');
-  if(finalCode){
+
+  // Step 4: combine into editor
+  const sep=(n,total,type,loc)=>
+`-- ╔══════════════════════════════════════════╗
+-- ║  SCRIPT ${n} of ${total} — ${type.padEnd(20)}║
+-- ║  → Place in: ${loc.padEnd(27)}║
+-- ╚══════════════════════════════════════════╝`;
+
+  const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
+  const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+
+  const parts=[];
+  plan.types.forEach((t,i)=>{
+    if(results[t]) parts.push(sep(i+1,plan.types.length,labelMap[t],locMap[t])+'\n'+results[t]);
+  });
+
+  const finalCode = parts.join('\n\n\n');
+
+  if(finalCode.trim()){
     $('code-area').value=finalCode;
     onCodeChange();
-    $('es-status').textContent='✓ AI generated';
+    // Switch tab to first type
+    autoSwitchTab(plan.types[0]);
+    $('es-status').textContent=`✓ ${plan.types.length} script(s) generated`;
+    toast(`✓ Generated ${plan.types.length} script(s) — ${plan.types.join(' + ')}`,'ok');
   } else {
     $('es-status').textContent='✗ Failed';
     toast('Generation failed.','bad');
