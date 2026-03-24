@@ -405,7 +405,7 @@ select.pinp{cursor:pointer}
 
       <!-- AI prompt bar -->
       <div class="ai-bar">
-        <span id="engine-badge" style="font-size:10px;color:var(--purple);white-space:nowrap;cursor:pointer" onclick="cycleEngine()" title="Click to switch AI engine">✦ Claude</span>
+        <span id="engine-badge" style="font-size:10px;color:var(--purple);white-space:nowrap;cursor:pointer" onclick="showEngineInfo()" title="AI powered via your Railway backend">✦ AI</span>
         <input class="ai-bar-input" id="ai-prompt" placeholder="Describe what to build — AI handles everything automatically…" onkeydown="if(event.key==='Enter')generateFromPrompt()"/>
         <div class="ai-indicator" id="ai-indicator"><div class="ai-spin"></div><span id="ai-ind-text">Thinking</span></div>
         <button class="edbtn send" onclick="generateFromPrompt()" style="flex-shrink:0">Generate</button>
@@ -552,10 +552,11 @@ select.pinp{cursor:pointer}
 
 <script>
 // ── Config ──
+// All AI calls route through your Railway backend — no API key needed in the browser.
 const BACKEND = "https://enesai-production.up.railway.app";
 
 // ── State ──
-let user=null,sessionToken=null,pluginConnected=false,pollInterval=null,verifyCode=null;
+let user=null,sessionToken=null,pluginConnected=false,pollInterval=null;
 let scriptType='script';
 let sceneObjects=[],selectedObjId=null,nextId=1;
 let showGrid=true,showWire=false,currentTool='select';
@@ -603,7 +604,7 @@ let logCount=0;
 function addLog(kind,msg){const inner=$('log-inner');const d=document.createElement('div');d.className=`log-entry ${kind}`;d.innerHTML=`<div class="le-top"><span class="ltag ${kind}">${kind}</span><span class="le-time">${ts()}</span></div><div class="le-body">${msg}</div>`;inner.appendChild(d);inner.scrollTop=inner.scrollHeight;logCount++;$('log-count').textContent=logCount;}
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-count').textContent='0';}
 
-// ── Detect server/client only APIs ──
+// ── Script type helpers ──
 function needsServerWrap(code){ return /OnServerEvent|OnServerInvoke|PlayerAdded|PlayerRemoving|DataStoreService|BindToClose/.test(code); }
 function needsClientWrap(code){ return /LocalPlayer|PlayerGui|OnClientEvent|OnClientInvoke|UserInputService|ContextActionService/.test(code); }
 
@@ -623,9 +624,7 @@ function detectBlockType(block){
   return 'script';
 }
 
-// Split multi-script editor content into individual blocks
 function splitScriptBlocks(code){
-  // Split on SCRIPT N of N header lines
   const lines = code.split('\n');
   const blocks = [];
   let currentLines = [];
@@ -635,23 +634,19 @@ function splitScriptBlocks(code){
     const line = lines[i];
     const isHeader = /SCRIPT\s+\d+\s+of\s+\d+/i.test(line);
     if(isHeader){
-      // save previous block
       if(currentLines.length && currentType){
         const c = currentLines.join('\n').trim();
         if(c) blocks.push({code:c, type:currentType});
       }
-      // detect new type from this header line
       if(/LocalScript/i.test(line)) currentType='localscript';
       else if(/ModuleScript/i.test(line)) currentType='modulescript';
       else currentType='script';
       currentLines=[];
     } else {
-      // skip pure border lines
       const isBorder = /^--\s*[╔╗╚╝═]+\s*$/.test(line.trim()) || /^--\s*[+\-|]+\s*$/.test(line.trim());
       if(!isBorder) currentLines.push(line);
     }
   }
-  // push last block
   if(currentLines.length && currentType){
     const c = currentLines.join('\n').trim();
     if(c) blocks.push({code:c, type:currentType});
@@ -674,7 +669,6 @@ async function sendToStudio(){
 
   for(let i=0;i<blocks.length;i++){
     const {code:blk, type}=blocks[i];
-    // Always insert as proper script type — never run raw
     const finalCode=wrapInsert(blk,type);
     addLog('sys',`[${i+1}/${blocks.length}] Inserting ${type}…`);
 
@@ -691,7 +685,6 @@ async function sendToStudio(){
       addLog('err',`[${i+1}/${blocks.length}] Failed: `+e.message);
     }
 
-    // gap between scripts so Studio processes each one
     if(i<blocks.length-1) await new Promise(r=>setTimeout(r,1500));
   }
 
@@ -699,17 +692,15 @@ async function sendToStudio(){
   if(blocks.length>1) toast(`All ${blocks.length} scripts sent!`,'ok');
 }
 
-// ── Script type ──
+// ── Script type tab ──
 function setScriptType(type,btn){
   scriptType=type;
   document.querySelectorAll('.stt').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if(btn) btn.classList.add('active');
   const labels={script:'Script (Server)',localscript:'LocalScript (Client)',modulescript:'ModuleScript'};
-  $('es-type').textContent=labels[type];
-  // Auto-add boilerplate header comment
   const area=$('code-area');
   const comments={script:'-- Script (Server-side)\n',localscript:'-- LocalScript (Client-side)\nlocal Players = game:GetService("Players")\nlocal player = Players.LocalPlayer\n',modulescript:'-- ModuleScript\nlocal module = {}\n\n\nreturn module\n'};
-  if(!area.value.trim())area.value=comments[type];
+  if(!area.value.trim()) area.value=comments[type];
   onCodeChange();
   toast('Switched to '+labels[type],'info');
 }
@@ -723,8 +714,13 @@ function syncLines(){$('line-nums').scrollTop=$('code-area').scrollTop;}
 function handleTab(e){if(e.key==='Tab'){e.preventDefault();const t=$('code-area');const s=t.selectionStart;t.value=t.value.slice(0,s)+'  '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+2;onCodeChange();}}
 function formatCode(){let lines=$('code-area').value.split('\n');let d=0;const out=lines.map(l=>{const t=l.trim();if(t.match(/^(end|until|\})/))d=Math.max(0,d-1);const r='  '.repeat(d)+t;if(t.match(/(then|do|function.*\)|repeat|\{)$/))d++;return r;});$('code-area').value=out.join('\n');onCodeChange();toast('Formatted','ok');}
 
-// ── Groq/AI backend ──
-// ── AI Engine — Claude (Anthropic) ──
+// ── AI engine info ──
+function showEngineInfo(){
+  toast('AI powered via your Railway backend — no API key in browser','info');
+}
+
+// ── Core AI call — routes entirely through your Railway backend ──
+// The browser NEVER touches any API key. The key lives only on Railway.
 const ROBLOX_KNOWLEDGE = `
 REMOTEEVENTS:
   Server CREATES: local e=Instance.new("RemoteEvent"); e.Name="X"; e.Parent=ReplicatedStorage
@@ -752,11 +748,9 @@ UI RULES:
   ResetOnSpawn=false on ScreenGui
 `;
 
-let aiEngine = "claude";
-
 async function callAI(userMsg, sysMsg="You are an expert Roblox Lua developer."){
-  // Route through your Railway backend which calls Groq (llama-3.3-70b)
-  // Backend injects Claude-level quality via the system prompt + knowledge base
+  // ALL requests go to your Railway backend at BACKEND/api/ai
+  // Railway holds the API key — the browser sends zero credentials
   try{
     const fullSystem = sysMsg + "\n\n" + ROBLOX_KNOWLEDGE;
     const r = await fetch(BACKEND+"/api/ai",{
@@ -766,270 +760,29 @@ async function callAI(userMsg, sysMsg="You are an expert Roblox Lua developer.")
     });
     if(!r.ok){
       const errText = await r.text().catch(()=>"");
-      throw new Error("HTTP "+r.status+": "+errText.slice(0,100));
+      throw new Error("Backend HTTP "+r.status+": "+errText.slice(0,120));
     }
     const d = await r.json();
-    // handle all response shapes from backend
+    // Handle all response shapes your backend might return
     let text=null;
     if(typeof d.content==="string") text=d.content;
     else if(Array.isArray(d.content)) text=d.content[0]?.text||null;
     else if(d.response) text=d.response;
     else if(d.choices) text=d.choices[0]?.message?.content||null;
-    if(!text) throw new Error("Empty response — check GROQ_API_KEY on Railway");
-    const badge=$("engine-badge");
-    if(badge){badge.textContent="✦ AI";badge.style.color="var(--purple)";}
+    else if(d.text) text=d.text;
+    if(!text) throw new Error("Empty response from backend — check your Railway /api/ai handler");
     return text;
   }catch(e){
     addLog("err","AI failed: "+e.message);
     const badge=$("engine-badge");
-    if(badge){badge.textContent="✗ AI offline";badge.style.color="var(--red)";}
+    if(badge){badge.textContent="✗ offline";badge.style.color="var(--red)";}
     return null;
   }
 }
 
-function cycleEngine(){
-  toast("Engine is automatic — Claude primary, Groq fallback","info");
-}
-
-function simulateAI(msg){
-  const m=msg.toLowerCase();
-  if(m.includes('door')||m.includes('touch open')){return scriptType==='localscript'?`-- LocalScript: Client door animation
-local TweenService = game:GetService("TweenService")
-local door = workspace:WaitForChild("Door")
-local debounce = false
-
-door.Touched:Connect(function(hit)
-    local player = game.Players:GetPlayerFromCharacter(hit.Parent)
-    if player and not debounce then
-        debounce = true
-        local tween = TweenService:Create(door, TweenInfo.new(0.5), {
-            CFrame = door.CFrame * CFrame.new(0, 8, 0)
-        })
-        tween:Play()
-        task.wait(3)
-        TweenService:Create(door, TweenInfo.new(0.5), {
-            CFrame = door.CFrame * CFrame.new(0, -8, 0)
-        }):Play()
-        task.wait(0.5)
-        debounce = false
-    end
-end)`:`-- Script: Server door with debounce
-local TweenService = game:GetService("TweenService")
-local door = script.Parent
-local debounce = false
-local openPos = door.CFrame * CFrame.new(0, 8, 0)
-local closePos = door.CFrame
-
-door.Touched:Connect(function(hit)
-    if hit.Parent:FindFirstChild("Humanoid") and not debounce then
-        debounce = true
-        TweenService:Create(door, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {CFrame = openPos}):Play()
-        task.wait(3)
-        TweenService:Create(door, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {CFrame = closePos}):Play()
-        task.wait(0.5)
-        debounce = false
-    end
-end)`;}
-  if(m.includes('leaderboard')||m.includes('stats')){return `-- Script: Leaderboard system
-local Players = game:GetService("Players")
-local DataStoreService = game:GetService("DataStoreService")
-local store = DataStoreService:GetDataStore("Stats_v1")
-
-Players.PlayerAdded:Connect(function(player)
-    local ls = Instance.new("Folder")
-    ls.Name = "leaderstats"
-    ls.Parent = player
-
-    local coins = Instance.new("IntValue")
-    coins.Name = "Coins"
-    coins.Parent = ls
-
-    local wins = Instance.new("IntValue")
-    wins.Name = "Wins"
-    wins.Parent = ls
-
-    local ok, data = pcall(function()
-        return store:GetAsync(player.UserId)
-    end)
-    if ok and data then
-        coins.Value = data.coins or 0
-        wins.Value = data.wins or 0
-    end
-end)
-
-Players.PlayerRemoving:Connect(function(player)
-    local ls = player:FindFirstChild("leaderstats")
-    if not ls then return end
-    pcall(function()
-        store:SetAsync(player.UserId, {
-            coins = ls.Coins.Value,
-            wins = ls.Wins.Value
-        })
-    end)
-end)`;}
-  if(m.includes('npc')||m.includes('pathfind')){return `-- Script: NPC with pathfinding
-local PathfindingService = game:GetService("PathfindingService")
-local npc = script.Parent
-local humanoid = npc:WaitForChild("Humanoid")
-local root = npc:WaitForChild("HumanoidRootPart")
-
-local function walkTo(target)
-    local path = PathfindingService:CreatePath({
-        AgentRadius = 2, AgentHeight = 5, AgentCanJump = true
-    })
-    local ok = pcall(function() path:ComputeAsync(root.Position, target) end)
-    if ok and path.Status == Enum.PathStatus.Success then
-        for _, wp in ipairs(path:GetWaypoints()) do
-            if wp.Action == Enum.PathWaypointAction.Jump then
-                humanoid.Jump = true
-            end
-            humanoid:MoveTo(wp.Position)
-            humanoid.MoveToFinished:Wait()
-        end
-    end
-end
-
-while true do
-    walkTo(Vector3.new(math.random(-30,30), 0, math.random(-30,30)))
-    task.wait(1)
-end`;}
-  if(m.includes('modulescript')||m.includes('module')){return `-- ModuleScript: Utility module
-local Utils = {}
-
-function Utils.lerp(a, b, t)
-    return a + (b - a) * t
-end
-
-function Utils.clamp(value, min, max)
-    return math.max(min, math.min(max, value))
-end
-
-function Utils.roundTo(value, decimals)
-    local factor = 10 ^ decimals
-    return math.round(value * factor) / factor
-end
-
-function Utils.tableContains(t, value)
-    for _, v in ipairs(t) do
-        if v == value then return true end
-    end
-    return false
-end
-
-return Utils`;}
-  return scriptType==='localscript'?
-`-- LocalScript generated
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local player = Players.LocalPlayer
-
--- Wait for character
-player.CharacterAdded:Connect(function(character)
-    local humanoid = character:WaitForChild("Humanoid")
-    print(player.Name .. " spawned!")
-end)
-
-print("LocalScript loaded!")`
-:scriptType==='modulescript'?
-`-- ModuleScript
-local M = {}
-
-function M.init()
-    print("Module initialized")
-end
-
-return M`
-:`-- Script generated
-local Players = game:GetService("Players")
-
-Players.PlayerAdded:Connect(function(player)
-    print(player.Name .. " joined!")
-end)
-
-print("Script loaded!")`;
-}
-
-// ── Game scanner — sends scan script to Studio, waits for result ──
-let lastGameScan = null;
-let lastScanTime = 0;
-
-async function scanGame(){
-  // Only rescan if older than 30s or never scanned
-  if(lastGameScan && Date.now()-lastScanTime < 30000) return lastGameScan;
-
-  if(!pluginConnected){ addLog('sys','Scanner: plugin not connected, skipping scan'); return null; }
-
-  $('es-status').textContent='Scanning game…';
-  addLog('sys','Scanning game structure…');
-
-  const scanScript=`
-local data = {}
-
--- Services present
-local services = {"ServerScriptService","StarterGui","StarterPack","StarterPlayer","ReplicatedStorage","Workspace","Lighting","Teams"}
-local foundServices = {}
-for _,name in ipairs(services) do
-  local ok,svc = pcall(function() return game:GetService(name) end)
-  if ok and svc then
-    local children = {}
-    for _,c in ipairs(svc:GetChildren()) do
-      table.insert(children, c.Name.."("..c.ClassName..")")
-    end
-    table.insert(foundServices, name..": ["..table.concat(children,", ").."]")
-  end
-end
-table.insert(data, "SERVICES:\\n"..table.concat(foundServices,"\\n"))
-
--- Workspace parts
-local parts = {}
-for _,v in ipairs(game.Workspace:GetDescendants()) do
-  if v:IsA("BasePart") or v:IsA("Model") or v:IsA("Script") or v:IsA("LocalScript") then
-    table.insert(parts, v.Name.."("..v.ClassName..")")
-    if #parts >= 30 then table.insert(parts,"...more") break end
-  end
-end
-table.insert(data, "WORKSPACE: ["..table.concat(parts,", ").."]")
-
--- Existing RemoteEvents
-local remotes = {}
-local ok,rs = pcall(function() return game:GetService("ReplicatedStorage") end)
-if ok then
-  for _,v in ipairs(rs:GetDescendants()) do
-    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
-      table.insert(remotes, v.Name.."("..v.ClassName..")")
-    end
-  end
-end
-table.insert(data, "REMOTES: ["..table.concat(remotes,", ").."]")
-
-print("SCAN_RESULT:"..table.concat(data,"|||"))
-`;
-
-  try{
-    const res = await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:scanScript})});
-    const d = await res.json();
-    if(!d.ok) return null;
-    let scanResult = null;
-    for(let i=0;i<8;i++){
-      await new Promise(r=>setTimeout(r,1000));
-      const rr = await fetch(BACKEND+'/api/result/'+sessionToken);
-      const rd = await rr.json();
-      if(rd.ready){ scanResult=rd.output; break; }
-    }
-    if(scanResult && scanResult.includes('SCAN_RESULT:')){
-      const raw = scanResult.split('SCAN_RESULT:')[1];
-      lastGameScan = raw;
-      lastScanTime = Date.now();
-      addLog('sys','Game scanned ✓');
-      return raw;
-    }
-  }catch(e){ addLog('err','Scan failed: '+e.message); }
-  return null;
-}
-
 function cleanCode(c){ return (c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim(); }
 
-// ── Code validator — catches common Roblox mistakes before showing code ──
+// ── Code validator ──
 function validateCode(code, type){
   const issues = [];
   if(type==='script'){
@@ -1047,11 +800,9 @@ function validateCode(code, type){
     if(/Players\.PlayerAdded/.test(code)) issues.push("LocalScript uses PlayerAdded — only allowed in server Script");
     if(/Instance\.new\("RemoteEvent"\)/.test(code)) issues.push("LocalScript creates RemoteEvent — create it in server Script, use WaitForChild in LocalScript");
   }
-  // Universal checks
   if(/TextBuffer/.test(code)) issues.push("TextBuffer doesn't exist in Roblox — use TextLabel with TextWrapped=true");
   if(/FontSize\.Size/.test(code)) issues.push("Enum.FontSize is deprecated — use TextSize property with a number instead");
-  if(/wait\(/.test(code)) issues.push("wait() is deprecated — use task.wait()");
-  if(/command:find\(" "\)/.test(code)) issues.push("command:find() can return nil if no space found — add nil check");
+  if(/wait\(/.test(code)) issues.push("wait() is deprecated — use task.wait()");
   if(/\.GetPlayer\(/.test(code)) issues.push("Players:GetPlayer() doesn't exist — use Players:FindFirstChild()");
   return issues;
 }
@@ -1060,13 +811,7 @@ async function validateAndFix(code, type){
   const issues = validateCode(code, type);
   if(issues.length === 0) return code;
   addLog('sys', 'Validator found '+issues.length+' issue(s), auto-fixing…');
-  const fixPrompt = `Fix these specific bugs in this Roblox ${type} Lua code and return ONLY the fixed raw Lua code:
-
-BUGS TO FIX:
-${issues.map((i,n)=>`${n+1}. ${i}`).join('\n')}
-
-CODE:
-${code}`;
+  const fixPrompt = `Fix these specific bugs in this Roblox ${type} Lua code and return ONLY the fixed raw Lua code:\n\nBUGS TO FIX:\n${issues.map((i,n)=>`${n+1}. ${i}`).join('\n')}\n\nCODE:\n${code}`;
   const fixed = await callAI(fixPrompt, 'You are a Roblox Lua bug fixer. Fix ONLY the listed bugs. Return raw Lua only, no markdown.');
   if(fixed){
     addLog('result', 'Auto-fixed '+issues.length+' issue(s)');
@@ -1075,26 +820,14 @@ ${code}`;
   return code;
 }
 
-function cycleEngine(){
-  const modes=["claude","groq","auto"];
-  const idx=modes.indexOf(aiEngine);
-  aiEngine=modes[(idx+1)%modes.length];
-  const labels={claude:"✦ Claude",groq:"⚡ Groq",auto:"◈ Auto"};
-  const colors={claude:"var(--purple)",groq:"var(--orange)",auto:"var(--accent)"};
-  const badge=$("engine-badge");
-  badge.textContent=labels[aiEngine];
-  badge.style.color=colors[aiEngine];
-  toast("AI Engine: "+labels[aiEngine],"info");
-}
-
 function autoSwitchTab(type){
   scriptType=type;
-  const labels={script:'Script','localscript':'LocalScript','modulescript':'ModuleScript'};
+  const labels={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const badge=$('es-type-badge');
   if(badge) badge.textContent='AI: '+labels[type];
 }
 
-// ── Main AI Generate — fully automatic ──
+// ── Main AI Generate ──
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what you want to build.','bad');return;}
@@ -1103,60 +836,27 @@ async function generateFromPrompt(){
   $('ai-ind-text').textContent='Expanding prompt';
   $('es-status').textContent='Expanding prompt…';
 
-  // ── Step 0: Expand vague prompt into detailed spec ──
-  const expandSys=`You are a Roblox game systems architect. A developer gave you a short vague description.
-Expand it into a detailed, specific technical specification that a Lua coder can follow exactly.
-
-Include:
-- Exact feature list (every mechanic, every button, every event)
-- Which script types are needed and why
-- What RemoteEvents are needed and their exact names
-- UI details if applicable (layout, colors, animations)
-- Admin/permission system if applicable
-- Edge cases to handle (player not found, invalid input, nil checks)
-- Any Roblox-specific APIs to use
-
-Output ONLY the expanded specification as plain text. No JSON. No code. Just a detailed description.
-Keep it under 300 words but make every word count.`;
-
+  const expandSys=`You are a Roblox game systems architect. Expand a short description into a detailed technical specification a Lua coder can follow. Include: feature list, script types needed, RemoteEvent names, UI details if needed, edge cases. Output plain text only, under 300 words.`;
   const expandedPrompt = await callAI('Expand this into a detailed Roblox scripting specification: ' + prompt, expandSys);
   const finalPrompt = expandedPrompt ? expandedPrompt.trim() : prompt;
   if(expandedPrompt){
     addLog('ai', '✦ Expanded: ' + finalPrompt.slice(0,120) + '…');
-    $('ai-prompt').value = finalPrompt; // show user what was expanded to
+    $('ai-prompt').value = finalPrompt;
   }
 
   $('ai-ind-text').textContent='Scanning';
   $('es-status').textContent='Scanning game…';
-
-  // Step 1: scan game
   const gameScan = await scanGame();
   const scanContext = gameScan
-    ? `\n\nCURRENT GAME STRUCTURE (already exists in Studio):\n${gameScan.replace(/\|\|\|/g,'\n')}`
-    : '\n\n(Game scan unavailable — plugin not connected or game is empty)';
+    ? `\n\nCURRENT GAME STRUCTURE:\n${gameScan.replace(/\|\|\|/g,'\n')}`
+    : '\n\n(Game scan unavailable — plugin not connected)';
 
   $('ai-ind-text').textContent='Planning';
   $('es-status').textContent='Planning…';
 
-  // Step 2: AI plans what to build
   const planSys=`You are a senior Roblox architect. Plan the script architecture.
-
-RULES:
-- RemoteEvents are ALWAYS created in server Script, NEVER in LocalScript
-- Admin console, shop, inventory, GUI systems = always ["script","localscript"]
-- Pure server (datastore, physics, round system) = ["script"]
-- Pure client visuals only = ["localscript"]
-- Shared logic across scripts = add "modulescript"
-- remoteEvents list = exact names the server will create, client will WaitForChild
-
 Output ONLY this JSON (no markdown):
-{
-  "types": ["script","localscript"],
-  "plan": "one sentence",
-  "scriptPurpose": {"script":"creates RemoteEvents + handles server logic","localscript":"builds GUI + listens to RemoteEvents"},
-  "remoteEvents": ["EventName1","EventName2"],
-  "existingToReuse": []
-}
+{"types":["script","localscript"],"plan":"one sentence","scriptPurpose":{"script":"creates RemoteEvents + handles server logic","localscript":"builds GUI + listens to RemoteEvents"},"remoteEvents":["EventName1"],"existingToReuse":[]}
 ${scanContext}`;
 
   const planRaw = await callAI(finalPrompt, planSys);
@@ -1165,72 +865,36 @@ ${scanContext}`;
     const cleaned = (planRaw||'').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
     plan = JSON.parse(cleaned);
   }catch(e){
-    // fallback plan
     plan = {types:['script','localscript'],plan:'Full system',scriptPurpose:{script:'Server logic',localscript:'Client UI'},remoteEvents:[],existingToReuse:[]};
   }
 
   addLog('ai','Plan: '+plan.plan+' | Types: '+plan.types.join('+'));
   $('ai-ind-text').textContent='Generating';
-  $('ai-ind-text').textContent='Generating';
   $('es-status').textContent='Generating ('+plan.types.length+' scripts)…';
 
-  // Step 3: generate each script in parallel
-  const remoteInfo = plan.remoteEvents?.length
-    ? `\nRemoteEvents to create/use: ${plan.remoteEvents.join(', ')}`
-    : '';
-  const reuseInfo = plan.existingToReuse?.length
-    ? `\nExisting instances to reuse: ${plan.existingToReuse.join(', ')}`
-    : '';
+  const remoteInfo = plan.remoteEvents?.length ? `\nRemoteEvents to create/use: ${plan.remoteEvents.join(', ')}` : '';
+  const reuseInfo = plan.existingToReuse?.length ? `\nExisting instances to reuse: ${plan.existingToReuse.join(', ')}` : '';
   const context = `\nUser request: ${finalPrompt}${remoteInfo}${reuseInfo}${scanContext}`;
 
   const STRICT_RULES=`
-STRICT ROBLOX RULES — NEVER BREAK THESE:
-1. RemoteEvents/RemoteFunctions are created ONLY in the server Script, NEVER in LocalScript or ModuleScript.
-2. LocalScript uses :WaitForChild() to get RemoteEvents from ReplicatedStorage — never Instance.new() them.
+STRICT ROBLOX RULES:
+1. RemoteEvents created ONLY in server Script, never in LocalScript.
+2. LocalScript uses WaitForChild() to get RemoteEvents — never Instance.new() them.
 3. LocalScript NEVER uses OnServerEvent — only OnClientEvent.
-4. Server Script NEVER uses LocalPlayer, PlayerGui, UserInputService, or StarterGui.
-5. LocalScript NEVER uses Players.PlayerAdded, DataStoreService, or BindToClose.
-6. ModuleScript never connects events — only exposes functions the caller uses.
-7. Always use task.wait() not wait(). Always use Players:FindFirstChild() not Players:GetPlayer().
-8. Never call :FireServer() on a RemoteEvent from a server Script — only from LocalScript.
-9. Never call :FireClient() from a LocalScript — only from server Script.
-10. If building a UI, use UICorner, UIGradient, UIStroke, TweenService hover effects. Never flat basic boxes.
-11. Write COMPLETE working code. Never write placeholders like "-- code here" or "-- add your logic".
-12. All pcall error handling must actually do something (warn or return fallback).
+4. Server Script NEVER uses LocalPlayer, PlayerGui, UserInputService.
+5. LocalScript NEVER uses DataStoreService, PlayerAdded, BindToClose.
+6. Always task.wait() not wait(). Players:FindFirstChild() not GetPlayer().
+7. FireServer() only from LocalScript. FireClient() only from server Script.
+8. GUI built in LocalScript only. Never in server Script.
+9. Write COMPLETE working code — no placeholders.
 `;
 
-  const sysScript=`You are a senior Roblox server Script engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
-NO markdown fences. Raw Lua only.
-${STRICT_RULES}
-Purpose of this Script: ${plan.scriptPurpose?.script||'Server-side logic'}
-${context}`;
-
-  const sysLocal=`You are a senior Roblox LocalScript engineer. Write ADVANCED, COMPLETE, PRODUCTION-READY Lua code.
-NO markdown fences. Raw Lua only.
-${STRICT_RULES}
-Purpose of this LocalScript: ${plan.scriptPurpose?.localscript||'Client-side UI and input'}
-${context}`;
-
-  const sysMod=`You are a senior Roblox ModuleScript engineer. Write ADVANCED, COMPLETE, REUSABLE Lua code.
-NO markdown fences. Raw Lua only. Return a proper module table.
-${STRICT_RULES}
-Purpose of this ModuleScript: ${plan.scriptPurpose?.modulescript||'Shared module'}
-${context}`;
+  const sysScript=`You are a senior Roblox server Script engineer. Write COMPLETE, PRODUCTION-READY Lua. No markdown fences. Raw Lua only.\n${STRICT_RULES}\nPurpose: ${plan.scriptPurpose?.script||'Server logic'}\n${context}`;
+  const sysLocal=`You are a senior Roblox LocalScript engineer. Write COMPLETE, PRODUCTION-READY Lua. No markdown fences. Raw Lua only.\n${STRICT_RULES}\nPurpose: ${plan.scriptPurpose?.localscript||'Client UI'}\n${context}`;
+  const sysMod=`You are a senior Roblox ModuleScript engineer. Write COMPLETE, REUSABLE Lua. No markdown. Raw Lua only. Return a proper module table.\n${STRICT_RULES}\nPurpose: ${plan.scriptPurpose?.modulescript||'Shared module'}\n${context}`;
 
   const promises = {};
-  const hardRules=`
-HARD RULES — any violation makes the code broken:
-- Server Script: CREATE RemoteEvents with Instance.new() then .Parent = ReplicatedStorage. NEVER WaitForChild on the server for events you are creating.
-- LocalScript: GET RemoteEvents with ReplicatedStorage:WaitForChild("EventName"). NEVER Instance.new() a RemoteEvent in LocalScript.
-- Server Script: NEVER touch PlayerGui, ScreenGui, LocalPlayer, UserInputService, StarterGui.
-- LocalScript: NEVER use OnServerEvent, DataStoreService, PlayerAdded, BindToClose.
-- FireServer() — only called from LocalScript. NEVER pass player as argument, server gets it automatically.
-- FireClient(player, ...) — only called from server Script.
-- OnClientEvent — only in LocalScript. OnServerEvent — only in server Script.
-- Do NOT build GUI in server Script. GUI is built in LocalScript only.
-- Write COMPLETE working implementation. No placeholder comments. No "-- add your logic here".
-- Use task.wait() not wait(). Use Players:FindFirstChild() not GetPlayer().
-`;
+  const hardRules=`\nHARD RULES: Server Script creates RemoteEvents. LocalScript uses WaitForChild to get them. Write complete implementation, no placeholders. task.wait() not wait().`;
 
   if(plan.types.includes('script'))       promises.script      = callAI('Write ONLY the server Script for: '+finalPrompt+hardRules, sysScript);
   if(plan.types.includes('localscript'))  promises.localscript = callAI('Write ONLY the LocalScript for: '+finalPrompt+hardRules, sysLocal);
@@ -1241,13 +905,11 @@ HARD RULES — any violation makes the code broken:
     const r=await p;
     if(!r){ addLog('err','AI returned nothing for '+k); results[k]=null; return; }
     const cleaned=cleanCode(r);
-    // validate and auto-fix before showing
     results[k]=await validateAndFix(cleaned,k);
   }));
 
   $('ai-indicator').classList.remove('active');
 
-  // Step 4: combine into editor
   const sep=(n,total,type,loc)=>
 `-- ╔══════════════════════════════════════════╗
 -- ║  SCRIPT ${n} of ${total} — ${type.padEnd(20)}║
@@ -1260,7 +922,7 @@ HARD RULES — any violation makes the code broken:
   const parts=[];
   plan.types.forEach((t,i)=>{
     if(results[t]) parts.push(sep(i+1,plan.types.length,labelMap[t],locMap[t])+'\n'+results[t]);
-    else parts.push(sep(i+1,plan.types.length,labelMap[t],locMap[t])+'\n-- AI generation failed for this script. Check backend logs.');
+    else parts.push(sep(i+1,plan.types.length,labelMap[t],locMap[t])+'\n-- AI generation failed for this script. Check your Railway backend.');
   });
 
   const finalCode = parts.join('\n\n\n');
@@ -1268,13 +930,12 @@ HARD RULES — any violation makes the code broken:
   if(finalCode.trim()){
     $('code-area').value=finalCode;
     onCodeChange();
-    // Switch tab to first type
     autoSwitchTab(plan.types[0]);
     $('es-status').textContent=`✓ ${plan.types.length} script(s) generated`;
     toast(`✓ Generated ${plan.types.length} script(s) — ${plan.types.join(' + ')}`,'ok');
   } else {
     $('es-status').textContent='✗ Failed';
-    toast('Generation failed.','bad');
+    toast('Generation failed — check Railway backend logs.','bad');
   }
 }
 
@@ -1290,7 +951,66 @@ async function aiAction(action){
   const r=await callAI(prompts[action]);
   $('ai-indicator').classList.remove('active');
   if(r){$('code-area').value=r.replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();onCodeChange();$('es-status').textContent='✓ Done';toast(action+' done!','ok');}
-  else toast('Failed.','bad');
+  else toast('Failed — check Railway backend.','bad');
+}
+
+// ── Game scanner ──
+let lastGameScan=null,lastScanTime=0;
+async function scanGame(){
+  if(lastGameScan && Date.now()-lastScanTime < 30000) return lastGameScan;
+  if(!pluginConnected){ addLog('sys','Scanner: plugin not connected, skipping'); return null; }
+  $('es-status').textContent='Scanning game…';
+  addLog('sys','Scanning game structure…');
+  const scanScript=`
+local data = {}
+local services = {"ServerScriptService","StarterGui","StarterPack","StarterPlayer","ReplicatedStorage","Workspace","Lighting"}
+local foundServices = {}
+for _,name in ipairs(services) do
+  local ok,svc = pcall(function() return game:GetService(name) end)
+  if ok and svc then
+    local children = {}
+    for _,c in ipairs(svc:GetChildren()) do table.insert(children, c.Name.."("..c.ClassName..")") end
+    table.insert(foundServices, name..": ["..table.concat(children,", ").."]")
+  end
+end
+table.insert(data, "SERVICES:\\n"..table.concat(foundServices,"\\n"))
+local parts = {}
+for _,v in ipairs(game.Workspace:GetDescendants()) do
+  if v:IsA("BasePart") or v:IsA("Model") or v:IsA("Script") or v:IsA("LocalScript") then
+    table.insert(parts, v.Name.."("..v.ClassName..")")
+    if #parts >= 30 then table.insert(parts,"...more") break end
+  end
+end
+table.insert(data, "WORKSPACE: ["..table.concat(parts,", ").."]")
+local remotes = {}
+local ok2,rs = pcall(function() return game:GetService("ReplicatedStorage") end)
+if ok2 then
+  for _,v in ipairs(rs:GetDescendants()) do
+    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then table.insert(remotes, v.Name.."("..v.ClassName..")") end
+  end
+end
+table.insert(data, "REMOTES: ["..table.concat(remotes,", ").."]")
+print("SCAN_RESULT:"..table.concat(data,"|||"))
+`;
+  try{
+    const res = await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:scanScript})});
+    const d = await res.json();
+    if(!d.ok) return null;
+    let scanResult = null;
+    for(let i=0;i<8;i++){
+      await new Promise(r=>setTimeout(r,1000));
+      const rr = await fetch(BACKEND+'/api/result/'+sessionToken);
+      const rd = await rr.json();
+      if(rd.ready){ scanResult=rd.output; break; }
+    }
+    if(scanResult && scanResult.includes('SCAN_RESULT:')){
+      const raw = scanResult.split('SCAN_RESULT:')[1];
+      lastGameScan = raw; lastScanTime = Date.now();
+      addLog('sys','Game scanned ✓');
+      return raw;
+    }
+  }catch(e){ addLog('err','Scan failed: '+e.message); }
+  return null;
 }
 
 // ── Templates ──
@@ -1340,26 +1060,16 @@ local info = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut,
 local goal = {Position = part.Position + Vector3.new(0, 5, 0)}
 
 TweenService:Create(part, info, goal):Play()`},
-  tool:{type:'localscript',code:`-- LocalScript: Tool (goes inside Tool > Handle)
+  tool:{type:'localscript',code:`-- LocalScript: Tool
 local tool = script.Parent
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local equipped = false
 
-tool.Equipped:Connect(function()
-    equipped = true
-    print(player.Name .. " equipped " .. tool.Name)
-end)
-
-tool.Unequipped:Connect(function()
-    equipped = false
-end)
-
+tool.Equipped:Connect(function() equipped = true end)
+tool.Unequipped:Connect(function() equipped = false end)
 tool.Activated:Connect(function()
-    if equipped then
-        print("Tool activated!")
-        -- Add your tool action here
-    end
+    if equipped then print("Tool activated!") end
 end)`},
   npc:{type:'script',code:`-- Script: NPC Pathfinding
 local PathfindingService = game:GetService("PathfindingService")
@@ -1383,34 +1093,30 @@ while true do
     walkTo(Vector3.new(math.random(-30,30), 0, math.random(-30,30)))
     task.wait(1)
 end`},
-  datastore:{type:'script',code:`-- Script: DataStore with full error handling
+  datastore:{type:'script',code:`-- Script: DataStore with error handling
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local store = DataStoreService:GetDataStore("GameData_v1")
 local cache = {}
 
-local function loadData(player)
-    local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
-    return ok and data or {coins=0, level=1}
-end
-
-local function saveData(player)
-    if not cache[player.UserId] then return end
-    pcall(function() store:SetAsync(tostring(player.UserId), cache[player.UserId]) end)
-end
-
 Players.PlayerAdded:Connect(function(player)
-    cache[player.UserId] = loadData(player)
-    print("Loaded data for", player.Name)
+    local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
+    cache[player.UserId] = ok and data or {coins=0, level=1}
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-    saveData(player)
-    cache[player.UserId] = nil
+    if cache[player.UserId] then
+        pcall(function() store:SetAsync(tostring(player.UserId), cache[player.UserId]) end)
+        cache[player.UserId] = nil
+    end
 end)
 
 game:BindToClose(function()
-    for _, player in ipairs(Players:GetPlayers()) do saveData(player) end
+    for _, player in ipairs(Players:GetPlayers()) do
+        if cache[player.UserId] then
+            pcall(function() store:SetAsync(tostring(player.UserId), cache[player.UserId]) end)
+        end
+    end
 end)`},
   gui:{type:'localscript',code:`-- LocalScript: ScreenGui
 local Players = game:GetService("Players")
@@ -1429,9 +1135,7 @@ frame.BackgroundColor3 = Color3.fromRGB(20, 22, 35)
 frame.BorderSizePixel = 0
 frame.Parent = gui
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = frame
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
 
 local btn = Instance.new("TextButton")
 btn.Size = UDim2.new(1, -20, 0, 40)
@@ -1443,16 +1147,13 @@ btn.Font = Enum.Font.GothamBold
 btn.TextSize = 14
 btn.Parent = frame
 
-local btnCorner = Instance.new("UICorner")
-btnCorner.CornerRadius = UDim.new(0, 6)
-btnCorner.Parent = btn
+Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
 btn.MouseButton1Click:Connect(function()
     btn.Text = "Clicked! ✓"
 end)`},
   vehicle:{type:'script',code:`-- Script: Vehicle seat controller
 local seat = script.Parent
-local speed = 60
 
 seat:GetPropertyChangedSignal("Occupant"):Connect(function()
     local occupant = seat.Occupant
@@ -1473,12 +1174,10 @@ local status = Instance.new("StringValue")
 status.Name = "Status"
 status.Parent = ReplicatedStorage
 
-local function setStatus(msg) status.Value = msg print(msg) end
+local function setStatus(msg) status.Value = msg; print(msg) end
 
 local function startRound()
-    local players = Players:GetPlayers()
     setStatus("Round started! " .. ROUND_TIME .. "s remaining")
-    -- Teleport players to map, set up game
     for i = ROUND_TIME, 1, -1 do
         task.wait(1)
         setStatus("Time: " .. i .. "s")
@@ -1498,8 +1197,7 @@ while true do
 end`},
   admin:{type:'script',code:`-- Script: Basic admin commands
 local ADMINS = {
-    -- Add Roblox user IDs here
-    [1] = true, -- Example: Roblox user ID 1
+    [1] = true, -- Replace with your Roblox user ID
 }
 
 local function isAdmin(player)
@@ -1515,14 +1213,12 @@ game.Players.PlayerAdded:Connect(function(player)
         if cmd == "/kick" and args[2] then
             local target = game.Players:FindFirstChild(args[2])
             if target then target:Kick("Kicked by admin") end
-
         elseif cmd == "/speed" and args[2] and args[3] then
             local target = game.Players:FindFirstChild(args[2])
             if target and target.Character then
                 local hum = target.Character:FindFirstChild("Humanoid")
                 if hum then hum.WalkSpeed = tonumber(args[3]) or 16 end
             end
-
         elseif cmd == "/tp" and args[2] then
             local target = game.Players:FindFirstChild(args[2])
             if target and target.Character and player.Character then
@@ -1537,20 +1233,20 @@ function loadTemplate(name){
   const t=TEMPLATES[name];
   if(!t)return;
   $('code-area').value=t.code;
-  setScriptType(t.type, $('stt-'+{script:'script',localscript:'local',modulescript:'module'}[t.type]));
+  scriptType=t.type;
   onCodeChange();
   toast('Template loaded: '+name,'ok');
 }
 
 // ── Snippets ──
 const SNIPPETS={
-  remote:`-- RemoteEvent (place in ReplicatedStorage)
--- Server:
+  remote:`-- RemoteEvent boilerplate
+-- Server Script:
 local re = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
 re.OnServerEvent:Connect(function(player, data)
     print(player.Name, data)
 end)
--- Client (LocalScript):
+-- LocalScript:
 -- game:GetService("ReplicatedStorage").MyEvent:FireServer({msg="hello"})`,
   bindable:`local event = Instance.new("BindableEvent")
 event.Event:Connect(function(data) print("Got:", data) end)
@@ -1575,7 +1271,6 @@ end`,
 PS:RegisterCollisionGroup("Players")
 PS:CollisionGroupSetCollidable("Players","Players",false)`,
   pcall:`local ok, result = pcall(function()
-    -- risky code here
     return dataStore:GetAsync(key)
 end)
 if not ok then warn("Error:", result) end`,
@@ -1615,10 +1310,10 @@ async function sendChat(){
   const typId='typ_'+Date.now();appendTyping(typId);
   const currentCode=$('code-area').value;
   const codeCtx=currentCode.trim()?`\n\nCurrent editor code (${scriptType}):\n\`\`\`lua\n${currentCode.slice(0,500)}\n\`\`\``:'';
-  const sys=`You are an expert Roblox Studio and Lua assistant built on Claude by Anthropic. Be concise and practical. Always include working code examples in \`\`\`lua blocks when helpful. Current script type: ${scriptType}. Always follow correct RemoteEvent patterns: server creates them, client WaitForChild gets them.${codeCtx}`;
+  const sys=`You are an expert Roblox Studio and Lua assistant. Be concise and practical. Include working code examples in \`\`\`lua blocks when helpful. Current script type: ${scriptType}. Always follow correct RemoteEvent patterns: server creates them, client WaitForChild gets them.${codeCtx}`;
   const r=await callAI(msg,sys);
   removeTyping(typId);$('chat-send').disabled=false;
-  appendMsg('ai',r||"Couldn't reach AI. Check your backend at "+BACKEND);
+  appendMsg('ai',r||"Couldn't reach AI backend. Is your Railway server running? Check: "+BACKEND);
 }
 
 function appendMsg(role,text){
@@ -1649,7 +1344,6 @@ function initModeler(){
   canvas.height=vp.clientHeight||228;
   new ResizeObserver(()=>{canvas.width=vp.clientWidth;canvas.height=vp.clientHeight;render3d();}).observe(vp);
   initModelerEvents();
-  // Add a default floor
   addPartSilent('BasePart','block',{x:0,y:-0.5,z:0,sx:30,sy:1,sz:30,color:'#444455',name:'Floor',anchored:true,material:'SmoothPlastic',transparency:0});
   render3d();
 }
@@ -1719,7 +1413,6 @@ function drawObj(obj){
       ctx.strokeStyle=sel?'rgba(0,212,255,0.8)':'rgba(0,0,0,0.15)';ctx.lineWidth=sel?1.5:0.3;ctx.stroke();
     }
   });
-  // selection ring
   if(sel){
     const cp=project(obj.x,obj.y,obj.z);
     if(cp){ctx.strokeStyle='rgba(0,212,255,0.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(cp.sx,cp.sy,Math.min(canvas.width,canvas.height)*0.06,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
@@ -1822,7 +1515,7 @@ function exportScene(){
     lua+=`local ${n} = Instance.new("${o.className}")\n${n}.Name = "${o.name}"\n${n}.Size = Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position = Vector3.new(${o.x},${o.y},${o.z})\n${n}.Material = Enum.Material.${o.material}\n${n}.Anchored = ${o.anchored}\n${n}.Transparency = ${o.transparency}\n${n}.Parent = workspace\n\n`;
   });
   $('code-area').value=lua;
-  setScriptType('script',$('stt-script'));
+  scriptType='script';
   onCodeChange();
   toast('Exported to editor!','ok');
   addLog('sys','Scene exported to editor ('+parts.length+' parts)');
