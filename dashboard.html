@@ -35,7 +35,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .auth-logo{font-family:var(--fd);font-size:12px;font-weight:900;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
 .auth-logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
 .auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative;overflow:hidden}
-.auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none}
+.auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
+.auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:1}
 .auth-box h2{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:.25rem}
 .auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
 .field{margin-bottom:.875rem}
@@ -315,9 +316,9 @@ select.pinp{cursor:pointer}
       <div class="auth-step active" id="step1">
         <h2>Welcome to Studio Bridge</h2>
         <p>Enter your name to get started. No verification needed.</p>
-        <div class="field"><label>Your name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')step1Next()" style="font-size:14px;padding:12px"/></div>
+        <div class="field"><label>Your name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')step1Next()" style="font-size:15px;padding:14px;position:relative;z-index:2"/></div>
         <div id="step1-err" class="auth-err">Please enter your name.</div>
-        <button class="btn-main" onclick="step1Next()" style="font-size:13px;padding:13px">Enter Dashboard →</button>
+        <button class="btn-main" onclick="step1Next()" style="font-size:14px;padding:14px;position:relative;z-index:2;cursor:pointer">Enter Dashboard →</button>
       </div>
     </div>
   </div>
@@ -572,8 +573,13 @@ function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=l
 
 // ── Auth ──
 function step1Next(){
-  const u=$('rbx-username').value.trim();
-  if(!u){$('step1-err').style.display='block';return;}
+  const inp=$('rbx-username');
+  const u=(inp.value||'').trim();
+  if(!u){
+    $('step1-err').style.display='block';
+    inp.focus();
+    return;
+  }
   $('step1-err').style.display='none';
   user={username:u,avatar:u[0].toUpperCase()};
   sessionToken=genTok()+genTok();
@@ -619,38 +625,42 @@ function detectBlockType(block){
 
 // Split multi-script editor content into individual blocks
 function splitScriptBlocks(code){
-  // Find all header positions with their types
-  const headerRegex=/--[^
-]*SCRIPT\s+\d+\s+of\s+\d+[^
-]*(?:Server Script|LocalScript|ModuleScript)[^
-]*/gi;
-  const matches=[...code.matchAll(headerRegex)];
+  // Split on SCRIPT N of N header lines
+  const lines = code.split('\n');
+  const blocks = [];
+  let currentLines = [];
+  let currentType = null;
 
-  if(matches.length<=1){
-    // No multi-script headers — single block, detect type
+  for(let i=0; i<lines.length; i++){
+    const line = lines[i];
+    const isHeader = /SCRIPT\s+\d+\s+of\s+\d+/i.test(line);
+    if(isHeader){
+      // save previous block
+      if(currentLines.length && currentType){
+        const c = currentLines.join('\n').trim();
+        if(c) blocks.push({code:c, type:currentType});
+      }
+      // detect new type from this header line
+      if(/LocalScript/i.test(line)) currentType='localscript';
+      else if(/ModuleScript/i.test(line)) currentType='modulescript';
+      else currentType='script';
+      currentLines=[];
+    } else {
+      // skip pure border lines
+      const isBorder = /^--\s*[╔╗╚╝═]+\s*$/.test(line.trim()) || /^--\s*[+\-|]+\s*$/.test(line.trim());
+      if(!isBorder) currentLines.push(line);
+    }
+  }
+  // push last block
+  if(currentLines.length && currentType){
+    const c = currentLines.join('\n').trim();
+    if(c) blocks.push({code:c, type:currentType});
+  }
+
+  if(blocks.length === 0){
     return [{code:code.trim(), type:detectBlockType(code)}];
   }
-
-  const blocks=[];
-  for(let i=0;i<matches.length;i++){
-    const header=matches[i][0];
-    const start=matches[i].index+header.length;
-    const end=i+1<matches.length ? matches[i+1].index : code.length;
-    // skip the box border lines after header
-    let blockCode=code.slice(start,end).trim();
-    // remove leading border line if present
-    blockCode=blockCode.replace(/^--\s*[╚╔][═─╗╝]+[^
-]*
-?/,'').trim();
-
-    let type='script';
-    if(/LocalScript/i.test(header)) type='localscript';
-    else if(/ModuleScript/i.test(header)) type='modulescript';
-    else type='script';
-
-    if(blockCode) blocks.push({code:blockCode, type});
-  }
-  return blocks.length ? blocks : [{code:code.trim(), type:detectBlockType(code)}];
+  return blocks;
 }
 
 // ── Send to Studio ──
@@ -1878,4 +1888,4 @@ function openModal(title,sub,body,btns){
 function closeModal(){$('modal-bg').classList.remove('open');}
 </script>
 </body>
-</html>\
+</html>
