@@ -1,3 +1,9 @@
+const express = require("express");
+
+const app = express(); // <-- REQUIRED
+
+app.use(express.json()); // so req.body works
+
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
@@ -13,7 +19,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "deepseek-chat", // or "deepseek-coder" if you prefer
+        model: "deepseek-chat",
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
@@ -37,4 +43,8 @@ app.post("/api/ai", async (req, res) => {
     console.error("AI route error:", e.message);
     res.status(500).json({ error: e.message });
   }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
