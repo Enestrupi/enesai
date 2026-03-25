@@ -552,7 +552,6 @@ select.pinp{cursor:pointer}
 
 <script>
 // ── Config ──
-// All AI calls route through your Railway backend — no API key needed in the browser.
 const BACKEND = "https://enesai-production.up.railway.app";
 
 // ── State ──
@@ -576,11 +575,7 @@ function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=l
 function step1Next(){
   const inp=$('rbx-username');
   const u=(inp.value||'').trim();
-  if(!u){
-    $('step1-err').style.display='block';
-    inp.focus();
-    return;
-  }
+  if(!u){$('step1-err').style.display='block';inp.focus();return;}
   $('step1-err').style.display='none';
   user={username:u,avatar:u[0].toUpperCase()};
   sessionToken=genTok()+genTok();
@@ -608,12 +603,27 @@ function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-count').textCo
 function needsServerWrap(code){ return /OnServerEvent|OnServerInvoke|PlayerAdded|PlayerRemoving|DataStoreService|BindToClose/.test(code); }
 function needsClientWrap(code){ return /LocalPlayer|PlayerGui|OnClientEvent|OnClientInvoke|UserInputService|ContextActionService/.test(code); }
 
+// ── FIX: wrapInsert uses Lua long-strings [==[...]==] to safely handle
+//    any characters inside the code (quotes, backslashes, etc.) ──
 function wrapInsert(code, type){
-  const esc=code.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\t/g,'\\t');
   const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
-  const svc=svcMap[type]||'ServerScriptService', cls=clsMap[type]||'Script';
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated"\ns.Source="${esc}"\ns.Parent=game:GetService("${svc}")\nprint("✓ ${cls} → ${svc}")`;
+  const svc = svcMap[type] || 'ServerScriptService';
+  const cls = clsMap[type] || 'Script';
+
+  // Use Lua long-string syntax [==[...]==] — safe for ALL characters
+  // We pick a level that can't appear in user code (level 5 is extremely safe)
+  const level = '=====';
+  const open  = '[' + level + '[';
+  const close = ']' + level + ']';
+
+  return (
+    `local s = Instance.new("${cls}")\n` +
+    `s.Name = "BridgeGenerated"\n` +
+    `s.Source = ${open}\n${code}\n${close}\n` +
+    `s.Parent = game:GetService("${svc}")\n` +
+    `print("checkmark ${cls} inserted into ${svc}")`
+  );
 }
 
 function detectBlockType(block){
@@ -624,6 +634,8 @@ function detectBlockType(block){
   return 'script';
 }
 
+// ── FIX: splitScriptBlocks — isHeader check runs BEFORE border check,
+//    and border regex no longer kills lines containing box chars + text ──
 function splitScriptBlocks(code){
   const lines = code.split('\n');
   const blocks = [];
@@ -632,26 +644,41 @@ function splitScriptBlocks(code){
 
   for(let i=0; i<lines.length; i++){
     const line = lines[i];
+
+    // A header line contains the SCRIPT N of N pattern
     const isHeader = /SCRIPT\s+\d+\s+of\s+\d+/i.test(line);
+
     if(isHeader){
+      // Save previous block
       if(currentLines.length && currentType){
         const c = currentLines.join('\n').trim();
         if(c) blocks.push({code:c, type:currentType});
       }
-      if(/LocalScript/i.test(line)) currentType='localscript';
-      else if(/ModuleScript/i.test(line)) currentType='modulescript';
-      else currentType='script';
-      currentLines=[];
-    } else {
-      const isBorder = /^--\s*[╔╗╚╝═]+\s*$/.test(line.trim()) || /^--\s*[+\-|]+\s*$/.test(line.trim());
-      if(!isBorder) currentLines.push(line);
+      // Detect new type from header line
+      if(/LocalScript/i.test(line))       currentType = 'localscript';
+      else if(/ModuleScript/i.test(line)) currentType = 'modulescript';
+      else                                currentType = 'script';
+      currentLines = [];
+      addLog('sys', 'Detected block: ' + currentType);
+      continue;
     }
+
+    // Skip pure box-drawing border lines (no real content after the -- prefix)
+    // Only skip lines that are ONLY box chars, not lines with actual text
+    const stripped = line.replace(/^--\s*/,'').trim();
+    const isPureBorder = stripped.length > 0 && /^[╔╗╚╝═╠╣╦╩╬─│┌┐└┘├┤┬┴┼+\-|=]+$/.test(stripped);
+    if(isPureBorder) continue;
+
+    currentLines.push(line);
   }
+
+  // Push last block
   if(currentLines.length && currentType){
     const c = currentLines.join('\n').trim();
     if(c) blocks.push({code:c, type:currentType});
   }
 
+  // No headers found — treat entire code as single block, auto-detect type
   if(blocks.length === 0){
     return [{code:code.trim(), type:detectBlockType(code)}];
   }
@@ -670,26 +697,31 @@ async function sendToStudio(){
   for(let i=0;i<blocks.length;i++){
     const {code:blk, type}=blocks[i];
     const finalCode=wrapInsert(blk,type);
-    addLog('sys',`[${i+1}/${blocks.length}] Inserting ${type}…`);
+    const label=`[${i+1}/${blocks.length}] ${type}`;
+    addLog('sys',`${label} — inserting into Studio…`);
 
     try{
       const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
       const d=await res.json();
       if(!d.ok) throw new Error(d.error||'Server error');
       let result=null;
-      for(let j=0;j<12;j++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+sessionToken);const rd=await rr.json();if(rd.ready){result=rd;break;}}
-      const label=`[${i+1}/${blocks.length}] ${type}`;
+      for(let j=0;j<12;j++){
+        await new Promise(r=>setTimeout(r,1000));
+        const rr=await fetch(BACKEND+'/api/result/'+sessionToken);
+        const rd=await rr.json();
+        if(rd.ready){result=rd;break;}
+      }
       if(result) addLog(result.success?'result':'err', label+': '+result.output);
-      else addLog('err', label+': No response');
+      else        addLog('err', label+': No response from Studio');
     }catch(e){
-      addLog('err',`[${i+1}/${blocks.length}] Failed: `+e.message);
+      addLog('err',`${label} failed: `+e.message);
     }
 
     if(i<blocks.length-1) await new Promise(r=>setTimeout(r,1500));
   }
 
   btn.disabled=false;btn.textContent='▶ Send to Studio';
-  if(blocks.length>1) toast(`All ${blocks.length} scripts sent!`,'ok');
+  toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
 // ── Script type tab ──
@@ -715,12 +747,9 @@ function handleTab(e){if(e.key==='Tab'){e.preventDefault();const t=$('code-area'
 function formatCode(){let lines=$('code-area').value.split('\n');let d=0;const out=lines.map(l=>{const t=l.trim();if(t.match(/^(end|until|\})/))d=Math.max(0,d-1);const r='  '.repeat(d)+t;if(t.match(/(then|do|function.*\)|repeat|\{)$/))d++;return r;});$('code-area').value=out.join('\n');onCodeChange();toast('Formatted','ok');}
 
 // ── AI engine info ──
-function showEngineInfo(){
-  toast('AI powered via your Railway backend — no API key in browser','info');
-}
+function showEngineInfo(){toast('AI powered via your Railway backend — no API key in browser','info');}
 
-// ── Core AI call — routes entirely through your Railway backend ──
-// The browser NEVER touches any API key. The key lives only on Railway.
+// ── Core AI call ──
 const ROBLOX_KNOWLEDGE = `
 REMOTEEVENTS:
   Server CREATES: local e=Instance.new("RemoteEvent"); e.Name="X"; e.Parent=ReplicatedStorage
@@ -749,8 +778,6 @@ UI RULES:
 `;
 
 async function callAI(userMsg, sysMsg="You are an expert Roblox Lua developer."){
-  // ALL requests go to your Railway backend at BACKEND/api/ai
-  // Railway holds the API key — the browser sends zero credentials
   try{
     const fullSystem = sysMsg + "\n\n" + ROBLOX_KNOWLEDGE;
     const r = await fetch(BACKEND+"/api/ai",{
@@ -758,19 +785,15 @@ async function callAI(userMsg, sysMsg="You are an expert Roblox Lua developer.")
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({system:fullSystem, prompt:userMsg})
     });
-    if(!r.ok){
-      const errText = await r.text().catch(()=>"");
-      throw new Error("Backend HTTP "+r.status+": "+errText.slice(0,120));
-    }
+    if(!r.ok){const errText=await r.text().catch(()=>"");throw new Error("Backend HTTP "+r.status+": "+errText.slice(0,120));}
     const d = await r.json();
-    // Handle all response shapes your backend might return
     let text=null;
     if(typeof d.content==="string") text=d.content;
     else if(Array.isArray(d.content)) text=d.content[0]?.text||null;
     else if(d.response) text=d.response;
     else if(d.choices) text=d.choices[0]?.message?.content||null;
     else if(d.text) text=d.text;
-    if(!text) throw new Error("Empty response from backend — check your Railway /api/ai handler");
+    if(!text) throw new Error("Empty response from backend");
     return text;
   }catch(e){
     addLog("err","AI failed: "+e.message);
@@ -813,10 +836,7 @@ async function validateAndFix(code, type){
   addLog('sys', 'Validator found '+issues.length+' issue(s), auto-fixing…');
   const fixPrompt = `Fix these specific bugs in this Roblox ${type} Lua code and return ONLY the fixed raw Lua code:\n\nBUGS TO FIX:\n${issues.map((i,n)=>`${n+1}. ${i}`).join('\n')}\n\nCODE:\n${code}`;
   const fixed = await callAI(fixPrompt, 'You are a Roblox Lua bug fixer. Fix ONLY the listed bugs. Return raw Lua only, no markdown.');
-  if(fixed){
-    addLog('result', 'Auto-fixed '+issues.length+' issue(s)');
-    return cleanCode(fixed);
-  }
+  if(fixed){addLog('result', 'Auto-fixed '+issues.length+' issue(s)');return cleanCode(fixed);}
   return code;
 }
 
@@ -839,10 +859,7 @@ async function generateFromPrompt(){
   const expandSys=`You are a Roblox game systems architect. Expand a short description into a detailed technical specification a Lua coder can follow. Include: feature list, script types needed, RemoteEvent names, UI details if needed, edge cases. Output plain text only, under 300 words.`;
   const expandedPrompt = await callAI('Expand this into a detailed Roblox scripting specification: ' + prompt, expandSys);
   const finalPrompt = expandedPrompt ? expandedPrompt.trim() : prompt;
-  if(expandedPrompt){
-    addLog('ai', '✦ Expanded: ' + finalPrompt.slice(0,120) + '…');
-    $('ai-prompt').value = finalPrompt;
-  }
+  if(expandedPrompt){addLog('ai', '✦ Expanded: ' + finalPrompt.slice(0,120) + '…');$('ai-prompt').value = finalPrompt;}
 
   $('ai-ind-text').textContent='Scanning';
   $('es-status').textContent='Scanning game…';
@@ -1187,10 +1204,10 @@ local function startRound()
 end
 
 while true do
-    setStatus("Waiting for players… (" .. #Players:GetPlayers() .. "/" .. MIN_PLAYERS .. ")")
+    setStatus("Waiting for players... (" .. #Players:GetPlayers() .. "/" .. MIN_PLAYERS .. ")")
     repeat task.wait(1) until #Players:GetPlayers() >= MIN_PLAYERS
     for i = LOBBY_TIME, 1, -1 do
-        setStatus("Starting in " .. i .. "s…")
+        setStatus("Starting in " .. i .. "s...")
         task.wait(1)
     end
     startRound()
@@ -1230,11 +1247,8 @@ end)`}
 };
 
 function loadTemplate(name){
-  const t=TEMPLATES[name];
-  if(!t)return;
-  $('code-area').value=t.code;
-  scriptType=t.type;
-  onCodeChange();
+  const t=TEMPLATES[name];if(!t)return;
+  $('code-area').value=t.code;scriptType=t.type;onCodeChange();
   toast('Template loaded: '+name,'ok');
 }
 
@@ -1430,11 +1444,8 @@ function addPartSilent(cls,shape,props={}){
 }
 
 function addPart(cls,shape){
-  const obj=addPartSilent(cls,shape);
-  selectObj(obj.id);render3d();updateSceneTree();
-  toast(cls+' added','ok');
+  const obj=addPartSilent(cls,shape);selectObj(obj.id);render3d();updateSceneTree();toast(cls+' added','ok');
 }
-
 function addLight(){const obj=addPartSilent('PointLight','sphere',{x:0,y:6,z:0,sx:1.5,sy:1.5,sz:1.5,color:'#ffffaa',material:'Neon',transparency:0});selectObj(obj.id);render3d();updateSceneTree();toast('Light added','ok');}
 
 function selectObj(id){
@@ -1514,9 +1525,7 @@ function exportScene(){
     const n=o.name.replace(/[^a-zA-Z0-9_]/g,'_');
     lua+=`local ${n} = Instance.new("${o.className}")\n${n}.Name = "${o.name}"\n${n}.Size = Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position = Vector3.new(${o.x},${o.y},${o.z})\n${n}.Material = Enum.Material.${o.material}\n${n}.Anchored = ${o.anchored}\n${n}.Transparency = ${o.transparency}\n${n}.Parent = workspace\n\n`;
   });
-  $('code-area').value=lua;
-  scriptType='script';
-  onCodeChange();
+  $('code-area').value=lua;scriptType='script';onCodeChange();
   toast('Exported to editor!','ok');
   addLog('sys','Scene exported to editor ('+parts.length+' parts)');
 }
@@ -1573,11 +1582,7 @@ function switchRTab(name,btn){
 }
 
 // ── Modal ──
-function openModal(title,sub,body,btns){
-  $('modal-title').textContent=title;$('modal-sub').textContent=sub||'';
-  $('modal-body').innerHTML=body||'';$('modal-btns').innerHTML=btns||'';
-  $('modal-bg').classList.add('open');
-}
+function openModal(title,sub,body,btns){$('modal-title').textContent=title;$('modal-sub').textContent=sub||'';$('modal-body').innerHTML=body||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
 function closeModal(){$('modal-bg').classList.remove('open');}
 </script>
 </body>
