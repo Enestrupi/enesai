@@ -1,117 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Expert Studio Bridge v5.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@600;900&display=swap" rel="stylesheet"/>
-<style>
-:root {
-    --bg: #040508; --bg2: #0a0c16; --accent: #00d4ff; --green: #00ffa2; --purple: #bc61ff;
-    --text: #e1e4f0; --border: rgba(255,255,255,0.08); --r: 8px;
-}
-body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-.container { display: grid; grid-template-columns: 320px 1fr 300px; width: 100%; }
-
-/* Sidebars */
-.sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 15px; }
-.header { font-family: 'Unbounded'; font-size: 12px; color: var(--accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-
-/* Editor */
-.main-content { display: flex; flex-direction: column; background: var(--bg); }
-.toolbar { padding: 10px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
-.code-editor { flex: 1; background: transparent; border: none; padding: 20px; color: #fff; font-size: 14px; outline: none; resize: none; line-height: 1.6; }
-
-/* Expert Buttons */
-.btn { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: var(--r); cursor: pointer; font-size: 11px; transition: 0.2s; }
-.btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
-.btn-deploy { background: var(--accent); color: #000; font-weight: bold; border: none; }
-.btn-deploy:hover { background: #fff; }
-
-.status { font-size: 10px; padding: 5px 10px; border-radius: 20px; background: rgba(0,255,162,0.1); color: var(--green); }
-.input-box { background: var(--bg); border: 1px solid var(--border); padding: 12px; border-radius: var(--r); color: white; width: 100%; box-sizing: border-box; margin-top: auto; }
-</style>
+    <meta charset="UTF-8">
+    <title>Studio Bridge | Ultra-Expert 4K AI</title>
+    <style>
+        :root {
+            --bg: #020408; --panel: #0a0c14; --accent: #00d4ff; --neon: #00ffa2;
+            --purple: #bf61ff; --text: #e1e4f5; --glass: rgba(255, 255, 255, 0.03);
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Consolas', monospace; display: flex; height: 100vh; margin: 0; overflow: hidden; }
+        
+        /* 4K UI Elements */
+        .glass-panel { background: var(--panel); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .sidebar { width: 350px; border-right: 1px solid var(--glass); display: flex; flex-direction: column; padding: 20px; gap: 15px; }
+        .editor-container { flex: 1; display: flex; flex-direction: column; position: relative; }
+        
+        /* Expert Toolbar */
+        .toolbar { height: 60px; background: var(--panel); display: flex; align-items: center; padding: 0 20px; gap: 20px; border-bottom: 1px solid var(--glass); }
+        .btn-expert { background: var(--accent); color: #000; padding: 10px 20px; border-radius: 6px; font-weight: 900; cursor: pointer; border: none; transition: 0.3s; text-transform: uppercase; font-size: 11px; }
+        .btn-expert:hover { background: #fff; box-shadow: 0 0 20px var(--accent); }
+        
+        #editor { flex: 1; background: transparent; border: none; padding: 30px; color: #d4d4d4; font-size: 14px; outline: none; resize: none; line-height: 1.6; }
+        .status-light { width: 10px; height: 10px; border-radius: 50%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <div class="header">Expert AI Brain</div>
-        <p style="font-size: 10px; color: #666;">SELECT ARCHITECTURE:</p>
-        <button class="btn" onclick="setMode('AdminConsole')">⚡ Admin Console (Full Set)</button>
-        <button class="btn" onclick="setMode('LemonadeUI')">💎 4K Lemonade UI</button>
-        <button class="btn" onclick="setMode('SmartNPC')">🤖 Combat NPC</button>
-        <button class="btn" onclick="setMode('TerrainGen')">🌍 Voxel Terrain</button>
-        
-        <div id="log" style="font-size: 10px; margin-top: 20px; color: var(--purple);">System Ready...</div>
-        
-        <textarea id="user-prompt" class="input-box" placeholder="Ask for advanced scripting..."></textarea>
-        <button class="btn-deploy" style="margin-top: 10px; padding: 12px;" onclick="generateCode()">Generate Expert Logic</button>
+<div class="sidebar">
+    <h2 style="font-size: 12px; letter-spacing: 3px; color: var(--accent);">STUDIO BRIDGE v9.0</h2>
+    
+    <div class="glass-panel" style="padding: 15px;">
+        <p style="font-size: 10px; color: var(--purple);">EXPERT BUNDLES</p>
+        <button class="btn-expert" style="width: 100%; margin-top: 5px;" onclick="loadBundle('AdminCMD')">Generate Admin System</button>
+        <button class="btn-expert" style="width: 100%; margin-top: 5px; background: var(--purple);" onclick="loadBundle('NPCAI')">Expert NPC Combat</button>
+        <button class="btn-expert" style="width: 100%; margin-top: 5px; background: var(--neon);" onclick="loadBundle('4KUI')">4K Lemonade UI</button>
     </div>
 
-    <div class="main-content">
-        <div class="toolbar">
-            <div id="current-file" style="font-size: 11px; color: var(--accent);">Script: ServerMain.lua</div>
-            <div class="status" id="bridge-status">BRIDGE: ONLINE</div>
-            <button class="btn btn-deploy" style="margin-left: auto;" onclick="autoInsert()">AUTO-INSERT TO STUDIO</button>
-        </div>
-        <textarea id="editor" class="code-editor">-- Expert AI waiting for prompt...</textarea>
+    <div style="flex: 1; overflow-y: auto; font-size: 11px; color: #888;" id="log-feed">
+        [SYSTEM]: Awaiting High-Level Directives...
     </div>
 
-    <div class="sidebar" style="border-left: 1px solid var(--border); border-right: none;">
-        <div class="header">3D & Assets</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="btn" onclick="addAsset('Tree')">Model Tree</div>
-            <div class="btn" onclick="addAsset('Building')">Model House</div>
+    <textarea id="ai-input" class="glass-panel" style="width: 100%; height: 100px; color: white; padding: 10px;" placeholder="Describe an advanced system..."></textarea>
+    <button class="btn-expert" onclick="processExpertRequest()">Execute Neural Link</button>
+</div>
+
+<div class="editor-container">
+    <div class="toolbar">
+        <div class="status-light"></div>
+        <div style="font-size: 10px; color: var(--neon);">LINK STATUS: SECURE</div>
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <button class="btn-expert" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="toggleMode('Server')">SERVER</button>
+            <button class="btn-expert" style="background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="toggleMode('Local')">CLIENT</button>
+            <button class="btn-expert" onclick="deployBundle()">DEPLOY 4K BUNDLE</button>
         </div>
     </div>
+    <textarea id="editor" spellcheck="false">-- EXPERT SCRIPT ENGINE READY</textarea>
 </div>
 
 <script>
-let currentMode = "Server";
-let generatedScripts = {};
+let currentBundle = { name: "NewPackage", scripts: [], assets: [] };
 
-function setMode(mode) {
-    document.getElementById('log').innerText = "Mode set to: " + mode;
-    if(mode === 'AdminConsole') {
-        document.getElementById('editor').value = `-- [EXPERT] SERVER ADMIN HANDLER\nlocal Remote = Instance.new("RemoteEvent", game.ReplicatedStorage)\nRemote.Name = "AdminRemote"\n\nRemote.OnServerEvent:Connect(function(player, cmd, target)\n    -- Expert validation logic here\nend)`;
+function loadBundle(type) {
+    const feed = document.getElementById('log-feed');
+    feed.innerHTML += `<div>[AI]: Constructing ${type} architecture...</div>`;
+    
+    if (type === 'AdminCMD') {
+        currentBundle = {
+            name: "ExpertAdmin_CMD",
+            is4K: true,
+            scripts: [
+                { name: "MainServer", type: "Script", parent: "ServerScriptService", source: "-- Expert Server Auth\nlocal Remote = Instance.new('RemoteEvent', game.ReplicatedStorage)\nRemote.Name = 'AdminRemote'\n-- Advanced Permission Logic..." },
+                { name: "CMD_Client", type: "LocalScript", parent: "StarterPlayerScripts", source: "-- 4K CMD UI Logic\nlocal Remote = game.ReplicatedStorage:WaitForChild('AdminRemote')\n-- TweenService UI Animations..." },
+                { name: "CommandLibrary", type: "ModuleScript", parent: "ReplicatedStorage", source: "local Lib = {}\nLib.Commands = {['kill'] = function() end}\nreturn Lib" }
+            ]
+        };
+        document.getElementById('editor').value = currentBundle.scripts[0].source;
     }
 }
 
-async function autoInsert() {
-    const status = document.getElementById('bridge-status');
-    status.innerText = "SENDING...";
-
+async function deployBundle() {
+    const status = document.querySelector('.status-light');
+    status.style.background = "orange";
+    
+    // Better Auto-Insert: Sending a complete JSON object instead of just text
     const payload = {
-        code: document.getElementById('editor').value,
-        type: currentMode, // Script, LocalScript, or ModuleScript
-        name: "ExpertGenerated_" + Date.now(),
-        is4K: true,
-        isAdvanced: true
+        action: "DEPLOY_BUNDLE",
+        data: currentBundle
     };
 
     try {
-        // This connects to the Bridge (default port 8080)
-        const response = await fetch('http://localhost:8080/insert', {
+        const response = await fetch('http://localhost:8080/deploy', {
             method: 'POST',
             body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'application/json' }
+            headers: {'Content-Type': 'application/json'}
         });
         
-        if (response.ok) {
-            status.innerText = "SUCCESS ✓";
-            setTimeout(() => status.innerText = "BRIDGE: ONLINE", 2000);
+        if(response.ok) {
+            status.style.background = "var(--neon)";
+            document.getElementById('log-feed').innerHTML += `<div style="color:var(--neon)">[SUCCESS]: Full Bundle Deployed.</div>`;
         }
-    } catch (e) {
-        status.innerText = "ERROR: NO PLUGIN";
-        status.style.color = "red";
+    } catch(e) {
+        status.style.background = "red";
     }
-}
-
-function generateCode() {
-    document.getElementById('log').innerText = "AI is thinking in 4K resolution...";
-    // In a real setup, this would call your AI API. 
-    // Here we simulate the expert logic you asked for:
-    document.getElementById('editor').value = `-- EXPERT MODULE: 4K UI + REMOTE EVENTS\nlocal Module = {}\n\nfunction Module:CreateUI()\n    local Screen = Instance.new("ScreenGui")\n    local Frame = Instance.new("Frame", Screen)\n    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)\n    Instance.new("UIStroke", Frame).Thickness = 2.5\n    return Screen\nend\n\nreturn Module`;
 }
 </script>
 </body>
