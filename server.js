@@ -22,24 +22,25 @@ function getSession(token) {
 }
 
 // ═══════════════════════════════════════════
-// AI ROUTE — Groq
+// AI ROUTE — DeepSeek (replaced Groq)
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
+  // Read the API key from the variable you set on Railway
+  const key = process.env.VARIABLE_NAME;   // <-- change this if you renamed the variable
+  if (!key) return res.status(500).json({ error: "DEEPSEEK_API_KEY not set on server" });
 
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "deepseek-chat",               // DeepSeek's standard model
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
@@ -52,8 +53,8 @@ app.post("/api/ai", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Groq error:", data);
-      return res.status(500).json({ error: data.error?.message || "Groq API error" });
+      console.error("DeepSeek error:", data);
+      return res.status(500).json({ error: data.error?.message || "DeepSeek API error" });
     }
 
     const text = data.choices?.[0]?.message?.content || "";
@@ -174,5 +175,5 @@ setInterval(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Studio Bridge backend running on port ${PORT}`);
-  console.log(`Groq key: ${process.env.GROQ_API_KEY ? "✓ set" : "✗ MISSING"}`);
+  console.log(`DeepSeek key: ${process.env.VARIABLE_NAME ? "✓ set" : "✗ MISSING"}`);
 });
