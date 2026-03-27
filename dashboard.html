@@ -848,6 +848,7 @@ let canvas,ctx;
 let terrainParams={width:512,height:80,roughness:5,water:30,trees:40,brush:12,biome:'grassland',features:{mountains:true,rivers:true,caves:false,roads:false,rocks:true,fog:false}};
 let terrainCanvas,terrainCtx,terrainData=[];
 let terrainPaintMode='raise';
+let terrainMap=[];  // MUST be here at top — used by initTerrainCanvas called at boot
 let guiElements=[],selectedGuiId=null,guiDragging=false,guiDragStart={x:0,y:0},guiDragEl=null;
 let npcParams={health:100,speed:16,detect:30,atkRange:5,damage:10,scale:1,behavior:'patrol',combat:'none',move:'walk',type:'humanoid'};
 let npcOptions={hp:true,dialog:false,loot:false,respawn:false,anim:false,sound:false,hat:false,sword:false,shield:false,armor:false};
@@ -2484,7 +2485,7 @@ function switchRTab(name,btn){
 // ═══════════════════════════════════════════
 // TERRAIN BUILDER
 // ═══════════════════════════════════════════
-let terrainMap=[];
+// terrainMap declared at top with other state vars
 const BIOME_COLORS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
   desert:   {low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
