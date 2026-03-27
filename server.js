@@ -28,10 +28,9 @@ app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  // Read the API key from the variable you set on Railway
-  // You set VARIABLE_NAME, so we use that. If you renamed it, change it here.
-  const key = process.env.VARIABLE_NAME;
-  if (!key) return res.status(500).json({ error: "VARIABLE_NAME (DeepSeek API key) not set on server" });
+  // Read the API key from the environment variable you set on Railway
+  const key = process.env.DEEPSEEK_API_KEY;   // <-- matches your Railway variable
+  if (!key) return res.status(500).json({ error: "DEEPSEEK_API_KEY not set on server" });
 
   try {
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -68,8 +67,7 @@ app.post("/api/ai", async (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// POLL — Roblox plugin polls this for commands
-//         (GET version of heartbeat)
+// POLL — Roblox plugin polls this for commands (GET version of heartbeat)
 // ═══════════════════════════════════════════
 app.get("/api/poll/:token", (req, res) => {
   const session = getSession(req.params.token);
@@ -85,8 +83,7 @@ app.get("/api/poll/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// PING — dashboard polls this to check if
-//         the Roblox plugin is connected
+// PING — dashboard polls this to check if the Roblox plugin is connected
 // ═══════════════════════════════════════════
 app.get("/api/ping/:token", (req, res) => {
   const session = getSession(req.params.token);
@@ -94,8 +91,7 @@ app.get("/api/ping/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// PLUGIN HEARTBEAT — Roblox plugin calls this
-//                    every few seconds to stay alive
+// PLUGIN HEARTBEAT — Roblox plugin calls this every few seconds to stay alive
 // ═══════════════════════════════════════════
 app.post("/api/heartbeat/:token", (req, res) => {
   const session = getSession(req.params.token);
@@ -104,7 +100,7 @@ app.post("/api/heartbeat/:token", (req, res) => {
   // If there's a pending command, send it to the plugin
   if (session.command) {
     const cmd = session.command;
-    session.command = null; // clear it so it's only sent once
+    session.command = null;
     return res.json({ hasCommand: true, command: cmd });
   }
 
@@ -112,8 +108,7 @@ app.post("/api/heartbeat/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// COMMAND — dashboard sends a script to run
-//           in Roblox Studio via the plugin
+// COMMAND — dashboard sends a script to run in Roblox Studio via the plugin
 // ═══════════════════════════════════════════
 app.post("/api/command", (req, res) => {
   const { token, type, body } = req.body;
@@ -127,8 +122,7 @@ app.post("/api/command", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// RESULT — plugin posts the output back here
-//           after running the script
+// RESULT — plugin posts the output back here after running the script
 // ═══════════════════════════════════════════
 app.post("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
@@ -141,8 +135,7 @@ app.post("/api/result/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// GET RESULT — dashboard polls this waiting
-//              for the plugin's output
+// GET RESULT — dashboard polls this waiting for the plugin's output
 // ═══════════════════════════════════════════
 app.get("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
@@ -163,10 +156,9 @@ app.post("/api/disconnect/:token", (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Auto-disconnect sessions that haven't
-//    pinged in 10 seconds ──
+// ── Auto‑disconnect sessions that haven't pinged in 10 seconds (placeholder) ──
 setInterval(() => {
-  // nothing to clean up with simple in-memory store,
+  // nothing to clean up with simple in‑memory store,
   // but you could add timestamps here if needed
 }, 10000);
 
@@ -176,5 +168,5 @@ setInterval(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Studio Bridge backend running on port ${PORT}`);
-  console.log(`DeepSeek key: ${process.env.VARIABLE_NAME ? "✓ set" : "✗ MISSING"}`);
+  console.log(`DeepSeek key: ${process.env.DEEPSEEK_API_KEY ? "✓ set" : "✗ MISSING"}`);
 });
