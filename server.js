@@ -27,7 +27,6 @@ app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  // Read the Groq API key from environment variable
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
@@ -39,7 +38,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",   // free, fast, capable
+        model: "llama-3.3-70b-versatile",
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
@@ -65,53 +64,76 @@ app.post("/api/ai", async (req, res) => {
   }
 });
 
-// All other routes remain unchanged
+// ═══════════════════════════════════════════
+// POLL — Roblox plugin polls this for commands (GET version)
+// ═══════════════════════════════════════════
 app.get("/api/poll/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.connected = true;
+
   if (session.command) {
     const cmd = session.command;
     session.command = null;
     return res.json({ hasCommand: true, command: cmd });
   }
+
   res.json({ hasCommand: false });
 });
 
+// ═══════════════════════════════════════════
+// PING — dashboard polls this to check if the plugin is connected
+// ═══════════════════════════════════════════
 app.get("/api/ping/:token", (req, res) => {
   const session = getSession(req.params.token);
   res.json({ connected: session.connected });
 });
 
+// ═══════════════════════════════════════════
+// PLUGIN HEARTBEAT — Roblox plugin calls this every few seconds
+// ═══════════════════════════════════════════
 app.post("/api/heartbeat/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.connected = true;
+
   if (session.command) {
     const cmd = session.command;
     session.command = null;
     return res.json({ hasCommand: true, command: cmd });
   }
+
   res.json({ hasCommand: false });
 });
 
+// ═══════════════════════════════════════════
+// COMMAND — dashboard sends a script to run in Studio
+// ═══════════════════════════════════════════
 app.post("/api/command", (req, res) => {
   const { token, type, body } = req.body;
   if (!token || !body) return res.status(400).json({ ok: false, error: "token and body required" });
+
   const session = getSession(token);
   session.command = { type: type || "run_script", body };
   session.result = null;
+
   res.json({ ok: true });
 });
 
+// ═══════════════════════════════════════════
+// RESULT — plugin posts output back here
+// ═══════════════════════════════════════════
 app.post("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.result = {
-    ready: true,
+    ready:   true,
     success: req.body.success !== false,
-    output: req.body.output || ""
+    output:  req.body.output || ""
   };
   res.json({ ok: true });
 });
 
+// ═══════════════════════════════════════════
+// GET RESULT — dashboard polls for the result
+// ═══════════════════════════════════════════
 app.get("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
   if (session.result?.ready) {
@@ -122,14 +144,21 @@ app.get("/api/result/:token", (req, res) => {
   res.json({ ready: false });
 });
 
+// ═══════════════════════════════════════════
+// DISCONNECT — plugin calls on shutdown
+// ═══════════════════════════════════════════
 app.post("/api/disconnect/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.connected = false;
   res.json({ ok: true });
 });
 
+// ── No cleanup needed for in‑memory store ──
 setInterval(() => {}, 10000);
 
+// ═══════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Studio Bridge backend running on port ${PORT}`);
