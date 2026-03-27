@@ -1303,64 +1303,90 @@ async function validateAndFix(code,type){
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
-  const ind=$('ai-indicator');ind.classList.add('active');$('ai-ind-text').textContent='Planning';$('es-status').textContent='Planning…';
 
-  // Plan which scripts needed
-  const planSys=`You are a senior Roblox Studio architect. Determine which script types are needed.
-Output ONLY valid JSON:
-{"types":["script","localscript"],"plan":"one sentence","scriptPurpose":{"script":"...","localscript":"...","modulescript":"..."},"remoteEvents":["EventName"],"existingToReuse":[]}
-If the feature only needs server-side code, return ["script"] only.
-If it needs client GUI/input, include "localscript".
-If there is shared reusable logic, include "modulescript".`;
-
-  const planRaw=await callAI(prompt,planSys);
-  let plan=null;
-  try{plan=JSON.parse((planRaw||'').replace(/```json\n?/g,'').replace(/```\n?/g,'').trim());}
-  catch{plan={types:['script','localscript'],plan:'Full system',scriptPurpose:{script:'Server logic',localscript:'Client UI'},remoteEvents:[],existingToReuse:[]};}
-
-  // Filter by active types
-  plan.types=plan.types.filter(t=>activeScriptTypes[t]);
-  if(!plan.types.length) plan.types=['script'];
-
-  addLog('ai','Plan: '+plan.plan+' | '+plan.types.join('+'));
-  ind.classList.remove('active');
+  const ind=$('ai-indicator');
+  ind.classList.add('active');
   $('ai-ind-text').textContent='Generating';
-  $('ai-indicator').classList.add('active');
-  $('es-status').textContent=`Generating ${plan.types.length} script(s)…`;
+  $('es-status').textContent='Generating scripts…';
 
-  const remotes=plan.remoteEvents?.length?`\nRemoteEvents to use: ${plan.remoteEvents.join(', ')}`:'';
-  const ctx=`\nUser request: ${prompt}${remotes}`;
+  // Determine which script types are active
+  const wantScript      = activeScriptTypes.script;
+  const wantLocal       = activeScriptTypes.localscript;
+  const wantModule      = activeScriptTypes.modulescript;
 
-  const STRICT=`HARD RULES:
-- Server Script CREATES RemoteEvents in ReplicatedStorage
-- LocalScript uses WaitForChild() to get RemoteEvents — NEVER Instance.new them
-- Complete working code, zero placeholders
-- task.wait() not wait()
-- Beautiful production-quality code with comments`;
+  const typeList = [];
+  if(wantScript)  typeList.push('Script (Server)');
+  if(wantLocal)   typeList.push('LocalScript (Client)');
+  if(wantModule)  typeList.push('ModuleScript');
 
-  const sysScript=`You are a senior Roblox server Script engineer. COMPLETE production Lua. No markdown. Raw Lua only.\n${STRICT}\nPurpose: ${plan.scriptPurpose?.script||'Server logic'}\n${ctx}`;
-  const sysLocal=`You are a senior Roblox LocalScript engineer. COMPLETE production Lua. No markdown. Raw Lua only.\n${STRICT}\nPurpose: ${plan.scriptPurpose?.localscript||'Client UI'}\n${ctx}`;
-  const sysMod=`You are a senior Roblox ModuleScript engineer. COMPLETE reusable module. No markdown. Raw Lua only. Return table.\n${STRICT}\nPurpose: ${plan.scriptPurpose?.modulescript||'Shared module'}\n${ctx}`;
+  // ONE single AI call — returns all scripts separated by headers
+  const singleSys = `You are an elite Roblox Studio developer. Generate COMPLETE, production-ready Lua code.
 
-  const promises={};
-  if(plan.types.includes('script')) promises.script=callAI('Write ONLY the server Script for: '+prompt+'\n'+STRICT,sysScript);
-  if(plan.types.includes('localscript')) promises.localscript=callAI('Write ONLY the LocalScript for: '+prompt+'\n'+STRICT,sysLocal);
-  if(plan.types.includes('modulescript')) promises.modulescript=callAI('Write ONLY the ModuleScript for: '+prompt+'\n'+STRICT,sysMod);
+STRICT RULES:
+- Server Script: PlayerAdded, DataStore, BindToClose, FireClient, OnServerEvent — NEVER LocalPlayer/PlayerGui/UserInputService
+- LocalScript: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent — NEVER DataStoreService/OnServerEvent
+- RemoteEvents created ONLY in server Script. LocalScript uses WaitForChild() to get them.
+- Always task.wait() not wait()
+- Complete working code — ZERO placeholders
+- Beautiful, commented, production-quality code
 
-  const results={};
-  await Promise.all(Object.entries(promises).map(async([k,p])=>{
-    const r=await p;
-    if(!r){addLog('err','AI got nothing for '+k);results[k]=null;return;}
-    results[k]=await validateAndFix(cleanCode(r),k);
-  }));
+OUTPUT FORMAT — use EXACTLY these separators between scripts:
+===SCRIPT_SERVER===
+(server Script code here, or omit this section if not needed)
+===SCRIPT_LOCAL===
+(LocalScript code here, or omit this section if not needed)
+===SCRIPT_MODULE===
+(ModuleScript code here, or omit this section if not needed)
 
-  $('ai-indicator').classList.remove('active');
+Only include sections for scripts that are actually needed for this feature.`;
 
-  // Build ordered output: Script first, LocalScript second, ModuleScript third
-  const ORDER=['script','localscript','modulescript'];
-  const active=ORDER.filter(t=>plan.types.includes(t));
-  const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
-  const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+  const userMsg = `Build this Roblox feature: ${prompt}
+
+Script types to generate: ${typeList.join(', ')||'Script (Server)'}
+
+Output each script under its separator header. Write complete, working code for each.`;
+
+  addLog('ai', '⚡ Fast mode — single call for: ' + prompt.slice(0,60));
+
+  const raw = await callAI(userMsg, singleSys);
+  ind.classList.remove('active');
+
+  if(!raw){
+    $('es-status').textContent='✗ Failed';
+    toast('Generation failed — check Railway backend','bad');
+    return;
+  }
+
+  // Parse sections from response
+  const locMap   = {script:'ServerScriptService', localscript:'StarterPlayerScripts', modulescript:'ServerScriptService'};
+  const labelMap = {script:'Server Script', localscript:'LocalScript', modulescript:'ModuleScript'};
+
+  const sections = [];
+
+  const serverMatch = raw.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
+  const localMatch  = raw.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
+  const modMatch    = raw.match(/===SCRIPT_MODULE===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_LOCAL===|$)/);
+
+  if(serverMatch) {
+    const code = cleanCode(serverMatch[1].trim());
+    if(code && wantScript) sections.push({type:'script', code});
+  }
+  if(localMatch) {
+    const code = cleanCode(localMatch[1].trim());
+    if(code && wantLocal) sections.push({type:'localscript', code});
+  }
+  if(modMatch) {
+    const code = cleanCode(modMatch[1].trim());
+    if(code && wantModule) sections.push({type:'modulescript', code});
+  }
+
+  // Fallback: if no separators found, treat entire response as auto-detected script
+  if(sections.length === 0){
+    const code = cleanCode(raw);
+    const type = detectBlockType(code);
+    sections.push({type, code});
+    addLog('sys','No separators found — auto-detected as: '+type);
+  }
 
   const sep=(n,tot,type,loc)=>
 `-- ╔══════════════════════════════════════════════╗
@@ -1368,18 +1394,17 @@ If there is shared reusable logic, include "modulescript".`;
 -- ║  → Place in: ${loc.padEnd(30)}║
 -- ╚══════════════════════════════════════════════╝`;
 
-  const parts=active.map((t,i)=>results[t]?sep(i+1,active.length,t,locMap[t])+'\n'+results[t]:sep(i+1,active.length,t,locMap[t])+'\n-- Generation failed for this script.');
-  const finalCode=parts.join('\n\n\n');
+  const parts = sections.map((s,i) =>
+    sep(i+1, sections.length, s.type, locMap[s.type]) + '\n' + s.code
+  );
+  const finalCode = parts.join('\n\n\n');
 
-  if(finalCode.trim()){
-    $('code-area').value=finalCode;onCodeChange();
-    $('es-status').textContent=`✓ ${active.length} script(s) ready`;
-    $('es-type-badge').textContent='AI: '+active.map(t=>labelMap[t]).join(' + ');
-    toast(`✓ ${active.length} script(s): ${active.join(' + ')}`,'ok');
-  }else{
-    $('es-status').textContent='✗ Failed';
-    toast('Generation failed — check Railway backend','bad');
-  }
+  $('code-area').value = finalCode;
+  onCodeChange();
+  $('es-status').textContent = `✓ ${sections.length} script(s) ready`;
+  $('es-type-badge').textContent = 'AI: ' + sections.map(s=>labelMap[s.type]).join(' + ');
+  toast(`✓ ${sections.length} script(s) generated!`, 'ok');
+  addLog('result', `Generated ${sections.length} script(s): ${sections.map(s=>s.type).join(', ')}`);
 }
 
 // ═══════════════════════════════════════════
