@@ -22,15 +22,16 @@ function getSession(token) {
 }
 
 // ═══════════════════════════════════════════
-// AI ROUTE — DeepSeek (replaced Groq)
+// AI ROUTE — DeepSeek
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
   // Read the API key from the variable you set on Railway
-  const key = process.env.VARIABLE_NAME;   // <-- change this if you renamed the variable
-  if (!key) return res.status(500).json({ error: "DEEPSEEK_API_KEY not set on server" });
+  // You set VARIABLE_NAME, so we use that. If you renamed it, change it here.
+  const key = process.env.VARIABLE_NAME;
+  if (!key) return res.status(500).json({ error: "VARIABLE_NAME (DeepSeek API key) not set on server" });
 
   try {
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -40,7 +41,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "deepseek-chat",               // DeepSeek's standard model
+        model: "deepseek-chat",
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
