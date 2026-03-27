@@ -832,257 +832,78 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 <div id="toasts"></div>
 
 <script>
-// ═══════════════════════════════════════════
+// =================================================================
 // CONFIG & GLOBALS
-// ═══════════════════════════════════════════
-const BACKEND = "https://enesai-production.up.railway.app";
+// =================================================================
+const BACKEND = "https://enesai-production.up.railway.app"; // change if needed
 
-// ─────────────────────────────────────────────────────────────
-// ROBLOX_MASTER_KNOWLEDGE must be defined before any function that uses it
-// ─────────────────────────────────────────────────────────────
+// =================================================================
+// SHORTENED ROBLOX KNOWLEDGE BASE – speeds up AI
+// =================================================================
 const ROBLOX_MASTER_KNOWLEDGE = `
-=== ROBLOX STUDIO EXPERT KNOWLEDGE BASE ===
+=== ROBLOX LUA QUICK REFERENCE ===
 
-━━ SCRIPT PLACEMENT RULES ━━
-• Script (Server): goes in ServerScriptService or server-side Model/Part
-  - Can: PlayerAdded, PlayerRemoving, DataStoreService, BindToClose, FireClient, OnServerEvent
-  - CANNOT: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent
-• LocalScript (Client): goes in StarterPlayerScripts, StarterCharacterScripts, or StarterGui
-  - Can: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent, RunService.RenderStepped
-  - CANNOT: DataStoreService, PlayerAdded (server), OnServerEvent, FireClient
-• ModuleScript: goes anywhere, required via require(). Must return a table.
-  - Can be used by both Script and LocalScript but runs in their context
+━━ SCRIPT PLACEMENT ━━
+• Script (Server): ServerScriptService. CAN: PlayerAdded, DataStoreService, RemoteEvent creation, FireClient. CANNOT: LocalPlayer, PlayerGui, FireServer.
+• LocalScript (Client): StarterPlayerScripts. CAN: LocalPlayer, PlayerGui, FireServer, OnClientEvent. CANNOT: DataStoreService, PlayerAdded, FireClient.
+• ModuleScript: reusable code, must return a table.
 
-━━ REMOTEEVENTS & REMOTEFUNCTIONS ━━
-• Always create in ServerScriptService or ReplicatedStorage from a SERVER Script ONLY
-• LocalScript gets them via: local re = ReplicatedStorage:WaitForChild("EventName")
-• FireServer(data) — called by LocalScript, player arg auto-added by Roblox
-• FireClient(player, data) — called by server Script only
-• FireAllClients(data) — server Script, sends to everyone
-• OnServerEvent:Connect(function(player, data) end) — ONLY in server Script
-• OnClientEvent:Connect(function(data) end) — ONLY in LocalScript
-• RemoteFunction: InvokeServer() from client, InvokeClient(player) from server
-• NEVER create RemoteEvent in LocalScript — always server Script
+━━ REMOTEEVENTS ━━
+• Server creates RemoteEvent in ReplicatedStorage.
+• Client: local re = ReplicatedStorage:WaitForChild("EventName"); re:FireServer(data)
+• Server: re.OnServerEvent:Connect(function(player, data) ... end); re:FireClient(player, data)
+• NEVER create RemoteEvent in LocalScript.
 
 ━━ SERVICES ━━
-local RS   = game:GetService("ReplicatedStorage")
-local SSS  = game:GetService("ServerScriptService")
-local PS   = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UIS  = game:GetService("UserInputService")   -- LocalScript only
-local CAS  = game:GetService("ContextActionService") -- LocalScript only
 local RunService = game:GetService("RunService")
-local DS   = game:GetService("DataStoreService")   -- Server only
-local HS   = game:GetService("HttpService")
-local CS   = game:GetService("CollectionService")
-local PhysicsService = game:GetService("PhysicsService")
+local DataStoreService = game:GetService("DataStoreService")  -- server only
 local PathfindingService = game:GetService("PathfindingService")
-local SoundService = game:GetService("SoundService")
-local StarterGui = game:GetService("StarterGui")
-local Debris = game:GetService("Debris")
-local Workspace = game:GetService("Workspace")
-local Lighting = game:GetService("Lighting")
-local MarketplaceService = game:GetService("MarketplaceService")
-local BadgeService = game:GetService("BadgeService")
-local ChatService = game:GetService("Chat")
-local AnimationService = game:GetService("AnimationController")
 
-━━ GUI BEST PRACTICES ━━
-• Always use UICorner for rounded corners
-• Use UIGradient with ColorSequence for gradient fills
-• Use UIStroke for borders/outlines
-• Use UIListLayout / UIGridLayout for automatic positioning
-• Use UIPadding for internal spacing
-• TweenService for ALL animations — smooth Size, Position, BackgroundColor3, TextTransparency
-• ResetOnSpawn = false on ScreenGui
-• ZIndex to layer elements correctly
-• LocalPlayer.PlayerGui is the parent for all local GUI
-• TextScaled = true for responsive text
-• NEVER anchor GUI with AbsolutePosition — always use UDim2
-
-━━ TWEENING & ANIMATION ━━
-local tweenInfo = TweenInfo.new(
-  0.3,                          -- time
-  Enum.EasingStyle.Quart,       -- style
-  Enum.EasingDirection.Out,     -- direction
-  0,                            -- repeat count
-  false,                        -- reverses
-  0                             -- delay
-)
-TweenService:Create(instance, tweenInfo, {property = value}):Play()
-
--- Spring-like effect: chain tweens or use RunService with lerp
--- Animation: local anim = humanoid:LoadAnimation(animationInstance); anim:Play()
-
-━━ DATASTORE PATTERN ━━
-local DS = game:GetService("DataStoreService")
-local store = DS:GetDataStore("PlayerData_v2")
-
-local function getData(player)
-  local ok, data = pcall(function()
-    return store:GetAsync(tostring(player.UserId))
-  end)
-  if ok then return data or {coins=0, level=1, xp=0}
-  else warn("DS error:", data); return {coins=0, level=1, xp=0} end
-end
-
-local function saveData(player, data)
-  for i = 1, 3 do  -- retry 3 times
-    local ok, err = pcall(function()
-      store:SetAsync(tostring(player.UserId), data)
-    end)
-    if ok then return true end
-    task.wait(2)
-  end
-  warn("Failed to save:", player.Name)
-end
-
-game:BindToClose(function()
-  for _, p in ipairs(Players:GetPlayers()) do
-    saveData(p, cache[p.UserId])
-  end
-end)
-
-━━ PATHFINDING ━━
-local PFS = game:GetService("PathfindingService")
-local path = PFS:CreatePath({
-  AgentRadius = 2, AgentHeight = 5,
-  AgentCanJump = true, AgentCanClimb = true,
-  AgentMaxSlope = 45
-})
-local ok = pcall(function() path:ComputeAsync(root.Position, target.Position) end)
-if ok and path.Status == Enum.PathStatus.Success then
-  for _, wp in ipairs(path:GetWaypoints()) do
-    if wp.Action == Enum.PathWaypointAction.Jump then humanoid.Jump = true end
-    humanoid:MoveTo(wp.Position)
-    local reached = humanoid.MoveToFinished:Wait(3)
-    if not reached then break end  -- stuck detection
-  end
-end
+━━ GUI ━━
+• Use UDim2, UICorner, UIStroke, UIGradient, TweenService for animations.
+• ScreenGui parent: player.PlayerGui
+• ResetOnSpawn = false
 
 ━━ ANIMATIONS ━━
--- Server: create Animation instance, replicate to client
--- LocalScript:
 local anim = Instance.new("Animation")
-anim.AnimationId = "rbxassetid://YOUR_ANIMATION_ID"
+anim.AnimationId = "rbxassetid://ID"
 local track = humanoid:LoadAnimation(anim)
 track:Play()
-track:GetMarkerReachedSignal("Hit"):Connect(function() ... end)
-track.Stopped:Connect(function() ... end)
-track.Priority = Enum.AnimationPriority.Action  -- or Idle, Movement, Core
 
-━━ TERRAIN GENERATION ━━
-local terrain = workspace.Terrain
--- Fill a region with material
-terrain:FillBlock(
-  CFrame.new(x, y, z),  -- center CFrame
-  Vector3.new(w, h, d),  -- size
-  Enum.Material.Grass    -- material
-)
--- Available materials: Grass, Sand, Rock, Snow, Ice, Water, Mud, Ground, Sandstone, Basalt, Limestone, Cracked Lava, Salt, Cobblestone, Brick, Concrete, SmoothRock, WoodPlanks, Glacier, LeafyGrass, Mud, Pebble, ForestFloor, Marsh
-
--- Replace terrain in a region:
-local region = Region3.new(Vector3.new(x1,y1,z1), Vector3.new(x2,y2,z2))
-local materials, occupancies = terrain:ReadVoxels(region, 4)
--- Write back: terrain:WriteVoxels(region, 4, materials, occupancies)
-
-━━ EFFECTS ━━
--- Beam:
-local beam = Instance.new("Beam")
-beam.Attachment0 = att0; beam.Attachment1 = att1
-beam.Color = ColorSequence.new(Color3.fromRGB(0,200,255))
-beam.Width0 = 0.5; beam.Width1 = 0.5
-beam.FaceCamera = true
-
--- ParticleEmitter:
-local pe = Instance.new("ParticleEmitter")
-pe.Color = ColorSequence.new(Color3.new(1,0.5,0))
-pe.Size = NumberSequence.new(0.5, 0)
-pe.Lifetime = NumberRange.new(0.5, 1.5)
-pe.Rate = 50; pe.Speed = NumberRange.new(5, 15)
-pe.Parent = part
-
--- Trail:
-local trail = Instance.new("Trail")
-trail.Attachment0 = att0; trail.Attachment1 = att1
-trail.Color = ColorSequence.new(Color3.fromRGB(255,200,0))
-trail.Lifetime = 0.5
-
-━━ SOUND ━━
-local sound = Instance.new("Sound")
-sound.SoundId = "rbxassetid://SOUND_ID"
-sound.Volume = 0.5
-sound.RollOffMaxDistance = 50
-sound.Parent = part
-sound:Play()
-SoundService:PlayLocalSound(sound)  -- in LocalScript for non-spatial
-
-━━ ADMIN COMMAND PATTERN ━━
-local RANKS = {
-  [OWNER_USER_ID] = 5,   -- Owner
-  [ADMIN_USER_ID] = 4,   -- Admin
-}
-local function getRank(player)
-  return RANKS[player.UserId] or 0
+━━ DATASTORE PATTERN ━━
+local store = DataStoreService:GetDataStore("PlayerData")
+function load(player)
+    local ok, data = pcall(store.GetAsync, store, tostring(player.UserId))
+    return ok and data or {coins=0}
 end
-local COMMANDS = {
-  kick = {rank=3, func=function(admin, args)
-    local target = Players:FindFirstChild(args[1])
-    if target then target:Kick(args[2] or "Kicked by admin") end
-  end},
-}
-player.Chatted:Connect(function(msg)
-  if msg:sub(1,1) ~= "/" then return end
-  local parts = msg:sub(2):split(" ")
-  local cmd = COMMANDS[parts[1]:lower()]
-  if cmd and getRank(player) >= cmd.rank then
-    cmd.func(player, {table.unpack(parts,2)})
-  end
-end)
+function save(player, data)
+    pcall(store.SetAsync, store, tostring(player.UserId), data)
+end
 
-━━ EMOTE SYSTEM ━━
--- Server Script creates RemoteEvent, LocalScript fires it
--- Animation IDs for default Roblox emotes:
--- wave: 507770239, dance: 507771019, laugh: 507770818
--- cheer: 507770677, point: 507770453, sit: 2506281703
+━━ PATHFINDING ━━
+local path = PathfindingService:CreatePath({AgentRadius=2, AgentHeight=5, AgentCanJump=true})
+path:ComputeAsync(start, target)
+for _, waypoint in ipairs(path:GetWaypoints()) do
+    humanoid:MoveTo(waypoint.Position)
+    humanoid.MoveToFinished:Wait(3)
+end
 
-━━ ANTI-CHEAT ━━
--- Server-side speed check:
-RunService.Heartbeat:Connect(function()
-  for _, player in ipairs(Players:GetPlayers()) do
-    local char = player.Character
-    if char then
-      local root = char:FindFirstChild("HumanoidRootPart")
-      local hum = char:FindFirstChildOfClass("Humanoid")
-      if root and hum then
-        local speed = root.AssemblyLinearVelocity.Magnitude
-        if speed > hum.WalkSpeed * 2.5 then
-          -- flag/kick/teleport back
-        end
-      end
-    end
-  end
-end)
-
-━━ NEVER DO THESE ━━
-× wait() — use task.wait()
-× Players:GetPlayer() — use Players:FindFirstChild()
-× Touching an event in LocalScript and creating RemoteEvent there
-× Using DataStoreService in LocalScript
-× FireServer(player, ...) — player is auto-sent, just FireServer(...)
-× Creating ScreenGui in server Script
-× Connecting OnServerEvent in LocalScript
-× Using LocalPlayer in server Script
-× .Touched connecting in server script without debounce
-× Long loops in Script without task.wait() — will timeout
+━━ BEST PRACTICES ━━
+• Use task.wait() instead of wait()
+• Use Players:FindFirstChild(name) not :GetPlayer()
+• For Touched events, add a debounce
+• RemoteEvent names should be unique and descriptive
 `;
 
-// ─────────────────────────────────────────────────────────────
-// All other state variables remain unchanged
-// ─────────────────────────────────────────────────────────────
-let user=null,sessionToken=null,pluginConnected=false,pollInterval=null;
-let sceneObjects=[],selectedObjId=null,nextId=1;
-let showGrid=true,showWire=false,currentTool='select';
+// =================================================================
+// STATE
+// =================================================================
+let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
+let sceneObjects=[], selectedObjId=null, nextId=1;
+let showGrid=true, showWire=false, currentTool='select';
 let camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};
 let canvas,ctx;
 let terrainParams={width:512,height:80,roughness:5,water:30,trees:40,brush:12,biome:'grassland',features:{mountains:true,rivers:true,caves:false,roads:false,rocks:true,fog:false}};
@@ -1093,9 +914,9 @@ let npcParams={health:100,speed:16,detect:30,atkRange:5,damage:10,scale:1,behavi
 let npcOptions={hp:true,dialog:false,loot:false,respawn:false,anim:false,sound:false,hat:false,sword:false,shield:false,armor:false};
 let activeScriptTypes={script:true,localscript:true,modulescript:false};
 
-// ═══════════════════════════════════════════
+// =================================================================
 // UTILS
-// ═══════════════════════════════════════════
+// =================================================================
 const $=id=>document.getElementById(id);
 function genTok(){return Math.random().toString(36).slice(2,8).toUpperCase();}
 function ts(){return new Date().toLocaleTimeString();}
@@ -1103,9 +924,9 @@ function toast(msg,type='info'){const c=$('toasts');const t=document.createEleme
 function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // AUTH
-// ═══════════════════════════════════════════
+// =================================================================
 function step1Next(){
   const inp=$('rbx-username');
   const u=(inp.value||'').trim();
@@ -1119,24 +940,24 @@ function enterApp(){save();$('auth').classList.add('gone');$('app').classList.ad
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
 load();if(user&&sessionToken){enterApp();}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // PLUGIN POLLING
-// ═══════════════════════════════════════════
+// =================================================================
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();if(d.connected&&!pluginConnected)setConn(true);else if(!d.connected&&pluginConnected)setConn(false);}catch{}},2500);}
 function stopPolling(){if(pollInterval)clearInterval(pollInterval);}
 function setConn(v){pluginConnected=v;const dot=$('conn-dot');dot.className='conn-dot-top '+(v?'on':'wait');$('plugin-status-text').textContent=v?'Studio connected':'Not connected';if(v){toast('Studio connected!','ok');addLog('sys','Connected to Studio.');}}
 function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // LOG
-// ═══════════════════════════════════════════
+// =================================================================
 let logCount=0;
 function addLog(kind,msg){const inner=$('log-inner');const d=document.createElement('div');d.className=`log-entry ${kind}`;d.innerHTML=`<div class="le-top"><span class="ltag ${kind}">${kind}</span><span class="le-time">${ts()}</span></div><div class="le-body">${msg.slice(0,200)}</div>`;inner.appendChild(d);inner.scrollTop=inner.scrollHeight;logCount++;$('log-count').textContent=logCount;}
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-count').textContent='0';}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // VIEW SWITCH
-// ═══════════════════════════════════════════
+// =================================================================
 function switchView(name,btn){
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1146,49 +967,58 @@ function switchView(name,btn){
   if(name==='npc'){drawNPCPreview();}
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // SCRIPT TYPE TOGGLE
-// ═══════════════════════════════════════════
+// =================================================================
 function toggleScriptType(type,el){
   activeScriptTypes[type]=!activeScriptTypes[type];
   el.classList.toggle('on',activeScriptTypes[type]);
   toast((activeScriptTypes[type]?'Enabled ':'Disabled ')+type,'info');
 }
 
-// ═══════════════════════════════════════════
-// CORE AI CALL
-// ═══════════════════════════════════════════
+// =================================================================
+// CORE AI CALL – uses backend (Groq)
+// =================================================================
 async function callAI(userMsg, sysMsg="You are an expert Roblox Studio developer."){
-  try{
-    const fullSystem = sysMsg + "\n\n" + ROBLOX_MASTER_KNOWLEDGE;
-    const r = await fetch(BACKEND+"/api/ai",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({system:fullSystem, prompt:userMsg})
+  try {
+    // Combine system message, knowledge base, and user prompt
+    const fullPrompt = sysMsg + "\n\n" + ROBLOX_MASTER_KNOWLEDGE + "\n\n" + userMsg;
+
+    const response = await fetch(BACKEND + "/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: fullPrompt })
     });
-    if(!r.ok){const errText=await r.text().catch(()=>"");throw new Error("Backend "+r.status+": "+errText.slice(0,120));}
-    const d = await r.json();
-    let text=null;
-    if(typeof d.content==="string") text=d.content;
-    else if(Array.isArray(d.content)) text=d.content[0]?.text||null;
-    else if(d.response) text=d.response;
-    else if(d.choices) text=d.choices[0]?.message?.content||null;
-    else if(d.text) text=d.text;
-    if(!text) throw new Error("Empty response from backend");
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Backend ${response.status}: ${errText.slice(0,120)}`);
+    }
+
+    const data = await response.json();
+    // The backend returns { content: [{ text: "..." }] } or { text: "..." }
+    let text = null;
+    if (typeof data.content === "string") text = data.content;
+    else if (Array.isArray(data.content)) text = data.content[0]?.text;
+    else if (data.response) text = data.response;
+    else if (data.choices) text = data.choices[0]?.message?.content;
+    else if (data.text) text = data.text;
+    if (!text) throw new Error("Empty response from backend");
     return text;
-  }catch(e){
-    addLog("err","AI: "+e.message);
-    const b=$("engine-badge");if(b){b.textContent="✗ offline";b.style.color="var(--red)";}
+  } catch (e) {
+    console.error("AI error:", e);
+    addLog("err", "AI: " + e.message);
+    toast("AI request failed: " + e.message, "bad");
     return null;
   }
 }
 
 function cleanCode(c){return(c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();}
-function showEngineInfo(){toast('AI powered via Railway backend — full Roblox knowledge injected','info');}
+function showEngineInfo(){toast('AI powered by Groq – fast and free!','info');}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // WRAP INSERT — Lua long-string safe
-// ═══════════════════════════════════════════
+// =================================================================
 function wrapInsert(code,type){
   const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
@@ -1198,9 +1028,9 @@ function wrapInsert(code,type){
   return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source=${open}\n${code}\n${close}\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // SPLIT SCRIPT BLOCKS — SCRIPT → LOCALSCRIPT → MODULE
-// ═══════════════════════════════════════════
+// =================================================================
 function detectBlockType(block){
   const b=block.toLowerCase();
   if(/localplayer|playergui|onclientevent|userinputservice|startergui|renderstepped|fireserver/.test(b)) return 'localscript';
@@ -1235,9 +1065,9 @@ function splitScriptBlocks(code){
   return blocks;
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // SEND TO STUDIO
-// ═══════════════════════════════════════════
+// =================================================================
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -1263,9 +1093,9 @@ async function sendToStudio(){
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // VALIDATOR + AUTO-FIX
-// ═══════════════════════════════════════════
+// =================================================================
 function validateCode(code,type){
   const issues=[];
   if(type==='script'){
@@ -1299,9 +1129,9 @@ async function validateAndFix(code,type){
   return code;
 }
 
-// ═══════════════════════════════════════════
-// GENERATE FROM PROMPT — Expert Multi-Script
-// ═══════════════════════════════════════════
+// =================================================================
+// GENERATE FROM PROMPT — Multi-Script
+// =================================================================
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -1380,13 +1210,13 @@ If there is shared reusable logic, include "modulescript".`;
     toast(`✓ ${active.length} script(s): ${active.join(' + ')}`,'ok');
   }else{
     $('es-status').textContent='✗ Failed';
-    toast('Generation failed — check Railway backend','bad');
+    toast('Generation failed — check backend','bad');
   }
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // AI ACTIONS
-// ═══════════════════════════════════════════
+// =================================================================
 async function aiAction(action){
   const code=$('code-area').value.trim();
   if(!code){toast('No code.','bad');return;}
@@ -1402,9 +1232,9 @@ async function aiAction(action){
   else toast('Failed.','bad');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // CODE EDITOR
-// ═══════════════════════════════════════════
+// =================================================================
 function setCode(s){$('code-area').value=s;onCodeChange();}
 function copyCode(){navigator.clipboard.writeText($('code-area').value);toast('Copied!','ok');}
 function onCodeChange(){const v=$('code-area').value;$('es-lines').textContent=v.split('\n').length;$('es-chars').textContent=v.length;updateLineNums();}
@@ -1417,9 +1247,9 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function chatTopic(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Cleared','info');}
 
-// ═══════════════════════════════════════════
+// =================================================================
 // TEMPLATES
-// ═══════════════════════════════════════════
+// =================================================================
 const TEMPLATES={
   door:{code:`-- Script: Touch-activated door with debounce + TweenService
 local TweenService = game:GetService("TweenService")
@@ -2010,9 +1840,9 @@ function loadTemplate(name){
   toast('Template: '+name,'ok');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // SNIPPETS — Extended
-// ═══════════════════════════════════════════
+// =================================================================
 const SNIPPETS={
   remote:`-- RemoteEvent: Server creates, client fires
 -- SERVER SCRIPT:
@@ -2262,9 +2092,9 @@ function insertSnippet(name){
   onCodeChange();toast('Snippet inserted: '+name,'ok');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // AI CHAT
-// ═══════════════════════════════════════════
+// =================================================================
 async function sendChat(){
   const inp=$('chat-input');
   const msg=inp.value.trim();if(!msg)return;
@@ -2299,9 +2129,9 @@ function appendTyping(id){
 }
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// ═══════════════════════════════════════════
-// 3D MODELER (existing, kept)
-// ═══════════════════════════════════════════
+// =================================================================
+// 3D MODELER (unchanged, kept from original)
+// =================================================================
 function initModeler(){
   canvas=$('mc');const vp=canvas.parentElement;
   canvas.width=vp.clientWidth||280;canvas.height=vp.clientHeight||220;
@@ -2458,9 +2288,9 @@ function switchRTab(name,btn){
   btn.classList.add('active');$('rpanel-'+name).classList.add('active');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // TERRAIN BUILDER
-// ═══════════════════════════════════════════
+// =================================================================
 let terrainMap=[];
 const BIOME_COLORS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
@@ -2532,7 +2362,6 @@ function renderTerrain(){
       else if(v<0.65) color=colors.mid;
       else if(v<0.82) color=colors.high;
       else color=colors.peak;
-      // Shade for depth
       const shade=0.7+v*0.3;
       terrainCtx.fillStyle=color;
       terrainCtx.globalAlpha=shade;
@@ -2541,7 +2370,6 @@ function renderTerrain(){
   }
   terrainCtx.globalAlpha=1;
 
-  // Draw trees
   if(terrainParams.features.rocks){
     terrainCtx.fillStyle='rgba(100,80,60,0.6)';
     const rocksN=Math.floor(terrainParams.trees/2);
@@ -2555,7 +2383,6 @@ function renderTerrain(){
     }
   }
 
-  // Fog overlay
   if(terrainParams.features.fog){
     const grad=terrainCtx.createRadialGradient(W/2,H/2,W*0.1,W/2,H/2,W*0.6);
     grad.addColorStop(0,'rgba(180,200,220,0)');
@@ -2564,7 +2391,6 @@ function renderTerrain(){
   }
 }
 
-// Terrain paint
 let terrainPainting=false;
 function setupTerrainEvents(){
   if(!terrainCanvas)return;
@@ -2663,9 +2489,9 @@ print("Terrain generated!")`;
   toast('Terrain Lua exported to editor!','gold');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // GUI BUILDER
-// ═══════════════════════════════════════════
+// =================================================================
 let guiNextId=1;
 const GUI_DEFAULTS={
   Frame:{bg:'#1a2035',w:200,h:150,text:'',border:true},
@@ -2831,9 +2657,9 @@ screenGui.Parent = playerGui
   toast('GUI exported to editor!','ok');
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // NPC CREATOR
-// ═══════════════════════════════════════════
+// =================================================================
 function npcToggle(group,val,el){
   npcParams[group]=val;
   document.querySelectorAll(`[id^="npc-${group[0]}-"]`).forEach(x=>x.classList.remove('active'));
@@ -2853,9 +2679,7 @@ function drawNPCPreview(){
   const W=300,H=420;
   ctx2.clearRect(0,0,W,H);
 
-  // Background
   ctx2.fillStyle='#0c0f1a';ctx2.fillRect(0,0,W,H);
-  // Grid floor
   ctx2.strokeStyle='rgba(255,255,255,0.05)';ctx2.lineWidth=1;
   for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
   for(let i=0;i<H;i+=20){ctx2.beginPath();ctx2.moveTo(0,i);ctx2.lineTo(W,i);ctx2.stroke();}
@@ -2868,30 +2692,23 @@ function drawNPCPreview(){
   const isMonster=npcParams.type==='monster';
   const sc=scale*(isBoss?1.4:isMonster?1.1:1);
 
-  // Draw shadow
   ctx2.fillStyle='rgba(0,0,0,0.3)';ctx2.beginPath();ctx2.ellipse(cx,cy+5,30*sc,8*sc,0,0,Math.PI*2);ctx2.fill();
-
-  // Legs
   ctx2.fillStyle=bodyColor;
   ctx2.fillRect(cx-18*sc,cy-50*sc,14*sc,50*sc);
   ctx2.fillRect(cx+4*sc,cy-50*sc,14*sc,50*sc);
 
-  // Body
   const bodyH=70*sc,bodyW=60*sc;
   ctx2.fillStyle=bodyColor;
   ctx2.fillRect(cx-bodyW/2,cy-50*sc-bodyH,bodyW,bodyH);
 
-  // Arms
   ctx2.fillStyle=bodyColor;
   ctx2.fillRect(cx-bodyW/2-16*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);
   ctx2.fillRect(cx+bodyW/2+2*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);
 
-  // Head
   const headR=28*sc;
   ctx2.fillStyle=bodyColor;
   ctx2.beginPath();ctx2.arc(cx,cy-50*sc-bodyH-headR*0.8,headR,0,Math.PI*2);ctx2.fill();
 
-  // Eyes
   ctx2.fillStyle=isBoss?'#ff0000':isMonster?'#ffaa00':'white';
   ctx2.beginPath();ctx2.arc(cx-10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();
   ctx2.beginPath();ctx2.arc(cx+10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();
@@ -2899,36 +2716,27 @@ function drawNPCPreview(){
   ctx2.beginPath();ctx2.arc(cx-10*sc,cy-50*sc-bodyH-headR*0.9,2.5*sc,0,Math.PI*2);ctx2.fill();
   ctx2.beginPath();ctx2.arc(cx+10*sc,cy-50*sc-bodyH-headR*0.9,2.5*sc,0,Math.PI*2);ctx2.fill();
 
-  // Hat accessory
   if(npcOptions.hat){
     ctx2.fillStyle='#222';
     ctx2.fillRect(cx-20*sc,cy-50*sc-bodyH-headR*2-10*sc,40*sc,12*sc);
     ctx2.fillRect(cx-14*sc,cy-50*sc-bodyH-headR*2-30*sc,28*sc,22*sc);
   }
-
-  // Sword accessory
   if(npcOptions.sword){
     ctx2.strokeStyle='#aaaacc';ctx2.lineWidth=4*sc;
     ctx2.beginPath();ctx2.moveTo(cx+bodyW/2+4*sc,cy-50*sc-bodyH+20*sc);ctx2.lineTo(cx+bodyW/2+20*sc,cy-20*sc);ctx2.stroke();
     ctx2.strokeStyle='#8B4513';ctx2.lineWidth=6*sc;
     ctx2.beginPath();ctx2.moveTo(cx+bodyW/2+10*sc,cy-50*sc-bodyH+30*sc);ctx2.lineTo(cx+bodyW/2+25*sc,cy-50*sc-bodyH+30*sc);ctx2.stroke();
   }
-
-  // Shield accessory
   if(npcOptions.shield){
     ctx2.fillStyle='#446688';
     ctx2.fillRect(cx-bodyW/2-28*sc,cy-50*sc-bodyH+8*sc,20*sc,34*sc);
     ctx2.strokeStyle='#8899bb';ctx2.lineWidth=2;
     ctx2.strokeRect(cx-bodyW/2-28*sc,cy-50*sc-bodyH+8*sc,20*sc,34*sc);
   }
-
-  // Armor
   if(npcOptions.armor){
     ctx2.fillStyle='rgba(120,140,160,0.7)';
     ctx2.fillRect(cx-bodyW/2+2,cy-50*sc-bodyH+2,bodyW-4,bodyH-4);
   }
-
-  // Health bar
   if(npcOptions.hp){
     ctx2.fillStyle='rgba(0,0,0,0.5)';ctx2.fillRect(cx-50,20,100,14);
     ctx2.fillStyle='#cc2244';ctx2.fillRect(cx-49,21,98,12);
@@ -2936,19 +2744,13 @@ function drawNPCPreview(){
     ctx2.fillStyle='white';ctx2.font='8px monospace';ctx2.textAlign='center';
     ctx2.fillText(npcParams.health+' HP',cx,31);
   }
-
-  // NPC name
   const npcName=$('npc-name-input')?.value||'NPC';
   ctx2.fillStyle='white';ctx2.font='bold 13px monospace';ctx2.textAlign='center';
   ctx2.fillText(npcName,cx,52);
-
-  // Type badge
   const typeBadge={humanoid:'Humanoid',monster:'Monster',boss:'☠ BOSS',merchant:'Merchant',pet:'Pet',guard:'Guard'}[npcParams.type]||'Humanoid';
   ctx2.fillStyle=isBoss?'#ff4400':isMonster?'#cc6600':'#0099cc';
   ctx2.fillRect(cx-30,58,60,14);
   ctx2.fillStyle='white';ctx2.font='8px monospace';ctx2.fillText(typeBadge,cx,69);
-
-  // Stats
   ctx2.textAlign='left';ctx2.fillStyle='rgba(255,255,255,0.5)';ctx2.font='9px monospace';
   ctx2.fillText(`Speed: ${npcParams.speed}  Detect: ${npcParams.detect}`,20,H-50);
   ctx2.fillText(`Behavior: ${npcParams.behavior}  Combat: ${npcParams.combat}`,20,H-36);
@@ -2996,9 +2798,9 @@ Make it fully complete with no placeholders.`;
   }
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // ADMIN SUITE — AI GENERATED
-// ═══════════════════════════════════════════
+// =================================================================
 async function genAdmin(type){
   const prompts={
     full:`Write a COMPLETE Roblox admin system in 2 scripts:
@@ -3034,14 +2836,14 @@ Make BOTH scripts complete with zero placeholders.`,
     toast('Admin system generated! Send to Studio.','gold');
     addLog('result','Admin system ready: '+type);
   }else{
-    $('code-area').value='-- Generation failed. Check Railway backend.';
+    $('code-area').value='-- Generation failed. Check backend.';
     toast('Failed','bad');
   }
 }
 
-// ═══════════════════════════════════════════
+// =================================================================
 // MODAL
-// ═══════════════════════════════════════════
+// =================================================================
 function openModal(title,sub,body,btns){$('modal-title').textContent=title;$('modal-sub').textContent=sub||'';$('modal-body').innerHTML=body||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
 function closeModal(){$('modal-bg').classList.remove('open');}
 </script>
