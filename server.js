@@ -66,6 +66,23 @@ app.post("/api/ai", async (req, res) => {
 });
 
 // ═══════════════════════════════════════════
+// POLL — Roblox plugin polls this for commands
+//         (GET version of heartbeat)
+// ═══════════════════════════════════════════
+app.get("/api/poll/:token", (req, res) => {
+  const session = getSession(req.params.token);
+  session.connected = true;
+
+  if (session.command) {
+    const cmd = session.command;
+    session.command = null; // clear so it's only sent once
+    return res.json({ hasCommand: true, command: cmd });
+  }
+
+  res.json({ hasCommand: false });
+});
+
+// ═══════════════════════════════════════════
 // PING — dashboard polls this to check if
 //         the Roblox plugin is connected
 // ═══════════════════════════════════════════
