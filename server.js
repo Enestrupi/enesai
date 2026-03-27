@@ -13,7 +13,6 @@ app.use((req, res, next) => {
 });
 
 // ── In-memory store for plugin commands + results ──
-// token → { connected, command, result }
 const sessions = {};
 
 function getSession(token) {
@@ -22,25 +21,25 @@ function getSession(token) {
 }
 
 // ═══════════════════════════════════════════
-// AI ROUTE — DeepSeek
+// AI ROUTE — Groq (free tier)
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  // Read the API key from the environment variable you set on Railway
-  const key = process.env.DEEPSEEK_API_KEY;   // <-- matches your Railway variable
-  if (!key) return res.status(500).json({ error: "DEEPSEEK_API_KEY not set on server" });
+  // Read the Groq API key from environment variable
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
   try {
-    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "llama-3.3-70b-versatile",   // free, fast, capable
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
@@ -53,8 +52,8 @@ app.post("/api/ai", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("DeepSeek error:", data);
-      return res.status(500).json({ error: data.error?.message || "DeepSeek API error" });
+      console.error("Groq error:", data);
+      return res.status(500).json({ error: data.error?.message || "Groq API error" });
     }
 
     const text = data.choices?.[0]?.message?.content || "";
@@ -66,107 +65,73 @@ app.post("/api/ai", async (req, res) => {
   }
 });
 
-// ═══════════════════════════════════════════
-// POLL — Roblox plugin polls this for commands (GET version of heartbeat)
-// ═══════════════════════════════════════════
+// All other routes remain unchanged
 app.get("/api/poll/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.connected = true;
-
-  if (session.command) {
-    const cmd = session.command;
-    session.command = null; // clear so it's only sent once
-    return res.json({ hasCommand: true, command: cmd });
-  }
-
-  res.json({ hasCommand: false });
-});
-
-// ═══════════════════════════════════════════
-// PING — dashboard polls this to check if the Roblox plugin is connected
-// ═══════════════════════════════════════════
-app.get("/api/ping/:token", (req, res) => {
-  const session = getSession(req.params.token);
-  res.json({ connected: session.connected });
-});
-
-// ═══════════════════════════════════════════
-// PLUGIN HEARTBEAT — Roblox plugin calls this every few seconds to stay alive
-// ═══════════════════════════════════════════
-app.post("/api/heartbeat/:token", (req, res) => {
-  const session = getSession(req.params.token);
-  session.connected = true;
-
-  // If there's a pending command, send it to the plugin
   if (session.command) {
     const cmd = session.command;
     session.command = null;
     return res.json({ hasCommand: true, command: cmd });
   }
-
   res.json({ hasCommand: false });
 });
 
-// ═══════════════════════════════════════════
-// COMMAND — dashboard sends a script to run in Roblox Studio via the plugin
-// ═══════════════════════════════════════════
+app.get("/api/ping/:token", (req, res) => {
+  const session = getSession(req.params.token);
+  res.json({ connected: session.connected });
+});
+
+app.post("/api/heartbeat/:token", (req, res) => {
+  const session = getSession(req.params.token);
+  session.connected = true;
+  if (session.command) {
+    const cmd = session.command;
+    session.command = null;
+    return res.json({ hasCommand: true, command: cmd });
+  }
+  res.json({ hasCommand: false });
+});
+
 app.post("/api/command", (req, res) => {
   const { token, type, body } = req.body;
   if (!token || !body) return res.status(400).json({ ok: false, error: "token and body required" });
-
   const session = getSession(token);
   session.command = { type: type || "run_script", body };
-  session.result  = null; // clear old result
-
+  session.result = null;
   res.json({ ok: true });
 });
 
-// ═══════════════════════════════════════════
-// RESULT — plugin posts the output back here after running the script
-// ═══════════════════════════════════════════
 app.post("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.result = {
-    ready:   true,
+    ready: true,
     success: req.body.success !== false,
-    output:  req.body.output || ""
+    output: req.body.output || ""
   };
   res.json({ ok: true });
 });
 
-// ═══════════════════════════════════════════
-// GET RESULT — dashboard polls this waiting for the plugin's output
-// ═══════════════════════════════════════════
 app.get("/api/result/:token", (req, res) => {
   const session = getSession(req.params.token);
   if (session.result?.ready) {
     const r = session.result;
-    session.result = null; // clear after reading
+    session.result = null;
     return res.json(r);
   }
   res.json({ ready: false });
 });
 
-// ═══════════════════════════════════════════
-// DISCONNECT — plugin calls this on shutdown
-// ═══════════════════════════════════════════
 app.post("/api/disconnect/:token", (req, res) => {
   const session = getSession(req.params.token);
   session.connected = false;
   res.json({ ok: true });
 });
 
-// ── Auto‑disconnect sessions that haven't pinged in 10 seconds (placeholder) ──
-setInterval(() => {
-  // nothing to clean up with simple in‑memory store,
-  // but you could add timestamps here if needed
-}, 10000);
+setInterval(() => {}, 10000);
 
-// ═══════════════════════════════════════════
-// START
-// ═══════════════════════════════════════════
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Studio Bridge backend running on port ${PORT}`);
-  console.log(`DeepSeek key: ${process.env.DEEPSEEK_API_KEY ? "✓ set" : "✗ MISSING"}`);
+  console.log(`Groq key: ${process.env.GROQ_API_KEY ? "✓ set" : "✗ MISSING"}`);
 });
