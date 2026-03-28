@@ -19,7 +19,7 @@ function getSession(token) {
   return sessions[token];
 }
 
-// ── Roblox knowledge base lives HERE on the server, not sent from browser ──
+// ── Roblox knowledge base lives HERE on the server ──
 const ROBLOX_SYSTEM = `You are an expert Roblox Studio Lua developer.
 
 RULES:
@@ -40,7 +40,7 @@ OUTPUT FORMAT for multi-script features, use EXACTLY these separators:
 Only include sections actually needed.`;
 
 // ═══════════════════════════════════════════
-// AI — Groq
+// AI — Groq (llama-3.1-8b-instant = fast)
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
@@ -49,11 +49,9 @@ app.post("/api/ai", async (req, res) => {
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
-  // 25s timeout
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
 
-  // Merge server knowledge + any extra system context from dashboard (capped small)
   const extraSystem = system ? system.slice(0, 300) : "";
   const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n\n" + extraSystem : "");
 
@@ -66,7 +64,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         max_tokens: 3000,
         temperature: 0.2,
         messages: [
