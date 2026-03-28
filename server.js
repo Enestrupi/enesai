@@ -19,6 +19,26 @@ function getSession(token) {
   return sessions[token];
 }
 
+// ── Roblox knowledge base lives HERE on the server, not sent from browser ──
+const ROBLOX_SYSTEM = `You are an expert Roblox Studio Lua developer.
+
+RULES:
+- Server Script: PlayerAdded, DataStore, BindToClose, FireClient, OnServerEvent — NEVER LocalPlayer/PlayerGui/UserInputService
+- LocalScript: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent — NEVER DataStoreService/OnServerEvent
+- RemoteEvents created ONLY in server Script. LocalScript uses WaitForChild() to get them.
+- Always task.wait() not wait()
+- Complete working code — ZERO placeholders
+- No markdown fences in output — raw Lua only
+
+OUTPUT FORMAT for multi-script features, use EXACTLY these separators:
+===SCRIPT_SERVER===
+(server Script code here)
+===SCRIPT_LOCAL===
+(LocalScript code here)
+===SCRIPT_MODULE===
+(ModuleScript code here)
+Only include sections actually needed.`;
+
 // ═══════════════════════════════════════════
 // AI — Groq
 // ═══════════════════════════════════════════
@@ -29,9 +49,13 @@ app.post("/api/ai", async (req, res) => {
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
-  // 25s timeout — prevents Railway from hanging
+  // 25s timeout
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
+
+  // Merge server knowledge + any extra system context from dashboard (capped small)
+  const extraSystem = system ? system.slice(0, 300) : "";
+  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n\n" + extraSystem : "");
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -46,8 +70,7 @@ app.post("/api/ai", async (req, res) => {
         max_tokens: 3000,
         temperature: 0.2,
         messages: [
-          // Slice system prompt — the huge ROBLOX_MASTER_KNOWLEDGE was killing speed
-          { role: "system", content: (system || "You are an expert Roblox Lua developer.").slice(0, 1500) },
+          { role: "system", content: fullSystem },
           { role: "user",   content: prompt }
         ]
       })
@@ -153,7 +176,7 @@ app.post("/api/disconnect/:token", (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Health check for Railway ──
+// ── Health check ──
 app.get("/", (req, res) => res.send("Studio Bridge OK"));
 
 // ── Clean up idle sessions ──
