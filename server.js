@@ -20,8 +20,7 @@ function getSession(token) {
 }
 
 // ═══════════════════════════════════════════
-// AI — Groq (fast, free tier available)
-// Add GROQ_API_KEY to Railway environment variables
+// AI — Groq
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
@@ -30,24 +29,31 @@ app.post("/api/ai", async (req, res) => {
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
+  // 25s timeout — prevents Railway from hanging
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);
+
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
+      signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 8000,
+        max_tokens: 3000,
         temperature: 0.2,
         messages: [
-          { role: "system", content: system || "You are an expert Roblox Lua developer." },
+          // Slice system prompt — the huge ROBLOX_MASTER_KNOWLEDGE was killing speed
+          { role: "system", content: (system || "You are an expert Roblox Lua developer.").slice(0, 1500) },
           { role: "user",   content: prompt }
         ]
       })
     });
 
+    clearTimeout(timeout);
     const data = await response.json();
 
     if (!response.ok) {
@@ -59,13 +65,15 @@ app.post("/api/ai", async (req, res) => {
     res.json({ content: [{ text }] });
 
   } catch (e) {
-    console.error("AI error:", e.message);
-    res.status(500).json({ error: e.message });
+    clearTimeout(timeout);
+    const msg = e.name === "AbortError" ? "Request timed out (25s)" : e.message;
+    console.error("AI error:", msg);
+    res.status(500).json({ error: msg });
   }
 });
 
 // ═══════════════════════════════════════════
-// PING — dashboard checks if plugin is live
+// PING
 // ═══════════════════════════════════════════
 app.get("/api/ping/:token", (req, res) => {
   const s = getSession(req.params.token);
@@ -73,29 +81,41 @@ app.get("/api/ping/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// HEARTBEAT — plugin calls this every ~1s
+// POLL — Roblox plugin polls this for commands
 // ═══════════════════════════════════════════
-app.post("/api/heartbeat/:token", (req, res) => {
+app.get("/api/poll/:token", (req, res) => {
   const s = getSession(req.params.token);
   s.connected = true;
   s.lastSeen  = Date.now();
-
   if (s.command) {
     const cmd = s.command;
     s.command = null;
     return res.json({ hasCommand: true, command: cmd });
   }
-
   res.json({ hasCommand: false });
 });
 
 // ═══════════════════════════════════════════
-// COMMAND — dashboard queues a script
+// HEARTBEAT
+// ═══════════════════════════════════════════
+app.post("/api/heartbeat/:token", (req, res) => {
+  const s = getSession(req.params.token);
+  s.connected = true;
+  s.lastSeen  = Date.now();
+  if (s.command) {
+    const cmd = s.command;
+    s.command = null;
+    return res.json({ hasCommand: true, command: cmd });
+  }
+  res.json({ hasCommand: false });
+});
+
+// ═══════════════════════════════════════════
+// COMMAND
 // ═══════════════════════════════════════════
 app.post("/api/command", (req, res) => {
   const { token, type, body } = req.body;
   if (!token || !body) return res.status(400).json({ ok: false, error: "token and body required" });
-
   const s = getSession(token);
   s.command = { type: type || "run_script", body };
   s.result  = null;
@@ -103,7 +123,7 @@ app.post("/api/command", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// RESULT POST — plugin sends back output
+// RESULT POST
 // ═══════════════════════════════════════════
 app.post("/api/result/:token", (req, res) => {
   const s = getSession(req.params.token);
@@ -112,7 +132,7 @@ app.post("/api/result/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// RESULT GET — dashboard polls for output
+// RESULT GET
 // ═══════════════════════════════════════════
 app.get("/api/result/:token", (req, res) => {
   const s = getSession(req.params.token);
@@ -125,7 +145,7 @@ app.get("/api/result/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// DISCONNECT — plugin calls on close
+// DISCONNECT
 // ═══════════════════════════════════════════
 app.post("/api/disconnect/:token", (req, res) => {
   const s = getSession(req.params.token);
@@ -133,7 +153,10 @@ app.post("/api/disconnect/:token", (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Clean up sessions idle > 5 min ──
+// ── Health check for Railway ──
+app.get("/", (req, res) => res.send("Studio Bridge OK"));
+
+// ── Clean up idle sessions ──
 setInterval(() => {
   const cutoff = Date.now() - 5 * 60 * 1000;
   for (const token in sessions) {
