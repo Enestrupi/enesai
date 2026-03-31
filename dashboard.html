@@ -645,7 +645,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 // ═══ CONFIG ═══
 const BACKEND = "https://enesai-production.up.railway.app";
 
-// ═══ STATE — ALL at top to avoid hoisting errors ═══
+// ═══ STATE ═══
 let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
 let logCount=0;
 let sceneObjects=[], selectedObjId=null, nextId=1;
@@ -661,7 +661,7 @@ let npcParams={health:100,speed:16,detect:30,atkRange:5,damage:10,scale:1,behavi
 let npcOptions={hp:true,dialog:false,loot:false,respawn:false,anim:false,sound:false};
 let activeScriptTypes={script:true,localscript:true,modulescript:false};
 
-// ═══ BIOME COLORS — declared before any terrain functions ═══
+// ═══ BIOME COLORS ═══
 const BIOME_COLORS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
   desert:   {low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
@@ -726,7 +726,7 @@ function switchView(name,btn){
 }
 function toggleScriptType(type,el){activeScriptTypes[type]=!activeScriptTypes[type];el.classList.toggle('on',activeScriptTypes[type]);toast((activeScriptTypes[type]?'Enabled ':'Disabled ')+type,'info');}
 
-// ═══ AI CALL — NO knowledge base sent, server handles it ═══
+// ═══ AI CALL ═══
 async function callAI(userMsg, sysMsg=""){
   try{
     const r=await fetch(BACKEND+"/api/ai",{
@@ -766,28 +766,20 @@ function detectBlockType(block){
   return 'script';
 }
 
+// FIXED: unified splitter — handles both ===SEPARATOR=== style and plain code
 function splitScriptBlocks(code){
-  const lines=code.split('\n');
-  const blocks=[];
-  let currentLines=[],currentType=null;
-  for(const line of lines){
-    const isHeader=/SCRIPT\s+\d+\s+of\s+\d+/i.test(line);
-    if(isHeader){
-      if(currentLines.length&&currentType){const c=currentLines.join('\n').trim();if(c)blocks.push({code:c,type:currentType});}
-      if(/LocalScript/i.test(line)) currentType='localscript';
-      else if(/ModuleScript/i.test(line)) currentType='modulescript';
-      else currentType='script';
-      currentLines=[];
-      continue;
-    }
-    currentLines.push(line);
-  }
-  if(currentLines.length&&currentType){const c=currentLines.join('\n').trim();if(c)blocks.push({code:c,type:currentType});}
-  if(blocks.length===0) return [{code:code.trim(),type:detectBlockType(code)}];
-  return blocks;
+  const sm=code.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
+  const lm=code.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
+  const mm=code.match(/===SCRIPT_MODULE===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_LOCAL===|$)/);
+  const sections=[];
+  if(sm){const c=cleanCode(sm[1].trim());if(c)sections.push({code:c,type:'script'});}
+  if(lm){const c=cleanCode(lm[1].trim());if(c)sections.push({code:c,type:'localscript'});}
+  if(mm){const c=cleanCode(mm[1].trim());if(c)sections.push({code:c,type:'modulescript'});}
+  if(sections.length===0)sections.push({code:cleanCode(code),type:detectBlockType(code)});
+  return sections;
 }
 
-// ═══ SEND TO STUDIO ═══
+// ═══ SEND TO STUDIO — FIXED: faster poll, sends body not name ═══
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -801,18 +793,24 @@ async function sendToStudio(){
     try{
       const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
       const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
+      // FIXED: faster polling — 500ms intervals, up to 20 attempts (10 seconds total)
       let result=null;
-      for(let j=0;j<12;j++){await new Promise(r=>setTimeout(r,1000));const rr=await fetch(BACKEND+'/api/result/'+sessionToken);const rd=await rr.json();if(rd.ready){result=rd;break;}}
+      for(let j=0;j<20;j++){
+        await new Promise(r=>setTimeout(r,500));
+        const rr=await fetch(BACKEND+'/api/result/'+sessionToken);
+        const rd=await rr.json();
+        if(rd.ready){result=rd;break;}
+      }
       if(result)addLog(result.success?'result':'err',label+': '+result.output);
-      else addLog('err',label+': No response');
+      else addLog('err',label+': No response from Studio');
     }catch(e){addLog('err',`${label}: `+e.message);}
-    if(i<blocks.length-1)await new Promise(r=>setTimeout(r,1200));
+    if(i<blocks.length-1)await new Promise(r=>setTimeout(r,800));
   }
   btn.disabled=false;btn.textContent='▶ Send to Studio';
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// ═══ GENERATE FROM PROMPT — fast single call ═══
+// ═══ GENERATE FROM PROMPT ═══
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -839,16 +837,7 @@ async function generateFromPrompt(){
 
   const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
-  const sections=[];
-
-  const sm=raw.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
-  const lm=raw.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
-  const mm=raw.match(/===SCRIPT_MODULE===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_LOCAL===|$)/);
-
-  if(sm){const c=cleanCode(sm[1].trim());if(c&&wantScript)sections.push({type:'script',code:c});}
-  if(lm){const c=cleanCode(lm[1].trim());if(c&&wantLocal)sections.push({type:'localscript',code:c});}
-  if(mm){const c=cleanCode(mm[1].trim());if(c&&wantModule)sections.push({type:'modulescript',code:c});}
-  if(sections.length===0){sections.push({type:detectBlockType(raw),code:cleanCode(raw)});}
+  const sections=splitScriptBlocks(raw);
 
   const sep=(n,tot,type,loc)=>
 `-- ╔══════════════════════════════════════════════╗
