@@ -33,9 +33,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .auth-wrap{width:420px}
 .auth-logo{font-family:var(--fd);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
 .auth-logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
-.auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative;overflow:hidden}
+/* FIX: removed overflow:hidden — was blocking click events in Safari/Firefox */
+.auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative}
 .auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
-.auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:1}
+/* FIX: bumped z-index from 1 to 3 so elements sit above ::before overlay */
+.auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:3}
+/* FIX: added position:relative + z-index to .auth-step so z-index actually applies */
+.auth-step{display:none;position:relative;z-index:3}.auth-step.active{display:block;position:relative;z-index:3}
 .auth-box h2{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:.25rem}
 .auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
 .field{margin-bottom:.875rem}
@@ -46,7 +50,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-main{width:100%;background:var(--accent);color:#06080f;border:none;border-radius:var(--r);padding:10px;font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.05em;cursor:pointer;transition:all .15s;text-transform:uppercase}
 .btn-main:hover{background:var(--accent2);box-shadow:0 0 18px var(--accent-glow)}
 .auth-err{color:var(--red);font-size:11px;margin-top:7px;display:none}
-.auth-step{display:none}.auth-step.active{display:block}
 #app{display:none;flex:1;flex-direction:column;overflow:hidden}
 #app.show{display:flex}
 .topbar{height:46px;border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:var(--bg);flex-shrink:0;z-index:10}
@@ -305,9 +308,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
       <div class="auth-step active" id="step1">
         <h2>Expert Roblox AI Studio</h2>
         <p>Full-stack: scripts, GUI, terrain, NPCs, admin, animations — everything.</p>
-        <div class="field"><label>Your name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')step1Next()" style="font-size:14px;padding:12px;position:relative;z-index:2"/></div>
+        <div class="field"><label>Your name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')step1Next()"/></div>
         <div id="step1-err" class="auth-err">Please enter your name.</div>
-        <button class="btn-main" onclick="step1Next()" style="font-size:13px;padding:12px;position:relative;z-index:2;cursor:pointer">Enter Studio →</button>
+        <button class="btn-main" onclick="step1Next()">Enter Studio →</button>
       </div>
     </div>
   </div>
@@ -392,7 +395,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <button class="edbtn" onclick="copyCode()">⎘ Copy</button>
           <div class="ed-sep"></div>
           <span style="font-size:9px;color:var(--text3)" id="es-type-badge">Auto</span>
-          <button class="edbtn green" onclick="sendToStudio()" id="send-studio-btn" style="margin-left:auto">▶ Send to Studio</button>
+          <button class="edbtn send" onclick="sendToStudio()" id="send-studio-btn" style="margin-left:auto">▶ Send to Studio</button>
         </div>
         <div class="script-order-bar">
           <span class="sot-label">Order:</span>
@@ -679,7 +682,7 @@ function toast(msg,type='info'){const c=$('toasts');const t=document.createEleme
 function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ═══ AUTH ═══
+// ═══ AUTH — FIXED: moved inline z-index styles to CSS, cleaner handler ═══
 function step1Next(){
   const inp=$('rbx-username');
   const u=(inp.value||'').trim();
@@ -766,7 +769,6 @@ function detectBlockType(block){
   return 'script';
 }
 
-// FIXED: unified splitter — handles both ===SEPARATOR=== style and plain code
 function splitScriptBlocks(code){
   const sm=code.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
   const lm=code.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
@@ -779,7 +781,6 @@ function splitScriptBlocks(code){
   return sections;
 }
 
-// ═══ SEND TO STUDIO — FIXED: faster poll, sends body not name ═══
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -793,7 +794,6 @@ async function sendToStudio(){
     try{
       const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
       const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
-      // FIXED: faster polling — 500ms intervals, up to 20 attempts (10 seconds total)
       let result=null;
       for(let j=0;j<20;j++){
         await new Promise(r=>setTimeout(r,500));
@@ -810,7 +810,6 @@ async function sendToStudio(){
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// ═══ GENERATE FROM PROMPT ═══
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -853,7 +852,6 @@ async function generateFromPrompt(){
   addLog('result','Generated: '+sections.map(s=>s.type).join(', '));
 }
 
-// ═══ AI ACTIONS ═══
 async function aiAction(action){
   const code=$('code-area').value.trim();
   if(!code){toast('No code.','bad');return;}
