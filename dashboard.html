@@ -33,12 +33,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .auth-wrap{width:420px}
 .auth-logo{font-family:var(--fd);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
 .auth-logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
-/* FIX: removed overflow:hidden — was blocking click events in Safari/Firefox */
 .auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative}
 .auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
-/* FIX: bumped z-index from 1 to 3 so elements sit above ::before overlay */
 .auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:3}
-/* FIX: added position:relative + z-index to .auth-step so z-index actually applies */
 .auth-step{display:none;position:relative;z-index:3}.auth-step.active{display:block;position:relative;z-index:3}
 .auth-box h2{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:.25rem}
 .auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
@@ -682,7 +679,7 @@ function toast(msg,type='info'){const c=$('toasts');const t=document.createEleme
 function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ═══ AUTH — FIXED: moved inline z-index styles to CSS, cleaner handler ═══
+// ═══ AUTH ═══
 function step1Next(){
   const inp=$('rbx-username');
   const u=(inp.value||'').trim();
@@ -781,6 +778,9 @@ function splitScriptBlocks(code){
   return sections;
 }
 
+// ════════════════════════════════════════════
+// ══ FIXED: sendToStudio — args.body fix ═════
+// ════════════════════════════════════════════
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -792,7 +792,15 @@ async function sendToStudio(){
     const finalCode=wrapInsert(blk,type);
     const label=`[${i+1}/${blocks.length}] ${type}`;
     try{
-      const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
+      const res=await fetch(BACKEND+'/api/command',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          token:sessionToken,
+          type:'run_script',
+          args:{ body: finalCode }   // ✅ FIX: was `body: finalCode` — now nested in args
+        })
+      });
       const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
       let result=null;
       for(let j=0;j<20;j++){
