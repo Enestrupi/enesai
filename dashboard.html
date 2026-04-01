@@ -750,13 +750,16 @@ function showEngineInfo(){toast('AI: Groq llama-3.1-8b-instant — fast generati
 
 // ═══ WRAP INSERT ═══
 function wrapInsert(code,type){
-  const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
+  const svcMap={script:'ServerScriptService',localscript:'StarterPlayer.StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const svc=svcMap[type]||'ServerScriptService';
+  const parentPath = type==='localscript'
+    ? 'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")'
+    : `game:GetService("${svc}")`;
   const cls=clsMap[type]||'Script';
   // FIX: escape code properly so Lua string delimiters can't be broken by code content
   const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source="${escaped}"\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source="${escaped}"\ns.Parent=${parentPath}\nprint("[Bridge] ${cls} inserted into ${svc}")`;
 }
 
 // ═══ DETECT BLOCK TYPE ═══
@@ -844,7 +847,7 @@ async function generateFromPrompt(){
 
   if(!raw){$('es-status').textContent='✗ Failed';toast('Generation failed','bad');return;}
 
-  const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
+  const locMap={script:'ServerScriptService',localscript:'StarterPlayer > StarterPlayerScripts',modulescript:'ServerScriptService'};
   const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const sections=splitScriptBlocks(raw);
 
@@ -1484,7 +1487,10 @@ async function generateNPCScript(){
 // ═══ ADMIN SUITE ═══
 async function genAdmin(type){
   const prompts={
-    full:`Write a complete Roblox admin system: server Script with rank system (Owner=5,Admin=4,Mod=3), 20+ commands (kick,ban,tp,bring,kill,god,ff,speed,announce,day,night), DataStore bans. Return raw Lua only.`,
+    full:`Write a complete Roblox admin system using ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL=== separators.
+SERVER: rank system (Owner=5,Admin=4,Mod=3), commands via player chat (prefix /), kick/ban/tempban/tp/bring/kill/god/ff/speed/day/night/unban, DataStore for bans, check bans on PlayerAdded. RemoteEvent in ReplicatedStorage for GUI.
+LOCAL: ScreenGui admin panel in StarterGui, command input box, player list, send commands via RemoteEvent. NO DataStore on client. NO UserInputService key binds for commands.
+Return ONLY the two sections with the separators, raw Lua, no explanation.`,
     ban:`Write a complete Roblox ban system server Script: ban/unban/tempban commands, DataStore persistence, kick banned players on join. Raw Lua only.`,
     anticheat:`Write a complete Roblox anti-cheat server Script: speed hack, fly hack detection, flag system, escalating punishment. Raw Lua only.`,
     emotes:`Write a complete Roblox emote system: server Script with RemoteEvent + 10 emotes, LocalScript with GUI wheel. Raw Lua only.`,
