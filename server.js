@@ -19,28 +19,16 @@ function getSession(token) {
   return sessions[token];
 }
 
-// ── Roblox knowledge base lives HERE on the server ──
-const ROBLOX_SYSTEM = `You are an expert Roblox Studio Lua developer.
-
-RULES:
-- Server Script: PlayerAdded, DataStore, BindToClose, FireClient, OnServerEvent — NEVER LocalPlayer/PlayerGui/UserInputService
-- LocalScript: LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent — NEVER DataStoreService/OnServerEvent
-- RemoteEvents created ONLY in server Script. LocalScript uses WaitForChild() to get them.
-- Always task.wait() not wait()
-- Complete working code — ZERO placeholders
-- No markdown fences in output — raw Lua only
-
-OUTPUT FORMAT for multi-script features, use EXACTLY these separators:
+// ── Roblox system prompt (concise) ──
+const ROBLOX_SYSTEM = `Expert Roblox Lua dev. Rules: Server scripts use DataStore/PlayerAdded/FireClient/OnServerEvent, never LocalPlayer. LocalScripts use LocalPlayer/PlayerGui/UserInputService/FireServer/OnClientEvent, never DataStoreService. RemoteEvents created server-side only; LocalScript uses WaitForChild(). Use task.wait() not wait(). Output complete code, no placeholders, no markdown fences.
+Multi-script format:
 ===SCRIPT_SERVER===
-(server Script code here)
 ===SCRIPT_LOCAL===
-(LocalScript code here)
 ===SCRIPT_MODULE===
-(ModuleScript code here)
-Only include sections actually needed.`;
+Only include needed sections.`;
 
 // ═══════════════════════════════════════════
-// AI — Groq (llama-3.3-70b-versatile = 128k context)
+// AI — Groq
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
@@ -52,8 +40,11 @@ app.post("/api/ai", async (req, res) => {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
 
-  const extraSystem = system ? system.slice(0, 300) : "";
-  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n\n" + extraSystem : "");
+  const extraSystem = system ? system.slice(0, 200) : "";
+  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n" + extraSystem : "");
+
+  // Trim prompt to avoid token limit (llama-3.3-70b TPM limit on free tier)
+  const trimmedPrompt = prompt.slice(0, 6000);
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -65,11 +56,11 @@ app.post("/api/ai", async (req, res) => {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 8000,
+        max_tokens: 6000,
         temperature: 0.2,
         messages: [
           { role: "system", content: fullSystem },
-          { role: "user",   content: prompt }
+          { role: "user",   content: trimmedPrompt }
         ]
       })
     });
@@ -102,7 +93,7 @@ app.get("/api/ping/:token", (req, res) => {
 });
 
 // ═══════════════════════════════════════════
-// POLL — Roblox plugin polls this for commands
+// POLL
 // ═══════════════════════════════════════════
 app.get("/api/poll/:token", (req, res) => {
   const s = getSession(req.params.token);
