@@ -33,12 +33,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .auth-wrap{width:420px}
 .auth-logo{font-family:var(--fd);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
 .auth-logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
-/* FIX: removed overflow:hidden — was blocking click events in Safari/Firefox */
 .auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative}
 .auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
-/* FIX: bumped z-index from 1 to 3 so elements sit above ::before overlay */
 .auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:3}
-/* FIX: added position:relative + z-index to .auth-step so z-index actually applies */
 .auth-step{display:none;position:relative;z-index:3}.auth-step.active{display:block;position:relative;z-index:3}
 .auth-box h2{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:.25rem}
 .auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
@@ -682,7 +679,7 @@ function toast(msg,type='info'){const c=$('toasts');const t=document.createEleme
 function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ═══ AUTH — FIXED: moved inline z-index styles to CSS, cleaner handler ═══
+// ═══ AUTH ═══
 function step1Next(){
   const inp=$('rbx-username');
   const u=(inp.value||'').trim();
@@ -753,11 +750,18 @@ function showEngineInfo(){toast('AI: Groq llama-3.1-8b-instant — fast generati
 
 // ═══ WRAP INSERT ═══
 function wrapInsert(code,type){
-  const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
+  const svcMap={script:'ServerScriptService',localscript:'StarterPlayer.StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const svc=svcMap[type]||'ServerScriptService';
+  const parentPath = type==='localscript'
+    ? 'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")'
+    : type==='modulescript'
+    ? 'game:GetService("ServerScriptService")'
+    : 'game:GetService("ServerScriptService")';
   const cls=clsMap[type]||'Script';
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source=[====[\n${code}\n]=====]\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
+  // FIX: escape code properly so Lua string delimiters can't be broken by code content
+  const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source="${escaped}"\ns.Parent=${parentPath}\nprint("[Bridge] ${cls} inserted into ${svc}")`;
 }
 
 // ═══ DETECT BLOCK TYPE ═══
@@ -781,6 +785,9 @@ function splitScriptBlocks(code){
   return sections;
 }
 
+// ════════════════════════════════════════════
+// ══ FIXED: sendToStudio — args.body fix ═════
+// ════════════════════════════════════════════
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -792,7 +799,15 @@ async function sendToStudio(){
     const finalCode=wrapInsert(blk,type);
     const label=`[${i+1}/${blocks.length}] ${type}`;
     try{
-      const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:finalCode})});
+      const res=await fetch(BACKEND+'/api/command',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          token:sessionToken,
+          type:'run_script',
+          body: finalCode   // ✅ FIX: top-level 'body' matches what backend expects
+        })
+      });
       const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
       let result=null;
       for(let j=0;j<20;j++){
@@ -834,7 +849,7 @@ async function generateFromPrompt(){
 
   if(!raw){$('es-status').textContent='✗ Failed';toast('Generation failed','bad');return;}
 
-  const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
+  const locMap={script:'ServerScriptService',localscript:'StarterPlayer > StarterPlayerScripts',modulescript:'ServerScriptService'};
   const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const sections=splitScriptBlocks(raw);
 
@@ -1473,14 +1488,303 @@ async function generateNPCScript(){
 
 // ═══ ADMIN SUITE ═══
 async function genAdmin(type){
+  const BANNED = `BANNED PATTERNS - NEVER use these or the script will error:
+- NEVER use varargs (...) inside pcall(function() ... end) — causes "Cannot use ... outside vararg function"
+- NEVER loop over RemoteEvents and call :FireServer() inside OnServerEvent — causes infinite recursion
+- NEVER use FontSize enum (deprecated) — use TextSize=number instead e.g. TextSize=13
+- NEVER use BackgroundColor without Color3 — always BackgroundColor3=Color3.fromRGB(...)
+- NEVER leave any statement incomplete — every variable must be fully assigned
+- NEVER use playerInput.Size = UDim2.new(0,1,...) — width of 1 pixel is wrong, use UDim2.new(1,-20,0,30)
+- NEVER add a generic pcall loop over all events at the bottom
+- NEVER use :FireServer() on the server side
+- NEVER use game.Players:GetPlayerByUserId() without pcall — it errors if player not found
+- Keep scripts under 200 lines each to avoid truncation`;
+
   const prompts={
-    full:`Write a complete Roblox admin system: server Script with rank system (Owner=5,Admin=4,Mod=3), 20+ commands (kick,ban,tp,bring,kill,god,ff,speed,announce,day,night), DataStore bans. Return raw Lua only.`,
-    ban:`Write a complete Roblox ban system server Script: ban/unban/tempban commands, DataStore persistence, kick banned players on join. Raw Lua only.`,
-    anticheat:`Write a complete Roblox anti-cheat server Script: speed hack, fly hack detection, flag system, escalating punishment. Raw Lua only.`,
-    emotes:`Write a complete Roblox emote system: server Script with RemoteEvent + 10 emotes, LocalScript with GUI wheel. Raw Lua only.`,
-    ranks:`Write a complete Roblox rank system server Script: 5 tiers, group support, BillboardGui nameplate. Raw Lua only.`,
-    notification:`Write a complete Roblox notification system: server Script RemoteEvent, LocalScript GUI with animations. Raw Lua only.`,
+    full:`${BANNED}
+
+Write a Roblox admin system. Two sections, EXACT markers, raw Lua only, no markdown:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+
+===SCRIPT_SERVER=== (max 150 lines):
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local DataStoreService = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local RANKS = {[1234567890]=5}
+local BanStore = DataStoreService:GetDataStore("AdminBans_v1")
+local F = Instance.new("Folder"); F.Name="AdminEvents"; F.Parent=ReplicatedStorage
+-- Create each RemoteEvent individually (no loops):
+local eKick=Instance.new("RemoteEvent"); eKick.Name="AdminKick"; eKick.Parent=F
+local eBan=Instance.new("RemoteEvent"); eBan.Name="AdminBan"; eBan.Parent=F
+local eUnban=Instance.new("RemoteEvent"); eUnban.Name="AdminUnban"; eUnban.Parent=F
+local eTp=Instance.new("RemoteEvent"); eTp.Name="AdminTp"; eTp.Parent=F
+local eBring=Instance.new("RemoteEvent"); eBring.Name="AdminBring"; eBring.Parent=F
+local eKill=Instance.new("RemoteEvent"); eKill.Name="AdminKill"; eKill.Parent=F
+local eGod=Instance.new("RemoteEvent"); eGod.Name="AdminGod"; eGod.Parent=F
+local eFf=Instance.new("RemoteEvent"); eFf.Name="AdminFf"; eFf.Parent=F
+local eSpeed=Instance.new("RemoteEvent"); eSpeed.Name="AdminSpeed"; eSpeed.Parent=F
+local eAnnounce=Instance.new("RemoteEvent"); eAnnounce.Name="AdminAnnounce"; eAnnounce.Parent=F
+local eDay=Instance.new("RemoteEvent"); eDay.Name="AdminDay"; eDay.Parent=F
+local eNight=Instance.new("RemoteEvent"); eNight.Name="AdminNight"; eNight.Parent=F
+local eFreeze=Instance.new("RemoteEvent"); eFreeze.Name="AdminFreeze"; eFreeze.Parent=F
+local eGetPlayers=Instance.new("RemoteEvent"); eGetPlayers.Name="AdminGetPlayers"; eGetPlayers.Parent=F
+local eNotify=Instance.new("RemoteEvent"); eNotify.Name="AdminNotify"; eNotify.Parent=F
+
+local function getRank(p) return RANKS[p.UserId] or 0 end
+local function findPlayer(name) return Players:FindFirstChild(name) end
+
+Players.PlayerAdded:Connect(function(p)
+    local ok,res=pcall(function() return BanStore:GetAsync(tostring(p.UserId)) end)
+    if ok and res then p:Kick("Banned: "..(res.reason or "")) end
+end)
+
+-- Each event handler separately, NO varargs, NO loops over events:
+eGetPlayers.OnServerEvent:Connect(function(sender)
+    if getRank(sender)<3 then return end
+    local t={}; for _,p in ipairs(Players:GetPlayers()) do table.insert(t,p.Name) end
+    eGetPlayers:FireClient(sender,t)
+end)
+eKick.OnServerEvent:Connect(function(sender,targetName,reason)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t then return end
+    t:Kick(reason or "Kicked by admin")
+    eNotify:FireClient(sender,"✓ Kicked "..targetName)
+end)
+eBan.OnServerEvent:Connect(function(sender,targetName,reason)
+    if getRank(sender)<4 then return end
+    local t=findPlayer(targetName); if not t then return end
+    pcall(function() BanStore:SetAsync(tostring(t.UserId),{reason=reason or "No reason",by=sender.Name,time=os.time()}) end)
+    t:Kick("Banned: "..(reason or "No reason"))
+    eNotify:FireClient(sender,"✓ Banned "..targetName)
+end)
+eUnban.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<4 then return end
+    local t=findPlayer(targetName); if not t then return end
+    pcall(function() BanStore:RemoveAsync(tostring(t.UserId)) end)
+    eNotify:FireClient(sender,"✓ Unbanned "..targetName)
+end)
+eTp.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character or not sender.Character then return end
+    t.Character:PivotTo(sender.Character:GetPivot())
+    eNotify:FireClient(sender,"✓ Teleported "..targetName)
+end)
+eBring.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character or not sender.Character then return end
+    t.Character:PivotTo(sender.Character:GetPivot()*CFrame.new(4,0,0))
+    eNotify:FireClient(sender,"✓ Brought "..targetName)
+end)
+eKill.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character then return end
+    local h=t.Character:FindFirstChildOfClass("Humanoid"); if h then h.Health=0 end
+    eNotify:FireClient(sender,"✓ Killed "..targetName)
+end)
+eGod.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character then return end
+    local h=t.Character:FindFirstChildOfClass("Humanoid"); if not h then return end
+    h.MaxHealth=math.huge; h.Health=math.huge
+    eNotify:FireClient(sender,"✓ God: "..targetName)
+end)
+eFf.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character then return end
+    local ff=t.Character:FindFirstChildOfClass("ForceField")
+    if ff then ff:Destroy() else Instance.new("ForceField").Parent=t.Character end
+    eNotify:FireClient(sender,"✓ FF toggled: "..targetName)
+end)
+eSpeed.OnServerEvent:Connect(function(sender,targetName,speed)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character then return end
+    local h=t.Character:FindFirstChildOfClass("Humanoid"); if not h then return end
+    h.WalkSpeed=math.clamp(tonumber(speed) or 16,0,500)
+    eNotify:FireClient(sender,"✓ Speed set: "..targetName)
+end)
+eAnnounce.OnServerEvent:Connect(function(sender,message)
+    if getRank(sender)<3 then return end
+    eNotify:FireAllClients("__announce__"..(message or ""))
+end)
+eDay.OnServerEvent:Connect(function(sender)
+    if getRank(sender)<3 then return end
+    Lighting.TimeOfDay="14:00:00"; Lighting.Brightness=2
+    eNotify:FireClient(sender,"✓ Day set")
+end)
+eNight.OnServerEvent:Connect(function(sender)
+    if getRank(sender)<3 then return end
+    Lighting.TimeOfDay="02:00:00"; Lighting.Brightness=0.5
+    eNotify:FireClient(sender,"✓ Night set")
+end)
+eFreeze.OnServerEvent:Connect(function(sender,targetName)
+    if getRank(sender)<3 then return end
+    local t=findPlayer(targetName); if not t or not t.Character then return end
+    local r=t.Character:FindFirstChild("HumanoidRootPart"); if not r then return end
+    r.Anchored=not r.Anchored
+    eNotify:FireClient(sender,"✓ Freeze toggled: "..targetName)
+end)
+print("[Admin] loaded")
+
+===SCRIPT_LOCAL=== (max 180 lines):
+local Players=game:GetService("Players")
+local TweenService=game:GetService("TweenService")
+local UIS=game:GetService("UserInputService")
+local RS=game:GetService("ReplicatedStorage")
+local lp=Players.LocalPlayer
+local pgui=lp:WaitForChild("PlayerGui")
+local F=RS:WaitForChild("AdminEvents")
+local eKick=F:WaitForChild("AdminKick")
+local eBan=F:WaitForChild("AdminBan")
+local eUnban=F:WaitForChild("AdminUnban")
+local eTp=F:WaitForChild("AdminTp")
+local eBring=F:WaitForChild("AdminBring")
+local eKill=F:WaitForChild("AdminKill")
+local eGod=F:WaitForChild("AdminGod")
+local eFf=F:WaitForChild("AdminFf")
+local eSpeed=F:WaitForChild("AdminSpeed")
+local eAnnounce=F:WaitForChild("AdminAnnounce")
+local eDay=F:WaitForChild("AdminDay")
+local eNight=F:WaitForChild("AdminNight")
+local eFreeze=F:WaitForChild("AdminFreeze")
+local eGetPlayers=F:WaitForChild("AdminGetPlayers")
+local eNotify=F:WaitForChild("AdminNotify")
+
+-- ScreenGui
+local sg=Instance.new("ScreenGui"); sg.Name="AdminPanel"; sg.ResetOnSpawn=false; sg.Enabled=false; sg.Parent=pgui
+-- Main frame 500x560 centered
+local mf=Instance.new("Frame"); mf.Size=UDim2.new(0,500,0,560); mf.Position=UDim2.new(0.5,-250,0.5,-280); mf.BackgroundColor3=Color3.fromRGB(6,8,15); mf.BorderSizePixel=0; mf.Parent=sg
+Instance.new("UICorner",mf).CornerRadius=UDim.new(0,12)
+local ms=Instance.new("UIStroke",mf); ms.Color=Color3.fromRGB(0,212,255); ms.Thickness=1
+-- Title bar
+local tb=Instance.new("Frame",mf); tb.Size=UDim2.new(1,0,0,40); tb.BackgroundColor3=Color3.fromRGB(0,20,40); tb.BorderSizePixel=0
+Instance.new("UICorner",tb).CornerRadius=UDim.new(0,12)
+local tl=Instance.new("TextLabel",tb); tl.Size=UDim2.new(1,-50,1,0); tl.Position=UDim2.new(0,12,0,0); tl.BackgroundTransparency=1; tl.Text="◈ Admin Panel"; tl.TextColor3=Color3.fromRGB(0,212,255); tl.Font=Enum.Font.GothamBold; tl.TextSize=13; tl.TextXAlignment=Enum.TextXAlignment.Left
+local cb=Instance.new("TextButton",tb); cb.Size=UDim2.new(0,28,0,28); cb.Position=UDim2.new(1,-34,0.5,-14); cb.BackgroundColor3=Color3.fromRGB(255,68,102); cb.BorderSizePixel=0; cb.Text="✕"; cb.TextColor3=Color3.new(1,1,1); cb.Font=Enum.Font.GothamBold; cb.TextSize=11
+Instance.new("UICorner",cb).CornerRadius=UDim.new(0,5)
+cb.MouseButton1Click:Connect(function() sg.Enabled=false end)
+-- Player input
+local pil=Instance.new("TextLabel",mf); pil.Size=UDim2.new(1,-20,0,16); pil.Position=UDim2.new(0,10,0,48); pil.BackgroundTransparency=1; pil.Text="TARGET PLAYER"; pil.TextColor3=Color3.fromRGB(80,90,120); pil.Font=Enum.Font.GothamBold; pil.TextSize=9; pil.TextXAlignment=Enum.TextXAlignment.Left
+local pi=Instance.new("TextBox",mf); pi.Size=UDim2.new(1,-20,0,30); pi.Position=UDim2.new(0,10,0,66); pi.BackgroundColor3=Color3.fromRGB(19,23,38); pi.BorderSizePixel=0; pi.PlaceholderText="Enter player name…"; pi.Text=""; pi.TextColor3=Color3.fromRGB(0,212,255); pi.Font=Enum.Font.Code; pi.TextSize=12; pi.ClearTextOnFocus=false
+Instance.new("UICorner",pi).CornerRadius=UDim.new(0,6); Instance.new("UIPadding",pi).PaddingLeft=UDim.new(0,8)
+-- Player chip scrollframe
+local pcf=Instance.new("ScrollingFrame",mf); pcf.Size=UDim2.new(1,-20,0,50); pcf.Position=UDim2.new(0,10,0,100); pcf.BackgroundColor3=Color3.fromRGB(12,15,26); pcf.BorderSizePixel=0; pcf.ScrollBarThickness=3; pcf.CanvasSize=UDim2.new(0,0,0,0)
+Instance.new("UICorner",pcf).CornerRadius=UDim.new(0,6)
+local pcl=Instance.new("UIListLayout",pcf); pcl.FillDirection=Enum.FillDirection.Horizontal; pcl.Padding=UDim.new(0,4); pcl.SortOrder=Enum.SortOrder.LayoutOrder
+Instance.new("UIPadding",pcf).PaddingLeft=UDim.new(0,6)
+-- Extra input
+local eil=Instance.new("TextLabel",mf); eil.Size=UDim2.new(1,-20,0,16); eil.Position=UDim2.new(0,10,0,158); eil.BackgroundTransparency=1; eil.Text="SPEED / REASON / MESSAGE"; eil.TextColor3=Color3.fromRGB(80,90,120); eil.Font=Enum.Font.GothamBold; eil.TextSize=9; eil.TextXAlignment=Enum.TextXAlignment.Left
+local ei=Instance.new("TextBox",mf); ei.Size=UDim2.new(1,-20,0,30); ei.Position=UDim2.new(0,10,0,176); ei.BackgroundColor3=Color3.fromRGB(19,23,38); ei.BorderSizePixel=0; ei.PlaceholderText="e.g. 50 / cheating / hello all"; ei.Text=""; ei.TextColor3=Color3.fromRGB(0,212,255); ei.Font=Enum.Font.Code; ei.TextSize=12; ei.ClearTextOnFocus=false
+Instance.new("UICorner",ei).CornerRadius=UDim.new(0,6); Instance.new("UIPadding",ei).PaddingLeft=UDim.new(0,8)
+-- Command grid
+local cgl=Instance.new("TextLabel",mf); cgl.Size=UDim2.new(1,-20,0,16); cgl.Position=UDim2.new(0,10,0,214); cgl.BackgroundTransparency=1; cgl.Text="COMMANDS"; cgl.TextColor3=Color3.fromRGB(80,90,120); cgl.Font=Enum.Font.GothamBold; cgl.TextSize=9; cgl.TextXAlignment=Enum.TextXAlignment.Left
+local cgf=Instance.new("Frame",mf); cgf.Size=UDim2.new(1,-20,0,230); cgf.Position=UDim2.new(0,10,0,232); cgf.BackgroundTransparency=1
+local cgg=Instance.new("UIGridLayout",cgf); cgg.CellSize=UDim2.new(0,104,0,38); cgg.CellPadding=UDim2.new(0,5,0,5); cgg.SortOrder=Enum.SortOrder.LayoutOrder
+local cmds={
+  {t="⚡ Kick",c=Color3.fromRGB(255,68,102),fn=function() eKick:FireServer(pi.Text,ei.Text) end},
+  {t="🔨 Ban",c=Color3.fromRGB(255,68,102),fn=function() eBan:FireServer(pi.Text,ei.Text) end},
+  {t="✅ Unban",c=Color3.fromRGB(0,200,100),fn=function() eUnban:FireServer(pi.Text) end},
+  {t="📍 Tp",c=Color3.fromRGB(0,180,255),fn=function() eTp:FireServer(pi.Text) end},
+  {t="🧲 Bring",c=Color3.fromRGB(0,180,255),fn=function() eBring:FireServer(pi.Text) end},
+  {t="💀 Kill",c=Color3.fromRGB(255,68,102),fn=function() eKill:FireServer(pi.Text) end},
+  {t="⭐ God",c=Color3.fromRGB(255,215,0),fn=function() eGod:FireServer(pi.Text) end},
+  {t="🛡 FF",c=Color3.fromRGB(0,212,255),fn=function() eFf:FireServer(pi.Text) end},
+  {t="⚡ Speed",c=Color3.fromRGB(168,85,247),fn=function() eSpeed:FireServer(pi.Text,tonumber(ei.Text) or 50) end},
+  {t="📢 Say",c=Color3.fromRGB(255,215,0),fn=function() eAnnounce:FireServer(ei.Text) end},
+  {t="🌅 Day",c=Color3.fromRGB(255,200,50),fn=function() eDay:FireServer() end},
+  {t="🌙 Night",c=Color3.fromRGB(80,90,160),fn=function() eNight:FireServer() end},
+  {t="❄ Freeze",c=Color3.fromRGB(100,200,255),fn=function() eFreeze:FireServer(pi.Text) end},
+}
+for i,cmd in ipairs(cmds) do
+  local b=Instance.new("TextButton",cgf); b.LayoutOrder=i; b.BackgroundColor3=Color3.fromRGB(19,23,38); b.BorderSizePixel=0; b.Text=cmd.t; b.TextColor3=cmd.c; b.Font=Enum.Font.GothamBold; b.TextSize=10; b.TextWrapped=true
+  Instance.new("UICorner",b).CornerRadius=UDim.new(0,6)
+  local s=Instance.new("UIStroke",b); s.Color=cmd.c; s.Thickness=0.5; s.Transparency=0.5
+  b.MouseEnter:Connect(function() TweenService:Create(b,TweenInfo.new(0.12),{BackgroundColor3=cmd.c}):Play(); b.TextColor3=Color3.fromRGB(6,8,15) end)
+  b.MouseLeave:Connect(function() TweenService:Create(b,TweenInfo.new(0.12),{BackgroundColor3=Color3.fromRGB(19,23,38)}):Play(); b.TextColor3=cmd.c end)
+  b.MouseButton1Click:Connect(function()
+    if cmd.t~="🌅 Day" and cmd.t~="🌙 Night" and cmd.t~="📢 Say" and pi.Text=="" then
+      showToast("⚠ Enter a player name!","#ffaa00") return
+    end
+    cmd.fn()
+  end)
+end
+-- Refresh button
+local rb=Instance.new("TextButton",mf); rb.Size=UDim2.new(1,-20,0,28); rb.Position=UDim2.new(0,10,1,-38); rb.BackgroundColor3=Color3.fromRGB(19,23,38); rb.BorderSizePixel=0; rb.Text="↻ Refresh Players"; rb.TextColor3=Color3.fromRGB(0,212,255); rb.Font=Enum.Font.GothamBold; rb.TextSize=10
+Instance.new("UICorner",rb).CornerRadius=UDim.new(0,6)
+rb.MouseButton1Click:Connect(function() eGetPlayers:FireServer() end)
+-- Toast
+local function showToast(msg,hex)
+  local tf=Instance.new("Frame",sg); tf.Size=UDim2.new(0,300,0,44); tf.Position=UDim2.new(1,-310,1,-60); tf.BackgroundColor3=Color3.fromRGB(12,15,26); tf.BorderSizePixel=0; tf.ZIndex=10
+  Instance.new("UICorner",tf).CornerRadius=UDim.new(0,8)
+  local ts2=Instance.new("UIStroke",tf); ts2.Color=Color3.fromHex(hex or "#00d4ff"); ts2.Thickness=1
+  local tl2=Instance.new("TextLabel",tf); tl2.Size=UDim2.new(1,-12,1,0); tl2.Position=UDim2.new(0,8,0,0); tl2.BackgroundTransparency=1; tl2.Text=msg; tl2.TextColor3=Color3.fromHex(hex or "#e8eaf2"); tl2.Font=Enum.Font.GothamBold; tl2.TextSize=12; tl2.TextXAlignment=Enum.TextXAlignment.Left; tl2.TextWrapped=true
+  tf.Position=UDim2.new(1,10,1,-60)
+  TweenService:Create(tf,TweenInfo.new(0.3,Enum.EasingStyle.Back),{Position=UDim2.new(1,-310,1,-60)}):Play()
+  task.delay(3.2,function() TweenService:Create(tf,TweenInfo.new(0.2),{Position=UDim2.new(1,10,1,-60)}):Play(); task.wait(0.25); tf:Destroy() end)
+end
+-- Announce banner
+local annBanner=Instance.new("Frame",sg); annBanner.Size=UDim2.new(1,0,0,0); annBanner.Position=UDim2.new(0,0,0,0); annBanner.BackgroundColor3=Color3.fromRGB(20,15,0); annBanner.BorderSizePixel=0; annBanner.ZIndex=20; annBanner.ClipsDescendants=true
+local annText=Instance.new("TextLabel",annBanner); annText.Size=UDim2.new(1,0,0,64); annText.BackgroundTransparency=1; annText.TextColor3=Color3.fromRGB(255,215,0); annText.Font=Enum.Font.GothamBold; annText.TextSize=16; annText.ZIndex=21
+-- Notify handler
+eNotify.OnClientEvent:Connect(function(msg)
+  if type(msg)=="string" and msg:sub(1,12)=="__announce__" then
+    annText.Text="📢 "..msg:sub(13)
+    TweenService:Create(annBanner,TweenInfo.new(0.4,Enum.EasingStyle.Quart),{Size=UDim2.new(1,0,0,64)}):Play()
+    task.delay(5,function() TweenService:Create(annBanner,TweenInfo.new(0.4),{Size=UDim2.new(1,0,0,0)}):Play() end)
+  else
+    showToast(tostring(msg),"#00ff88")
+  end
+end)
+-- GetPlayers handler
+eGetPlayers.OnClientEvent:Connect(function(names)
+  for _,c in ipairs(pcf:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
+  for _,name in ipairs(names or {}) do
+    local chip=Instance.new("TextButton",pcf); chip.Size=UDim2.new(0,80,0,38); chip.BackgroundColor3=Color3.fromRGB(19,23,38); chip.BorderSizePixel=0; chip.Text=name; chip.TextColor3=Color3.fromRGB(200,210,230); chip.Font=Enum.Font.Code; chip.TextSize=9; chip.TextWrapped=true
+    Instance.new("UICorner",chip).CornerRadius=UDim.new(0,5)
+    chip.MouseButton1Click:Connect(function() pi.Text=name end)
+  end
+  pcl:ApplyLayout()
+  pcf.CanvasSize=UDim2.new(0,pcl.AbsoluteContentSize.X+12,0,0)
+end)
+-- F9 toggle
+UIS.InputBegan:Connect(function(input,gp) if gp then return end
+  if input.KeyCode==Enum.KeyCode.F9 then
+    sg.Enabled=not sg.Enabled
+    if sg.Enabled then eGetPlayers:FireServer() end
+  end
+end)
+task.wait(1); eGetPlayers:FireServer()`,
+
+    ban:`Write a Roblox ban system. Two sections, raw Lua only:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+SERVER (max 80 lines): Services. Folder "BanEvents" in RS. RemoteEvents: BanPlayer,UnbanPlayer,TempBan,GetBanList,BanNotify each in folder. RANKS={[1234567890]=5}. BanStore. Each handler: NO varargs in pcall, rank check first. BanPlayer(sender,targetName,reason): find by name, SetAsync, kick. UnbanPlayer(sender,targetName): find by name, RemoveAsync. TempBan(sender,targetName,reason,secs): SetAsync with expires=os.time()+secs, kick. GetBanList fires back empty table if no data. PlayerAdded checks ban.
+LOCAL (max 100 lines): WaitForChild all. ScreenGui F8. Dark 460x480 panel. Two TextButton tabs. Ban tab: two TextBoxes, 4 duration chips, Ban+Unban buttons. BanList tab: ScrollingFrame populated on GetBanList response. Toasts via TweenService.`,
+
+    anticheat:`Write a Roblox anti-cheat. ONE section only, raw Lua:
+===SCRIPT_SERVER===
+Services. ACBans DataStore. RemoteEvent "ACNotify" in RS. flags/lastPos/airTime tables. PlayerAdded/Removing init cleanup. Heartbeat: speed check (velocity>120), fly check (airborne>5s no jump), teleport check (delta>400). flag(player,type): increment, warn at 2, kick at 4, ban+kick at 6. NO varargs in pcall. Reset flags every 300s via task.delay loop.`,
+
+    emotes:`Write a Roblox emote system. Two sections, raw Lua only:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+SERVER (max 40 lines): Folder "EmoteEvents". RemoteEvents PlayEmote,StopEmote. emoteTracks table. PlayEmote: load+play anim on character, store track. StopEmote: stop+destroy track.
+LOCAL (max 120 lines): WaitForChild. 12 emotes table {name,id}. ScreenGui emote wheel toggle E key. Frame 320x320 centered transparent bg. Center stop button 60x60. 12 buttons 64x64 using math.cos/sin radius 120. UICorner, dark bg. TweenService hover scale. Click fires PlayEmote, closes wheel. TweenService fade wheel open/close.`,
+
+    ranks:`Write a Roblox rank system. Two sections, raw Lua only:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+SERVER (max 80 lines): Folder "RankEvents". RemoteEvents SetRank,GetMyRank,RankChanged. RANKS+RankStore. RANK_NAMES/RANK_COLORS tables. PlayerAdded: load rank, create BillboardGui TextLabel on HumanoidRootPart. GetMyRank fires back rank+name. SetRank: only rank 5 can set, save, fire RankChanged.
+LOCAL (max 100 lines): WaitForChild. Rank card HUD top-right. GetMyRank on load, update card. F7 panel: player list, rank dropdown, SetRank button if rank==5. RankChanged: update card with TweenService pop.`,
+
+    notification:`Write a Roblox notification system. Two sections, raw Lua only:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+SERVER (max 40 lines): Folder "NotifEvents". RemoteEvents ShowToast,ShowAnnouncement,ShowHint,ShowDialog. _G helpers. Each just fires to client(s).
+LOCAL (max 140 lines): WaitForChild. Toast stack bottom-right max 4, slide-in TweenService Back easing, colored border by type, auto-destroy 4s. Announcement full-width top bar slide-down TweenService hold 5s. Hint bottom-center fade. Dialog modal 400x260 with dynamic buttons firing DialogResponse. All 4 OnClientEvent listeners.`
   };
+
   toast('Generating…','gold');
   $('code-area').value='-- Generating, please wait...';onCodeChange();
   document.querySelector('.nav-tab').click();
