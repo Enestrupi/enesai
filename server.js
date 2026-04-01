@@ -50,7 +50,7 @@ app.post("/api/ai", async (req, res) => {
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
 
   const extraSystem = system ? system.slice(0, 300) : "";
   const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n\n" + extraSystem : "");
@@ -65,7 +65,7 @@ app.post("/api/ai", async (req, res) => {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 3000,
+        max_tokens: 8000,
         temperature: 0.2,
         messages: [
           { role: "system", content: fullSystem },
@@ -87,7 +87,7 @@ app.post("/api/ai", async (req, res) => {
 
   } catch (e) {
     clearTimeout(timeout);
-    const msg = e.name === "AbortError" ? "Request timed out (25s)" : e.message;
+    const msg = e.name === "AbortError" ? "Request timed out (60s)" : e.message;
     console.error("AI error:", msg);
     res.status(500).json({ error: msg });
   }
