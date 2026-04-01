@@ -40,7 +40,7 @@ OUTPUT FORMAT for multi-script features, use EXACTLY these separators:
 Only include sections actually needed.`;
 
 // ═══════════════════════════════════════════
-// AI — Groq (llama-3.1-8b-instant = fast)
+// AI — Groq (llama-3.3-70b-versatile = 128k context)
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
@@ -64,7 +64,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
+        model: "llama-3.3-70b-versatile",
         max_tokens: 3000,
         temperature: 0.2,
         messages: [
