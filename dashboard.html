@@ -1488,136 +1488,108 @@ async function generateNPCScript(){
 
 // ═══ ADMIN SUITE ═══
 async function genAdmin(type){
-  const RULES = `CRITICAL RULES for ALL scripts:
-- Use ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL=== section markers exactly
-- SERVER: create RemoteEvents with Instance.new("RemoteEvent") at the TOP before anything else, parent to ReplicatedStorage
-- LOCAL: WaitForChild every RemoteEvent. Parent ScreenGui to game.Players.LocalPlayer.PlayerGui. Use MouseButton1Click not Touched for buttons. NO DataStoreService on client. DO NOT pass LocalPlayer as FireServer argument.
-- NO player:Chat(), NO :EnablePhysicsActuation(), NO banStore.OnUpdate
-- Day/Night = change game:GetService("Lighting").TimeOfDay
-- God = Humanoid.MaxHealth=math.huge and Health=math.huge
-- ForceField = Instance.new("ForceField").Parent = character
-- GUI must use UIListLayout or UIGridLayout so buttons don't overlap
-- Return ONLY raw Lua in the two sections, no markdown, no explanation`;
-
   const prompts={
-    full:`${RULES}
-
-Build a COMPLETE professional Roblox admin system:
+    full:`You are writing Roblox Lua. Output ONLY raw Lua code in two sections using these EXACT markers with no other text:
 ===SCRIPT_SERVER===
-- Hardcoded rank table: local RANKS = {[1234567890]=5} (Owner=5,Admin=4,Mod=3,VIP=2)
-- Create 14 RemoteEvents at top: AdminKick,AdminBan,AdminUnban,AdminTp,AdminBring,AdminKill,AdminGod,AdminFf,AdminSpeed,AdminAnnounce,AdminDay,AdminNight,AdminFreeze,AdminGetPlayers
-- AdminGetPlayers fires back a list of player names to client
-- DataStore "AdminBans_v1": save {reason,time} on ban, delete on unban, check on PlayerAdded and kick if banned
-- Each OnServerEvent: rank check (getRank(sender) >= minRank), then perform action
-- AdminAnnounce: FireAllClients on AdminAnnounce event with the message
-- AdminFreeze: toggle Anchored on HumanoidRootPart
-- AdminDay: Lighting.TimeOfDay="14:00:00", AdminNight: Lighting.TimeOfDay="02:00:00"
-- AdminKick kicks self-target too (admins can self-kick for testing)
-- Print "[Admin] loaded" at end
-
+(server code here)
 ===SCRIPT_LOCAL===
-- Professional dark ScreenGui (background #06080f), 500x560px centered
-- Title bar "◈ Admin Panel" in cyan, close button top right
-- Scrolling player list: on AdminGetPlayers response, show clickable name chips that fill a target TextBox
-- Target TextBox + Reason/Extra TextBox
-- UIGridLayout button grid, 4 columns, buttons: Kick(red),Ban(red),Unban(green),Tp(cyan),Bring(cyan),Kill(red),God(gold),FF(cyan),Speed(purple),Announce(gold),Day(yellow),Night(blue),Freeze(orange)
-- Each button fires correct RemoteEvent with target and extra values
-- Toast notification system: small popup bottom-right that fades in/out using TweenService
-- AdminAnnounce.OnClientEvent: show a big centered announcement banner with TweenService
-- Press F9 to toggle panel open/close
-- On open: FireServer AdminGetPlayers to refresh list`,
+(localscript code here)
 
-    ban:`${RULES}
+===SCRIPT_SERVER=== EXACT REQUIREMENTS:
+1. First lines: get services: ReplicatedStorage, DataStoreService, Players, Lighting
+2. RANKS table: local RANKS = {[1234567890]=5} -- owner userId
+3. DataStore: local BanStore = DataStoreService:GetDataStore("AdminBans_v1")
+4. Create a Folder: local F=Instance.new("Folder") F.Name="AdminEvents" F.Parent=ReplicatedStorage
+5. Create these RemoteEvents inside F: AdminKick, AdminBan, AdminUnban, AdminTp, AdminBring, AdminKill, AdminGod, AdminFf, AdminSpeed, AdminAnnounce, AdminDay, AdminNight, AdminFreeze, AdminGetPlayers, AdminNotify
+6. local function getRank(p) return RANKS[p.UserId] or 0 end
+7. Players.PlayerAdded: check BanStore:GetAsync(tostring(p.UserId)), if result then p:Kick("Banned: "..result.reason) end
+8. AdminGetPlayers.OnServerEvent: build table of player names, fire back with AdminGetPlayers:FireClient(sender, nameTable)
+9. AdminKick.OnServerEvent: params (sender, targetName, reason) -- targetName is a STRING. Find player: local t=Players:FindFirstChild(targetName). Rank check: getRank(sender)>=3. Then t:Kick(reason or "Kicked")
+10. AdminBan.OnServerEvent: params (sender, targetName, reason) -- rank>=4. Find player by name. BanStore:SetAsync(tostring(t.UserId),{reason=reason,by=sender.Name,time=os.time()}). t:Kick("Banned: "..(reason or ""))
+11. AdminUnban.OnServerEvent: params (sender, targetName) -- rank>=4. Find player by name. BanStore:RemoveAsync(tostring(t.UserId))
+12. AdminTp.OnServerEvent: params (sender, targetName) -- find target by name, target.Character:PivotTo(sender.Character:GetPivot())
+13. AdminBring.OnServerEvent: params (sender, targetName) -- target.Character:PivotTo(sender.Character:GetPivot()*CFrame.new(4,0,0))
+14. AdminKill.OnServerEvent: params (sender, targetName) -- local h=t.Character:FindFirstChildOfClass("Humanoid") if h then h.Health=0 end
+15. AdminGod.OnServerEvent: params (sender, targetName) -- local h=t.Character:FindFirstChildOfClass("Humanoid") h.MaxHealth=math.huge h.Health=math.huge
+16. AdminFf.OnServerEvent: params (sender, targetName) -- local ff=t.Character:FindFirstChildOfClass("ForceField") if ff then ff:Destroy() else Instance.new("ForceField").Parent=t.Character end
+17. AdminSpeed.OnServerEvent: params (sender, targetName, speed) -- local h=t.Character:FindFirstChildOfClass("Humanoid") h.WalkSpeed=tonumber(speed) or 16
+18. AdminAnnounce.OnServerEvent: params (sender, message) -- rank>=3. AdminNotify:FireAllClients("announce", message)
+19. AdminDay.OnServerEvent: Lighting.TimeOfDay="14:00:00" Lighting.Brightness=2
+20. AdminNight.OnServerEvent: Lighting.TimeOfDay="02:00:00" Lighting.Brightness=0.5
+21. AdminFreeze.OnServerEvent: params (sender, targetName) -- local r=t.Character:FindFirstChild("HumanoidRootPart") r.Anchored=not r.Anchored
+22. Every OnServerEvent wraps logic in pcall. Every command: AdminNotify:FireClient(sender,"ok","Command done")
+23. print("[Admin] System loaded") at end
 
-Build a complete Roblox BAN SYSTEM:
+===SCRIPT_LOCAL=== EXACT REQUIREMENTS:
+1. Services: Players, TweenService, UserInputService, ReplicatedStorage
+2. local lp = Players.LocalPlayer
+3. local pgui = lp:WaitForChild("PlayerGui")
+4. local F = ReplicatedStorage:WaitForChild("AdminEvents")
+5. WaitForChild every event: local eKick=F:WaitForChild("AdminKick") etc for all 15 events
+6. Create ScreenGui: local sg=Instance.new("ScreenGui") sg.Name="AdminPanel" sg.ResetOnSpawn=false sg.Enabled=false sg.Parent=pgui
+7. Main frame: 500x560, Position UDim2.new(0.5,-250,0.5,-280), BackgroundColor3 Color3.fromRGB(6,8,15), parent=sg. Add UICorner radius 12. Add UIStroke Color Color3.fromRGB(0,212,255) Thickness 1.
+8. Title bar frame: full width, height 40, BackgroundColor3 Color3.fromRGB(0,20,40), UICorner 12. TextLabel "◈ Admin Panel" font GothamBold size 13 color Color3.fromRGB(0,212,255). Close TextButton top-right 28x28 red bg "✕" destroys sg on click.
+9. Section label "TARGET PLAYER": TextLabel at Position(0,10,0,48), font GothamBold size 9, color Color3.fromRGB(80,90,120)
+10. playerInput TextBox: Size(1,-20,0,30) Position(0,10,0,64) BackgroundColor3 Color3.fromRGB(19,23,38) PlaceholderText="Enter player name…" font Code size 12 color cyan. UICorner 6. UIPadding PaddingLeft 8.
+11. Player chip list: ScrollingFrame Size(1,-20,0,52) Position(0,10,0,98) BackgroundColor3 Color3.fromRGB(12,15,26) ScrollBarThickness=3 UICorner 6. UIListLayout horizontal padding 4. On AdminGetPlayers.OnClientEvent(names): clear children, for each name create TextButton 80x44 BackgroundColor3(19,23,38) font Code size 9 UICorner 5, on click set playerInput.Text=name
+12. extraInput TextBox: Size(1,-20,0,30) Position(0,10,0,158) placeholder="Speed / Ban reason / Message" same style as playerInput
+13. Command grid Frame: Size(1,-20,0,220) Position(0,10,0,196). UIGridLayout CellSize(0,104,0,36) CellPadding(0,5,0,5). Buttons array:
+    {text="⚡ Kick",color=Color3.fromRGB(255,68,102),fn=function() eKick:FireServer(playerInput.Text, extraInput.Text) end},
+    {text="🔨 Ban",color=Color3.fromRGB(255,68,102),fn=function() eBan:FireServer(playerInput.Text, extraInput.Text) end},
+    {text="✅ Unban",color=Color3.fromRGB(0,200,100),fn=function() eUnban:FireServer(playerInput.Text) end},
+    {text="📍 Tp",color=Color3.fromRGB(0,180,255),fn=function() eTp:FireServer(playerInput.Text) end},
+    {text="🧲 Bring",color=Color3.fromRGB(0,180,255),fn=function() eBring:FireServer(playerInput.Text) end},
+    {text="💀 Kill",color=Color3.fromRGB(255,68,102),fn=function() eKill:FireServer(playerInput.Text) end},
+    {text="⭐ God",color=Color3.fromRGB(255,215,0),fn=function() eGod:FireServer(playerInput.Text) end},
+    {text="🛡 FF",color=Color3.fromRGB(0,212,255),fn=function() eFf:FireServer(playerInput.Text) end},
+    {text="⚡ Speed",color=Color3.fromRGB(168,85,247),fn=function() eSpeed:FireServer(playerInput.Text, tonumber(extraInput.Text) or 50) end},
+    {text="📢 Say",color=Color3.fromRGB(255,215,0),fn=function() eAnnounce:FireServer(extraInput.Text) end},
+    {text="🌅 Day",color=Color3.fromRGB(255,200,50),fn=function() eDay:FireServer() end},
+    {text="🌙 Night",color=Color3.fromRGB(80,90,160),fn=function() eNight:FireServer() end},
+    {text="❄ Freeze",color=Color3.fromRGB(100,200,255),fn=function() eFreeze:FireServer(playerInput.Text) end}
+    For each button: TextButton Size(0,104,0,36) BackgroundColor3=Color3.fromRGB(19,23,38) BorderSizePixel=0 font GothamBold size 10 TextColor3=cmd.color UICorner 6 UIStroke color=cmd.color thickness 0.5. MouseButton1Click fires cmd.fn(). MouseEnter tween bg to cmd.color textcolor to Color3.fromRGB(6,8,15). MouseLeave tween bg back.
+14. Refresh button: TextButton Size(1,-20,0,28) Position(0,10,1,-38) bg(19,23,38) text="↻ Refresh Players" color cyan. On click: eGetPlayers:FireServer()
+15. TOAST function showToast(msg,hex): Frame 300x44 Position(1,-310,1,-60) parent=sg bg(12,15,26) UICorner 8 UIStroke color Color3.fromHex(hex). TextLabel inside with msg. TweenService slide in from right over 0.3s Back easing. After 3.5s slide back out. Destroy after.
+16. AdminNotify.OnClientEvent: function(kind, msg) if kind=="announce" then show big centered banner 600x70 bg gradient gold, TextLabel with msg, TweenService slide down from top hold 4s slide back up else showToast(msg, "#00ff88") end
+17. UserInputService.InputBegan: if KeyCode==F9 and not gameProcessed: sg.Enabled=not sg.Enabled. If enabled: eGetPlayers:FireServer()
+18. On load: task.wait(1) eGetPlayers:FireServer()`,
+
+    ban:`You are writing Roblox Lua. Output ONLY raw Lua in two sections:
 ===SCRIPT_SERVER===
-- RemoteEvents at top: BanPlayer, UnbanPlayer, TempBan, GetBanList
-- RANKS table hardcoded, rank check on every event
-- DataStore "BanSystem_v2": store {reason, bannedBy, timestamp, expires(optional)} 
-- TempBan: store expiry timestamp, check on PlayerAdded if expired then auto-unban
-- GetBanList: read DataStore ordered pages, fire list back to client
-- PlayerAdded: check ban, kick with reason and banned-by info
-- Print ban/unban actions to server console
-
 ===SCRIPT_LOCAL===
-- Dark ScreenGui ban manager panel, toggle with F8
-- Tabs: "Ban Player" and "Ban List"
-- Ban tab: target name input, reason input, duration dropdown (Permanent/1h/24h/7d), Ban and Unban buttons
-- Ban List tab: ScrollingFrame showing active bans with player name, reason, date
-- Each action fires correct RemoteEvent
-- Toast notifications for success/error`,
 
-    anticheat:`${RULES}
+SERVER: Services at top. RemoteEvents in a Folder "BanEvents" in ReplicatedStorage: BanPlayer, UnbanPlayer, TempBan, GetBanList, BanNotify. RANKS={[1234567890]=5}. BanStore=DataStoreService:GetDataStore("BanSystem_v2"). BanPlayer.OnServerEvent(sender,targetName,reason): rank>=4, find player by name, SetAsync(tostring(t.UserId),{reason=reason,by=sender.Name,time=os.time()}), kick player. UnbanPlayer.OnServerEvent(sender,targetName): rank>=4, find by name, RemoveAsync. TempBan.OnServerEvent(sender,targetName,reason,seconds): SetAsync with expires=os.time()+seconds, kick. GetBanList.OnServerEvent(sender): rank>=3, use pcall+GetAsync for known keys, fire list back. PlayerAdded: check ban, if expires and os.time()>expires then RemoveAsync and allow, else kick.
 
-Build a complete Roblox ANTI-CHEAT system:
+LOCAL: WaitForChild all events. ScreenGui "BanManager" toggle F8. Dark panel 460x480. Two tab buttons "Ban Player" / "Ban List" at top. Active tab underlined cyan. Ban tab: target TextBox, reason TextBox, duration Frame with 4 TextButtons (Perm/1h/24h/7d) that highlight when selected storing choice, Ban button fires BanPlayer or TempBan, Unban button fires UnbanPlayer. Ban List tab: ScrollingFrame, GetBanList.OnClientEvent populates rows showing name+reason+date, each row has Unban button. Toast notifications via TweenService on all actions.`,
+
+    anticheat:`You are writing Roblox Lua. Output ONLY raw Lua in ONE section:
 ===SCRIPT_SERVER===
-- RemoteEvents at top: ACNotify (fire client when cheat detected)
-- Track per-player: flags table, last position, last speed check time
-- RunService.Heartbeat: for each player check WalkSpeed > 28 (speed hack), check if airborne > 4 seconds without jumping (fly hack), check teleport (position delta > 500 studs in one frame)
-- Flag system: warn on flag 1, kick on flag 3, ban on flag 5 (DataStore "ACBans")
-- BodyPosition/BodyVelocity removal: scan character for illegal instances every 10 seconds
-- Anti noclip: check if character is inside a part using Region3
-- Log all detections with player name, cheat type, timestamp using print
-- Reset flags every 5 minutes
 
-===SCRIPT_LOCAL===
-- Small status HUD bottom-left showing "Anti-Cheat: Active" in green
-- ACNotify.OnClientEvent: show warning toast "You have been flagged for: [reason]"`,
+SERVER ONLY. Services: Players, RunService, DataStoreService. ACBans=DataStoreService:GetDataStore("ACBans_v1"). RemoteEvent "ACNotify" in ReplicatedStorage. Per-player tracking table: flags{}, lastPos{}, airTime{}, lastCheck{}. Players.PlayerAdded: init tracking. Players.PlayerRemoving: cleanup. RunService.Heartbeat: for each player with character: 1) speedCheck: get HumanoidRootPart velocity magnitude, if >120 then flag(player,"Speed hack"). 2) flyCheck: if not grounded (RaycastResult nil below feet 4 studs) increment airTime, if airTime>5 then flag(player,"Fly hack"). 3) teleportCheck: if (rootPos-lastPos).Magnitude>400 in one frame flag(player,"Teleport hack"). Update lastPos. flag(player,cheatType) function: increment flags[player], print warning, if flags==2 then warn player via ACNotify:FireClient, if flags==4 then kick, if flags>=6 then ACBans:SetAsync+kick. Reset flags every 300 seconds per player. ACNotify RemoteEvent created at top.`,
 
-    emotes:`${RULES}
-
-Build a complete Roblox EMOTE SYSTEM:
+    emotes:`You are writing Roblox Lua. Output ONLY raw Lua in two sections:
 ===SCRIPT_SERVER===
-- RemoteEvents at top: PlayEmote, StopEmote
-- 12 emotes table with name and AnimationId (use placeholder IDs like rbxassetid://000)
-- PlayEmote.OnServerEvent: load and play animation on character, stop on movement
-- StopEmote.OnServerEvent: stop current emote track
-- Detect movement via Humanoid.MoveDirection and auto-cancel emote
-- Only one emote at a time per player
-
 ===SCRIPT_LOCAL===
-- Circular emote wheel GUI, toggle with E key
-- 12 emote slots arranged in a circle around a center point using math.cos/sin
-- Each slot: circular button with emote name, hover highlight with TweenService scale
-- Click fires PlayEmote RemoteEvent
-- Center button = stop emote
-- Wheel fades in/out with TweenService when toggled
-- Close wheel on emote selected`,
 
-    ranks:`${RULES}
+SERVER: Folder "EmoteEvents" in ReplicatedStorage. RemoteEvents: PlayEmote, StopEmote. emoteTracks={} table. PlayEmote.OnServerEvent(sender,emoteName): load Animation on sender.Character Humanoid, store in emoteTracks[sender], play it, stop on Humanoid.MoveDirection change via heartbeat. StopEmote.OnServerEvent(sender): stop and destroy track.
 
-Build a complete Roblox RANK SYSTEM:
+LOCAL: WaitForChild events. 12 emotes table with name and placeholder AnimationId "rbxassetid://507770239". Emote wheel ScreenGui toggle with E key. Wheel frame 320x320 centered, bg transparent, enabled=false. Center circle gray "Stop" button 60x60. 12 emote buttons 64x64 positioned in circle using math.cos/math.sin with radius 120. Each button: circular UICorner, dark bg, emote name TextLabel. TweenService scale animation on hover. Click fires PlayEmote with emote name, hides wheel. Center fires StopEmote. Wheel fades in/out with TweenService ImageTransparency tween on open/close.`,
+
+    ranks:`You are writing Roblox Lua. Output ONLY raw Lua in two sections:
 ===SCRIPT_SERVER===
-- RemoteEvents at top: SetRank, GetRank, RankChanged (fire client on rank change)
-- RANKS = {[userId]=rank} hardcoded + DataStore "PlayerRanks_v1" for dynamic ranks
-- SetRank.OnServerEvent: only rank 5 can set ranks, save to DataStore
-- GetRank.OnServerEvent: return player rank to client
-- PlayerAdded: load rank from DataStore, create BillboardGui nameplate above head showing name + rank tag (Owner/Admin/Mod/VIP/Player) with correct color
-- RankChanged: update nameplate when rank changes
-- Rank colors: 5=gold, 4=red, 3=orange, 2=cyan, 1=white
-
 ===SCRIPT_LOCAL===
-- Rank card HUD top-right showing own rank badge with color and title
-- Rank manager panel (F7): list of online players with their ranks, SetRank button (only visible if own rank=5)
-- Rank dropdown: Owner/Admin/Mod/VIP/Player
-- RankChanged.OnClientEvent: update own rank card with TweenService pop animation`,
 
-    notification:`${RULES}
+SERVER: Folder "RankEvents" in ReplicatedStorage. RemoteEvents: SetRank, GetMyRank, RankChanged. RANKS={[1234567890]=5}. RankStore=DataStoreService:GetDataStore("PlayerRanks_v1"). RANK_NAMES={[5]="Owner",[4]="Admin",[3]="Mod",[2]="VIP",[1]="Player",[0]="Guest"}. RANK_COLORS={[5]=Color3.fromRGB(255,215,0),[4]=Color3.fromRGB(255,68,102),[3]=Color3.fromRGB(255,140,0),[2]=Color3.fromRGB(0,212,255),[1]=Color3.fromRGB(200,200,200),[0]=Color3.fromRGB(100,100,100)}. Players.PlayerAdded: load rank from RankStore, merge with RANKS table (take max), create BillboardGui on HumanoidRootPart size(0,120,0,40) StudsOffset(0,3,0) with TextLabel showing name+rank tag in rank color font GothamBold. GetMyRank.OnServerEvent: fire back rank number and name. SetRank.OnServerEvent(sender,targetName,newRank): only if getRank(sender)==5, find player, save to RankStore, fire RankChanged to target. RankChanged fires with new rank data.
 
-Build a complete Roblox NOTIFICATION SYSTEM:
+LOCAL: WaitForChild events. Rank card HUD: small frame top-right 160x44 showing own rank badge (colored bg pill with rank name). GetMyRank:FireServer() on load, OnClientEvent updates card with TweenService color tween. Rank manager panel (F7) 400x460: player list with their ranks shown, SetRank only visible if own rank==5, dropdown Frame with rank options, confirm button fires SetRank. RankChanged.OnClientEvent: update own card with pop scale animation.`,
+
+    notification:`You are writing Roblox Lua. Output ONLY raw Lua in two sections:
 ===SCRIPT_SERVER===
-- RemoteEvents at top: ShowToast, ShowAnnouncement, ShowHint, ShowDialog
-- All events fire to specific client or all clients
-- Helper functions: notifyPlayer(player,msg,type,color), notifyAll(msg,type)
-- Types: "success"(green), "error"(red), "info"(cyan), "warning"(gold)
-- ShowDialog: fires with title, message, and button options array
-
 ===SCRIPT_LOCAL===
-- Toast system: max 4 toasts stacked bottom-right, each 300x50px, auto-dismiss after 4s, TweenService slide-in from right, slide-out to right, colored left border by type
-- Announcement banner: full-width top bar, slides down from top, holds 5s then slides back up, gradient background
-- Hint system: small text bottom-center, fades in/out
-- Dialog system: modal popup center screen with title, message, and clickable buttons that fire back to server
-- All animations use TweenService with EasingStyle.Quart`
+
+SERVER: Folder "NotifEvents" in ReplicatedStorage. RemoteEvents: ShowToast, ShowAnnouncement, ShowHint, ShowDialog, DialogResponse. Helper functions exposed via _G: _G.notifyPlayer(player,msg,type) fires ShowToast to one client. _G.notifyAll(msg,type) fires to all. _G.announce(msg) fires ShowAnnouncement to all. Types: "success","error","info","warning". ShowDialog.OnServerEvent: just for testing, fire back a dialog to sender.
+
+LOCAL: WaitForChild all events. TOAST SYSTEM: toastContainer Frame anchor top-right, UIListLayout vertical gap 6. showToast(msg,toastType): create Frame 300x52 in container, left border 3px colored by type (success=#00ff88, error=#ff4466, info=#00d4ff, warning=#ffaa00), dark bg, UICorner 8, TextLabel with msg font GothamBold size 11, small type icon. TweenService slide in X from +320 to 0 over 0.25s Back easing. Auto destroy after 4s with slide-out tween. Max 4 toasts, oldest removed if exceeded. ANNOUNCEMENT: full-width Frame at top 0 height initially, gradient bg (gold left to transparent right), large TextLabel centered, TweenService expand to height 64 on show, collapse after 5s. HINT: TextLabel bottom-center, fade in/out with Transparency tween, 3s duration. DIALOG: modal Frame 400x260 center screen, title+message+dynamic TextButtons created from array, each button fires DialogResponse:FireServer(buttonIndex), backdrop frame full screen 50% transparent closes dialog on click. All 4 systems listen to their OnClientEvent and call the right function.`
   };
 
   toast('Generating…','gold');
