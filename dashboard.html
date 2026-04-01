@@ -754,7 +754,9 @@ function wrapInsert(code,type){
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const svc=svcMap[type]||'ServerScriptService';
   const cls=clsMap[type]||'Script';
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source=[====[\n${code}\n]=====]\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
+  // FIX: escape code properly so Lua string delimiters can't be broken by code content
+  const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source="${escaped}"\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
 }
 
 // ═══ DETECT BLOCK TYPE ═══
