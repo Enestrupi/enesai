@@ -19,13 +19,29 @@ function getSession(token) {
   return sessions[token];
 }
 
-// ── Roblox system prompt (concise) ──
-const ROBLOX_SYSTEM = `Expert Roblox Lua dev. Rules: Server scripts use DataStore/PlayerAdded/FireClient/OnServerEvent, never LocalPlayer. LocalScripts use LocalPlayer/PlayerGui/UserInputService/FireServer/OnClientEvent, never DataStoreService. RemoteEvents created server-side only; LocalScript uses WaitForChild(). Use task.wait() not wait(). Output complete code, no placeholders, no markdown fences.
-Multi-script format:
+// ── System prompt ──
+const ROBLOX_SYSTEM = `You are an expert Roblox Lua developer. Follow these rules strictly:
+- Server Script: use DataStoreService, PlayerAdded, FireClient, OnServerEvent. NEVER use LocalPlayer/PlayerGui/UserInputService.
+- LocalScript: use LocalPlayer, PlayerGui, UserInputService, FireServer, OnClientEvent. NEVER use DataStoreService/OnServerEvent.
+- RemoteEvents must be created in the server Script only. LocalScript uses WaitForChild() to get them.
+- Always use task.wait(), never wait().
+- Output ONLY raw Lua. No markdown, no code fences, no explanations.
+- Write complete, fully working code. No placeholders like "PlayerName" or "put code here".
+- GUIs must be fully functional with real TextBox inputs, not hardcoded strings.
+Multi-script separator format (only include sections needed):
 ===SCRIPT_SERVER===
 ===SCRIPT_LOCAL===
-===SCRIPT_MODULE===
-Only include needed sections.`;
+===SCRIPT_MODULE===`;
+
+// ── Token estimator (rough: 1 token ≈ 4 chars) ──
+function estimateTokens(str) {
+  return Math.ceil(str.length / 4);
+}
+
+// ── Trim to fit within a token budget ──
+function trimToTokens(str, maxTokens) {
+  return str.slice(0, maxTokens * 4);
+}
 
 // ═══════════════════════════════════════════
 // AI — Groq
@@ -37,14 +53,19 @@ app.post("/api/ai", async (req, res) => {
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
+  // Budget: llama-3.3-70b free tier = ~6000 TPM
+  // System ~300 tokens + output ~4000 tokens = 1700 tokens left for user prompt
+  const MAX_OUTPUT_TOKENS = 4000;
+  const SYSTEM_TOKENS = estimateTokens(ROBLOX_SYSTEM);
+  const EXTRA_TOKENS = system ? Math.min(estimateTokens(system), 100) : 0;
+  const PROMPT_BUDGET = 6000 - SYSTEM_TOKENS - EXTRA_TOKENS - MAX_OUTPUT_TOKENS - 100; // 100 buffer
+
+  const extraSystem = system ? trimToTokens(system, 100) : "";
+  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n" + extraSystem : "");
+  const trimmedPrompt = trimToTokens(prompt, Math.max(PROMPT_BUDGET, 500));
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
-
-  const extraSystem = system ? system.slice(0, 200) : "";
-  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n" + extraSystem : "");
-
-  // Trim prompt to avoid token limit (llama-3.3-70b TPM limit on free tier)
-  const trimmedPrompt = prompt.slice(0, 6000);
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -56,7 +77,7 @@ app.post("/api/ai", async (req, res) => {
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
-        max_tokens: 6000,
+        max_tokens: MAX_OUTPUT_TOKENS,
         temperature: 0.2,
         messages: [
           { role: "system", content: fullSystem },
