@@ -1488,35 +1488,138 @@ async function generateNPCScript(){
 
 // ═══ ADMIN SUITE ═══
 async function genAdmin(type){
+  const RULES = `CRITICAL RULES for ALL scripts:
+- Use ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL=== section markers exactly
+- SERVER: create RemoteEvents with Instance.new("RemoteEvent") at the TOP before anything else, parent to ReplicatedStorage
+- LOCAL: WaitForChild every RemoteEvent. Parent ScreenGui to game.Players.LocalPlayer.PlayerGui. Use MouseButton1Click not Touched for buttons. NO DataStoreService on client. DO NOT pass LocalPlayer as FireServer argument.
+- NO player:Chat(), NO :EnablePhysicsActuation(), NO banStore.OnUpdate
+- Day/Night = change game:GetService("Lighting").TimeOfDay
+- God = Humanoid.MaxHealth=math.huge and Health=math.huge
+- ForceField = Instance.new("ForceField").Parent = character
+- GUI must use UIListLayout or UIGridLayout so buttons don't overlap
+- Return ONLY raw Lua in the two sections, no markdown, no explanation`;
+
   const prompts={
-    full:`Write a complete Roblox admin system. Use EXACTLY these two section markers: ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL===
+    full:`${RULES}
 
-===SCRIPT_SERVER=== rules:
-- Create ALL RemoteEvents first at the top (Kick, Ban, Unban, Tp, Bring, Kill, God, Ff, Speed, Announce, Day, Night) using Instance.new("RemoteEvent") parented to ReplicatedStorage
-- Rank system: hardcode owner by UserId, use a ranks table {[OWNER_ID]=5} and default rank 0
-- Commands triggered by each RemoteEvent.OnServerEvent (NOT inside PlayerAdded)
-- DataStore for bans, check bans in Players.PlayerAdded and kick if banned
-- Day/Night must change game.Lighting.TimeOfDay, not WalkSpeed
-- God mode: set MaxHealth and Health to math.huge
-- ForceField (ff): use Instance.new("ForceField") parented to character
-- NO :EnablePhysicsActuation (does not exist)
-- NO player:Chat() (does not exist)
-- Announce: use a RemoteEvent to fire all clients
+Build a COMPLETE professional Roblox admin system:
+===SCRIPT_SERVER===
+- Hardcoded rank table: local RANKS = {[1234567890]=5} (Owner=5,Admin=4,Mod=3,VIP=2)
+- Create 14 RemoteEvents at top: AdminKick,AdminBan,AdminUnban,AdminTp,AdminBring,AdminKill,AdminGod,AdminFf,AdminSpeed,AdminAnnounce,AdminDay,AdminNight,AdminFreeze,AdminGetPlayers
+- AdminGetPlayers fires back a list of player names to client
+- DataStore "AdminBans_v1": save {reason,time} on ban, delete on unban, check on PlayerAdded and kick if banned
+- Each OnServerEvent: rank check (getRank(sender) >= minRank), then perform action
+- AdminAnnounce: FireAllClients on AdminAnnounce event with the message
+- AdminFreeze: toggle Anchored on HumanoidRootPart
+- AdminDay: Lighting.TimeOfDay="14:00:00", AdminNight: Lighting.TimeOfDay="02:00:00"
+- AdminKick kicks self-target too (admins can self-kick for testing)
+- Print "[Admin] loaded" at end
 
-===SCRIPT_LOCAL=== rules:
-- WaitForChild for every RemoteEvent before using it
-- Simple ScreenGui with TextButton for each command
-- NO DataStoreService (server only)
-- NO FireServer passing LocalPlayer as argument (server already knows who fired)
-- Parent the ScreenGui to game.Players.LocalPlayer.PlayerGui
+===SCRIPT_LOCAL===
+- Professional dark ScreenGui (background #06080f), 500x560px centered
+- Title bar "◈ Admin Panel" in cyan, close button top right
+- Scrolling player list: on AdminGetPlayers response, show clickable name chips that fill a target TextBox
+- Target TextBox + Reason/Extra TextBox
+- UIGridLayout button grid, 4 columns, buttons: Kick(red),Ban(red),Unban(green),Tp(cyan),Bring(cyan),Kill(red),God(gold),FF(cyan),Speed(purple),Announce(gold),Day(yellow),Night(blue),Freeze(orange)
+- Each button fires correct RemoteEvent with target and extra values
+- Toast notification system: small popup bottom-right that fades in/out using TweenService
+- AdminAnnounce.OnClientEvent: show a big centered announcement banner with TweenService
+- Press F9 to toggle panel open/close
+- On open: FireServer AdminGetPlayers to refresh list`,
 
-Return ONLY raw Lua in the two sections. No markdown, no explanation.`,
-    ban:`Write a Roblox ban system. Use ===SCRIPT_SERVER=== section only. Create a RemoteEvent called AdminBan in ReplicatedStorage at the top. Rank check by UserId hardcoded table. DataStore bans with reason and timestamp. Check bans in Players.PlayerAdded. Unban command. NO player:Chat(). Return raw Lua only, no markdown.`,
-    anticheat:`Write a Roblox anti-cheat server Script using ===SCRIPT_SERVER=== only. Detect speed hacks by checking WalkSpeed in RunService.Heartbeat. Detect fly hacks by checking if character is off ground too long. Flag system: warn on first offense, kick on third. Use Players.PlayerAdded and RunService.Heartbeat. Return raw Lua only, no markdown.`,
-    emotes:`Write a complete Roblox emote system: server Script with RemoteEvent + 10 emotes, LocalScript with GUI wheel. Raw Lua only.`,
-    ranks:`Write a complete Roblox rank system server Script: 5 tiers, group support, BillboardGui nameplate. Raw Lua only.`,
-    notification:`Write a Roblox notification system. Use ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL===. SERVER: create RemoteEvent called ShowNotification in ReplicatedStorage, expose it so server scripts can fire it. LOCAL: WaitForChild the RemoteEvent, show a ScreenGui toast notification with TweenService fade in/out animation when event fires. NO DataStore. Return raw Lua only, no markdown.`,
+    ban:`${RULES}
+
+Build a complete Roblox BAN SYSTEM:
+===SCRIPT_SERVER===
+- RemoteEvents at top: BanPlayer, UnbanPlayer, TempBan, GetBanList
+- RANKS table hardcoded, rank check on every event
+- DataStore "BanSystem_v2": store {reason, bannedBy, timestamp, expires(optional)} 
+- TempBan: store expiry timestamp, check on PlayerAdded if expired then auto-unban
+- GetBanList: read DataStore ordered pages, fire list back to client
+- PlayerAdded: check ban, kick with reason and banned-by info
+- Print ban/unban actions to server console
+
+===SCRIPT_LOCAL===
+- Dark ScreenGui ban manager panel, toggle with F8
+- Tabs: "Ban Player" and "Ban List"
+- Ban tab: target name input, reason input, duration dropdown (Permanent/1h/24h/7d), Ban and Unban buttons
+- Ban List tab: ScrollingFrame showing active bans with player name, reason, date
+- Each action fires correct RemoteEvent
+- Toast notifications for success/error`,
+
+    anticheat:`${RULES}
+
+Build a complete Roblox ANTI-CHEAT system:
+===SCRIPT_SERVER===
+- RemoteEvents at top: ACNotify (fire client when cheat detected)
+- Track per-player: flags table, last position, last speed check time
+- RunService.Heartbeat: for each player check WalkSpeed > 28 (speed hack), check if airborne > 4 seconds without jumping (fly hack), check teleport (position delta > 500 studs in one frame)
+- Flag system: warn on flag 1, kick on flag 3, ban on flag 5 (DataStore "ACBans")
+- BodyPosition/BodyVelocity removal: scan character for illegal instances every 10 seconds
+- Anti noclip: check if character is inside a part using Region3
+- Log all detections with player name, cheat type, timestamp using print
+- Reset flags every 5 minutes
+
+===SCRIPT_LOCAL===
+- Small status HUD bottom-left showing "Anti-Cheat: Active" in green
+- ACNotify.OnClientEvent: show warning toast "You have been flagged for: [reason]"`,
+
+    emotes:`${RULES}
+
+Build a complete Roblox EMOTE SYSTEM:
+===SCRIPT_SERVER===
+- RemoteEvents at top: PlayEmote, StopEmote
+- 12 emotes table with name and AnimationId (use placeholder IDs like rbxassetid://000)
+- PlayEmote.OnServerEvent: load and play animation on character, stop on movement
+- StopEmote.OnServerEvent: stop current emote track
+- Detect movement via Humanoid.MoveDirection and auto-cancel emote
+- Only one emote at a time per player
+
+===SCRIPT_LOCAL===
+- Circular emote wheel GUI, toggle with E key
+- 12 emote slots arranged in a circle around a center point using math.cos/sin
+- Each slot: circular button with emote name, hover highlight with TweenService scale
+- Click fires PlayEmote RemoteEvent
+- Center button = stop emote
+- Wheel fades in/out with TweenService when toggled
+- Close wheel on emote selected`,
+
+    ranks:`${RULES}
+
+Build a complete Roblox RANK SYSTEM:
+===SCRIPT_SERVER===
+- RemoteEvents at top: SetRank, GetRank, RankChanged (fire client on rank change)
+- RANKS = {[userId]=rank} hardcoded + DataStore "PlayerRanks_v1" for dynamic ranks
+- SetRank.OnServerEvent: only rank 5 can set ranks, save to DataStore
+- GetRank.OnServerEvent: return player rank to client
+- PlayerAdded: load rank from DataStore, create BillboardGui nameplate above head showing name + rank tag (Owner/Admin/Mod/VIP/Player) with correct color
+- RankChanged: update nameplate when rank changes
+- Rank colors: 5=gold, 4=red, 3=orange, 2=cyan, 1=white
+
+===SCRIPT_LOCAL===
+- Rank card HUD top-right showing own rank badge with color and title
+- Rank manager panel (F7): list of online players with their ranks, SetRank button (only visible if own rank=5)
+- Rank dropdown: Owner/Admin/Mod/VIP/Player
+- RankChanged.OnClientEvent: update own rank card with TweenService pop animation`,
+
+    notification:`${RULES}
+
+Build a complete Roblox NOTIFICATION SYSTEM:
+===SCRIPT_SERVER===
+- RemoteEvents at top: ShowToast, ShowAnnouncement, ShowHint, ShowDialog
+- All events fire to specific client or all clients
+- Helper functions: notifyPlayer(player,msg,type,color), notifyAll(msg,type)
+- Types: "success"(green), "error"(red), "info"(cyan), "warning"(gold)
+- ShowDialog: fires with title, message, and button options array
+
+===SCRIPT_LOCAL===
+- Toast system: max 4 toasts stacked bottom-right, each 300x50px, auto-dismiss after 4s, TweenService slide-in from right, slide-out to right, colored left border by type
+- Announcement banner: full-width top bar, slides down from top, holds 5s then slides back up, gradient background
+- Hint system: small text bottom-center, fades in/out
+- Dialog system: modal popup center screen with title, message, and clickable buttons that fire back to server
+- All animations use TweenService with EasingStyle.Quart`
   };
+
   toast('Generating…','gold');
   $('code-area').value='-- Generating, please wait...';onCodeChange();
   document.querySelector('.nav-tab').click();
