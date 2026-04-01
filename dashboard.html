@@ -755,7 +755,9 @@ function wrapInsert(code,type){
   const svc=svcMap[type]||'ServerScriptService';
   const parentPath = type==='localscript'
     ? 'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")'
-    : `game:GetService("${svc}")`;
+    : type==='modulescript'
+    ? 'game:GetService("ServerScriptService")'
+    : 'game:GetService("ServerScriptService")';
   const cls=clsMap[type]||'Script';
   // FIX: escape code properly so Lua string delimiters can't be broken by code content
   const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
@@ -1487,15 +1489,33 @@ async function generateNPCScript(){
 // ═══ ADMIN SUITE ═══
 async function genAdmin(type){
   const prompts={
-    full:`Write a complete Roblox admin system using ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL=== separators.
-SERVER: rank system (Owner=5,Admin=4,Mod=3), commands via player chat (prefix /), kick/ban/tempban/tp/bring/kill/god/ff/speed/day/night/unban, DataStore for bans, check bans on PlayerAdded. RemoteEvent in ReplicatedStorage for GUI.
-LOCAL: ScreenGui admin panel in StarterGui, command input box, player list, send commands via RemoteEvent. NO DataStore on client. NO UserInputService key binds for commands.
-Return ONLY the two sections with the separators, raw Lua, no explanation.`,
-    ban:`Write a complete Roblox ban system server Script: ban/unban/tempban commands, DataStore persistence, kick banned players on join. Raw Lua only.`,
-    anticheat:`Write a complete Roblox anti-cheat server Script: speed hack, fly hack detection, flag system, escalating punishment. Raw Lua only.`,
+    full:`Write a complete Roblox admin system. Use EXACTLY these two section markers: ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL===
+
+===SCRIPT_SERVER=== rules:
+- Create ALL RemoteEvents first at the top (Kick, Ban, Unban, Tp, Bring, Kill, God, Ff, Speed, Announce, Day, Night) using Instance.new("RemoteEvent") parented to ReplicatedStorage
+- Rank system: hardcode owner by UserId, use a ranks table {[OWNER_ID]=5} and default rank 0
+- Commands triggered by each RemoteEvent.OnServerEvent (NOT inside PlayerAdded)
+- DataStore for bans, check bans in Players.PlayerAdded and kick if banned
+- Day/Night must change game.Lighting.TimeOfDay, not WalkSpeed
+- God mode: set MaxHealth and Health to math.huge
+- ForceField (ff): use Instance.new("ForceField") parented to character
+- NO :EnablePhysicsActuation (does not exist)
+- NO player:Chat() (does not exist)
+- Announce: use a RemoteEvent to fire all clients
+
+===SCRIPT_LOCAL=== rules:
+- WaitForChild for every RemoteEvent before using it
+- Simple ScreenGui with TextButton for each command
+- NO DataStoreService (server only)
+- NO FireServer passing LocalPlayer as argument (server already knows who fired)
+- Parent the ScreenGui to game.Players.LocalPlayer.PlayerGui
+
+Return ONLY raw Lua in the two sections. No markdown, no explanation.`,
+    ban:`Write a Roblox ban system. Use ===SCRIPT_SERVER=== section only. Create a RemoteEvent called AdminBan in ReplicatedStorage at the top. Rank check by UserId hardcoded table. DataStore bans with reason and timestamp. Check bans in Players.PlayerAdded. Unban command. NO player:Chat(). Return raw Lua only, no markdown.`,
+    anticheat:`Write a Roblox anti-cheat server Script using ===SCRIPT_SERVER=== only. Detect speed hacks by checking WalkSpeed in RunService.Heartbeat. Detect fly hacks by checking if character is off ground too long. Flag system: warn on first offense, kick on third. Use Players.PlayerAdded and RunService.Heartbeat. Return raw Lua only, no markdown.`,
     emotes:`Write a complete Roblox emote system: server Script with RemoteEvent + 10 emotes, LocalScript with GUI wheel. Raw Lua only.`,
     ranks:`Write a complete Roblox rank system server Script: 5 tiers, group support, BillboardGui nameplate. Raw Lua only.`,
-    notification:`Write a complete Roblox notification system: server Script RemoteEvent, LocalScript GUI with animations. Raw Lua only.`,
+    notification:`Write a Roblox notification system. Use ===SCRIPT_SERVER=== and ===SCRIPT_LOCAL===. SERVER: create RemoteEvent called ShowNotification in ReplicatedStorage, expose it so server scripts can fire it. LOCAL: WaitForChild the RemoteEvent, show a ScreenGui toast notification with TweenService fade in/out animation when event fires. NO DataStore. Return raw Lua only, no markdown.`,
   };
   toast('Generating…','gold');
   $('code-area').value='-- Generating, please wait...';onCodeChange();
