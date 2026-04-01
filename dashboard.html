@@ -798,7 +798,7 @@ async function sendToStudio(){
         body:JSON.stringify({
           token:sessionToken,
           type:'run_script',
-          args:{ body: finalCode }   // ✅ FIX: was `body: finalCode` — now nested in args
+          body: finalCode   // ✅ FIX: top-level 'body' matches what backend expects
         })
       });
       const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
