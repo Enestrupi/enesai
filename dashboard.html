@@ -33,10 +33,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .auth-wrap{width:420px}
 .auth-logo{font-family:var(--fd);font-size:11px;font-weight:900;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2rem;display:flex;align-items:center;gap:10px}
 .auth-logo-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
+/* FIX: removed overflow:hidden — was blocking click events in Safari/Firefox */
 .auth-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;position:relative}
 .auth-box::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
+/* FIX: bumped z-index from 1 to 3 so elements sit above ::before overlay */
 .auth-box h2,.auth-box p,.auth-step,.field,.auth-err,.btn-main{position:relative;z-index:3}
-.auth-step{display:none;position:relative;z-index:3}.auth-step.active{display:block}
+/* FIX: added position:relative + z-index to .auth-step so z-index actually applies */
+.auth-step{display:none;position:relative;z-index:3}.auth-step.active{display:block;position:relative;z-index:3}
 .auth-box h2{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:.25rem}
 .auth-box p{font-size:11px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
 .field{margin-bottom:.875rem}
@@ -136,6 +139,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .script-order-bar{display:flex;gap:3px;align-items:center;padding:5px 8px;border-bottom:.5px solid var(--border);flex-shrink:0;background:var(--bg2);flex-wrap:wrap}
 .sot-label{font-size:9px;color:var(--text3);margin-right:4px}
 .sot-chip{display:flex;align-items:center;gap:4px;background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:2px 8px;font-size:9px;color:var(--text3);cursor:pointer;transition:all .15s}
+.sot-chip:hover{border-color:var(--accent);color:var(--accent)}
 .sot-chip.s.on{border-color:var(--green);color:var(--green);background:var(--green-dim)}
 .sot-chip.ls.on{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 .sot-chip.ms.on{border-color:var(--purple);color:var(--purple);background:var(--purple-dim)}
@@ -165,8 +169,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .vtbtn{background:var(--bg3);border:.5px solid var(--border);color:var(--text3);border-radius:4px;padding:2px 6px;font-size:9px;cursor:pointer;transition:all .15s;font-family:var(--fm)}
 .vtbtn:hover{border-color:var(--accent);color:var(--accent)}
 .vtbtn.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(0,212,255,.25)}
-.vp-canvas{position:absolute;inset:0;top:30px}
 canvas#mc{width:100%;height:100%;display:block;cursor:crosshair}
+.vp-canvas{position:absolute;inset:0;top:30px}
 .vp-overlay{position:absolute;bottom:4px;left:4px;pointer-events:none}
 .vp-info{background:rgba(6,8,15,.8);border:.5px solid var(--border);border-radius:3px;padding:2px 6px;font-size:8px;color:var(--text3)}
 .insert-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;padding:.5rem;border-bottom:.5px solid var(--border);flex-shrink:0}
@@ -193,6 +197,7 @@ canvas#mc{width:100%;height:100%;display:block;cursor:crosshair}
 .pact{flex:1;background:var(--bg3);border:.5px solid var(--border);color:var(--text2);border-radius:var(--r);padding:3px;font-size:9px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--fm)}
 .pact:hover{border-color:var(--accent);color:var(--accent)}
 .pact.del:hover{border-color:var(--red);color:var(--red)}
+.lua-preview{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:6px;font-family:var(--fm);font-size:8px;color:var(--text2);overflow-x:auto;line-height:1.5;max-height:90px;overflow-y:auto;white-space:pre;margin-top:3px}
 .tmpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:.4rem}
 .tmpl{background:var(--bg3);border:.5px solid var(--border);border-radius:var(--r);padding:5px 7px;cursor:pointer;transition:all .15s}
 .tmpl:hover{border-color:var(--purple);background:var(--purple-dim)}
@@ -281,6 +286,7 @@ canvas#npc-canvas{border:.5px solid var(--border);border-radius:var(--r)}
 .mbtn:hover{border-color:var(--accent);color:var(--accent)}
 .mbtn.accent{background:var(--accent);color:#06080f;border-color:var(--accent);font-weight:700}
 .mbtn.accent:hover{background:var(--accent2)}
+.mbtn.gold{background:var(--gold);color:#06080f;border-color:var(--gold);font-weight:700}
 #toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:5px;z-index:999}
 .toast{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r);padding:7px 11px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
 .toast.ok{border-left:2px solid var(--green)}
@@ -336,8 +342,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     <div class="nav-tab" onclick="switchView('npc',this)">🤖 NPC Creator</div>
     <div class="nav-tab gold" onclick="switchView('admin',this)">👑 Admin Suite</div>
   </div>
-
-  <!-- EDITOR VIEW -->
   <div class="view active" id="view-editor" style="flex-direction:row">
     <div class="workspace">
       <div class="col-left">
@@ -489,7 +493,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
   </div>
 
-  <!-- TERRAIN VIEW -->
   <div class="view" id="view-terrain" style="flex-direction:row">
     <div class="terrain-view" style="flex:1">
       <div class="terrain-sidebar">
@@ -531,7 +534,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
   </div>
 
-  <!-- GUI BUILDER VIEW -->
   <div class="view" id="view-gui" style="flex-direction:row">
     <div class="gui-view" style="flex:1">
       <div class="gui-sidebar">
@@ -570,7 +572,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
   </div>
 
-  <!-- NPC VIEW -->
   <div class="view" id="view-npc" style="flex-direction:row">
     <div class="npc-view" style="flex:1">
       <div class="npc-sidebar">
@@ -616,16 +617,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
   </div>
 
-  <!-- ADMIN SUITE VIEW -->
   <div class="view" id="view-admin" style="flex-direction:column">
     <div class="admin-view">
       <div class="admin-header">👑 Admin Command Suite</div>
-      <div class="admin-sub">Click any card to generate complete admin scripts. Full Admin always produces a working LocalScript.</div>
+      <div class="admin-sub">Click any card to generate complete admin scripts.</div>
       <div class="admin-grid">
-        <div class="admin-card" onclick="genAdmin('full')"><div class="admin-card-icon">👑</div><div class="admin-card-name">Full Admin System</div><div class="admin-card-desc">Rank system, 13 commands, GUI console with player chips, F9 toggle.</div><div class="admin-card-badge">Complete</div></div>
+        <div class="admin-card" onclick="genAdmin('full')"><div class="admin-card-icon">👑</div><div class="admin-card-name">Full Admin System</div><div class="admin-card-desc">Rank system, 40+ commands, GUI console, DataStore logging.</div><div class="admin-card-badge">Complete</div></div>
         <div class="admin-card" onclick="genAdmin('ban')"><div class="admin-card-icon">🔨</div><div class="admin-card-name">Ban System</div><div class="admin-card-desc">Permanent/temp bans, DataStore, ban list GUI.</div><div class="admin-card-badge">DataStore</div></div>
         <div class="admin-card" onclick="genAdmin('anticheat')"><div class="admin-card-icon">🛡</div><div class="admin-card-name">Anti-Cheat</div><div class="admin-card-desc">Speed, fly, noclip, damage exploit detection.</div><div class="admin-card-badge">Security</div></div>
-        <div class="admin-card" onclick="genAdmin('emotes')"><div class="admin-card-icon">💃</div><div class="admin-card-name">Emote System</div><div class="admin-card-desc">12 emotes, GUI wheel, cancel-on-move.</div><div class="admin-card-badge">Animations</div></div>
+        <div class="admin-card" onclick="genAdmin('emotes')"><div class="admin-card-icon">💃</div><div class="admin-card-name">Emote System</div><div class="admin-card-desc">20+ emotes, GUI wheel, cancel-on-move.</div><div class="admin-card-badge">Animations</div></div>
         <div class="admin-card" onclick="genAdmin('ranks')"><div class="admin-card-icon">🎖</div><div class="admin-card-name">Rank Permissions</div><div class="admin-card-desc">5-tier rank system, group support, rank display.</div><div class="admin-card-badge">Groups</div></div>
         <div class="admin-card" onclick="genAdmin('notification')"><div class="admin-card-icon">📢</div><div class="admin-card-name">Notifications</div><div class="admin-card-desc">Announcements, hints, toasts, dialogs with animations.</div><div class="admin-card-badge">UI</div></div>
       </div>
@@ -643,29 +643,38 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 </div>
 <div id="toasts"></div>
+
 <script>
-const BACKEND="https://enesai-production.up.railway.app";
-let user=null,sessionToken=null,pluginConnected=false,pollInterval=null;
+// ═══ CONFIG ═══
+const BACKEND = "https://enesai-production.up.railway.app";
+
+// ═══ STATE ═══
+let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
 let logCount=0;
-let sceneObjects=[],selectedObjId=null,nextId=1;
-let showGrid=true,showWire=false,currentTool='select';
+let sceneObjects=[], selectedObjId=null, nextId=1;
+let showGrid=true, showWire=false, currentTool='select';
 let camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};
-let canvas,ctx;
-let terrainParams={width:512,height:80,roughness:5,water:30,biome:'grassland',features:{mountains:true,rivers:true,caves:false,rocks:true,fog:false}};
-let terrainCanvas,terrainCtx,terrainMap=[],terrainPaintMode='raise';
-let guiElements=[],selectedGuiId=null,guiDragging=false,guiDragStart={x:0,y:0},guiDragEl=null;
-let npcParams={health:100,speed:16,detect:30,damage:10,behavior:'patrol',combat:'none',type:'humanoid'};
+let canvas, ctx;
+let terrainParams={width:512,height:80,roughness:5,water:30,trees:40,brush:12,biome:'grassland',features:{mountains:true,rivers:true,caves:false,roads:false,rocks:true,fog:false}};
+let terrainCanvas, terrainCtx;
+let terrainPaintMode='raise';
+let terrainMap=[];
+let guiElements=[], selectedGuiId=null, guiDragging=false, guiDragStart={x:0,y:0}, guiDragEl=null;
+let npcParams={health:100,speed:16,detect:30,atkRange:5,damage:10,scale:1,behavior:'patrol',combat:'none',move:'walk',type:'humanoid'};
+let npcOptions={hp:true,dialog:false,loot:false,respawn:false,anim:false,sound:false};
 let activeScriptTypes={script:true,localscript:true,modulescript:false};
 
+// ═══ BIOME COLORS ═══
 const BIOME_COLORS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
-  desert:{low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
-  arctic:{low:'#c0d0e0',mid:'#d8e8f0',high:'#e8f0ff',peak:'#ffffff',water:'#3a6a9a'},
-  volcano:{low:'#2a1a0a',mid:'#6a2a0a',high:'#cc3a0a',peak:'#ff6a00',water:'#cc1a0a'},
-  ocean:{low:'#0a3a6a',mid:'#1a5a8a',high:'#2a7aaa',peak:'#aaccdd',water:'#0a2a5a'},
-  forest:{low:'#1a3a1a',mid:'#2a5a2a',high:'#4a7a2a',peak:'#9a9a5a',water:'#1a3a6a'},
+  desert:   {low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
+  arctic:   {low:'#c0d0e0',mid:'#d8e8f0',high:'#e8f0ff',peak:'#ffffff',water:'#3a6a9a'},
+  volcano:  {low:'#2a1a0a',mid:'#6a2a0a',high:'#cc3a0a',peak:'#ff6a00',water:'#cc1a0a'},
+  ocean:    {low:'#0a3a6a',mid:'#1a5a8a',high:'#2a7aaa',peak:'#aaccdd',water:'#0a2a5a'},
+  forest:   {low:'#1a3a1a',mid:'#2a5a2a',high:'#4a7a2a',peak:'#9a9a5a',water:'#1a3a6a'},
 };
 
+// ═══ UTILS ═══
 const $=id=>document.getElementById(id);
 function genTok(){return Math.random().toString(36).slice(2,8).toUpperCase();}
 function ts(){return new Date().toLocaleTimeString();}
@@ -673,45 +682,65 @@ function toast(msg,type='info'){const c=$('toasts');const t=document.createEleme
 function save(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function load(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
+// ═══ AUTH — FIXED: moved inline z-index styles to CSS, cleaner handler ═══
 function step1Next(){
-  const inp=$('rbx-username');const u=(inp.value||'').trim();
+  const inp=$('rbx-username');
+  const u=(inp.value||'').trim();
   if(!u){$('step1-err').style.display='block';inp.focus();return;}
   $('step1-err').style.display='none';
-  user={username:u,avatar:u[0].toUpperCase()};sessionToken=genTok()+genTok();enterApp();
+  user={username:u,avatar:u[0].toUpperCase()};
+  sessionToken=genTok()+genTok();
+  enterApp();
 }
 function enterApp(){
-  save();$('auth').classList.add('gone');$('app').classList.add('show');
-  $('top-avatar').textContent=user.avatar;$('top-uname').textContent=user.username;
-  $('session-token').textContent=sessionToken;$('boot-time').textContent=ts();
-  startPolling();initModeler();initTerrainCanvas();drawNPCPreview();
+  save();
+  $('auth').classList.add('gone');
+  $('app').classList.add('show');
+  $('top-avatar').textContent=user.avatar;
+  $('top-uname').textContent=user.username;
+  $('session-token').textContent=sessionToken;
+  $('boot-time').textContent=ts();
+  startPolling();
+  initModeler();
+  initTerrainCanvas();
+  drawNPCPreview();
 }
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
 load();if(user&&sessionToken){enterApp();}
 
+// ═══ POLLING ═══
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();if(d.connected&&!pluginConnected)setConn(true);else if(!d.connected&&pluginConnected)setConn(false);}catch{}},2500);}
 function stopPolling(){if(pollInterval)clearInterval(pollInterval);}
 function setConn(v){pluginConnected=v;const dot=$('conn-dot');dot.className='conn-dot-top '+(v?'on':'wait');$('plugin-status-text').textContent=v?'Studio connected':'Not connected';if(v){toast('Studio connected!','ok');addLog('sys','Connected to Studio.');}}
 function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
+// ═══ LOG ═══
 function addLog(kind,msg){const inner=$('log-inner');const d=document.createElement('div');d.className=`log-entry ${kind}`;d.innerHTML=`<div class="le-top"><span class="ltag ${kind}">${kind}</span><span class="le-time">${ts()}</span></div><div class="le-body">${msg.slice(0,200)}</div>`;inner.appendChild(d);inner.scrollTop=inner.scrollHeight;logCount++;$('log-count').textContent=logCount;}
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-count').textContent='0';}
 
+// ═══ VIEW SWITCH ═══
 function switchView(name,btn){
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  btn.classList.add('active');$('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  $('view-'+name).classList.add('active');
   if(name==='terrain'){initTerrainCanvas();generateTerrain();}
   if(name==='npc'){drawNPCPreview();}
 }
 function toggleScriptType(type,el){activeScriptTypes[type]=!activeScriptTypes[type];el.classList.toggle('on',activeScriptTypes[type]);toast((activeScriptTypes[type]?'Enabled ':'Disabled ')+type,'info');}
 
-async function callAI(userMsg,sysMsg=""){
+// ═══ AI CALL ═══
+async function callAI(userMsg, sysMsg=""){
   try{
-    const r=await fetch(BACKEND+"/api/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system:sysMsg.slice(0,200),prompt:userMsg})});
+    const r=await fetch(BACKEND+"/api/ai",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({system:sysMsg.slice(0,300), prompt:userMsg})
+    });
     if(!r.ok){const e=await r.text().catch(()=>"");throw new Error("Backend "+r.status+": "+e.slice(0,120));}
     const d=await r.json();
-    const text=d.content?.[0]?.text||d.text||d.choices?.[0]?.message?.content||null;
-    if(!text)throw new Error("Empty response");
+    const text=d.content?.[0]?.text || d.text || d.choices?.[0]?.message?.content || null;
+    if(!text) throw new Error("Empty response");
     return text;
   }catch(e){
     addLog("err","AI: "+e.message);
@@ -720,22 +749,24 @@ async function callAI(userMsg,sysMsg=""){
   }
 }
 function cleanCode(c){return(c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();}
-function showEngineInfo(){toast('AI: Groq llama-3.3-70b-versatile','info');}
+function showEngineInfo(){toast('AI: Groq llama-3.1-8b-instant — fast generation','info');}
 
+// ═══ WRAP INSERT ═══
 function wrapInsert(code,type){
+  const svcMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
-  const parentPath=type==='localscript'?'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")':'game:GetService("ServerScriptService")';
+  const svc=svcMap[type]||'ServerScriptService';
   const cls=clsMap[type]||'Script';
-  const escaped=code.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'');
-  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source="${escaped}"\ns.Parent=${parentPath}\nprint("[Bridge] ${cls} inserted")`;
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGenerated_${cls}"\ns.Source=[====[\n${code}\n]=====]\ns.Parent=game:GetService("${svc}")\nprint("[Bridge] ${cls} inserted into ${svc}")`;
 }
 
+// ═══ DETECT BLOCK TYPE ═══
 function detectBlockType(block){
   const b=block.toLowerCase();
-  if(/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(b))return'localscript';
-  if(/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(b))return'script';
-  if(/return module/.test(b))return'modulescript';
-  return'script';
+  if(/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(b)) return 'localscript';
+  if(/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(b)) return 'script';
+  if(/return module/.test(b)) return 'modulescript';
+  return 'script';
 }
 
 function splitScriptBlocks(code){
@@ -757,7 +788,7 @@ async function sendToStudio(){
   const blocks=splitScriptBlocks(code);
   addLog('sent',`Sending ${blocks.length} script(s)…`);
   for(let i=0;i<blocks.length;i++){
-    const{code:blk,type}=blocks[i];
+    const {code:blk,type}=blocks[i];
     const finalCode=wrapInsert(blk,type);
     const label=`[${i+1}/${blocks.length}] ${type}`;
     try{
@@ -767,7 +798,8 @@ async function sendToStudio(){
       for(let j=0;j<20;j++){
         await new Promise(r=>setTimeout(r,500));
         const rr=await fetch(BACKEND+'/api/result/'+sessionToken);
-        const rd=await rr.json();if(rd.ready){result=rd;break;}
+        const rd=await rr.json();
+        if(rd.ready){result=rd;break;}
       }
       if(result)addLog(result.success?'result':'err',label+': '+result.output);
       else addLog('err',label+': No response from Studio');
@@ -781,36 +813,57 @@ async function sendToStudio(){
 async function generateFromPrompt(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
-  const ind=$('ai-indicator');ind.classList.add('active');$('ai-ind-text').textContent='Generating';$('es-status').textContent='Generating…';
+  const ind=$('ai-indicator');
+  ind.classList.add('active');
+  $('ai-ind-text').textContent='Generating';
+  $('es-status').textContent='Generating…';
+
+  const wantScript=activeScriptTypes.script;
+  const wantLocal=activeScriptTypes.localscript;
+  const wantModule=activeScriptTypes.modulescript;
   const typeList=[];
-  if(activeScriptTypes.script)typeList.push('Script (Server)');
-  if(activeScriptTypes.localscript)typeList.push('LocalScript (Client)');
-  if(activeScriptTypes.modulescript)typeList.push('ModuleScript');
-  const userMsg=`Build this Roblox feature: ${prompt}\nScript types needed: ${typeList.join(', ')||'Script (Server)'}\nUse separators:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\n===SCRIPT_MODULE===\nOnly include sections needed.`;
+  if(wantScript) typeList.push('Script (Server)');
+  if(wantLocal)  typeList.push('LocalScript (Client)');
+  if(wantModule) typeList.push('ModuleScript');
+
+  const userMsg=`Build this Roblox feature: ${prompt}\nScript types needed: ${typeList.join(', ')||'Script (Server)'}\n\nUse these exact separators:\n===SCRIPT_SERVER===\n(server code)\n===SCRIPT_LOCAL===\n(client code)\n===SCRIPT_MODULE===\n(module code)\nOnly include sections actually needed.`;
+
   addLog('ai','Generating: '+prompt.slice(0,60));
   const raw=await callAI(userMsg);
   ind.classList.remove('active');
+
   if(!raw){$('es-status').textContent='✗ Failed';toast('Generation failed','bad');return;}
-  const locMap={script:'ServerScriptService',localscript:'StarterPlayer > StarterPlayerScripts',modulescript:'ServerScriptService'};
+
+  const locMap={script:'ServerScriptService',localscript:'StarterPlayerScripts',modulescript:'ServerScriptService'};
   const labelMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const sections=splitScriptBlocks(raw);
-  const sep=(n,tot,type,loc)=>`-- ╔══════════════════════════════════════════════╗\n-- ║  SCRIPT ${String(n).padEnd(2)} of ${String(tot).padEnd(2)} — ${labelMap[type].padEnd(22)}║\n-- ║  → Place in: ${loc.padEnd(30)}║\n-- ╚══════════════════════════════════════════════╝`;
+
+  const sep=(n,tot,type,loc)=>
+`-- ╔══════════════════════════════════════════════╗
+-- ║  SCRIPT ${String(n).padEnd(2)} of ${String(tot).padEnd(2)} — ${labelMap[type].padEnd(22)}║
+-- ║  → Place in: ${loc.padEnd(30)}║
+-- ╚══════════════════════════════════════════════╝`;
+
   $('code-area').value=sections.map((s,i)=>sep(i+1,sections.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
-  onCodeChange();$('es-status').textContent=`✓ ${sections.length} script(s) ready`;
+  onCodeChange();
+  $('es-status').textContent=`✓ ${sections.length} script(s) ready`;
   $('es-type-badge').textContent='AI: '+sections.map(s=>labelMap[s.type]).join(' + ');
   toast(`✓ ${sections.length} script(s) generated!`,'ok');
   addLog('result','Generated: '+sections.map(s=>s.type).join(', '));
 }
 
 async function aiAction(action){
-  const code=$('code-area').value.trim();if(!code){toast('No code.','bad');return;}
+  const code=$('code-area').value.trim();
+  if(!code){toast('No code.','bad');return;}
   const p={fix:'Fix all bugs in this Roblox Lua. Return only fixed code:\n\n'+code,comment:'Add Lua comments. Return only commented code:\n\n'+code,optimize:'Optimize for performance. Return only code:\n\n'+code};
   $('ai-indicator').classList.add('active');$('es-status').textContent=action+'ing…';
-  const r=await callAI(p[action]);$('ai-indicator').classList.remove('active');
+  const r=await callAI(p[action]);
+  $('ai-indicator').classList.remove('active');
   if(r){$('code-area').value=cleanCode(r);onCodeChange();$('es-status').textContent='✓ Done';toast(action+' done!','ok');}
   else toast('Failed.','bad');
 }
 
+// ═══ CODE EDITOR ═══
 function copyCode(){navigator.clipboard.writeText($('code-area').value);toast('Copied!','ok');}
 function onCodeChange(){const v=$('code-area').value;$('es-lines').textContent=v.split('\n').length;$('es-chars').textContent=v.length;updateLineNums();}
 function updateLineNums(){const v=$('code-area').value;const lines=v.split('\n').length;let h='';for(let i=1;i<=Math.max(lines,1);i++)h+=`<span class="ln">${i}</span>`;$('line-nums').innerHTML=h;}
@@ -822,297 +875,621 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function chatTopic(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Cleared','info');}
 
+// ═══ TEMPLATES ═══
 const TEMPLATES={
-  door:{code:`local TweenService=game:GetService("TweenService")\nlocal door=script.Parent\nlocal debounce=false\nlocal openPos=door.CFrame*CFrame.new(0,8,0)\nlocal closePos=door.CFrame\nlocal info=TweenInfo.new(0.5,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)\ndoor.Touched:Connect(function(hit)\n  if hit.Parent:FindFirstChild("Humanoid") and not debounce then\n    debounce=true\n    TweenService:Create(door,info,{CFrame=openPos}):Play()\n    task.wait(3)\n    TweenService:Create(door,info,{CFrame=closePos}):Play()\n    task.wait(0.5)\n    debounce=false\n  end\nend)`},
-  leaderboard:{code:`local Players=game:GetService("Players")\nlocal DS=game:GetService("DataStoreService")\nlocal store=DS:GetDataStore("Stats_v1")\nlocal cache={}\nPlayers.PlayerAdded:Connect(function(p)\n  local ok,data=pcall(function() return store:GetAsync(tostring(p.UserId)) end)\n  cache[p.UserId]=(ok and data) or {coins=0,wins=0}\n  local ls=Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=p\n  local coins=Instance.new("IntValue"); coins.Name="Coins"; coins.Value=cache[p.UserId].coins; coins.Parent=ls\nend)\nPlayers.PlayerRemoving:Connect(function(p)\n  pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)\nend)\ngame:BindToClose(function()\n  for _,p in ipairs(Players:GetPlayers()) do\n    pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)\n  end\nend)`},
-  gui:{code:`local Players=game:GetService("Players")\nlocal TweenService=game:GetService("TweenService")\nlocal player=Players.LocalPlayer\nlocal gui=Instance.new("ScreenGui"); gui.ResetOnSpawn=false; gui.Parent=player.PlayerGui\nlocal frame=Instance.new("Frame")\nframe.Size=UDim2.new(0,280,0,160)\nframe.Position=UDim2.new(0.5,-140,0.6,-80)\nframe.BackgroundColor3=Color3.fromRGB(15,17,28)\nframe.BackgroundTransparency=1\nframe.BorderSizePixel=0\nframe.Parent=gui\nInstance.new("UICorner",frame).CornerRadius=UDim.new(0,12)\nInstance.new("UIStroke",frame).Color=Color3.fromRGB(0,180,255)\nTweenService:Create(frame,TweenInfo.new(0.4,Enum.EasingStyle.Back),{Position=UDim2.new(0.5,-140,0.5,-80),BackgroundTransparency=0}):Play()`},
-  npc:{code:`local PathfindingService=game:GetService("PathfindingService")\nlocal Players=game:GetService("Players")\nlocal RunService=game:GetService("RunService")\nlocal npc=script.Parent\nlocal humanoid=npc:WaitForChild("Humanoid")\nlocal root=npc:WaitForChild("HumanoidRootPart")\nlocal DETECT=30; local ATK=5; local DMG=10; local lastAtk=0\nhumanoid.MaxHealth=100; humanoid.Health=100\nRunService.Heartbeat:Connect(function()\n  if humanoid.Health<=0 then return end\n  for _,p in ipairs(Players:GetPlayers()) do\n    local char=p.Character\n    if char then\n      local hr=char:FindFirstChild("HumanoidRootPart")\n      local hum=char:FindFirstChildOfClass("Humanoid")\n      if hr and hum and hum.Health>0 then\n        local dist=(hr.Position-root.Position).Magnitude\n        if dist<=ATK then\n          if tick()-lastAtk>=1.5 then lastAtk=tick(); hum:TakeDamage(DMG) end\n        elseif dist<=DETECT then\n          humanoid:MoveTo(hr.Position)\n        end\n      end\n    end\n  end\nend)`},
-  datastore:{code:`local DS=game:GetService("DataStoreService")\nlocal Players=game:GetService("Players")\nlocal store=DS:GetDataStore("GameData_v2")\nlocal cache={}\nlocal DEFAULT={coins=0,level=1,xp=0}\nPlayers.PlayerAdded:Connect(function(player)\n  for i=1,3 do\n    local ok,data=pcall(function() return store:GetAsync(tostring(player.UserId)) end)\n    if ok then cache[player.UserId]=data or table.clone(DEFAULT); break end\n    task.wait(2)\n  end\n  local ls=Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player\n  local coins=Instance.new("IntValue"); coins.Name="Coins"; coins.Value=cache[player.UserId].coins; coins.Parent=ls\nend)\nPlayers.PlayerRemoving:Connect(function(player)\n  pcall(function() store:SetAsync(tostring(player.UserId),cache[player.UserId]) end)\n  cache[player.UserId]=nil\nend)\ngame:BindToClose(function()\n  for _,p in ipairs(Players:GetPlayers()) do\n    pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)\n  end\nend)`},
-  round:{code:`local Players=game:GetService("Players")\nlocal RS=game:GetService("ReplicatedStorage")\nlocal MIN=2; local LOBBY=20; local ROUND=180\nlocal statusEvent=Instance.new("RemoteEvent"); statusEvent.Name="StatusUpdate"; statusEvent.Parent=RS\ntask.spawn(function()\n  while true do\n    repeat\n      statusEvent:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN..")")\n      task.wait(2)\n    until #Players:GetPlayers()>=MIN\n    for i=LOBBY,1,-1 do statusEvent:FireAllClients("Starting in "..i.."s!"); task.wait(1) end\n    statusEvent:FireAllClients("Round started!")\n    task.wait(ROUND)\n    statusEvent:FireAllClients("Round over!")\n    task.wait(10)\n  end\nend)`},
-  admin:{code:`local Players=game:GetService("Players")\nlocal RANKS={[1]=5}\nlocal function getRank(p) return RANKS[p.UserId] or 0 end\nlocal function find(name) for _,p in ipairs(Players:GetPlayers()) do if p.Name:lower():find(name:lower()) then return p end end end\nlocal COMMANDS={\n  kick={rank=3,func=function(a,args) local t=find(args[1]);if t then t:Kick(args[2] or "Kicked") end end},\n  tp={rank=3,func=function(a,args) local t=find(args[1]);if t and t.Character and a.Character then t.Character:MoveTo(a.Character.HumanoidRootPart.Position) end end},\n  god={rank=4,func=function(a,args) local t=find(args[1]);if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid");if h then h.MaxHealth=math.huge;h.Health=math.huge end end end},\n  day={rank=3,func=function() game:GetService("Lighting").TimeOfDay="14:00:00" end},\n  night={rank=3,func=function() game:GetService("Lighting").TimeOfDay="02:00:00" end},\n}\nPlayers.PlayerAdded:Connect(function(player)\n  player.Chatted:Connect(function(msg)\n    if msg:sub(1,1)~="/" then return end\n    local parts=msg:sub(2):split(" ")\n    local cmd=COMMANDS[parts[1]:lower()]\n    if cmd and getRank(player)>=cmd.rank then pcall(cmd.func,player,{table.unpack(parts,2)}) end\n  end)\nend)`},
-  shop:{code:`local Players=game:GetService("Players")\nlocal RS=game:GetService("ReplicatedStorage")\nlocal buyEvent=Instance.new("RemoteEvent"); buyEvent.Name="BuyItem"; buyEvent.Parent=RS\nlocal ITEMS={\n  speed={cost=100,func=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid");if h then h.WalkSpeed=24 end end end},\n}\nbuyEvent.OnServerEvent:Connect(function(player,itemId)\n  local item=ITEMS[itemId]; if not item then return end\n  local ls=player:FindFirstChild("leaderstats")\n  local coins=ls and ls:FindFirstChild("Coins")\n  if not coins or coins.Value<item.cost then buyEvent:FireClient(player,"error","Not enough coins!"); return end\n  coins.Value-=item.cost; item.func(player); buyEvent:FireClient(player,"success",itemId)\nend)`},
+  door:{code:`-- Script: Touch door with TweenService
+local TweenService = game:GetService("TweenService")
+local door = script.Parent
+local debounce = false
+local openPos = door.CFrame * CFrame.new(0, 8, 0)
+local closePos = door.CFrame
+local info = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+door.Touched:Connect(function(hit)
+    if hit.Parent:FindFirstChild("Humanoid") and not debounce then
+        debounce = true
+        TweenService:Create(door, info, {CFrame = openPos}):Play()
+        task.wait(3)
+        TweenService:Create(door, info, {CFrame = closePos}):Play()
+        task.wait(0.5)
+        debounce = false
+    end
+end)`},
+  leaderboard:{code:`-- Script: Leaderboard + DataStore
+local Players = game:GetService("Players")
+local DS = game:GetService("DataStoreService")
+local store = DS:GetDataStore("PlayerStats_v1")
+local cache = {}
+Players.PlayerAdded:Connect(function(player)
+    local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
+    cache[player.UserId] = (ok and data) or {coins=0, wins=0, level=1}
+    local ls = Instance.new("Folder"); ls.Name = "leaderstats"; ls.Parent = player
+    local coins = Instance.new("IntValue"); coins.Name = "Coins"; coins.Value = cache[player.UserId].coins; coins.Parent = ls
+end)
+Players.PlayerRemoving:Connect(function(player)
+    pcall(function() store:SetAsync(tostring(player.UserId), cache[player.UserId]) end)
+    cache[player.UserId] = nil
+end)
+game:BindToClose(function()
+    for _, p in ipairs(Players:GetPlayers()) do
+        pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+    end
+end)`},
+  gui:{code:`-- LocalScript: Pro animated ScreenGui
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local gui = Instance.new("ScreenGui"); gui.ResetOnSpawn = false; gui.Parent = player.PlayerGui
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 280, 0, 160)
+frame.Position = UDim2.new(0.5, -140, 0.6, -80)
+frame.BackgroundColor3 = Color3.fromRGB(15, 17, 28)
+frame.BackgroundTransparency = 1
+frame.BorderSizePixel = 0
+frame.Parent = gui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(0, 180, 255)
+TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Back), {Position=UDim2.new(0.5,-140,0.5,-80), BackgroundTransparency=0}):Play()`},
+  npc:{code:`-- Script: NPC with pathfinding
+local PathfindingService = game:GetService("PathfindingService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local npc = script.Parent
+local humanoid = npc:WaitForChild("Humanoid")
+local root = npc:WaitForChild("HumanoidRootPart")
+local DETECT_RANGE = 30
+local ATTACK_RANGE = 5
+local DAMAGE = 10
+humanoid.MaxHealth = 100; humanoid.Health = 100
+local lastAttack = 0
+RunService.Heartbeat:Connect(function()
+    if humanoid.Health <= 0 then return end
+    for _, p in ipairs(Players:GetPlayers()) do
+        local char = p.Character
+        if char then
+            local hr = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hr and hum and hum.Health > 0 then
+                local dist = (hr.Position - root.Position).Magnitude
+                if dist <= ATTACK_RANGE then
+                    if tick() - lastAttack >= 1.5 then lastAttack = tick(); hum:TakeDamage(DAMAGE) end
+                elseif dist <= DETECT_RANGE then
+                    humanoid:MoveTo(hr.Position)
+                end
+            end
+        end
+    end
+end)`},
+  datastore:{code:`-- Script: DataStore with retry
+local DS = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local store = DS:GetDataStore("GameData_v2")
+local cache = {}
+local DEFAULT = {coins=0, level=1, xp=0}
+Players.PlayerAdded:Connect(function(player)
+    for i = 1, 3 do
+        local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
+        if ok then cache[player.UserId] = data or table.clone(DEFAULT); break end
+        task.wait(2)
+    end
+    local ls = Instance.new("Folder"); ls.Name = "leaderstats"; ls.Parent = player
+    local coins = Instance.new("IntValue"); coins.Name = "Coins"; coins.Value = cache[player.UserId].coins; coins.Parent = ls
+end)
+Players.PlayerRemoving:Connect(function(player)
+    pcall(function() store:SetAsync(tostring(player.UserId), cache[player.UserId]) end)
+    cache[player.UserId] = nil
+end)
+game:BindToClose(function()
+    for _, p in ipairs(Players:GetPlayers()) do
+        pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+    end
+end)`},
+  round:{code:`-- Script: Round system
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
+local MIN_PLAYERS = 2
+local LOBBY_TIME = 20
+local ROUND_TIME = 180
+local statusEvent = Instance.new("RemoteEvent"); statusEvent.Name = "StatusUpdate"; statusEvent.Parent = RS
+task.spawn(function()
+    while true do
+        repeat
+            statusEvent:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN_PLAYERS..")")
+            task.wait(2)
+        until #Players:GetPlayers() >= MIN_PLAYERS
+        for i = LOBBY_TIME, 1, -1 do
+            statusEvent:FireAllClients("Starting in "..i.."s!")
+            task.wait(1)
+        end
+        statusEvent:FireAllClients("Round started!")
+        task.wait(ROUND_TIME)
+        statusEvent:FireAllClients("Round over!")
+        task.wait(10)
+    end
+end)`},
+  admin:{code:`-- Script: Admin system
+local Players = game:GetService("Players")
+local RANKS = {[1] = 5}
+local function getRank(p) return RANKS[p.UserId] or 0 end
+local function find(name) for _,p in ipairs(Players:GetPlayers()) do if p.Name:lower():find(name:lower()) then return p end end end
+local COMMANDS = {
+    kick={rank=3,func=function(a,args) local t=find(args[1]);if t then t:Kick(args[2] or "Kicked") end end},
+    tp  ={rank=3,func=function(a,args) local t=find(args[1]);if t and t.Character and a.Character then t.Character:MoveTo(a.Character.HumanoidRootPart.Position) end end},
+    god ={rank=4,func=function(a,args) local t=find(args[1]);if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid");if h then h.MaxHealth=math.huge;h.Health=math.huge end end end},
+    day ={rank=3,func=function() game:GetService("Lighting").TimeOfDay="14:00:00" end},
+    night={rank=3,func=function() game:GetService("Lighting").TimeOfDay="02:00:00" end},
+}
+Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(msg)
+        if msg:sub(1,1)~="/" then return end
+        local parts=msg:sub(2):split(" ")
+        local cmd=COMMANDS[parts[1]:lower()]
+        if cmd and getRank(player)>=cmd.rank then pcall(cmd.func,player,{table.unpack(parts,2)}) end
+    end)
+end)`},
+  shop:{code:`-- Script: Shop system
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
+local buyEvent = Instance.new("RemoteEvent"); buyEvent.Name = "BuyItem"; buyEvent.Parent = RS
+local ITEMS = {
+    speed={cost=100,func=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid");if h then h.WalkSpeed=24 end end end},
+}
+buyEvent.OnServerEvent:Connect(function(player, itemId)
+    local item = ITEMS[itemId]
+    if not item then return end
+    local ls = player:FindFirstChild("leaderstats")
+    local coins = ls and ls:FindFirstChild("Coins")
+    if not coins or coins.Value < item.cost then
+        buyEvent:FireClient(player, "error", "Not enough coins!")
+        return
+    end
+    coins.Value -= item.cost
+    item.func(player)
+    buyEvent:FireClient(player, "success", itemId)
+end)`},
 };
 
-function loadTemplate(name){const t=TEMPLATES[name];if(!t)return;$('code-area').value=t.code;onCodeChange();document.querySelector('.nav-tab').click();toast('Template: '+name,'ok');}
+function loadTemplate(name){
+  const t=TEMPLATES[name];if(!t)return;
+  $('code-area').value=t.code;onCodeChange();
+  document.querySelector('.nav-tab').click();
+  toast('Template: '+name,'ok');
+}
 
+// ═══ SNIPPETS ═══
 const SNIPPETS={
-  remote:`-- RemoteEvent boilerplate\nlocal RS=game:GetService("ReplicatedStorage")\nlocal myEvent=Instance.new("RemoteEvent"); myEvent.Name="MyEvent"; myEvent.Parent=RS\nmyEvent.OnServerEvent:Connect(function(player,data)\n  print(player.Name,"sent:",data)\nend)\n-- LocalScript:\n-- local myEvent=game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")\n-- myEvent:FireServer({message="hello"})`,
-  anim:`local anim=Instance.new("Animation")\nanim.AnimationId="rbxassetid://YOUR_ID"\nlocal track=character:FindFirstChildOfClass("Humanoid"):LoadAnimation(anim)\ntrack.Priority=Enum.AnimationPriority.Action\ntrack:Play()`,
-  tween:`local TweenService=game:GetService("TweenService")\nlocal info=TweenInfo.new(0.5,Enum.EasingStyle.Quart,Enum.EasingDirection.Out)\nTweenService:Create(part,info,{Position=Vector3.new(0,10,0)}):Play()`,
-  npc:`local npc=script.Parent\nlocal humanoid=npc:WaitForChild("Humanoid")\nlocal bb=Instance.new("BillboardGui")\nbb.Size=UDim2.new(0,100,0,20); bb.StudsOffset=Vector3.new(0,3,0); bb.Parent=npc:WaitForChild("HumanoidRootPart")\nlocal bar=Instance.new("Frame"); bar.Size=UDim2.new(1,0,1,0); bar.BackgroundColor3=Color3.fromRGB(220,50,50); bar.Parent=bb\nInstance.new("UICorner",bar).CornerRadius=UDim.new(1,0)\nhumanoid.HealthChanged:Connect(function(hp) bar.Size=UDim2.new(hp/humanoid.MaxHealth,0,1,0) end)`,
-  gui:`local frame=Instance.new("Frame")\nframe.Size=UDim2.new(0,300,0,200)\nframe.Position=UDim2.new(0.5,-150,0.5,-100)\nframe.BackgroundColor3=Color3.fromRGB(12,15,25)\nframe.BorderSizePixel=0\nframe.Parent=script.Parent\nInstance.new("UICorner",frame).CornerRadius=UDim.new(0,12)`,
-  debounce:`local debounce=false\nscript.Parent.Touched:Connect(function(hit)\n  if debounce then return end\n  if not hit.Parent:FindFirstChildOfClass("Humanoid") then return end\n  debounce=true\n  -- your code here\n  task.wait(1)\n  debounce=false\nend)`,
+  remote:`-- RemoteEvent boilerplate
+-- SERVER SCRIPT:
+local RS = game:GetService("ReplicatedStorage")
+local myEvent = Instance.new("RemoteEvent")
+myEvent.Name = "MyEvent"
+myEvent.Parent = RS
+myEvent.OnServerEvent:Connect(function(player, data)
+    print(player.Name, "sent:", data)
+end)
+-- LOCALSCRIPT:
+-- local myEvent = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
+-- myEvent:FireServer({message = "hello"})`,
+  anim:`-- Play animation
+local anim = Instance.new("Animation")
+anim.AnimationId = "rbxassetid://YOUR_ID"
+local track = character:FindFirstChildOfClass("Humanoid"):LoadAnimation(anim)
+track.Priority = Enum.AnimationPriority.Action
+track:Play()`,
+  tween:`-- TweenService
+local TweenService = game:GetService("TweenService")
+local info = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+TweenService:Create(part, info, {Position = Vector3.new(0, 10, 0)}):Play()`,
+  npc:`-- Basic NPC health bar
+local npc = script.Parent
+local humanoid = npc:WaitForChild("Humanoid")
+local bb = Instance.new("BillboardGui")
+bb.Size = UDim2.new(0, 100, 0, 20)
+bb.StudsOffset = Vector3.new(0, 3, 0)
+bb.Parent = npc:WaitForChild("HumanoidRootPart")
+local bar = Instance.new("Frame"); bar.Size = UDim2.new(1,0,1,0); bar.BackgroundColor3 = Color3.fromRGB(220,50,50); bar.Parent = bb
+Instance.new("UICorner", bar).CornerRadius = UDim.new(1,0)
+humanoid.HealthChanged:Connect(function(hp) bar.Size = UDim2.new(hp/humanoid.MaxHealth,0,1,0) end)`,
+  gui:`-- GUI Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(12, 15, 25)
+frame.BorderSizePixel = 0
+frame.Parent = script.Parent
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)`,
+  debounce:`-- Debounce
+local debounce = false
+script.Parent.Touched:Connect(function(hit)
+    if debounce then return end
+    if not hit.Parent:FindFirstChildOfClass("Humanoid") then return end
+    debounce = true
+    -- your code here
+    task.wait(1)
+    debounce = false
+end)`,
 };
-function insertSnippet(name){if(!SNIPPETS[name])return;const cur=$('code-area').value;$('code-area').value=cur+(cur?'\n\n':'')+SNIPPETS[name];onCodeChange();toast('Snippet inserted','ok');}
 
+function insertSnippet(name){
+  if(!SNIPPETS[name])return;
+  const cur=$('code-area').value;
+  $('code-area').value=cur+(cur?'\n\n':'')+SNIPPETS[name];
+  onCodeChange();toast('Snippet inserted','ok');
+}
+
+// ═══ AI CHAT ═══
 async function sendChat(){
-  const inp=$('chat-input');const msg=inp.value.trim();if(!msg)return;
-  inp.value='';inp.style.height='auto';appendMsg('user',msg);
-  $('chat-send').disabled=true;const typId='typ_'+Date.now();appendTyping(typId);
+  const inp=$('chat-input');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';inp.style.height='auto';
+  appendMsg('user',msg);
+  $('chat-send').disabled=true;
+  const typId='typ_'+Date.now();appendTyping(typId);
   const r=await callAI(msg,'You are a concise Roblox Lua expert. Give practical answers.');
   removeTyping(typId);$('chat-send').disabled=false;
   appendMsg('ai',r||"Backend offline. Check: "+BACKEND);
 }
+
 function appendMsg(role,text){
-  const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg'+(role==='user'?' user':'');
-  const av=role==='ai'?'✦':(user?user.avatar:'U');const cls=role==='ai'?'ai':'user';
+  const c=$('chat-msgs');const d=document.createElement('div');
+  d.className='cmsg'+(role==='user'?' user':'');
+  const av=role==='ai'?'✦':(user?user.avatar:'U');
+  const cls=role==='ai'?'ai':'user';
   const fmt=text.replace(/```lua\n?([\s\S]*?)```/g,'<pre><code>$1</code></pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>');
   d.innerHTML=`<div class="cavatar ${cls}">${av}</div><div><div class="cbubble">${fmt}</div></div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
-function appendTyping(id){const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;d.innerHTML=`<div class="cavatar ai">✦</div><div><div class="cbubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function appendTyping(id){
+  const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;
+  d.innerHTML=`<div class="cavatar ai">✦</div><div><div class="cbubble"><div class="typing-dots"><span></span><span></span><span></span></div></div></div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// 3D MODELER
-function initModeler(){canvas=$('mc');const vp=canvas.parentElement;canvas.width=vp.clientWidth||280;canvas.height=vp.clientHeight||220;new ResizeObserver(()=>{canvas.width=vp.clientWidth;canvas.height=vp.clientHeight;render3d();}).observe(vp);initModelerEvents();addPartSilent('BasePart','block',{x:0,y:-0.5,z:0,sx:30,sy:1,sz:30,color:'#444455',name:'Floor',anchored:true,material:'SmoothPlastic',transparency:0});render3d();}
-function project(x,y,z){const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z;let tmp=rx*cos(camera.ry)-rz*sin(camera.ry);rz=rx*sin(camera.ry)+rz*cos(camera.ry);rx=tmp;tmp=ry*cos(camera.rx)-rz*sin(camera.rx);rz=ry*sin(camera.rx)+rz*cos(camera.rx);ry=tmp;rz+=camera.z;rx+=camera.x;ry-=camera.y;if(rz<=0)return null;const fov=260*camera.zoom;return{sx:canvas.width/2+rx*fov/rz,sy:canvas.height/2+ry*fov/rz,depth:rz};}
-function render3d(){if(!canvas)return;ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#0c0f1a';ctx.fillRect(0,0,canvas.width,canvas.height);if(showGrid)drawGrid3d();[...sceneObjects].sort((a,b)=>{const pa=project(a.x,a.y,a.z),pb=project(b.x,b.y,b.z);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawObj(o));drawAxes3d();}
-function drawGrid3d(){ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=0.5;for(let i=-16;i<=16;i+=2){const a=project(i,0,-16),b=project(i,0,16),c=project(-16,0,i),d=project(16,0,i);if(a&&b){ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);ctx.stroke();}if(c&&d){ctx.beginPath();ctx.moveTo(c.sx,c.sy);ctx.lineTo(d.sx,d.sy);ctx.stroke();}}}
-function drawAxes3d(){const o=project(0,0,0);if(!o)return;[[3,0,0,'#ff4466','X'],[0,3,0,'#00ff88','Y'],[0,0,3,'#00d4ff','Z']].forEach(([x,y,z,c,l])=>{const p=project(x,y,z);if(!p)return;ctx.strokeStyle=c;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(o.sx,o.sy);ctx.lineTo(p.sx,p.sy);ctx.stroke();ctx.fillStyle=c;ctx.font='8px monospace';ctx.fillText(l,p.sx+2,p.sy-2);});}
-function drawObj(obj){const hw=obj.sx/2,hh=obj.sy/2,hd=obj.sz/2;const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>project(obj.x+vx,obj.y+vy,obj.z+vz));if(verts.some(v=>!v))return;const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];const sel=obj.id===selectedObjId;const hex=obj.color||'#888';const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);faces.forEach(([a,b2,c,d],fi)=>{const p=[verts[a],verts[b2],verts[c],verts[d]];const light=Math.max(0.25,0.3+normals[fi][1]*0.45+(normals[fi][2]+normals[fi][0])*0.12);ctx.beginPath();ctx.moveTo(p[0].sx,p[0].sy);p.forEach(pt=>ctx.lineTo(pt.sx,pt.sy));ctx.closePath();ctx.fillStyle=`rgba(${Math.round(r*light)},${Math.round(g*light)},${Math.round(b*light)},${1-(obj.transparency||0)})`;ctx.fill();ctx.strokeStyle=sel?'rgba(0,212,255,.8)':'rgba(0,0,0,.15)';ctx.lineWidth=sel?1.5:0.3;ctx.stroke();});}
-function addPartSilent(cls,shape,props={}){const pal=['#8899aa','#ff6666','#66aaff','#66ee88','#ffcc55','#cc66ff','#ff9955'];const id='o'+nextId++;const obj={id,name:cls+'_'+(nextId-1),className:cls,shape,x:0,y:2,z:0,sx:4,sy:4,sz:4,color:pal[Math.floor(Math.random()*pal.length)],material:'SmoothPlastic',anchored:true,transparency:0,...props};sceneObjects.push(obj);return obj;}
+// ═══ 3D MODELER ═══
+function initModeler(){
+  canvas=$('mc');const vp=canvas.parentElement;
+  canvas.width=vp.clientWidth||280;canvas.height=vp.clientHeight||220;
+  new ResizeObserver(()=>{canvas.width=vp.clientWidth;canvas.height=vp.clientHeight;render3d();}).observe(vp);
+  initModelerEvents();
+  addPartSilent('BasePart','block',{x:0,y:-0.5,z:0,sx:30,sy:1,sz:30,color:'#444455',name:'Floor',anchored:true,material:'SmoothPlastic',transparency:0});
+  render3d();
+}
+function project(x,y,z){
+  const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z;
+  let tmp=rx*cos(camera.ry)-rz*sin(camera.ry);rz=rx*sin(camera.ry)+rz*cos(camera.ry);rx=tmp;
+  tmp=ry*cos(camera.rx)-rz*sin(camera.rx);rz=ry*sin(camera.rx)+rz*cos(camera.rx);ry=tmp;
+  rz+=camera.z;rx+=camera.x;ry-=camera.y;
+  if(rz<=0)return null;
+  const fov=260*camera.zoom;
+  return{sx:canvas.width/2+rx*fov/rz,sy:canvas.height/2+ry*fov/rz,depth:rz};
+}
+function render3d(){
+  if(!canvas)return;ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#0c0f1a';ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(showGrid)drawGrid3d();
+  [...sceneObjects].sort((a,b)=>{const pa=project(a.x,a.y,a.z),pb=project(b.x,b.y,b.z);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawObj(o));
+  drawAxes3d();
+}
+function drawGrid3d(){
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=0.5;
+  for(let i=-16;i<=16;i+=2){
+    const a=project(i,0,-16),b=project(i,0,16),c=project(-16,0,i),d=project(16,0,i);
+    if(a&&b){ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);ctx.stroke();}
+    if(c&&d){ctx.beginPath();ctx.moveTo(c.sx,c.sy);ctx.lineTo(d.sx,d.sy);ctx.stroke();}
+  }
+}
+function drawAxes3d(){
+  const o=project(0,0,0);if(!o)return;
+  [[3,0,0,'#ff4466','X'],[0,3,0,'#00ff88','Y'],[0,0,3,'#00d4ff','Z']].forEach(([x,y,z,c,l])=>{
+    const p=project(x,y,z);if(!p)return;
+    ctx.strokeStyle=c;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(o.sx,o.sy);ctx.lineTo(p.sx,p.sy);ctx.stroke();
+    ctx.fillStyle=c;ctx.font='8px monospace';ctx.fillText(l,p.sx+2,p.sy-2);
+  });
+}
+function drawObj(obj){
+  const hw=obj.sx/2,hh=obj.sy/2,hd=obj.sz/2;
+  const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>project(obj.x+vx,obj.y+vy,obj.z+vz));
+  if(verts.some(v=>!v))return;
+  const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
+  const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];
+  const sel=obj.id===selectedObjId;
+  const hex=obj.color||'#888';
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  faces.forEach(([a,b2,c,d],fi)=>{
+    const p=[verts[a],verts[b2],verts[c],verts[d]];
+    const light=Math.max(0.25,0.3+normals[fi][1]*0.45+(normals[fi][2]+normals[fi][0])*0.12);
+    ctx.beginPath();ctx.moveTo(p[0].sx,p[0].sy);p.forEach(pt=>ctx.lineTo(pt.sx,pt.sy));ctx.closePath();
+    ctx.fillStyle=`rgba(${Math.round(r*light)},${Math.round(g*light)},${Math.round(b*light)},${1-(obj.transparency||0)})`;ctx.fill();
+    ctx.strokeStyle=sel?'rgba(0,212,255,.8)':'rgba(0,0,0,.15)';ctx.lineWidth=sel?1.5:0.3;ctx.stroke();
+  });
+  if(sel){const cp=project(obj.x,obj.y,obj.z);if(cp){ctx.strokeStyle='rgba(0,212,255,.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(cp.sx,cp.sy,Math.min(canvas.width,canvas.height)*0.06,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}}
+}
+function addPartSilent(cls,shape,props={}){
+  const pal=['#8899aa','#ff6666','#66aaff','#66ee88','#ffcc55','#cc66ff','#ff9955'];
+  const id='o'+nextId++;
+  const obj={id,name:cls+'_'+(nextId-1),className:cls,shape,x:0,y:2,z:0,sx:4,sy:4,sz:4,rx:0,ry:0,rz:0,color:pal[Math.floor(Math.random()*pal.length)],material:'SmoothPlastic',anchored:true,transparency:0,...props};
+  sceneObjects.push(obj);return obj;
+}
 function addPart(cls,shape){const obj=addPartSilent(cls,shape);selectObj(obj.id);render3d();updateSceneTree();toast(cls+' added','ok');}
 function addLight(){const obj=addPartSilent('PointLight','sphere',{x:0,y:6,z:0,sx:1.5,sy:1.5,sz:1.5,color:'#ffffaa',material:'Neon',transparency:0});selectObj(obj.id);render3d();updateSceneTree();toast('Light added','ok');}
-function selectObj(id){selectedObjId=id;const obj=sceneObjects.find(o=>o.id===id);document.querySelectorAll('.tree-item').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));const area=$('props-area');if(obj){area.innerHTML=`<div class="prop-group-title">Transform</div><div class="prop-row"><span class="prop-lbl">Position</span><div class="prop-inputs"><input class="pinp" type="number" value="${obj.x}" step="0.5" onchange="uprop('x',this.value)"><input class="pinp" type="number" value="${obj.y}" step="0.5" onchange="uprop('y',this.value)"><input class="pinp" type="number" value="${obj.z}" step="0.5" onchange="uprop('z',this.value)"></div></div><div class="prop-row"><span class="prop-lbl">Size</span><div class="prop-inputs"><input class="pinp" type="number" value="${obj.sx}" step="0.5" min="0.1" onchange="uprop('sx',this.value)"><input class="pinp" type="number" value="${obj.sy}" step="0.5" min="0.1" onchange="uprop('sy',this.value)"><input class="pinp" type="number" value="${obj.sz}" step="0.5" min="0.1" onchange="uprop('sz',this.value)"></div></div><div class="prop-group-title">Appearance</div><div class="prop-row"><span class="prop-lbl">Color</span><div class="prop-inputs"><input type="color" class="pinp single" value="${obj.color}" onchange="uprop('color',this.value)" style="height:22px;cursor:pointer;padding:1px"></div></div><div class="prop-row"><span class="prop-lbl">Material</span><div class="prop-inputs"><select class="pinp single" onchange="uprop('material',this.value)">${['SmoothPlastic','Brick','Wood','Metal','Neon','Glass'].map(m=>`<option${m===obj.material?' selected':''}>${m}</option>`).join('')}</select></div></div><div class="prop-actions"><button class="pact" onclick="dupeSelected()">⎘ Dupe</button><button class="pact del" onclick="delSelected()">✕ Del</button><button class="pact" onclick="exportScene()" style="color:var(--green)">⬇ Lua</button></div>`;}else{area.innerHTML='<div style="font-size:9px;color:var(--text3);padding:.5rem 0">Select a part.</div>';}render3d();}
-function uprop(key,val){const obj=sceneObjects.find(o=>o.id===selectedObjId);if(!obj)return;const n=parseFloat(val);if(['x','y','z','sx','sy','sz','transparency'].includes(key))obj[key]=isNaN(n)?0:n;else obj[key]=val;render3d();updateSceneTree();}
+function selectObj(id){
+  selectedObjId=id;
+  const obj=sceneObjects.find(o=>o.id===id);
+  document.querySelectorAll('.tree-item').forEach(el=>el.classList.toggle('selected',el.dataset.id===id));
+  const area=$('props-area');
+  if(obj){
+    area.innerHTML=`<div class="prop-group-title">Transform</div>
+<div class="prop-row"><span class="prop-lbl">Position</span><div class="prop-inputs"><input class="pinp" type="number" value="${obj.x}" step="0.5" onchange="uprop('x',this.value)"><input class="pinp" type="number" value="${obj.y}" step="0.5" onchange="uprop('y',this.value)"><input class="pinp" type="number" value="${obj.z}" step="0.5" onchange="uprop('z',this.value)"></div></div>
+<div class="prop-row"><span class="prop-lbl">Size</span><div class="prop-inputs"><input class="pinp" type="number" value="${obj.sx}" step="0.5" min="0.1" onchange="uprop('sx',this.value)"><input class="pinp" type="number" value="${obj.sy}" step="0.5" min="0.1" onchange="uprop('sy',this.value)"><input class="pinp" type="number" value="${obj.sz}" step="0.5" min="0.1" onchange="uprop('sz',this.value)"></div></div>
+<div class="prop-group-title">Appearance</div>
+<div class="prop-row"><span class="prop-lbl">Color</span><div class="prop-inputs"><input type="color" class="pinp single" value="${obj.color}" onchange="uprop('color',this.value)" style="height:22px;cursor:pointer;padding:1px"></div></div>
+<div class="prop-row"><span class="prop-lbl">Material</span><div class="prop-inputs"><select class="pinp single" onchange="uprop('material',this.value)">${['SmoothPlastic','Brick','Wood','Metal','Neon','Glass'].map(m=>`<option${m===obj.material?' selected':''}>${m}</option>`).join('')}</select></div></div>
+<div class="prop-actions">
+  <button class="pact" onclick="dupeSelected()">⎘ Dupe</button>
+  <button class="pact del" onclick="delSelected()">✕ Del</button>
+  <button class="pact" onclick="exportScene()" style="color:var(--green)">⬇ Lua</button>
+</div>`;
+  }else{area.innerHTML='<div style="font-size:9px;color:var(--text3);padding:.5rem 0">Select a part.</div>';}
+  render3d();
+}
+function uprop(key,val){
+  const obj=sceneObjects.find(o=>o.id===selectedObjId);if(!obj)return;
+  const n=parseFloat(val);
+  if(['x','y','z','sx','sy','sz','transparency'].includes(key))obj[key]=isNaN(n)?0:n;
+  else if(key==='anchored')obj.anchored=val;
+  else obj[key]=val;
+  render3d();updateSceneTree();
+}
 function delSelected(){if(!selectedObjId)return;sceneObjects=sceneObjects.filter(o=>o.id!==selectedObjId);selectedObjId=null;selectObj(null);render3d();updateSceneTree();}
 function dupeSelected(){const o=sceneObjects.find(o=>o.id===selectedObjId);if(!o)return;const id='o'+nextId++;sceneObjects.push({...o,id,name:o.name+'_copy',x:o.x+4});selectObj(id);render3d();updateSceneTree();}
 function updateSceneTree(){const t=$('scene-tree');if(!sceneObjects.length){t.innerHTML='<div style="font-size:9px;color:var(--text3)">No objects.</div>';return;}t.innerHTML=sceneObjects.map(o=>`<div class="tree-item${o.id===selectedObjId?' selected':''}" onclick="selectObj('${o.id}')" data-id="${o.id}"><span class="ti-name">${o.name}</span><span class="ti-cls">${o.className}</span></div>`).join('');}
-function exportScene(){const parts=sceneObjects.filter(o=>o.name!=='Floor');if(!parts.length){toast('No objects.','bad');return;}let lua='local workspace=game.Workspace\n\n';parts.forEach(o=>{const n=o.name.replace(/[^a-zA-Z0-9_]/g,'_');lua+=`local ${n}=Instance.new("${o.className}")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position=Vector3.new(${o.x},${o.y},${o.z})\n${n}.Material=Enum.Material.${o.material}\n${n}.Anchored=${o.anchored}\n${n}.Parent=workspace\n\n`;});$('code-area').value=lua;onCodeChange();toast('Exported!','ok');}
+function exportScene(){
+  const parts=sceneObjects.filter(o=>o.name!=='Floor');
+  if(!parts.length){toast('No objects.','bad');return;}
+  let lua='local workspace = game.Workspace\n\n';
+  parts.forEach(o=>{const n=o.name.replace(/[^a-zA-Z0-9_]/g,'_');lua+=`local ${n}=Instance.new("${o.className}")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position=Vector3.new(${o.x},${o.y},${o.z})\n${n}.Material=Enum.Material.${o.material}\n${n}.Anchored=${o.anchored}\n${n}.Parent=workspace\n\n`;});
+  $('code-area').value=lua;onCodeChange();toast('Exported!','ok');
+}
 function setTool(t){currentTool=t;['select','move','rotate','scale'].forEach(n=>{const el=$('vtool-'+n);if(el)el.classList.toggle('active',n===t);});}
 function setView(v){if(v==='t'){camera={x:0,y:22,z:0.01,rx:-Math.PI/2,ry:0,zoom:1};}else if(v==='f'){camera={x:0,y:4,z:18,rx:0,ry:0,zoom:1};}else{camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};}render3d();}
 function toggleGrid(){showGrid=!showGrid;render3d();}
 function toggleWire(){showWire=!showWire;render3d();}
-function initModelerEvents(){let drag=false,lastX=0,lastY=0,rmb=false;canvas.addEventListener('mousedown',e=>{if(e.button===2||e.button===1||(e.button===0&&e.altKey)){drag=true;rmb=true;}else if(e.button===0){pickObj(e);}lastX=e.clientX;lastY=e.clientY;});canvas.addEventListener('mousemove',e=>{if(drag&&rmb){camera.ry+=(e.clientX-lastX)*0.01;camera.rx+=(e.clientY-lastY)*0.01;camera.rx=Math.max(-Math.PI/2,Math.min(Math.PI/2,camera.rx));render3d();}lastX=e.clientX;lastY=e.clientY;});canvas.addEventListener('mouseup',()=>{drag=false;rmb=false;});canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('wheel',e=>{camera.zoom=Math.max(0.1,Math.min(8,camera.zoom-e.deltaY*0.001));render3d();e.preventDefault();},{passive:false});}
-function pickObj(e){const r=canvas.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;let closest=null,minD=Infinity;sceneObjects.forEach(o=>{const p=project(o.x,o.y,o.z);if(!p)return;const d=Math.hypot(p.sx-mx,p.sy-my);if(d<minD){minD=d;closest=o;}});if(closest&&minD<60)selectObj(closest.id);else{selectedObjId=null;selectObj(null);render3d();}}
-function switchRTab(name,btn){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.rpanel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('rpanel-'+name).classList.add('active');}
+function initModelerEvents(){
+  let drag=false,lastX=0,lastY=0,rmb=false;
+  canvas.addEventListener('mousedown',e=>{if(e.button===2||e.button===1||(e.button===0&&e.altKey)){drag=true;rmb=true;}else if(e.button===0){pickObj(e);}lastX=e.clientX;lastY=e.clientY;});
+  canvas.addEventListener('mousemove',e=>{if(drag&&rmb){camera.ry+=(e.clientX-lastX)*0.01;camera.rx+=(e.clientY-lastY)*0.01;camera.rx=Math.max(-Math.PI/2,Math.min(Math.PI/2,camera.rx));render3d();}lastX=e.clientX;lastY=e.clientY;});
+  canvas.addEventListener('mouseup',()=>{drag=false;rmb=false;});
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+  canvas.addEventListener('wheel',e=>{camera.zoom=Math.max(0.1,Math.min(8,camera.zoom-e.deltaY*0.001));render3d();e.preventDefault();},{passive:false});
+}
+function pickObj(e){
+  const r=canvas.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;
+  let closest=null,minD=Infinity;
+  sceneObjects.forEach(o=>{const p=project(o.x,o.y,o.z);if(!p)return;const d=Math.hypot(p.sx-mx,p.sy-my);if(d<minD){minD=d;closest=o;}});
+  if(closest&&minD<60)selectObj(closest.id);else{selectedObjId=null;selectObj(null);render3d();}
+}
+function switchRTab(name,btn){
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.rpanel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');$('rpanel-'+name).classList.add('active');
+}
 
-// TERRAIN
+// ═══ TERRAIN ═══
 function setBiome(b,el){terrainParams.biome=b;document.querySelectorAll('.biome-btn').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
 function toggleFeature(f,el){terrainParams.features[f]=!terrainParams.features[f];el.classList.toggle('active',terrainParams.features[f]);}
-function initTerrainCanvas(){terrainCanvas=$('tc');if(!terrainCanvas)return;const wrap=terrainCanvas.parentElement;terrainCanvas.width=Math.max(wrap.clientWidth||600,600);terrainCanvas.height=Math.max(wrap.clientHeight||400,400);terrainCtx=terrainCanvas.getContext('2d');}
-function noise2d(x,y,scale,octaves=4){let v=0,amp=1,freq=1,max=0;for(let i=0;i<octaves;i++){v+=Math.sin(x*freq*scale+i*7.3)*Math.cos(y*freq*scale+i*13.7)*amp;max+=amp;amp*=0.5;freq*=2;}return v/max;}
-function generateTerrain(){if(!terrainCanvas)return;const W=terrainCanvas.width,H=terrainCanvas.height;const cols=Math.floor(W/4),rows=Math.floor(H/4);terrainMap=[];const scale=0.05+terrainParams.roughness*0.01;const waterY=terrainParams.water/100;const seed=Math.random()*100;for(let r=0;r<rows;r++){terrainMap[r]=[];for(let c=0;c<cols;c++){let v=(noise2d(c+seed,r+seed,scale)+1)/2;if(terrainParams.features.mountains)v=Math.pow(v,0.7);if(terrainParams.features.rivers&&Math.abs(c/cols-0.5)<0.05+noise2d(c*0.1,r*0.1,0.05)*0.03)v=Math.min(v,waterY);terrainMap[r][c]=v;}}renderTerrain();}
-function renderTerrain(){if(!terrainCtx||!terrainMap.length)return;const W=terrainCanvas.width,H=terrainCanvas.height;const rows=terrainMap.length,cols=terrainMap[0].length;const cw=W/cols,ch=H/rows;const colors=BIOME_COLORS[terrainParams.biome]||BIOME_COLORS.grassland;const waterY=terrainParams.water/100;terrainCtx.clearRect(0,0,W,H);for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){const v=terrainMap[r][c];let color=v<waterY?colors.water:v<waterY+0.15?colors.low:v<0.65?colors.mid:v<0.82?colors.high:colors.peak;terrainCtx.fillStyle=color;terrainCtx.globalAlpha=0.7+v*0.3;terrainCtx.fillRect(Math.floor(c*cw),Math.floor(r*ch),Math.ceil(cw)+1,Math.ceil(ch)+1);}};terrainCtx.globalAlpha=1;}
+function initTerrainCanvas(){
+  terrainCanvas=$('tc');if(!terrainCanvas)return;
+  const wrap=terrainCanvas.parentElement;
+  terrainCanvas.width=Math.max(wrap.clientWidth||600,600);
+  terrainCanvas.height=Math.max(wrap.clientHeight||400,400);
+  terrainCtx=terrainCanvas.getContext('2d');
+}
+function noise2d(x,y,scale,octaves=4){
+  let v=0,amp=1,freq=1,max=0;
+  for(let i=0;i<octaves;i++){v+=Math.sin(x*freq*scale+i*7.3)*Math.cos(y*freq*scale+i*13.7)*amp;max+=amp;amp*=0.5;freq*=2;}
+  return v/max;
+}
+function generateTerrain(){
+  if(!terrainCanvas)return;
+  const W=terrainCanvas.width,H=terrainCanvas.height;
+  const cols=Math.floor(W/4),rows=Math.floor(H/4);
+  terrainMap=[];
+  const scale=0.05+terrainParams.roughness*0.01;
+  const waterY=terrainParams.water/100;
+  const seed=Math.random()*100;
+  for(let r=0;r<rows;r++){terrainMap[r]=[];for(let c=0;c<cols;c++){let v=(noise2d(c+seed,r+seed,scale)+1)/2;if(terrainParams.features.mountains)v=Math.pow(v,0.7);if(terrainParams.features.rivers&&Math.abs(c/cols-0.5)<0.05+noise2d(c*0.1,r*0.1,0.05)*0.03)v=Math.min(v,waterY);terrainMap[r][c]=v;}}
+  renderTerrain();
+}
+function renderTerrain(){
+  if(!terrainCtx||!terrainMap.length)return;
+  const W=terrainCanvas.width,H=terrainCanvas.height;
+  const rows=terrainMap.length,cols=terrainMap[0].length;
+  const cw=W/cols,ch=H/rows;
+  const colors=BIOME_COLORS[terrainParams.biome]||BIOME_COLORS.grassland;
+  const waterY=terrainParams.water/100;
+  terrainCtx.clearRect(0,0,W,H);
+  for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){
+    const v=terrainMap[r][c];
+    let color=v<waterY?colors.water:v<waterY+0.15?colors.low:v<0.65?colors.mid:v<0.82?colors.high:colors.peak;
+    terrainCtx.fillStyle=color;terrainCtx.globalAlpha=0.7+v*0.3;
+    terrainCtx.fillRect(Math.floor(c*cw),Math.floor(r*ch),Math.ceil(cw)+1,Math.ceil(ch)+1);
+  }}
+  terrainCtx.globalAlpha=1;
+  if(terrainParams.features.fog){const grad=terrainCtx.createRadialGradient(W/2,H/2,W*0.1,W/2,H/2,W*0.6);grad.addColorStop(0,'rgba(180,200,220,0)');grad.addColorStop(1,'rgba(180,200,220,0.5)');terrainCtx.fillStyle=grad;terrainCtx.fillRect(0,0,W,H);}
+}
 let terrainPainting=false;
-setTimeout(()=>{if(!terrainCanvas)return;terrainCanvas.addEventListener('mousedown',e=>{if(e.button===0)terrainPainting=true;});terrainCanvas.addEventListener('mouseup',()=>terrainPainting=false);terrainCanvas.addEventListener('mouseleave',()=>terrainPainting=false);terrainCanvas.addEventListener('mousemove',e=>{if(!terrainPainting)return;const r2=terrainCanvas.getBoundingClientRect();const mx=(e.clientX-r2.left)/terrainCanvas.width,my=(e.clientY-r2.top)/terrainCanvas.height;const rows=terrainMap.length,cols=terrainMap[0]?.length||0;const pr=Math.floor(my*rows),pc=Math.floor(mx*cols);const br=3;for(let dr=-br;dr<=br;dr++)for(let dc=-br;dc<=br;dc++){const nr=pr+dr,nc=pc+dc;if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&Math.hypot(dr,dc)<=br){const str=0.02*(1-Math.hypot(dr,dc)/br);if(terrainPaintMode==='raise')terrainMap[nr][nc]=Math.min(1,terrainMap[nr][nc]+str);else terrainMap[nr][nc]=Math.max(0,terrainMap[nr][nc]-str);}}renderTerrain();});},500);
-function exportTerrainToLua(){const W=terrainParams.width,H=terrainParams.height;const MATS={grassland:['Grass','Grass','Ground','Rock','Snow'],desert:['Sand','Sand','Sandstone','Rock','Snow'],arctic:['Glacier','Snow','Snow','Snow','Snow'],volcano:['CrackedLava','Basalt','Basalt','Rock','Snow'],ocean:['Water','Sand','Rock','Rock','Snow'],forest:['LeafyGrass','Grass','Ground','Rock','Snow']}[terrainParams.biome]||['Grass','Grass','Ground','Rock','Snow'];const lua=`local terrain=workspace.Terrain\nterrain:Clear()\nlocal function noise(x,z,s) return math.sin(x*s)*math.cos(z*s)*0.5+math.sin(x*s*2.1)*math.cos(z*s*1.8)*0.25 end\nfor x=-${Math.floor(W/2)},${Math.floor(W/2)},8 do for z=-${Math.floor(W/2)},${Math.floor(W/2)},8 do\nlocal h=math.floor((noise(x,z,0.03)+1)*0.5*${H})\nterrain:FillBlock(CFrame.new(x,h*0.5,z),Vector3.new(8,h,8),Enum.Material.${MATS[1]})\ntask.wait() end end\nprint("Terrain done!")`;$('code-area').value=lua;onCodeChange();document.querySelector('.nav-tab').click();toast('Terrain Lua exported!','ok');}
+setTimeout(()=>{
+  if(!terrainCanvas)return;
+  terrainCanvas.addEventListener('mousedown',e=>{if(e.button===0)terrainPainting=true;});
+  terrainCanvas.addEventListener('mouseup',()=>terrainPainting=false);
+  terrainCanvas.addEventListener('mouseleave',()=>terrainPainting=false);
+  terrainCanvas.addEventListener('mousemove',e=>{
+    if(!terrainPainting)return;
+    const r2=terrainCanvas.getBoundingClientRect();
+    const mx=(e.clientX-r2.left)/terrainCanvas.width,my=(e.clientY-r2.top)/terrainCanvas.height;
+    const rows=terrainMap.length,cols=terrainMap[0]?.length||0;
+    const pr=Math.floor(my*rows),pc=Math.floor(mx*cols);
+    const br=Math.ceil(terrainParams.brush/4);
+    for(let dr=-br;dr<=br;dr++)for(let dc=-br;dc<=br;dc++){
+      const nr=pr+dr,nc=pc+dc;
+      if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&Math.hypot(dr,dc)<=br){
+        const str=0.02*(1-Math.hypot(dr,dc)/br);
+        if(terrainPaintMode==='raise')terrainMap[nr][nc]=Math.min(1,terrainMap[nr][nc]+str);
+        else if(terrainPaintMode==='lower')terrainMap[nr][nc]=Math.max(0,terrainMap[nr][nc]-str);
+        else terrainMap[nr][nc]+=(0.5-terrainMap[nr][nc])*str*2;
+      }
+    }
+    renderTerrain();
+  });
+},500);
+function exportTerrainToLua(){
+  const W=terrainParams.width,H=terrainParams.height;
+  const waterY=terrainParams.water/100;
+  const MATS={grassland:['Grass','Grass','Ground','Rock','Snow'],desert:['Sand','Sand','Sandstone','Rock','Snow'],arctic:['Glacier','Snow','Snow','Snow','Snow'],volcano:['CrackedLava','Basalt','Basalt','Rock','Snow'],ocean:['Water','Sand','Rock','Rock','Snow'],forest:['LeafyGrass','Grass','Ground','Rock','Snow']}[terrainParams.biome]||['Grass','Grass','Ground','Rock','Snow'];
+  const lua=`local terrain = workspace.Terrain\nterrain:Clear()\nlocal function noise(x,z,s) return math.sin(x*s)*math.cos(z*s)*0.5+math.sin(x*s*2.1)*math.cos(z*s*1.8)*0.25 end\nfor x=-${Math.floor(W/2)},${Math.floor(W/2)},8 do for z=-${Math.floor(W/2)},${Math.floor(W/2)},8 do\nlocal h=math.floor((noise(x,z,0.03)+1)*0.5*${H})\nterrain:FillBlock(CFrame.new(x,h*0.5,z),Vector3.new(8,h,8),Enum.Material.${MATS[1]})\ntask.wait() end end\nprint("Terrain done!")`;
+  $('code-area').value=lua;onCodeChange();
+  document.querySelector('.nav-tab').click();
+  toast('Terrain Lua exported!','gold');
+}
 
-// GUI BUILDER
+// ═══ GUI BUILDER ═══
 let guiNextId=1;
 const GUI_DEFAULTS={Frame:{bg:'#1a2035',w:200,h:150,text:'',border:true},TextLabel:{bg:'transparent',w:150,h:30,text:'Text Label',border:false},TextButton:{bg:'#0099cc',w:160,h:40,text:'Click Me',border:true},TextBox:{bg:'#0d1020',w:160,h:36,text:'Type here...',border:true},ImageLabel:{bg:'#333344',w:100,h:100,text:'🖼',border:false},ScrollingFrame:{bg:'#0d1020',w:200,h:150,text:'',border:true},ProgressBar:{bg:'#0d1020',w:200,h:18,text:'',border:true,progress:0.6}};
-function addGuiElement(type){const def=GUI_DEFAULTS[type]||{bg:'#1a2035',w:120,h:60,text:type,border:true};const id='g'+guiNextId++;const el={id,type,x:Math.random()*300+50,y:Math.random()*200+50,w:def.w,h:def.h,bg:def.bg,text:def.text,border:def.border,progress:def.progress||null};guiElements.push(el);renderGuiScreen();selectGuiEl(id);updateGuiLayerTree();}
-function renderGuiScreen(){const screen=$('gui-screen');screen.innerHTML='';guiElements.forEach(el=>{const div=document.createElement('div');div.className='gui-element'+(el.id===selectedGuiId?' selected':'');div.style.cssText=`left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;background:${el.bg==='transparent'?'transparent':el.bg};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#e8eaf2;overflow:hidden;`;if(el.border)div.style.border='1px solid rgba(0,180,255,0.3)';if(el.progress!==null){div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00d4ff,#a855f7);border-radius:4px"></div>`;}else if(el.text){div.textContent=el.text;}div.dataset.id=el.id;div.addEventListener('mousedown',e=>{selectGuiEl(el.id);guiDragging=true;guiDragStart={x:e.clientX-el.x,y:e.clientY-el.y};guiDragEl=el;e.stopPropagation();});screen.appendChild(div);});}
+function addGuiElement(type){
+  const def=GUI_DEFAULTS[type]||{bg:'#1a2035',w:120,h:60,text:type,border:true};
+  const id='g'+guiNextId++;
+  const el={id,type,x:Math.random()*300+50,y:Math.random()*200+50,w:def.w,h:def.h,bg:def.bg,text:def.text,border:def.border,progress:def.progress||null};
+  guiElements.push(el);renderGuiScreen();selectGuiEl(id);updateGuiLayerTree();
+}
+function renderGuiScreen(){
+  const screen=$('gui-screen');screen.innerHTML='';
+  guiElements.forEach(el=>{
+    const div=document.createElement('div');
+    div.className='gui-element'+(el.id===selectedGuiId?' selected':'');
+    div.style.cssText=`left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;background:${el.bg==='transparent'?'transparent':el.bg};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#e8eaf2;overflow:hidden;`;
+    if(el.border)div.style.border='1px solid rgba(0,180,255,0.3)';
+    if(el.progress!==null){div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00d4ff,#a855f7);border-radius:4px"></div>`;}
+    else if(el.text){div.textContent=el.text;}
+    div.dataset.id=el.id;
+    div.addEventListener('mousedown',e=>{selectGuiEl(el.id);guiDragging=true;guiDragStart={x:e.clientX-el.x,y:e.clientY-el.y};guiDragEl=el;e.stopPropagation();});
+    screen.appendChild(div);
+  });
+}
 function guiScreenClick(e){if(!e.target.dataset.id){selectedGuiId=null;renderGuiScreen();updateGuiProps();}}
 function guiDrag(e){if(!guiDragging||!guiDragEl)return;guiDragEl.x=Math.max(0,Math.min(600-guiDragEl.w,e.clientX-guiDragStart.x));guiDragEl.y=Math.max(0,Math.min(380-guiDragEl.h,e.clientY-guiDragStart.y));renderGuiScreen();}
 function guiDragEnd(){guiDragging=false;guiDragEl=null;}
 function selectGuiEl(id){selectedGuiId=id;renderGuiScreen();updateGuiProps();updateGuiLayerTree();}
-function updateGuiProps(){const props=$('gui-props');const el=guiElements.find(e=>e.id===selectedGuiId);if(!el){props.innerHTML='<div style="font-size:9px;color:var(--text3)">Select an element.</div>';return;}props.innerHTML=`<div class="prop-group-title">Layout</div><div class="prop-row"><span class="prop-lbl">X</span><div class="prop-inputs"><input class="pinp single" type="number" value="${Math.round(el.x)}" onchange="guiProp('x',+this.value)"></div></div><div class="prop-row"><span class="prop-lbl">Y</span><div class="prop-inputs"><input class="pinp single" type="number" value="${Math.round(el.y)}" onchange="guiProp('y',+this.value)"></div></div><div class="prop-row"><span class="prop-lbl">Width</span><div class="prop-inputs"><input class="pinp single" type="number" value="${el.w}" onchange="guiProp('w',+this.value)"></div></div><div class="prop-row"><span class="prop-lbl">Height</span><div class="prop-inputs"><input class="pinp single" type="number" value="${el.h}" onchange="guiProp('h',+this.value)"></div></div><div class="prop-group-title">Appearance</div><div class="prop-row"><span class="prop-lbl">BG</span><div class="prop-inputs"><input type="color" class="pinp single" value="${el.bg==='transparent'?'#000000':el.bg}" onchange="guiProp('bg',this.value)" style="height:20px;cursor:pointer;padding:1px"></div></div><div class="prop-row"><span class="prop-lbl">Text</span><div class="prop-inputs"><input class="pinp single" value="${el.text||''}" onchange="guiProp('text',this.value)"></div></div><div class="prop-actions"><button class="pact del" onclick="delGuiEl()">✕ Del</button><button class="edbtn green" style="flex:1;font-size:8px" onclick="exportGuiToLua()">⬇ Lua</button></div>`;}
+function updateGuiProps(){
+  const props=$('gui-props');
+  const el=guiElements.find(e=>e.id===selectedGuiId);
+  if(!el){props.innerHTML='<div style="font-size:9px;color:var(--text3)">Select an element.</div>';return;}
+  props.innerHTML=`<div class="prop-group-title">Layout</div>
+<div class="prop-row"><span class="prop-lbl">X</span><div class="prop-inputs"><input class="pinp single" type="number" value="${Math.round(el.x)}" onchange="guiProp('x',+this.value)"></div></div>
+<div class="prop-row"><span class="prop-lbl">Y</span><div class="prop-inputs"><input class="pinp single" type="number" value="${Math.round(el.y)}" onchange="guiProp('y',+this.value)"></div></div>
+<div class="prop-row"><span class="prop-lbl">Width</span><div class="prop-inputs"><input class="pinp single" type="number" value="${el.w}" onchange="guiProp('w',+this.value)"></div></div>
+<div class="prop-row"><span class="prop-lbl">Height</span><div class="prop-inputs"><input class="pinp single" type="number" value="${el.h}" onchange="guiProp('h',+this.value)"></div></div>
+<div class="prop-group-title">Appearance</div>
+<div class="prop-row"><span class="prop-lbl">BG</span><div class="prop-inputs"><input type="color" class="pinp single" value="${el.bg==='transparent'?'#000000':el.bg}" onchange="guiProp('bg',this.value)" style="height:20px;cursor:pointer;padding:1px"></div></div>
+<div class="prop-row"><span class="prop-lbl">Text</span><div class="prop-inputs"><input class="pinp single" value="${el.text||''}" onchange="guiProp('text',this.value)"></div></div>
+<div class="prop-actions"><button class="pact del" onclick="delGuiEl()">✕ Del</button><button class="edbtn green" style="flex:1;font-size:8px" onclick="exportGuiToLua()">⬇ Lua</button></div>`;
+}
 function guiProp(k,v){const el=guiElements.find(e=>e.id===selectedGuiId);if(!el)return;el[k]=v;renderGuiScreen();}
 function delGuiEl(){guiElements=guiElements.filter(e=>e.id!==selectedGuiId);selectedGuiId=null;renderGuiScreen();updateGuiProps();updateGuiLayerTree();}
 function updateGuiLayerTree(){const tree=$('gui-layer-tree');tree.innerHTML=[...guiElements].reverse().map(el=>`<div class="gui-element-row${el.id===selectedGuiId?' selected':''}" onclick="selectGuiEl('${el.id}')">${el.type}</div>`).join('');}
-function loadGuiPreset(name){guiElements=[];guiNextId=1;const presets={hud:[{id:'g1',type:'Frame',x:10,y:10,w:200,h:30,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'TextLabel',x:14,y:14,w:80,h:22,bg:'transparent',text:'❤ 100 HP',border:false,progress:null}],shop:[{id:'g1',type:'Frame',x:120,y:40,w:360,h:300,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'TextButton',x:130,y:280,w:160,h:40,bg:'#0099cc',text:'Buy',border:true,progress:null}],inventory:[{id:'g1',type:'Frame',x:80,y:60,w:440,h:260,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'ScrollingFrame',x:90,y:100,w:420,h:200,bg:'#0a0d18',text:'',border:true,progress:null}]};guiElements=presets[name]||[];guiNextId=guiElements.length+1;selectedGuiId=null;renderGuiScreen();updateGuiLayerTree();updateGuiProps();toast('Preset: '+name,'ok');}
-function exportGuiToLua(){if(!guiElements.length){toast('No elements.','bad');return;}let lua=`local Players=game:GetService("Players")\nlocal player=Players.LocalPlayer\nlocal playerGui=player:WaitForChild("PlayerGui")\nlocal screenGui=Instance.new("ScreenGui")\nscreenGui.ResetOnSpawn=false\nscreenGui.Parent=playerGui\n\n`;const sx=1/600,sy=1/380;guiElements.forEach((el,i)=>{const v=`el${i+1}`;const cls=el.type==='ProgressBar'?'Frame':el.type;lua+=`local ${v}=Instance.new("${cls}")\n${v}.Size=UDim2.new(${(el.w*sx).toFixed(4)},0,${(el.h*sy).toFixed(4)},0)\n${v}.Position=UDim2.new(${(el.x*sx).toFixed(4)},0,${(el.y*sy).toFixed(4)},0)\n`;if(el.bg!=='transparent'){const h=el.bg.replace('#','');lua+=`${v}.BackgroundColor3=Color3.fromRGB(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)})\n`;}else{lua+=`${v}.BackgroundTransparency=1\n`;}lua+=`${v}.BorderSizePixel=0\n`;if(el.text&&cls!=='Frame')lua+=`${v}.Text="${el.text}"\n${v}.TextColor3=Color3.new(1,1,1)\n${v}.Font=Enum.Font.GothamBold\n${v}.TextSize=13\n`;lua+=`${v}.Parent=screenGui\nInstance.new("UICorner",${v}).CornerRadius=UDim.new(0,8)\n\n`;});$('code-area').value=lua;onCodeChange();toast('GUI exported!','ok');}
-
-// NPC CREATOR
-function npcToggle(group,val,el){npcParams[group]=val;document.querySelectorAll(`[id^="npc-${group[0]}-"]`).forEach(x=>x.classList.remove('active'));el.classList.add('active');drawNPCPreview();}
-function drawNPCPreview(){const c=$('npc-canvas');if(!c)return;const ctx2=c.getContext('2d');const W=300,H=420;ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#0c0f1a';ctx2.fillRect(0,0,W,H);const sc=npcParams.type==='boss'?1.4:npcParams.type==='monster'?1.1:1;const cx=150,cy=280;const bodyColor=$('npc-color')?.value||'#8B4513';ctx2.fillStyle='rgba(0,0,0,0.3)';ctx2.beginPath();ctx2.ellipse(cx,cy+5,30*sc,8*sc,0,0,Math.PI*2);ctx2.fill();ctx2.fillStyle=bodyColor;ctx2.fillRect(cx-18*sc,cy-50*sc,14*sc,50*sc);ctx2.fillRect(cx+4*sc,cy-50*sc,14*sc,50*sc);const bodyH=70*sc,bodyW=60*sc;ctx2.fillRect(cx-bodyW/2,cy-50*sc-bodyH,bodyW,bodyH);ctx2.fillRect(cx-bodyW/2-16*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);ctx2.fillRect(cx+bodyW/2+2*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);const headR=28*sc;ctx2.beginPath();ctx2.arc(cx,cy-50*sc-bodyH-headR*0.8,headR,0,Math.PI*2);ctx2.fill();ctx2.fillStyle=npcParams.type==='boss'?'#ff0000':npcParams.type==='monster'?'#ffaa00':'white';ctx2.beginPath();ctx2.arc(cx-10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();ctx2.fillStyle='white';ctx2.font='bold 13px monospace';ctx2.textAlign='center';ctx2.fillText($('npc-name-input')?.value||'NPC',cx,52);ctx2.textAlign='left';ctx2.fillStyle='rgba(255,255,255,0.5)';ctx2.font='9px monospace';ctx2.fillText(`HP:${npcParams.health} SPD:${npcParams.speed}`,20,H-36);ctx2.fillText(`Behavior:${npcParams.behavior}`,20,H-22);}
-async function generateNPCScript(){const name=$('npc-name-input')?.value||'EnemyNPC';const prompt=`Create a complete Roblox server Script NPC named "${name}": health=${npcParams.health}, speed=${npcParams.speed}, detect=${npcParams.detect}, damage=${npcParams.damage}, behavior=${npcParams.behavior}, combat=${npcParams.combat}, type=${npcParams.type}. Include pathfinding with PathfindingService. Return raw Lua only.`;toast('Generating NPC…','ai');$('npc-output-info').textContent='Generating…';const result=await callAI(prompt);if(result){$('code-area').value=cleanCode(result);onCodeChange();$('npc-output-info').textContent='✓ Done! Check editor tab.';document.querySelector('.nav-tab').click();toast('NPC generated!','ok');}else{$('npc-output-info').textContent='Failed.';toast('Failed','bad');}}
-
-// ADMIN SUITE — LocalScript is hardcoded, AI only generates server script
-async function genAdmin(type){
-
-const FIXED_LOCAL=`local Players=game:GetService("Players")
-local TweenService=game:GetService("TweenService")
-local UIS=game:GetService("UserInputService")
-local RS=game:GetService("ReplicatedStorage")
-local lp=Players.LocalPlayer
-local pgui=lp:WaitForChild("PlayerGui")
-local F=RS:WaitForChild("AdminEvents")
-local eKick=F:WaitForChild("AdminKick")
-local eBan=F:WaitForChild("AdminBan")
-local eUnban=F:WaitForChild("AdminUnban")
-local eTp=F:WaitForChild("AdminTp")
-local eBring=F:WaitForChild("AdminBring")
-local eKill=F:WaitForChild("AdminKill")
-local eGod=F:WaitForChild("AdminGod")
-local eFf=F:WaitForChild("AdminFf")
-local eSpeed=F:WaitForChild("AdminSpeed")
-local eAnnounce=F:WaitForChild("AdminAnnounce")
-local eDay=F:WaitForChild("AdminDay")
-local eNight=F:WaitForChild("AdminNight")
-local eFreeze=F:WaitForChild("AdminFreeze")
-local eGetPlayers=F:WaitForChild("AdminGetPlayers")
-local eNotify=F:WaitForChild("AdminNotify")
-local sg=Instance.new("ScreenGui"); sg.Name="AdminPanel"; sg.ResetOnSpawn=false; sg.Enabled=false; sg.Parent=pgui
-local mf=Instance.new("Frame"); mf.Size=UDim2.new(0,500,0,560); mf.Position=UDim2.new(0.5,-250,0.5,-280); mf.BackgroundColor3=Color3.fromRGB(6,8,15); mf.BorderSizePixel=0; mf.Parent=sg
-Instance.new("UICorner",mf).CornerRadius=UDim.new(0,12)
-local ms=Instance.new("UIStroke",mf); ms.Color=Color3.fromRGB(0,212,255); ms.Thickness=1
-local tb=Instance.new("Frame",mf); tb.Size=UDim2.new(1,0,0,40); tb.BackgroundColor3=Color3.fromRGB(0,20,40); tb.BorderSizePixel=0
-Instance.new("UICorner",tb).CornerRadius=UDim.new(0,12)
-local tl=Instance.new("TextLabel",tb); tl.Size=UDim2.new(1,-50,1,0); tl.Position=UDim2.new(0,12,0,0); tl.BackgroundTransparency=1; tl.Text="◈ Admin Panel"; tl.TextColor3=Color3.fromRGB(0,212,255); tl.Font=Enum.Font.GothamBold; tl.TextSize=13; tl.TextXAlignment=Enum.TextXAlignment.Left
-local cb=Instance.new("TextButton",tb); cb.Size=UDim2.new(0,28,0,28); cb.Position=UDim2.new(1,-34,0.5,-14); cb.BackgroundColor3=Color3.fromRGB(255,68,102); cb.BorderSizePixel=0; cb.Text="X"; cb.TextColor3=Color3.new(1,1,1); cb.Font=Enum.Font.GothamBold; cb.TextSize=11
-Instance.new("UICorner",cb).CornerRadius=UDim.new(0,5)
-cb.MouseButton1Click:Connect(function() sg.Enabled=false end)
-local pil=Instance.new("TextLabel",mf); pil.Size=UDim2.new(1,-20,0,16); pil.Position=UDim2.new(0,10,0,48); pil.BackgroundTransparency=1; pil.Text="TARGET PLAYER"; pil.TextColor3=Color3.fromRGB(80,90,120); pil.Font=Enum.Font.GothamBold; pil.TextSize=9; pil.TextXAlignment=Enum.TextXAlignment.Left
-local pi=Instance.new("TextBox",mf); pi.Size=UDim2.new(1,-20,0,30); pi.Position=UDim2.new(0,10,0,66); pi.BackgroundColor3=Color3.fromRGB(19,23,38); pi.BorderSizePixel=0; pi.PlaceholderText="Enter player name"; pi.Text=""; pi.TextColor3=Color3.fromRGB(0,212,255); pi.Font=Enum.Font.Code; pi.TextSize=12; pi.ClearTextOnFocus=false
-Instance.new("UICorner",pi).CornerRadius=UDim.new(0,6); Instance.new("UIPadding",pi).PaddingLeft=UDim.new(0,8)
-local pcf=Instance.new("ScrollingFrame",mf); pcf.Size=UDim2.new(1,-20,0,50); pcf.Position=UDim2.new(0,10,0,100); pcf.BackgroundColor3=Color3.fromRGB(12,15,26); pcf.BorderSizePixel=0; pcf.ScrollBarThickness=3; pcf.CanvasSize=UDim2.new(0,0,0,0)
-Instance.new("UICorner",pcf).CornerRadius=UDim.new(0,6)
-local pcl=Instance.new("UIListLayout",pcf); pcl.FillDirection=Enum.FillDirection.Horizontal; pcl.Padding=UDim.new(0,4); pcl.SortOrder=Enum.SortOrder.LayoutOrder
-Instance.new("UIPadding",pcf).PaddingLeft=UDim.new(0,6)
-local eil=Instance.new("TextLabel",mf); eil.Size=UDim2.new(1,-20,0,16); eil.Position=UDim2.new(0,10,0,158); eil.BackgroundTransparency=1; eil.Text="SPEED / REASON / MESSAGE"; eil.TextColor3=Color3.fromRGB(80,90,120); eil.Font=Enum.Font.GothamBold; eil.TextSize=9; eil.TextXAlignment=Enum.TextXAlignment.Left
-local ei=Instance.new("TextBox",mf); ei.Size=UDim2.new(1,-20,0,30); ei.Position=UDim2.new(0,10,0,176); ei.BackgroundColor3=Color3.fromRGB(19,23,38); ei.BorderSizePixel=0; ei.PlaceholderText="e.g. 50 / cheating / hello all"; ei.Text=""; ei.TextColor3=Color3.fromRGB(0,212,255); ei.Font=Enum.Font.Code; ei.TextSize=12; ei.ClearTextOnFocus=false
-Instance.new("UICorner",ei).CornerRadius=UDim.new(0,6); Instance.new("UIPadding",ei).PaddingLeft=UDim.new(0,8)
-local cgl=Instance.new("TextLabel",mf); cgl.Size=UDim2.new(1,-20,0,16); cgl.Position=UDim2.new(0,10,0,214); cgl.BackgroundTransparency=1; cgl.Text="COMMANDS"; cgl.TextColor3=Color3.fromRGB(80,90,120); cgl.Font=Enum.Font.GothamBold; cgl.TextSize=9; cgl.TextXAlignment=Enum.TextXAlignment.Left
-local cgf=Instance.new("Frame",mf); cgf.Size=UDim2.new(1,-20,0,230); cgf.Position=UDim2.new(0,10,0,232); cgf.BackgroundTransparency=1
-local cgg=Instance.new("UIGridLayout",cgf); cgg.CellSize=UDim2.new(0,104,0,38); cgg.CellPadding=UDim2.new(0,5,0,5); cgg.SortOrder=Enum.SortOrder.LayoutOrder
-local cmds={
-  {t="Kick",c=Color3.fromRGB(255,68,102),fn=function() eKick:FireServer(pi.Text,ei.Text) end},
-  {t="Ban",c=Color3.fromRGB(255,68,102),fn=function() eBan:FireServer(pi.Text,ei.Text) end},
-  {t="Unban",c=Color3.fromRGB(0,200,100),fn=function() eUnban:FireServer(pi.Text) end},
-  {t="Tp",c=Color3.fromRGB(0,180,255),fn=function() eTp:FireServer(pi.Text) end},
-  {t="Bring",c=Color3.fromRGB(0,180,255),fn=function() eBring:FireServer(pi.Text) end},
-  {t="Kill",c=Color3.fromRGB(255,68,102),fn=function() eKill:FireServer(pi.Text) end},
-  {t="God",c=Color3.fromRGB(255,215,0),fn=function() eGod:FireServer(pi.Text) end},
-  {t="FF",c=Color3.fromRGB(0,212,255),fn=function() eFf:FireServer(pi.Text) end},
-  {t="Speed",c=Color3.fromRGB(168,85,247),fn=function() eSpeed:FireServer(pi.Text,tonumber(ei.Text) or 50) end},
-  {t="Say",c=Color3.fromRGB(255,215,0),fn=function() eAnnounce:FireServer(ei.Text) end},
-  {t="Day",c=Color3.fromRGB(255,200,50),fn=function() eDay:FireServer() end},
-  {t="Night",c=Color3.fromRGB(80,90,160),fn=function() eNight:FireServer() end},
-  {t="Freeze",c=Color3.fromRGB(100,200,255),fn=function() eFreeze:FireServer(pi.Text) end},
-}
-for i,cmd in ipairs(cmds) do
-  local b=Instance.new("TextButton",cgf); b.LayoutOrder=i; b.BackgroundColor3=Color3.fromRGB(19,23,38); b.BorderSizePixel=0; b.Text=cmd.t; b.TextColor3=cmd.c; b.Font=Enum.Font.GothamBold; b.TextSize=10; b.TextWrapped=true
-  Instance.new("UICorner",b).CornerRadius=UDim.new(0,6)
-  local s=Instance.new("UIStroke",b); s.Color=cmd.c; s.Thickness=0.5; s.Transparency=0.5
-  b.MouseEnter:Connect(function() TweenService:Create(b,TweenInfo.new(0.12),{BackgroundColor3=cmd.c}):Play(); b.TextColor3=Color3.fromRGB(6,8,15) end)
-  b.MouseLeave:Connect(function() TweenService:Create(b,TweenInfo.new(0.12),{BackgroundColor3=Color3.fromRGB(19,23,38)}):Play(); b.TextColor3=cmd.c end)
-  b.MouseButton1Click:Connect(function()
-    if cmd.t~="Day" and cmd.t~="Night" and cmd.t~="Say" and pi.Text=="" then return end
-    cmd.fn()
-  end)
-end
-local rb=Instance.new("TextButton",mf); rb.Size=UDim2.new(1,-20,0,28); rb.Position=UDim2.new(0,10,1,-38); rb.BackgroundColor3=Color3.fromRGB(19,23,38); rb.BorderSizePixel=0; rb.Text="Refresh Players"; rb.TextColor3=Color3.fromRGB(0,212,255); rb.Font=Enum.Font.GothamBold; rb.TextSize=10
-Instance.new("UICorner",rb).CornerRadius=UDim.new(0,6)
-rb.MouseButton1Click:Connect(function() eGetPlayers:FireServer() end)
-local function showToast(msg,hex)
-  local tf=Instance.new("Frame",sg); tf.Size=UDim2.new(0,300,0,44); tf.Position=UDim2.new(1,10,1,-60); tf.BackgroundColor3=Color3.fromRGB(12,15,26); tf.BorderSizePixel=0; tf.ZIndex=10
-  Instance.new("UICorner",tf).CornerRadius=UDim.new(0,8)
-  local ts2=Instance.new("UIStroke",tf); ts2.Color=Color3.fromHex(hex or "#00d4ff"); ts2.Thickness=1
-  local tl2=Instance.new("TextLabel",tf); tl2.Size=UDim2.new(1,-12,1,0); tl2.Position=UDim2.new(0,8,0,0); tl2.BackgroundTransparency=1; tl2.Text=msg; tl2.TextColor3=Color3.fromHex(hex or "#e8eaf2"); tl2.Font=Enum.Font.GothamBold; tl2.TextSize=12; tl2.TextXAlignment=Enum.TextXAlignment.Left; tl2.TextWrapped=true
-  TweenService:Create(tf,TweenInfo.new(0.3,Enum.EasingStyle.Back),{Position=UDim2.new(1,-310,1,-60)}):Play()
-  task.delay(3.2,function() TweenService:Create(tf,TweenInfo.new(0.2),{Position=UDim2.new(1,10,1,-60)}):Play(); task.wait(0.25); tf:Destroy() end)
-end
-local annBanner=Instance.new("Frame",sg); annBanner.Size=UDim2.new(1,0,0,0); annBanner.Position=UDim2.new(0,0,0,0); annBanner.BackgroundColor3=Color3.fromRGB(20,15,0); annBanner.BorderSizePixel=0; annBanner.ZIndex=20; annBanner.ClipsDescendants=true
-local annText=Instance.new("TextLabel",annBanner); annText.Size=UDim2.new(1,0,0,64); annText.BackgroundTransparency=1; annText.TextColor3=Color3.fromRGB(255,215,0); annText.Font=Enum.Font.GothamBold; annText.TextSize=16; annText.ZIndex=21
-eNotify.OnClientEvent:Connect(function(msg)
-  if type(msg)=="string" and msg:sub(1,12)=="__announce__" then
-    annText.Text="[!] "..msg:sub(13)
-    TweenService:Create(annBanner,TweenInfo.new(0.4,Enum.EasingStyle.Quart),{Size=UDim2.new(1,0,0,64)}):Play()
-    task.delay(5,function() TweenService:Create(annBanner,TweenInfo.new(0.4),{Size=UDim2.new(1,0,0,0)}):Play() end)
-  else showToast(tostring(msg),"#00ff88") end
-end)
-eGetPlayers.OnClientEvent:Connect(function(names)
-  for _,c in ipairs(pcf:GetChildren()) do if c:IsA("TextButton") then c:Destroy() end end
-  for _,name in ipairs(names or {}) do
-    local chip=Instance.new("TextButton",pcf); chip.Size=UDim2.new(0,80,0,38); chip.BackgroundColor3=Color3.fromRGB(19,23,38); chip.BorderSizePixel=0; chip.Text=name; chip.TextColor3=Color3.fromRGB(200,210,230); chip.Font=Enum.Font.Code; chip.TextSize=9; chip.TextWrapped=true
-    Instance.new("UICorner",chip).CornerRadius=UDim.new(0,5)
-    chip.MouseButton1Click:Connect(function() pi.Text=name end)
-  end
-  pcl:ApplyLayout()
-  pcf.CanvasSize=UDim2.new(0,pcl.AbsoluteContentSize.X+12,0,0)
-end)
-UIS.InputBegan:Connect(function(input,gp) if gp then return end
-  if input.KeyCode==Enum.KeyCode.F9 then
-    sg.Enabled=not sg.Enabled
-    if sg.Enabled then eGetPlayers:FireServer() end
-  end
-end)
-task.wait(1); eGetPlayers:FireServer()`;
-
-  const SERVER_PROMPT=`Write ONLY the server Script for a Roblox admin system. Raw Lua only, no markdown, no LocalScript.
-Start with:
-local ReplicatedStorage=game:GetService("ReplicatedStorage")
-local DataStoreService=game:GetService("DataStoreService")
-local Players=game:GetService("Players")
-local Lighting=game:GetService("Lighting")
-local RANKS={[1234567890]=5}
-local BanStore=DataStoreService:GetDataStore("AdminBans_v1")
-local F=Instance.new("Folder"); F.Name="AdminEvents"; F.Parent=ReplicatedStorage
-local eKick=Instance.new("RemoteEvent"); eKick.Name="AdminKick"; eKick.Parent=F
-local eBan=Instance.new("RemoteEvent"); eBan.Name="AdminBan"; eBan.Parent=F
-local eUnban=Instance.new("RemoteEvent"); eUnban.Name="AdminUnban"; eUnban.Parent=F
-local eTp=Instance.new("RemoteEvent"); eTp.Name="AdminTp"; eTp.Parent=F
-local eBring=Instance.new("RemoteEvent"); eBring.Name="AdminBring"; eBring.Parent=F
-local eKill=Instance.new("RemoteEvent"); eKill.Name="AdminKill"; eKill.Parent=F
-local eGod=Instance.new("RemoteEvent"); eGod.Name="AdminGod"; eGod.Parent=F
-local eFf=Instance.new("RemoteEvent"); eFf.Name="AdminFf"; eFf.Parent=F
-local eSpeed=Instance.new("RemoteEvent"); eSpeed.Name="AdminSpeed"; eSpeed.Parent=F
-local eAnnounce=Instance.new("RemoteEvent"); eAnnounce.Name="AdminAnnounce"; eAnnounce.Parent=F
-local eDay=Instance.new("RemoteEvent"); eDay.Name="AdminDay"; eDay.Parent=F
-local eNight=Instance.new("RemoteEvent"); eNight.Name="AdminNight"; eNight.Parent=F
-local eFreeze=Instance.new("RemoteEvent"); eFreeze.Name="AdminFreeze"; eFreeze.Parent=F
-local eGetPlayers=Instance.new("RemoteEvent"); eGetPlayers.Name="AdminGetPlayers"; eGetPlayers.Parent=F
-local eNotify=Instance.new("RemoteEvent"); eNotify.Name="AdminNotify"; eNotify.Parent=F
-Then add: getRank, findPlayer, PlayerAdded ban check, and all OnServerEvent handlers. No varargs in pcall. Use eNotify:FireClient for feedback.`;
-
-  const OTHER={
-    ban:`Write ONLY a Roblox ban system server Script. Raw Lua only. Folder "BanEvents" in RS. RemoteEvents BanPlayer,UnbanPlayer,TempBan,GetBanList,BanNotify added individually. RANKS={[1234567890]=5}. BanStore DataStore. Handlers: rank check, no varargs in pcall. BanPlayer: find by name, SetAsync, kick. UnbanPlayer: find, RemoveAsync. TempBan: SetAsync with expires, kick. PlayerAdded checks ban.`,
-    anticheat:`Write ONLY a Roblox anti-cheat server Script. Raw Lua only. ACBans DataStore. RemoteEvent "ACNotify" in RS individually. flags/lastPos/airTime tables. PlayerAdded/Removing cleanup. Heartbeat: speed>120, airborne>5s, teleport>400 flags. flag(): warn at 2, kick at 4, ban+kick at 6. No varargs in pcall.`,
-    emotes:`Write a Roblox emote system. Two sections:
-===SCRIPT_SERVER===
-===SCRIPT_LOCAL===
-SERVER (40 lines): Folder "EmoteEvents". RemoteEvents PlayEmote,StopEmote individually. emoteTracks table. Handlers load/play/stop.
-LOCAL (120 lines): WaitForChild all. 12 emotes. E key toggles wheel. Buttons via math.cos/sin. TweenService open/close.`,
-    ranks:`Write a Roblox rank system. Two sections:
-===SCRIPT_SERVER===
-===SCRIPT_LOCAL===
-SERVER (80 lines): Folder "RankEvents". RemoteEvents individually. RANKS table. PlayerAdded BillboardGui. GetMyRank fires back. SetRank rank-5-only.
-LOCAL (100 lines): WaitForChild all. Rank HUD. GetMyRank on load. F7 panel.`,
-    notification:`Write a Roblox notification system. Two sections:
-===SCRIPT_SERVER===
-===SCRIPT_LOCAL===
-SERVER (40 lines): Folder "NotifEvents". RemoteEvents ShowToast,ShowAnnouncement,ShowHint,ShowDialog individually.
-LOCAL (140 lines): WaitForChild all. Toast stack TweenService. Announcement bar. Hint bottom. Dialog modal.`
+function loadGuiPreset(name){
+  guiElements=[];guiNextId=1;
+  const presets={
+    hud:[{id:'g1',type:'Frame',x:10,y:10,w:200,h:30,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'TextLabel',x:14,y:14,w:80,h:22,bg:'transparent',text:'❤ 100 HP',border:false,progress:null}],
+    shop:[{id:'g1',type:'Frame',x:120,y:40,w:360,h:300,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'TextButton',x:130,y:280,w:160,h:40,bg:'#0099cc',text:'Buy',border:true,progress:null}],
+    inventory:[{id:'g1',type:'Frame',x:80,y:60,w:440,h:260,bg:'#0d1020',text:'',border:true,progress:null},{id:'g2',type:'ScrollingFrame',x:90,y:100,w:420,h:200,bg:'#0a0d18',text:'',border:true,progress:null}],
   };
-
-  toast('Generating…','gold');
-  $('code-area').value='-- Generating, please wait...';
-  onCodeChange();
-  document.querySelector('.nav-tab').click();
-
-  if(type==='full'){
-    const serverRaw=await callAI(SERVER_PROMPT);
-    if(serverRaw){
-      const serverCode=cleanCode(serverRaw);
-      $('code-area').value=
-`-- ╔══════════════════════════════════════════════╗
--- ║  SCRIPT 1 of 2 — Server Script               ║
--- ║  → Place in: ServerScriptService             ║
--- ╚══════════════════════════════════════════════╝
-${serverCode}
-
-
--- ╔══════════════════════════════════════════════╗
--- ║  SCRIPT 2 of 2 — LocalScript                 ║
--- ║  → Place in: StarterPlayer>StarterPlayerScripts ║
--- ╚══════════════════════════════════════════════╝
-${FIXED_LOCAL}`;
-      onCodeChange();
-      toast('Admin system generated!','gold');
-      addLog('result','Admin: server+local ready');
-    }else{
-      $('code-area').value='-- Generation failed. Check backend.';
-      toast('Failed','bad');
-    }
-  }else{
-    const result=await callAI(OTHER[type]||OTHER.ban);
-    if(result){$('code-area').value=cleanCode(result);onCodeChange();toast('Generated! Send to Studio.','gold');}
-    else{$('code-area').value='-- Generation failed.';toast('Failed','bad');}
-  }
+  guiElements=presets[name]||[];guiNextId=guiElements.length+1;
+  selectedGuiId=null;renderGuiScreen();updateGuiLayerTree();updateGuiProps();
+  toast('Preset: '+name,'ok');
+}
+function exportGuiToLua(){
+  if(!guiElements.length){toast('No elements.','bad');return;}
+  let lua=`local Players = game:GetService("Players")\nlocal player = Players.LocalPlayer\nlocal playerGui = player:WaitForChild("PlayerGui")\nlocal screenGui = Instance.new("ScreenGui")\nscreenGui.ResetOnSpawn = false\nscreenGui.Parent = playerGui\n\n`;
+  const sx=1/600,sy=1/380;
+  guiElements.forEach((el,i)=>{
+    const v=`el${i+1}`;
+    const cls=el.type==='ProgressBar'?'Frame':el.type;
+    lua+=`local ${v}=Instance.new("${cls}")\n${v}.Size=UDim2.new(${(el.w*sx).toFixed(4)},0,${(el.h*sy).toFixed(4)},0)\n${v}.Position=UDim2.new(${(el.x*sx).toFixed(4)},0,${(el.y*sy).toFixed(4)},0)\n`;
+    if(el.bg!=='transparent'){const h=el.bg.replace('#','');lua+=`${v}.BackgroundColor3=Color3.fromRGB(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)})\n`;}
+    else{lua+=`${v}.BackgroundTransparency=1\n`;}
+    lua+=`${v}.BorderSizePixel=0\n`;
+    if(el.text&&cls!=='Frame')lua+=`${v}.Text="${el.text}"\n${v}.TextColor3=Color3.new(1,1,1)\n${v}.Font=Enum.Font.GothamBold\n${v}.TextSize=13\n`;
+    lua+=`${v}.Parent=screenGui\nInstance.new("UICorner",${v}).CornerRadius=UDim.new(0,8)\n\n`;
+  });
+  $('code-area').value=lua;onCodeChange();toast('GUI exported!','ok');
 }
 
+// ═══ NPC CREATOR ═══
+function npcToggle(group,val,el){npcParams[group]=val;document.querySelectorAll(`[id^="npc-${group[0]}-"]`).forEach(x=>x.classList.remove('active'));el.classList.add('active');drawNPCPreview();}
+function npcOpt(key,el){npcOptions[key]=!npcOptions[key];el.classList.toggle('active',npcOptions[key]);drawNPCPreview();}
+function drawNPCPreview(){
+  const c=$('npc-canvas');if(!c)return;
+  const ctx2=c.getContext('2d');
+  const W=300,H=420;
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle='#0c0f1a';ctx2.fillRect(0,0,W,H);
+  const scale=npcParams.scale||1;
+  const cx=150,cy=280;
+  const bodyColor=$('npc-color')?.value||'#8B4513';
+  const isBoss=npcParams.type==='boss';
+  const isMonster=npcParams.type==='monster';
+  const sc=scale*(isBoss?1.4:isMonster?1.1:1);
+  ctx2.fillStyle='rgba(0,0,0,0.3)';ctx2.beginPath();ctx2.ellipse(cx,cy+5,30*sc,8*sc,0,0,Math.PI*2);ctx2.fill();
+  ctx2.fillStyle=bodyColor;
+  ctx2.fillRect(cx-18*sc,cy-50*sc,14*sc,50*sc);
+  ctx2.fillRect(cx+4*sc,cy-50*sc,14*sc,50*sc);
+  const bodyH=70*sc,bodyW=60*sc;
+  ctx2.fillRect(cx-bodyW/2,cy-50*sc-bodyH,bodyW,bodyH);
+  ctx2.fillRect(cx-bodyW/2-16*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);
+  ctx2.fillRect(cx+bodyW/2+2*sc,cy-50*sc-bodyH+10*sc,14*sc,50*sc);
+  const headR=28*sc;
+  ctx2.beginPath();ctx2.arc(cx,cy-50*sc-bodyH-headR*0.8,headR,0,Math.PI*2);ctx2.fill();
+  ctx2.fillStyle=isBoss?'#ff0000':isMonster?'#ffaa00':'white';
+  ctx2.beginPath();ctx2.arc(cx-10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();
+  ctx2.beginPath();ctx2.arc(cx+10*sc,cy-50*sc-bodyH-headR*0.9,5*sc,0,Math.PI*2);ctx2.fill();
+  ctx2.fillStyle='white';ctx2.font='bold 13px monospace';ctx2.textAlign='center';
+  ctx2.fillText($('npc-name-input')?.value||'NPC',cx,52);
+  ctx2.textAlign='left';ctx2.fillStyle='rgba(255,255,255,0.5)';ctx2.font='9px monospace';
+  ctx2.fillText(`HP:${npcParams.health} SPD:${npcParams.speed}`,20,H-36);
+  ctx2.fillText(`Behavior:${npcParams.behavior}`,20,H-22);
+}
+async function generateNPCScript(){
+  const name=$('npc-name-input')?.value||'EnemyNPC';
+  const prompt=`Create a complete Roblox server Script NPC named "${name}": health=${npcParams.health}, speed=${npcParams.speed}, detect=${npcParams.detect}, damage=${npcParams.damage}, behavior=${npcParams.behavior}, combat=${npcParams.combat}, type=${npcParams.type}. Include pathfinding with PathfindingService. Return raw Lua only.`;
+  toast('Generating NPC…','ai');$('npc-output-info').textContent='Generating…';
+  const result=await callAI(prompt);
+  if(result){
+    $('code-area').value=cleanCode(result);onCodeChange();
+    $('npc-output-info').textContent='✓ Done! Check editor tab.';
+    document.querySelector('.nav-tab').click();
+    toast('NPC generated!','ok');
+  }else{$('npc-output-info').textContent='Failed.';toast('Failed','bad');}
+}
+
+// ═══ ADMIN SUITE ═══
+async function genAdmin(type){
+  const prompts={
+    full:`Write a complete Roblox admin system: server Script with rank system (Owner=5,Admin=4,Mod=3), 20+ commands (kick,ban,tp,bring,kill,god,ff,speed,announce,day,night), DataStore bans. Return raw Lua only.`,
+    ban:`Write a complete Roblox ban system server Script: ban/unban/tempban commands, DataStore persistence, kick banned players on join. Raw Lua only.`,
+    anticheat:`Write a complete Roblox anti-cheat server Script: speed hack, fly hack detection, flag system, escalating punishment. Raw Lua only.`,
+    emotes:`Write a complete Roblox emote system: server Script with RemoteEvent + 10 emotes, LocalScript with GUI wheel. Raw Lua only.`,
+    ranks:`Write a complete Roblox rank system server Script: 5 tiers, group support, BillboardGui nameplate. Raw Lua only.`,
+    notification:`Write a complete Roblox notification system: server Script RemoteEvent, LocalScript GUI with animations. Raw Lua only.`,
+  };
+  toast('Generating…','gold');
+  $('code-area').value='-- Generating, please wait...';onCodeChange();
+  document.querySelector('.nav-tab').click();
+  const result=await callAI(prompts[type]||prompts.full);
+  if(result){$('code-area').value=cleanCode(result);onCodeChange();toast('Generated! Send to Studio.','gold');}
+  else{$('code-area').value='-- Generation failed.';toast('Failed','bad');}
+}
+
+// ═══ MODAL ═══
 function openModal(title,sub,body,btns){$('modal-title').textContent=title;$('modal-sub').textContent=sub||'';$('modal-body').innerHTML=body||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
 function closeModal(){$('modal-bg').classList.remove('open');}
 </script>
