@@ -240,7 +240,7 @@ canvas#mc{width:100%;height:100%;display:block;cursor:crosshair}
 .ti-cls{font-size:7px;color:var(--text3);margin-left:auto}
 
 /* ═══════════════════════════════════
-   3D AI MODEL VIEWER (Meshy-style)
+   3D AI MODEL VIEWER
 ═══════════════════════════════════ */
 .model3d-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .model3d-sidebar{width:260px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--bg)}
@@ -281,8 +281,6 @@ canvas#model3d-canvas{width:100%;height:100%;display:block}
 .m3d-part:hover{border-color:var(--c1);color:var(--c1)}
 .m3d-part.selected{background:var(--c1d);border-color:var(--c1);color:var(--c1)}
 .m3d-color-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-/* Progress bar */
 .m3d-progress{height:2px;background:var(--bg4);border-radius:1px;overflow:hidden;margin-bottom:8px;display:none}
 .m3d-progress.on{display:block}
 .m3d-progress-bar{height:100%;background:linear-gradient(90deg,var(--c2),var(--c1));border-radius:1px;transition:width .3s;animation:pbar 1.5s infinite}
@@ -391,7 +389,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 <body>
 <div id="root">
 
-<!-- AUTH -->
+<!-- AUTH — UNCHANGED -->
 <div id="auth">
   <div class="auth-glow"></div>
   <div class="auth-wrap">
@@ -833,39 +831,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 <div id="toasts"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════════════════
 const BACKEND = "https://enesai-production.up.railway.app";
 
-// ═══════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════
 let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
 let logCount=0;
-// 3D editor state
 let sceneObjects=[], selectedObjId=null, nextId=1, showGrid=true, currentTool='select';
 let camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};
 let vpCanvas, vpCtx;
-// 3D model viewer state
 let m3dObjects=[], m3dSelectedId=null, m3dNextId=1;
 let m3dCamera={x:0,y:0,z:22,rx:-0.35,ry:0.4,zoom:1};
 let m3dCanvas, m3dCtx;
 let m3dParams={base:'humanoid',style:'lowpoly',complexity:5,scale:2,parts:12};
-// Terrain
 let tp={width:512,height:80,roughness:5,water:30,biome:'grassland',features:{mountains:true,rivers:true,caves:false,rocks:true,fog:false}};
 let terrainMap=[], terrainCanvas, terrainCtx, terrainPainting=false;
-// GUI
 let guiEls=[], selGuiId=null, guiDragging=false, guiDragStart={}, guiDragEl=null;
 let guiNextId=1;
-// NPC
 let np={health:100,speed:16,detect:30,damage:10,behavior:'patrol',combat:'none',type:'humanoid'};
-// Script types
 let activeST={script:true,localscript:true,modulescript:false};
-// NPC preview rotate
 let npcAngle=0, npcDragging=false, npcLastX=0;
 
-// Biome colors
 const BIOME_COLS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
   desert:{low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
@@ -875,9 +859,6 @@ const BIOME_COLS={
   forest:{low:'#1a3a1a',mid:'#2a5a2a',high:'#4a7a2a',peak:'#9a9a5a',water:'#1a3a6a'},
 };
 
-// ═══════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════
 const $=id=>document.getElementById(id);
 function genTok(){return Math.random().toString(36).slice(2,8).toUpperCase();}
 function ts(){return new Date().toLocaleTimeString();}
@@ -889,9 +870,7 @@ function toast(msg,type='info',dur=3200){
 function sv(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function lv(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ═══════════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════════
+// ── AUTH — UNCHANGED ──
 function startApp(){
   const inp=$('rbx-username');const u=(inp.value||'').trim();
   if(!u){$('auth-err').style.display='block';inp.focus();return;}
@@ -917,17 +896,13 @@ function enterApp(){
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
 lv();if(user&&sessionToken)enterApp();
 
-// ═══════════════════════════════════════════════════════════
-// POLLING
-// ═══════════════════════════════════════════════════════════
+// ── POLLING ──
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();d.connected&&!pluginConnected?setConn(true):!d.connected&&pluginConnected?setConn(false):null;}catch{}},2500);}
 function stopPolling(){clearInterval(pollInterval);}
 function setConn(v){pluginConnected=v;const d=$('conn-dot');d.className='conn-dot '+(v?'on':'wait');$('conn-txt').textContent=v?'Studio connected':'Not connected';v&&(toast('Studio connected!','ok'),addLog('sys','Studio connected.'));}
 function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
-// ═══════════════════════════════════════════════════════════
-// LOG
-// ═══════════════════════════════════════════════════════════
+// ── LOG ──
 function addLog(kind,msg){
   const el=document.createElement('div');
   el.className=`le ${kind}`;
@@ -937,9 +912,7 @@ function addLog(kind,msg){
 }
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-cnt').textContent='0';}
 
-// ═══════════════════════════════════════════════════════════
-// VIEW SWITCH
-// ═══════════════════════════════════════════════════════════
+// ── VIEW SWITCH ──
 function gotoView(name,btn){
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -950,9 +923,7 @@ function gotoView(name,btn){
 }
 function toggleST(type,el){activeST[type]=!activeST[type];el.classList.toggle('on',activeST[type]);toast((activeST[type]?'Enabled ':'Disabled ')+type,'info');}
 
-// ═══════════════════════════════════════════════════════════
-// ANTHROPIC API CALL (direct, genius-level)
-// ═══════════════════════════════════════════════════════════
+// ── AI ──
 const GENIUS_SYSTEM = `You are an expert in EVERYTHING:
 - Roblox Lua scripting: every API, service, best practice, framework
 - Roblox frameworks: Cmdr (command system by evaera), Knit (framework by sleitnick), ProfileService (by loleris), DataStore2 (by Kampfkarren), Rojo (file sync by Roblox), Promise (by evaera), t (typechecking), ReactLua, Matter (ECS)
@@ -966,7 +937,7 @@ const GENIUS_SYSTEM = `You are an expert in EVERYTHING:
 
 When answering about Roblox frameworks or tools, give specific accurate details about the actual API. When mentioning YouTubers, give accurate info about their content style and focus. For scripts, always return production-ready Lua. Be conversational, detailed, and insightful.`;
 
-async function callAI(prompt, sysOverride=null, maxTok=2000){
+async function callAI(prompt,sysOverride=null,maxTok=2000){
   try{
     const r=await fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
@@ -986,11 +957,11 @@ async function callAI(prompt, sysOverride=null, maxTok=2000){
     return null;
   }
 }
+
+// Strip markdown fences but leave ===MARKERS=== intact
 function cc(c){return(c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();}
 
-// ═══════════════════════════════════════════════════════════
-// SEND TO STUDIO
-// ═══════════════════════════════════════════════════════════
+// ── SEND TO STUDIO ──
 function wrapInsert(code,type){
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const parentMap={
@@ -1010,6 +981,9 @@ function detectType(b){
   if(/return module/.test(lb))return'modulescript';
   return'script';
 }
+
+// FIX: split FIRST on raw text, then cc() each block's content.
+// The old version called cc() on the whole string first which stripped the ===MARKERS===.
 function splitBlocks(code){
   const sm=code.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
   const lm=code.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
@@ -1021,6 +995,7 @@ function splitBlocks(code){
   if(!secs.length)secs.push({code:cc(code),type:detectType(code)});
   return secs;
 }
+
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -1048,9 +1023,7 @@ async function sendToStudio(){
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// ═══════════════════════════════════════════════════════════
-// GENERATE SCRIPT
-// ═══════════════════════════════════════════════════════════
+// ── GENERATE SCRIPT ──
 async function genScript(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -1075,6 +1048,7 @@ Return production-ready, commented Lua. No markdown fences.`;
   if(!raw){$('es-status').textContent='✗ Failed';toast('Generation failed','bad');return;}
   const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
   const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+  // FIX: splitBlocks on raw (not cc'd) output so markers survive
   const secs=splitBlocks(raw);
   const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗
 -- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║
@@ -1086,6 +1060,7 @@ Return production-ready, commented Lua. No markdown fences.`;
   toast(`✓ ${secs.length} script(s) generated!`,'ok');
   addLog('result','Generated: '+secs.map(s=>s.type).join(', '));
 }
+
 async function aiAction(action){
   const code=$('code-area').value.trim();
   if(!code){toast('No code.','bad');return;}
@@ -1108,9 +1083,7 @@ async function aiAction(action){
   }else toast('Failed.','bad');
 }
 
-// ═══════════════════════════════════════════════════════════
-// CODE EDITOR
-// ═══════════════════════════════════════════════════════════
+// ── CODE EDITOR ──
 function cpyCode(){navigator.clipboard.writeText($('code-area').value);toast('Copied!','ok');}
 function onCE(){const v=$('code-area').value;$('es-lines').textContent=v.split('\n').length;$('es-chars').textContent=v.length;updateLN();}
 function updateLN(){const n=$('code-area').value.split('\n').length;$('line-nums').innerHTML=Array.from({length:Math.max(n,1)},(_,i)=>`<span class="ln">${i+1}</span>`).join('');}
@@ -1122,9 +1095,7 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function cq(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Chat cleared','info');}
 
-// ═══════════════════════════════════════════════════════════
-// GENIUS AI CHAT
-// ═══════════════════════════════════════════════════════════
+// ── AI CHAT ──
 async function sendChat(){
   const inp=$('chat-input');const msg=inp.value.trim();if(!msg)return;
   inp.value='';inp.style.height='auto';
@@ -1147,9 +1118,7 @@ function appendMsg(role,text){
 function appendTyping(id){const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;d.innerHTML=`<div class="cava ai">✦</div><div><div class="cbub"><div class="typing"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// ═══════════════════════════════════════════════════════════
-// TEMPLATES & SNIPPETS
-// ═══════════════════════════════════════════════════════════
+// ── TEMPLATES & SNIPPETS ──
 const TMPLS={
   door:`-- SCRIPT: Touch-activated door with TweenService
 local TweenService = game:GetService("TweenService")
@@ -1398,9 +1367,7 @@ if not ok2 then warn("Save failed:", err) end`,
 };
 function inSnip(n){if(!SNIPS[n])return;const cur=$('code-area').value;$('code-area').value=cur+(cur?'\n\n':'')+SNIPS[n];onCE();toast('Snippet inserted','ok');}
 
-// ═══════════════════════════════════════════════════════════
-// 3D VIEWPORT (Editor panel)
-// ═══════════════════════════════════════════════════════════
+// ── 3D VIEWPORT ──
 function initViewport(){
   vpCanvas=$('mc');const vp=vpCanvas.parentElement;
   vpCanvas.width=vp.clientWidth||280;vpCanvas.height=vp.clientHeight||200;
@@ -1505,9 +1472,7 @@ function pickObj3d(e){
 }
 function switchRT(name,btn){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.rpanel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('rpanel-'+name).classList.add('active');}
 
-// ═══════════════════════════════════════════════════════════
-// 3D AI MODEL VIEWER (Meshy-style)
-// ═══════════════════════════════════════════════════════════
+// ── 3D MODEL VIEWER ──
 function initM3dViewer(){
   m3dCanvas=$('model3d-canvas');if(!m3dCanvas)return;
   const wrap=m3dCanvas.parentElement;
@@ -1527,17 +1492,12 @@ function m3dProj(x,y,z){
 function renderM3d(){
   if(!m3dCanvas)return;m3dCtx=m3dCanvas.getContext('2d');
   m3dCtx.clearRect(0,0,m3dCanvas.width,m3dCanvas.height);
-  // Dark gradient bg
   const bg=m3dCtx.createRadialGradient(m3dCanvas.width/2,m3dCanvas.height/2,0,m3dCanvas.width/2,m3dCanvas.height/2,m3dCanvas.width*.6);
   bg.addColorStop(0,'#070a12');bg.addColorStop(1,'#020304');
   m3dCtx.fillStyle=bg;m3dCtx.fillRect(0,0,m3dCanvas.width,m3dCanvas.height);
-  // Grid
   drawM3dGrid();
-  // Objects sorted by depth
   [...m3dObjects].sort((a,b)=>{const pa=m3dProj(a.x,a.y,a.z),pb=m3dProj(b.x,b.y,b.z);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawM3dObj(o));
-  // Axes
   drawM3dAxes();
-  // Stats
   $('m3d-stats').textContent=m3dObjects.length+' parts';
 }
 function drawM3dGrid(){
@@ -1547,7 +1507,6 @@ function drawM3dGrid(){
     if(a&&b){m3dCtx.beginPath();m3dCtx.moveTo(a.sx,a.sy);m3dCtx.lineTo(b.sx,b.sy);m3dCtx.stroke();}
     if(c&&d){m3dCtx.beginPath();m3dCtx.moveTo(c.sx,c.sy);m3dCtx.lineTo(d.sx,d.sy);m3dCtx.stroke();}
   }
-  // Shadow under model
   const o=m3dProj(0,-0.05,0);if(o){m3dCtx.beginPath();m3dCtx.ellipse(o.sx,o.sy,80,20,0,0,Math.PI*2);m3dCtx.fillStyle='rgba(0,229,255,0.03)';m3dCtx.fill();}
 }
 function drawM3dAxes(){
@@ -1569,7 +1528,6 @@ function drawM3dObj(obj){
   const sel=obj.id===m3dSelectedId;
   faces.forEach(([a,b2,c,d],fi)=>{
     const pts=[verts[a],verts[b2],verts[c],verts[d]];
-    // Lighting: top light + rim
     const light=Math.max(0.18,0.28+normals[fi][1]*0.55+(normals[fi][2]+normals[fi][0])*0.12);
     const rim=Math.max(0,normals[fi][2]*-0.15);
     const fr=Math.round(r*light+20*rim),fg=Math.round(g*light+30*rim),fb=Math.round(b*light+50*rim);
@@ -1580,29 +1538,21 @@ function drawM3dObj(obj){
 }
 function m3dToggle(group,val,el){
   m3dParams[group]=val;
-  document.querySelectorAll(`[id^="ms-${val.slice(0,1)}"],#ms-humanoid,#ms-monster,#ms-robot,#ms-vehicle,#ms-building,#ms-weapon`).forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll(`[id^="mst-"]`).forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[id^="mst-"]').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
   genModel3d();
 }
 function genModel3d(){
   m3dObjects=[];m3dNextId=1;
   const{base,complexity,scale,parts}=m3dParams;
-  const builders={
-    humanoid:buildHumanoid,monster:buildMonster,robot:buildRobot,
-    vehicle:buildVehicle,building:buildBuilding,weapon:buildWeapon
-  };
+  const builders={humanoid:buildHumanoid,monster:buildMonster,robot:buildRobot,vehicle:buildVehicle,building:buildBuilding,weapon:buildWeapon};
   const fn=builders[base]||buildHumanoid;
   fn(scale,complexity,parts);
-  updateM3dPartList();
-  renderM3d();
+  updateM3dPartList();renderM3d();
 }
-function m3dPart(name,x,y,z,w,h,d,color){
-  m3dObjects.push({id:'m'+m3dNextId++,name,x,y,z,w,h,d,color});
-}
-function buildHumanoid(sc,cx,pts){
-  const c=m3dParams.style;
-  const col=['#5a7fc7','#4a6bb5','#3d5aa0'];
+function m3dPart(name,x,y,z,w,h,d,color){m3dObjects.push({id:'m'+m3dNextId++,name,x,y,z,w,h,d,color});}
+function buildHumanoid(sc,cx){
   const skin='#c8956c';const cloth='#3a5a8a';const dark='#1a2a4a';
   m3dPart('Head',0,sc*3.2,0,sc*1.6,sc*1.6,sc*1.6,skin);
   m3dPart('Torso',0,sc*1.4,0,sc*2,sc*2.4,sc*1.2,cloth);
@@ -1617,55 +1567,41 @@ function buildHumanoid(sc,cx,pts){
 }
 function buildMonster(sc,cx){
   const body='#2a4a2a';const skin='#3a6a3a';const dark='#1a2a1a';
-  m3dPart('Body',0,0,0,sc*3,sc*3,sc*2,body);
-  m3dPart('Head',0,sc*2.2,0,sc*2.4,sc*2,sc*2,skin);
-  m3dPart('LArm',-sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
-  m3dPart('RArm',sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
-  m3dPart('LLeg',-sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
-  m3dPart('RLeg',sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
+  m3dPart('Body',0,0,0,sc*3,sc*3,sc*2,body);m3dPart('Head',0,sc*2.2,0,sc*2.4,sc*2,sc*2,skin);
+  m3dPart('LArm',-sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);m3dPart('RArm',sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
+  m3dPart('LLeg',-sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);m3dPart('RLeg',sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
   if(cx>=5){m3dPart('Horns',0,sc*3.4,0,sc*.5,sc*1.2,sc*.5,'#8a2a2a');m3dPart('HornL',-sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');m3dPart('HornR',sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');}
   if(cx>=7){m3dPart('Tail',sc*1.5,-sc*1.5,sc*1.2,sc*.6,sc*.6,sc*2.5,'#2a6a2a');}
 }
 function buildRobot(sc,cx){
   const metal='#5a6a7a';const dark='#2a3040';const light='#8a9aaa';const glow='#00aaff';
-  m3dPart('Head',0,sc*3,0,sc*1.8,sc*1.5,sc*1.8,dark);
-  m3dPart('HeadVisor',0,sc*3,sc*.92,sc*1.4,sc*1,sc*.3,glow);
-  m3dPart('Chest',0,sc*1.3,0,sc*2.4,sc*2.8,sc*1.4,metal);
-  m3dPart('ChestPanel',0,sc*1.5,sc*.72,sc*1.8,sc*1.8,sc*.3,dark);
-  m3dPart('LArm',-sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);
-  m3dPart('RArm',sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);
-  m3dPart('LLeg',-sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);
-  m3dPart('RLeg',sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);
+  m3dPart('Head',0,sc*3,0,sc*1.8,sc*1.5,sc*1.8,dark);m3dPart('HeadVisor',0,sc*3,sc*.92,sc*1.4,sc*1,sc*.3,glow);
+  m3dPart('Chest',0,sc*1.3,0,sc*2.4,sc*2.8,sc*1.4,metal);m3dPart('ChestPanel',0,sc*1.5,sc*.72,sc*1.8,sc*1.8,sc*.3,dark);
+  m3dPart('LArm',-sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);m3dPart('RArm',sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);
+  m3dPart('LLeg',-sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);m3dPart('RLeg',sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);
   if(cx>=6){m3dPart('LShoulder',-sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);m3dPart('RShoulder',sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);}
 }
 function buildVehicle(sc,cx){
   const body='#cc3a22';const dark='#1a1a2a';const glass='#4488cc';const chrome='#aabbcc';
-  m3dPart('Body',0,sc*.8,0,sc*4,sc*1.2,sc*2,body);
-  m3dPart('Roof',0,sc*1.7,-sc*.2,sc*2.8,sc*.8,sc*1.8,body);
-  m3dPart('FLWheel',-sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);
-  m3dPart('FRWheel',sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);
-  m3dPart('BLWheel',-sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
-  m3dPart('BRWheel',sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
+  m3dPart('Body',0,sc*.8,0,sc*4,sc*1.2,sc*2,body);m3dPart('Roof',0,sc*1.7,-sc*.2,sc*2.8,sc*.8,sc*1.8,body);
+  m3dPart('FLWheel',-sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart('FRWheel',sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);
+  m3dPart('BLWheel',-sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart('BRWheel',sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
   m3dPart('Windshield',0,sc*1.8,sc*.88,sc*2.4,sc*.7,sc*.1,glass);
   if(cx>=5){m3dPart('FBumper',0,sc*.4,sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);m3dPart('BBumper',0,sc*.4,-sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);}
   if(cx>=7){m3dPart('Spoiler',0,sc*1.6,-sc*1.2,sc*3,sc*.2,sc*.4,'#0a0a0a');}
 }
 function buildBuilding(sc,cx){
   const wall='#8a8a9a';const window='#4499cc';const roof='#6a4a3a';const door='#5a3a2a';
-  m3dPart('Foundation',0,-sc*.25,0,sc*5,sc*.5,sc*4,wall);
-  m3dPart('WallBase',0,sc*2.5,0,sc*4.8,sc*5,sc*3.8,wall);
-  m3dPart('Roof',0,sc*5.5,0,sc*5.5,sc*1,sc*4.5,roof);
-  m3dPart('Door',0,sc*1.5,sc*1.92,sc*1,sc*2.8,sc*.2,door);
+  m3dPart('Foundation',0,-sc*.25,0,sc*5,sc*.5,sc*4,wall);m3dPart('WallBase',0,sc*2.5,0,sc*4.8,sc*5,sc*3.8,wall);
+  m3dPart('Roof',0,sc*5.5,0,sc*5.5,sc*1,sc*4.5,roof);m3dPart('Door',0,sc*1.5,sc*1.92,sc*1,sc*2.8,sc*.2,door);
   ['W1','W2','W3','W4'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*3.5,sc*1.92,sc*.9,sc*1.2,sc*.1,window));
   if(cx>=5){['W5','W6','W7','W8'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*1.8,sc*1.92,sc*.9,sc*1.2,sc*.1,window));}
   if(cx>=7){m3dPart('Chimney',sc*1.5,sc*6.5,-sc*.5,sc*.8,sc*2,sc*.8,'#5a5a6a');}
 }
 function buildWeapon(sc,cx){
-  const metal='#5a6a7a';const dark='#2a3040';const light='#9aaabc';const grip='#4a3020';const gold='#cc9922';
-  m3dPart('Blade',0,sc*2,0,sc*.4,sc*5,sc*.2,light);
-  m3dPart('BladeEdge',sc*.22,sc*2,0,sc*.08,sc*5,sc*.15,light);
-  m3dPart('Guard',0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);
-  m3dPart('Grip',0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);
+  const light='#9aaabc';const grip='#4a3020';const gold='#cc9922';
+  m3dPart('Blade',0,sc*2,0,sc*.4,sc*5,sc*.2,light);m3dPart('BladeEdge',sc*.22,sc*2,0,sc*.08,sc*5,sc*.15,light);
+  m3dPart('Guard',0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);m3dPart('Grip',0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);
   m3dPart('Pommel',0,-sc*2.5,0,sc*.7,sc*.7,sc*.7,gold);
   if(cx>=5){m3dPart('Gem',0,sc*.15,sc*.28,sc*.4,sc*.4,sc*.4,'#aa2288');}
   if(cx>=7){m3dPart('EngL',-sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);m3dPart('EngR',sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);}
@@ -1710,13 +1646,10 @@ Choose the best base shape. Return only the JSON, nothing else.`;
       if(cfg.complexity)m3dParams.complexity=cfg.complexity;
       if(cfg.scale)m3dParams.scale=Math.min(5,cfg.scale);
       if(cfg.parts)m3dParams.parts=Math.min(40,cfg.parts);
-      // update UI sliders
       document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
       const el=$('ms-'+m3dParams.base);if(el)el.classList.add('active');
       genModel3d();toast('Model generated from AI description!','ok');
-    }catch{
-      genModel3d();toast('Generated!','ok');
-    }
+    }catch{genModel3d();toast('Generated!','ok');}
   }else{genModel3d();toast('Generated!','ok');}
 }
 function exportModelToLua(){
@@ -1728,15 +1661,13 @@ function exportModelToLua(){
     const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
     lua+=`local ${n}=Instance.new("Part")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.w.toFixed(2)},${o.h.toFixed(2)},${o.d.toFixed(2)})\n${n}.Position=Vector3.new(${o.x.toFixed(2)},${o.y.toFixed(2)},${o.z.toFixed(2)})\n${n}.BrickColor=BrickColor.new(Color3.fromRGB(${r},${g},${b}))\n${n}.Material=Enum.Material.SmoothPlastic\n${n}.Anchored=true\n${n}.Parent=model\n\n`;
   });
-  lua+=`-- Primary part\nmodel.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
+  lua+=`model.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
   $('code-area').value=lua;onCE();
   document.querySelectorAll('.nav-tab')[0].click();
   toast(`Model exported! ${m3dObjects.length} parts.`,'ok');
 }
 
-// ═══════════════════════════════════════════════════════════
-// TERRAIN
-// ═══════════════════════════════════════════════════════════
+// ── TERRAIN ──
 function setBiome(b,el){tp.biome=b;document.querySelectorAll('.biome-btn').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
 function toggleFeat(f,el){tp.features[f]=!tp.features[f];el.classList.toggle('active',tp.features[f]);}
 function initTerrainCanvas(){
@@ -1795,9 +1726,7 @@ function exportTerrainLua(){
   $('code-area').value=lua;onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Terrain Lua exported!','gold');
 }
 
-// ═══════════════════════════════════════════════════════════
-// GUI BUILDER
-// ═══════════════════════════════════════════════════════════
+// ── GUI BUILDER ──
 const GUI_DEF={Frame:{bg:'#1a2035',w:200,h:150,text:'',border:true},TextLabel:{bg:'transparent',w:150,h:30,text:'Text Label',border:false},TextButton:{bg:'#0055aa',w:160,h:40,text:'Click Me',border:true},TextBox:{bg:'#0d1020',w:160,h:36,text:'',border:true},ImageLabel:{bg:'#333344',w:100,h:100,text:'🖼',border:false},ProgressBar:{bg:'#0d1020',w:200,h:18,text:'',border:true,progress:.6}};
 function addGuiEl(type){
   const def=GUI_DEF[type]||{bg:'#1a2035',w:120,h:60,text:type,border:true};
@@ -1836,7 +1765,7 @@ function updateGuiProps(){
 }
 function guiProp(k,v){const el=guiEls.find(e=>e.id===selGuiId);if(!el)return;el[k]=v;renderGuiScreen();}
 function delGuiEl(){guiEls=guiEls.filter(e=>e.id!==selGuiId);selGuiId=null;renderGuiScreen();updateGuiProps();updateGuiLayers();}
-function updateGuiLayers(){const t=$('gui-layers');t.innerHTML=[...guiEls].reverse().map(el=>`<div class="gui-element-row${el.id===selGuiId?' selected':''}" onclick="selGuiEl('${el.id}')" style="display:flex;align-items:center;gap:4px;padding:3px 4px;border-radius:3px;cursor:pointer;font-size:8px;color:${el.id===selGuiId?'var(--c1)':'var(--text2)'};">${el.type}</div>`).join('');}
+function updateGuiLayers(){const t=$('gui-layers');t.innerHTML=[...guiEls].reverse().map(el=>`<div onclick="selGuiEl('${el.id}')" style="display:flex;align-items:center;gap:4px;padding:3px 4px;border-radius:3px;cursor:pointer;font-size:8px;color:${el.id===selGuiId?'var(--c1)':'var(--text2)'};">${el.type}</div>`).join('');}
 function loadGuiPreset(name){
   guiEls=[];guiNextId=1;
   const presets={
@@ -1861,37 +1790,43 @@ function exportGuiLua(){
   $('code-area').value=lua;onCE();toast('GUI exported!','ok');document.querySelectorAll('.nav-tab')[0].click();
 }
 
-// ═══════════════════════════════════════════════════════════
-// NPC CREATOR
-// ═══════════════════════════════════════════════════════════
-function npcT(group,val,el){np[group]=val;document.querySelectorAll(`[id^="n${group[0]}-"],[id^="nt-"]`).forEach(x=>{if(x.id.startsWith('n'+group[0]+'-')||x.id.startsWith('nt-'))x.classList.remove('active');});el.classList.add('active');drawNPC();}
+// ── NPC CREATOR ──
+function npcT(group,val,el){
+  np[group]=val;
+  // Clear only the relevant group's buttons
+  const prefix=group==='type'?'nt':group==='behavior'?'nb':group==='combat'?'nc':'n?';
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  drawNPC();
+}
 function drawNPC(){
   const c=$('npc-c');if(!c)return;
-  const ctx2=c.getContext('2d'),W=280,H=400,cx=140,cy=320;
+  const ctx2=c.getContext('2d'),W=280,H=400,cx=140;
+  // FIX: use npcAngle to rotate the preview so drag-rotate actually works
+  const cosA=Math.cos(npcAngle),sinA=Math.sin(npcAngle);
   ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#040609';ctx2.fillRect(0,0,W,H);
-  // Subtle grid
   ctx2.strokeStyle='rgba(0,229,255,0.03)';ctx2.lineWidth=.5;
   for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
   for(let i=0;i<H;i+=20){ctx2.beginPath();ctx2.moveTo(0,i);ctx2.lineTo(W,i);ctx2.stroke();}
   const sc=np.type==='boss'?1.5:np.type==='monster'?1.2:1;
+  const cy=320;
   const skin=$('npc-col')?.value||'#8B4513';
   const cloth=np.type==='monster'?'#2a4a2a':np.type==='boss'?'#1a0a2a':'#3a5a8a';
-  // Shadow
+  // Perspective skew based on npcAngle
+  const skew=sinA*12*sc;
   ctx2.beginPath();ctx2.ellipse(cx,cy+4,28*sc,8*sc,0,0,Math.PI*2);ctx2.fillStyle='rgba(0,0,0,.4)';ctx2.fill();
-  // Legs
-  ctx2.fillStyle=cloth;ctx2.fillRect(cx-16*sc,cy-44*sc,12*sc,44*sc);ctx2.fillRect(cx+4*sc,cy-44*sc,12*sc,44*sc);
-  // Torso
-  ctx2.fillRect(cx-28*sc,cy-110*sc,56*sc,66*sc);
-  // Arms
-  ctx2.fillStyle=skin;ctx2.fillRect(cx-44*sc,cy-108*sc,14*sc,52*sc);ctx2.fillRect(cx+30*sc,cy-108*sc,14*sc,52*sc);
-  // Head
-  ctx2.fillStyle=skin;ctx2.beginPath();ctx2.roundRect(cx-24*sc,cy-158*sc,48*sc,50*sc,np.type==='robot'?6:12);ctx2.fill();
-  // Eyes
+  ctx2.fillStyle=cloth;
+  ctx2.fillRect(cx-16*sc+skew,cy-44*sc,12*sc,44*sc);
+  ctx2.fillRect(cx+4*sc+skew,cy-44*sc,12*sc,44*sc);
+  ctx2.fillRect(cx-28*sc+skew,cy-110*sc,56*sc,66*sc);
+  ctx2.fillStyle=skin;
+  ctx2.fillRect(cx-44*sc+skew,cy-108*sc,14*sc,52*sc);
+  ctx2.fillRect(cx+30*sc+skew,cy-108*sc,14*sc,52*sc);
+  ctx2.beginPath();ctx2.roundRect(cx-24*sc+skew,cy-158*sc,48*sc,50*sc,np.type==='robot'?6:12);ctx2.fill();
   ctx2.fillStyle=np.type==='boss'?'#ff0000':np.type==='monster'?'#ffaa00':'#1a1a2a';
-  ctx2.beginPath();ctx2.arc(cx-10*sc,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-  ctx2.beginPath();ctx2.arc(cx+10*sc,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-  if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-12*sc,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+12*sc,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();}
-  // Name
+  ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
+  ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
+  if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();}
   ctx2.fillStyle='white';ctx2.font=`bold 12px JetBrains Mono,monospace`;ctx2.textAlign='center';ctx2.fillText($('npc-name')?.value||'NPC',cx,48);
   ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`9px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-32);ctx2.fillText(np.behavior+' · '+np.combat,cx,H-18);ctx2.textAlign='left';
 }
@@ -1907,41 +1842,95 @@ Return raw Lua only, no markdown fences.`;
   if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Script ready in editor!';document.querySelectorAll('.nav-tab')[0].click();toast('NPC script generated!','ok');}
   else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
 }
-// NPC canvas rotate
 const npcCv=$('npc-c');if(npcCv){
   npcCv.addEventListener('mousedown',e=>{npcDragging=true;npcLastX=e.clientX;});
   npcCv.addEventListener('mousemove',e=>{if(!npcDragging)return;npcAngle+=(e.clientX-npcLastX)*.01;npcLastX=e.clientX;drawNPC();});
   npcCv.addEventListener('mouseup',()=>npcDragging=false);
 }
 
-// ═══════════════════════════════════════════════════════════
-// ADMIN SUITE
-// ═══════════════════════════════════════════════════════════
+// ── ADMIN SUITE ──
 async function genAdmin(type){
-  const BANNED=`BANNED: never use varargs (...) in pcall, FontSize enum (use TextSize=number), BackgroundColor (use BackgroundColor3), :FireServer() server-side, incomplete statements.`;
+  const BANNED=`IMPORTANT RULES — follow strictly:
+- Never use FontSize enum, use TextSize=number
+- Never use BackgroundColor, use BackgroundColor3
+- Never call :FireServer() from a server Script
+- Never use varargs (...) inside pcall
+- Always use task.wait() not wait()
+- All RemoteEvents must be created individually, not in loops
+- The local script must create a visible on-screen GUI with TweenService animations, not just print()`;
+
   const prompts={
-    full:`${BANNED}\nWrite a complete Roblox admin system. TWO SECTIONS, use exact markers:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\nServer (150 lines max): Folder "AdminEvents" in RS. Individual RemoteEvents (not loops). RANKS table. Handlers for: Kick, Ban (DataStore), Unban, Tp, Bring, Kill, God, FF, Speed, Announce, Day, Night, Freeze, GetPlayers, Notify. PlayerAdded ban check.\nLocal (200 lines max): Dark 500×560 panel toggled F9. Player chips, command buttons with hover tweens, toast notifications, announcement banner. GothamBold font throughout.`,
-    ban:`${BANNED}\nWrite a Roblox ban system. TWO SECTIONS:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\nServer: BanStore DataStore, Folder+RemoteEvents, PlayerAdded ban check, handlers: BanPlayer (name,reason), UnbanPlayer, TempBan (expires=os.time()+secs), GetBanList.\nLocal: F8 panel, ban/unban/tempban inputs, ban list scrollframe.`,
-    anticheat:`${BANNED}\nWrite anti-cheat. ONE SECTION:\n===SCRIPT_SERVER===\nSpeed>120 detect, fly detect (airborne>5s), teleport>400 studs. Flag system: warn@2, kick@4, ban+DS@6. Heartbeat loop, flag reset every 300s. ACNotify RemoteEvent for warnings.`,
-    emotes:`${BANNED}\nWrite emote system. TWO SECTIONS:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\nServer: PlayEmote/StopEmote events, load+play animations.\nLocal: 12 emotes, E key toggle wheel, circular layout with math.cos/sin, TweenService open/close, hover scale.`,
-    ranks:`${BANNED}\nWrite rank system. TWO SECTIONS:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\nServer: 5 rank names+colors, BillboardGui rank tag, SetRank/GetMyRank/RankChanged events, DataStore save.\nLocal: F7 panel, rank display card, only rank 5 sees SetRank controls, pop animation on rank change.`,
-    notification:`${BANNED}\nWrite notification system. TWO SECTIONS:\n===SCRIPT_SERVER===\n===SCRIPT_LOCAL===\nServer: Folder+RemoteEvents ShowToast/ShowAnnouncement/ShowHint/ShowDialog, fire helpers.\nLocal: Toast stack max 4 (slide-in TweenService Back, colored border, 4s timeout), Announcement top bar slide-down, Hint bottom fade, Dialog modal with dynamic buttons.`,
+    // FIX: prompts now explicitly request the ===MARKERS=== so splitBlocks can separate them
+    full:`${BANNED}
+Write a complete Roblox admin system as TWO scripts using EXACTLY these section markers (no extra text before them):
+===SCRIPT_SERVER===
+(server Script here — ~150 lines)
+===SCRIPT_LOCAL===
+(LocalScript here — ~200 lines)
+
+Server requirements: Folder named "AdminEvents" in ReplicatedStorage. Create each RemoteEvent individually by name. RANKS table keyed by UserId. Rank hierarchy check so lower ranks cannot target higher ranks. Handlers: Kick(name,reason), Ban(name,reason) with DataStore, Unban(name) looking up offline userId via a name→id DataStore, Tp, Bring, Kill, God, FF toggle, Speed(name,value), Announce, Day, Night, Freeze toggle using Attributes. PlayerAdded ban check.
+Local requirements: Dark panel (500×560) toggled with F9. Scrollable player list (clicking name fills target input). Separate target input and reason/value input. Buttons with TweenService hover effects for: Kick, Ban, Unban, Kill, God, FF, Freeze, TP, Bring, Speed, Day, Night. Announce text box + button. Notifications rendered on screen as sliding cards using TweenService — NOT print(). Announcement banner at top of screen.`,
+
+    ban:`${BANNED}
+Write a Roblox ban system as TWO scripts:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+Server: BanStore DataStore. NameStore DataStore mapping name→UserId for offline unbans. Folder+RemoteEvents. PlayerAdded ban check. Handlers: BanPlayer(name,reason), UnbanPlayer(name) that resolves offline players via NameStore, TempBan(name,secs,reason) using os.time()+secs, GetBanList returning array.
+Local: F8 toggle panel. Ban input, reason input, unban input, tempban+duration input. Ban list ScrollingFrame populated from GetBanList. On-screen toast notifications with TweenService.`,
+
+    anticheat:`${BANNED}
+Write a Roblox anti-cheat as ONE script:
+===SCRIPT_SERVER===
+Speed hack: WalkSpeed>120 detected via Heartbeat. Fly hack: character airborne >5 consecutive seconds. Teleport hack: HumanoidRootPart moves >400 studs in one frame.
+Flag system: warn at 2 flags (RemoteEvent notification), kick at 4, permanent DataStore ban at 6. Flag table resets every 300 seconds. ACNotify RemoteEvent fires warning text to the flagged player's screen.`,
+
+    emotes:`${BANNED}
+Write an emote system as TWO scripts:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+Server: PlayEmote and StopEmote RemoteEvents. Load animation by AssetId, play on Animator, stop on StopEmote or character death.
+Local: 12 emotes with names and placeholder AnimationIds. E key toggles circular wheel. Buttons arranged with math.cos/sin around center. TweenService open/close animation. Hovering scales button up. Clicking fires PlayEmote and closes wheel. Moving character fires StopEmote.`,
+
+    ranks:`${BANNED}
+Write a rank system as TWO scripts:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+Server: 5 rank tiers with names and BrickColors. BillboardGui rank tag above head updated on rank change. SetRank, GetMyRank, RankChanged RemoteEvents. DataStore saves rank per UserId.
+Local: F7 toggle panel. Shows current player's rank as a styled card. SetRank dropdown+button only visible to rank 5. RankChanged fires a pop animation on the rank card using TweenService.`,
+
+    notification:`${BANNED}
+Write a notification system as TWO scripts:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+Server: Folder+RemoteEvents: ShowToast(player,text,color), ShowAnnouncement(text), ShowHint(text), ShowDialog(player,title,body,buttons[]).
+Local: Toast stack (max 4 visible, slide in from right using TweenService Back easing, left-colored border, 4s auto-dismiss). Announcement: full-width top bar slides down, 6s dismiss. Hint: bottom-center fade in/out. Dialog: modal frame centered, dynamically creates buttons, fires DialogResponse RemoteEvent with button index.`,
   };
+
   toast('Generating admin script…','gold');
-  $('code-area').value='-- Generating, please wait…';onCE();
-  document.querySelectorAll('.nav-tab')[0].click();
-  const r=await callAI(prompts[type]||prompts.full,GENIUS_SYSTEM,3000);
-  if(r){$('code-area').value=cc(r);onCE();toast('Admin script ready! Send to Studio.','gold');}
-  else{$('code-area').value='-- Generation failed.';toast('Failed','bad');}
+  $('code-area').value='-- Generating, please wait…';
+  onCE();
+  document.querySelector('.nav-tab').click();
+
+  // FIX: use higher token limit for complex scripts and ask for more tokens
+  const r=await callAI(prompts[type]||prompts.full, GENIUS_SYSTEM, 4000);
+
+  if(r){
+    // FIX: put raw AI output (markers intact) into editor — do NOT call cc() here.
+    // splitBlocks() called by sendToStudio will strip fences per-block.
+    $('code-area').value=r;
+    onCE();
+    toast('Admin script ready! Review then Send to Studio.','gold');
+    addLog('result','Admin: '+type+' generated');
+  }else{
+    $('code-area').value='-- Generation failed. Try again.';
+    toast('Failed','bad');
+  }
 }
 
-// ═══════════════════════════════════════════════════════════
-// MODAL
-// ═══════════════════════════════════════════════════════════
+// ── MODAL ──
 function openModal(t,s,b,btns){$('modal-title').textContent=t;$('modal-sub').textContent=s||'';$('modal-body').innerHTML=b||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
 function closeModal(){$('modal-bg').classList.remove('open');}
 
-// Init
 onCE();
 </script>
 </body>
