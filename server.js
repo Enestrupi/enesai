@@ -33,37 +33,55 @@ Multi-script separator format (only include sections needed):
 ===SCRIPT_LOCAL===
 ===SCRIPT_MODULE===`;
 
+// ── Token estimator (rough: 1 token ≈ 4 chars) ──
+function estimateTokens(str) {
+  return Math.ceil(str.length / 4);
+}
+
+// ── Trim to fit within a token budget ──
+function trimToTokens(str, maxTokens) {
+  return str.slice(0, maxTokens * 4);
+}
+
 // ═══════════════════════════════════════════
-// AI — Claude (Anthropic)
+// AI — Groq
 // ═══════════════════════════════════════════
 app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return res.status(500).json({ error: "ANTHROPIC_API_KEY not set on server" });
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
 
-  const extraSystem = system ? system.slice(0, 400) : "";
+  // Budget: llama-3.3-70b free tier = ~6000 TPM
+  // System ~300 tokens + output ~4000 tokens = 1700 tokens left for user prompt
+  const MAX_OUTPUT_TOKENS = 4000;
+  const SYSTEM_TOKENS = estimateTokens(ROBLOX_SYSTEM);
+  const EXTRA_TOKENS = system ? Math.min(estimateTokens(system), 100) : 0;
+  const PROMPT_BUDGET = 6000 - SYSTEM_TOKENS - EXTRA_TOKENS - MAX_OUTPUT_TOKENS - 100; // 100 buffer
+
+  const extraSystem = system ? trimToTokens(system, 100) : "";
   const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n" + extraSystem : "");
+  const trimmedPrompt = trimToTokens(prompt, Math.max(PROMPT_BUDGET, 500));
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01"
+        "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 4000,
-        system: fullSystem,
+        model: "llama-3.3-70b-versatile",
+        max_tokens: MAX_OUTPUT_TOKENS,
+        temperature: 0.2,
         messages: [
-          { role: "user", content: prompt }
+          { role: "system", content: fullSystem },
+          { role: "user",   content: trimmedPrompt }
         ]
       })
     });
@@ -72,11 +90,11 @@ app.post("/api/ai", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Anthropic error:", data);
-      return res.status(500).json({ error: data.error?.message || "Anthropic API error" });
+      console.error("Groq error:", data);
+      return res.status(500).json({ error: data.error?.message || "Groq API error" });
     }
 
-    const text = data.content?.[0]?.text || "";
+    const text = data.choices?.[0]?.message?.content || "";
     res.json({ content: [{ text }] });
 
   } catch (e) {
@@ -184,5 +202,5 @@ setInterval(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Studio Bridge on port " + PORT);
-  console.log("Anthropic key: " + (process.env.ANTHROPIC_API_KEY ? "SET" : "MISSING"));
+  console.log("Groq key: " + (process.env.GROQ_API_KEY ? "SET" : "MISSING"));
 });
