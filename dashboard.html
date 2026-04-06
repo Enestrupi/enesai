@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -30,369 +29,335 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 #root{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
 
 /* ── AUTH ── */
-#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(–bg)}
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(--bg)}
 #auth.gone{display:none}
 .auth-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,229,255,0.06) 0%,transparent 70%);pointer-events:none}
 .auth-wrap{width:440px;position:relative;z-index:2}
 .auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
-.auth-brand-mark{width:36px;height:36px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 30px rgba(0,229,255,0.3)}
-.auth-brand-name{font-family:var(–fd);font-size:16px;font-weight:800;color:var(–text)}
-.auth-brand-ver{font-size:9px;color:var(–text2);margin-top:1px;letter-spacing:.15em}
-.auth-card{background:var(–bg2);border:.5px solid var(–border2);border-radius:var(–rlg);padding:2rem;backdrop-filter:blur(20px)}
-.auth-card h2{font-family:var(–fd);font-size:18px;font-weight:800;margin-bottom:.35rem}
-.auth-card p{font-size:10px;color:var(–text2);margin-bottom:1.5rem;line-height:1.7}
+.auth-brand-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 30px rgba(0,229,255,0.3)}
+.auth-brand-name{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--text)}
+.auth-brand-ver{font-size:9px;color:var(--text2);margin-top:1px;letter-spacing:.15em}
+.auth-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;backdrop-filter:blur(20px)}
+.auth-card h2{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:.35rem}
+.auth-card p{font-size:10px;color:var(--text2);margin-bottom:1.5rem;line-height:1.7}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:9px;color:var(–text2);margin-bottom:5px;letter-spacing:.12em;text-transform:uppercase}
-.field input{width:100%;background:var(–bg3);border:.5px solid var(–border2);border-radius:var(–r);padding:10px 12px;font-family:var(–fm);font-size:12px;color:var(–text);outline:none;transition:border-color .2s}
-.field input:focus{border-color:var(–c1)}
-.field input::placeholder{color:var(–text3)}
-.btn-main{width:100%;background:linear-gradient(135deg,var(–c1),#00b4d8);color:#050709;border:none;border-radius:var(–r);padding:11px;font-family:var(–fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.field label{display:block;font-size:9px;color:var(--text2);margin-bottom:5px;letter-spacing:.12em;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:var(--fm);font-size:12px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--c1)}
+.field input::placeholder{color:var(--text3)}
+.btn-main{width:100%;background:linear-gradient(135deg,var(--c1),#00b4d8);color:#050709;border:none;border-radius:var(--r);padding:11px;font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .btn-main:hover{box-shadow:0 0 24px rgba(0,229,255,0.4);transform:translateY(-1px)}
-.auth-err{color:var(–c5);font-size:10px;margin-top:6px;display:none}
+.auth-err{color:var(--c5);font-size:10px;margin-top:6px;display:none}
 
 /* ── APP SHELL ── */
 #app{display:none;flex:1;flex-direction:column;overflow:hidden}
 #app.show{display:flex}
 
 /* ── TOPBAR ── */
-.topbar{height:44px;border-bottom:.5px solid var(–border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.95);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
+.topbar{height:44px;border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.95);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
 .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
-.topbar-brand-name{font-family:var(–fd);font-size:11px;font-weight:800;color:var(–text);letter-spacing:.03em}
-.topbar-sep{width:.5px;height:18px;background:var(–border);margin:0 4px}
-.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;color:var(–text2)}
-.conn-dot{width:5px;height:5px;border-radius:50%;background:var(–text3);flex-shrink:0}
-.conn-dot.on{background:var(–c3);box-shadow:0 0 6px var(–c3);animation:none}
-.conn-dot.wait{background:var(–c4);animation:pb 1.4s infinite}
+.topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.topbar-brand-name{font-family:var(--fd);font-size:11px;font-weight:800;color:var(--text);letter-spacing:.03em}
+.topbar-sep{width:.5px;height:18px;background:var(--border);margin:0 4px}
+.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px;color:var(--text2)}
+.conn-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.conn-dot.on{background:var(--c3);box-shadow:0 0 6px var(--c3);animation:none}
+.conn-dot.wait{background:var(--c4);animation:pb 1.4s infinite}
 @keyframes pb{0%,100%{opacity:1}50%{opacity:.3}}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
-.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px}
-.tok-val{color:var(–c1);font-size:9px;letter-spacing:.08em}
-.tok-btn{color:var(–text3);cursor:pointer;padding:1px 4px;border:.5px solid var(–border);border-radius:3px;transition:all .15s}
-.tok-btn:hover{border-color:var(–c1);color:var(–c1)}
-.user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px}
-.user-ava{width:22px;height:22px;border-radius:50%;background:var(–rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
-.user-name{font-size:10px;color:var(–text)}
-.logout-btn{color:var(–text3);cursor:pointer;margin-left:4px;font-size:10px}
-.logout-btn:hover{color:var(–c5)}
+.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px}
+.tok-val{color:var(--c1);font-size:9px;letter-spacing:.08em}
+.tok-btn{color:var(--text3);cursor:pointer;padding:1px 4px;border:.5px solid var(--border);border-radius:3px;transition:all .15s}
+.tok-btn:hover{border-color:var(--c1);color:var(--c1)}
+.user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px}
+.user-ava{width:22px;height:22px;border-radius:50%;background:var(--rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+.user-name{font-size:10px;color:var(--text)}
+.logout-btn{color:var(--text3);cursor:pointer;margin-left:4px;font-size:10px}
+.logout-btn:hover{color:var(--c5)}
 
 /* ── TABS ── */
-.nav-tabs{display:flex;gap:0;padding:0 1rem;background:var(–bg2);border-bottom:.5px solid var(–border);flex-shrink:0;overflow-x:auto}
-.nav-tab{padding:8px 16px;font-size:9px;font-family:var(–fm);color:var(–text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;user-select:none;letter-spacing:.06em;text-transform:uppercase}
-.nav-tab:hover{color:var(–text2)}
-.nav-tab.active{color:var(–c1);border-bottom-color:var(–c1)}
-.nav-tab.gold{color:var(–c4)}
-.nav-tab.gold.active{color:var(–c4);border-bottom-color:var(–c4)}
+.nav-tabs{display:flex;gap:0;padding:0 1rem;background:var(--bg2);border-bottom:.5px solid var(--border);flex-shrink:0;overflow-x:auto}
+.nav-tab{padding:8px 16px;font-size:9px;font-family:var(--fm);color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;user-select:none;letter-spacing:.06em;text-transform:uppercase}
+.nav-tab:hover{color:var(--text2)}
+.nav-tab.active{color:var(--c1);border-bottom-color:var(--c1)}
+.nav-tab.gold{color:var(--c4)}
+.nav-tab.gold.active{color:var(--c4);border-bottom-color:var(--c4)}
 
 /* ── VIEWS ── */
 .view{display:none;flex:1;overflow:hidden;min-height:0}
 .view.active{display:flex}
 
-/* ═══════════════════════════════════
-EDITOR VIEW
-═══════════════════════════════════ */
+/* EDITOR */
 .editor-layout{flex:1;display:grid;grid-template-columns:280px 1fr 260px;overflow:hidden;min-height:0}
-
-/* Left: AI chat panel */
-.panel-left{display:flex;flex-direction:column;border-right:.5px solid var(–border);overflow:hidden}
-.panel-hdr{padding:8px 12px;border-bottom:.5px solid var(–border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(–bg2)}
-.panel-hdr-title{font-size:9px;font-weight:600;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.phdr-badge{width:6px;height:6px;border-radius:50%;background:var(–c2);box-shadow:0 0 8px var(–c2)}
-
-/* Quick topics */
-.qtopics{display:flex;flex-wrap:wrap;gap:3px;padding:8px;border-bottom:.5px solid var(–border);flex-shrink:0;background:var(–bg)}
-.qtopic{background:transparent;border:.5px solid var(–border2);color:var(–text3);border-radius:3px;padding:2px 7px;font-size:8px;cursor:pointer;transition:all .15s;font-family:var(–fm);letter-spacing:.04em}
-.qtopic:hover{border-color:var(–c2);color:var(–c2);background:var(–c2d)}
-
-/* Chat messages */
+.panel-left{display:flex;flex-direction:column;border-right:.5px solid var(--border);overflow:hidden}
+.panel-hdr{padding:8px 12px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
+.panel-hdr-title{font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.phdr-badge{width:6px;height:6px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px var(--c2)}
+.qtopics{display:flex;flex-wrap:wrap;gap:3px;padding:8px;border-bottom:.5px solid var(--border);flex-shrink:0;background:var(--bg)}
+.qtopic{background:transparent;border:.5px solid var(--border2);color:var(--text3);border-radius:3px;padding:2px 7px;font-size:8px;cursor:pointer;transition:all .15s;font-family:var(--fm);letter-spacing:.04em}
+.qtopic:hover{border-color:var(--c2);color:var(--c2);background:var(--c2d)}
 .chat-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0}
 .cmsg{display:flex;gap:8px;align-items:flex-start}
 .cmsg.user{flex-direction:row-reverse}
 .cava{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:2px}
-.cava.ai{background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(0,229,255,0.2));border:.5px solid rgba(124,58,237,0.4);color:var(–c2)}
-.cava.user{background:var(–rbx);color:white}
-.cbub{background:var(–bg3);border:.5px solid var(–border2);border-radius:10px;padding:8px 10px;font-size:10px;color:var(–text);line-height:1.65;max-width:220px;word-break:break-word}
+.cava.ai{background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(0,229,255,0.2));border:.5px solid rgba(124,58,237,0.4);color:var(--c2)}
+.cava.user{background:var(--rbx);color:white}
+.cbub{background:var(--bg3);border:.5px solid var(--border2);border-radius:10px;padding:8px 10px;font-size:10px;color:var(--text);line-height:1.65;max-width:220px;word-break:break-word}
 .cmsg.user .cbub{background:rgba(0,229,255,0.07);border-color:rgba(0,229,255,0.12)}
-.cbub pre{background:var(–bg4);border:.5px solid var(–border);border-radius:6px;padding:7px;margin-top:6px;overflow-x:auto;font-size:9px;color:var(–c1);white-space:pre;line-height:1.6}
-.cbub code{background:var(–bg4);border-radius:3px;padding:1px 4px;color:var(–c1);font-size:9px}
-.cbub a{color:var(–c1);text-decoration:underline dotted}
+.cbub pre{background:var(--bg4);border:.5px solid var(--border);border-radius:6px;padding:7px;margin-top:6px;overflow-x:auto;font-size:9px;color:var(--c1);white-space:pre;line-height:1.6}
+.cbub code{background:var(--bg4);border-radius:3px;padding:1px 4px;color:var(--c1);font-size:9px}
+.cbub a{color:var(--c1);text-decoration:underline dotted}
 .typing{display:flex;gap:4px;padding:3px 0}
-.typing span{width:4px;height:4px;border-radius:50%;background:var(–c2);animation:td .9s infinite both}
+.typing span{width:4px;height:4px;border-radius:50%;background:var(--c2);animation:td .9s infinite both}
 .typing span:nth-child(2){animation-delay:.2s}
 .typing span:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-.chat-inp-row{display:flex;gap:5px;padding:8px;border-top:.5px solid var(–border);flex-shrink:0;background:var(–bg2)}
-.chat-inp{flex:1;background:var(–bg3);border:.5px solid var(–border2);border-radius:6px;padding:7px 9px;font-family:var(–fm);font-size:10px;color:var(–text);outline:none;resize:none;max-height:80px;transition:border-color .2s;line-height:1.5}
-.chat-inp:focus{border-color:var(–c2)}
-.chat-inp::placeholder{color:var(–text3)}
-.chat-send{background:var(–c2);color:white;border:none;border-radius:6px;padding:7px 10px;font-size:10px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.chat-inp-row{display:flex;gap:5px;padding:8px;border-top:.5px solid var(--border);flex-shrink:0;background:var(--bg2)}
+.chat-inp{flex:1;background:var(--bg3);border:.5px solid var(--border2);border-radius:6px;padding:7px 9px;font-family:var(--fm);font-size:10px;color:var(--text);outline:none;resize:none;max-height:80px;transition:border-color .2s;line-height:1.5}
+.chat-inp:focus{border-color:var(--c2)}
+.chat-inp::placeholder{color:var(--text3)}
+.chat-send{background:var(--c2);color:white;border:none;border-radius:6px;padding:7px 10px;font-size:10px;cursor:pointer;transition:all .15s;flex-shrink:0}
 .chat-send:hover{background:#6d28d9}
 .chat-send:disabled{opacity:.4;cursor:not-allowed}
-
-/* Log */
-.log-panel{flex:0 0 160px;border-top:.5px solid var(–border);display:flex;flex-direction:column;overflow:hidden}
+.log-panel{flex:0 0 160px;border-top:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .log-inner{flex:1;overflow-y:auto;padding:5px 8px;display:flex;flex-direction:column;gap:2px}
-.le{padding:3px 6px;border-radius:3px;font-size:8px;border-left:2px solid transparent;background:var(–bg3);margin-bottom:1px}
-.le.sent{border-left-color:var(–c1)}
-.le.result{border-left-color:var(–c3)}
-.le.err{border-left-color:var(–c5)}
-.le.sys{border-left-color:var(–text3)}
-.le.ai{border-left-color:var(–c2)}
+.le{padding:3px 6px;border-radius:3px;font-size:8px;border-left:2px solid transparent;background:var(--bg3);margin-bottom:1px}
+.le.sent{border-left-color:var(--c1)}
+.le.result{border-left-color:var(--c3)}
+.le.err{border-left-color:var(--c5)}
+.le.sys{border-left-color:var(--text3)}
+.le.ai{border-left-color:var(--c2)}
 .le-top{display:flex;align-items:center;gap:3px;margin-bottom:1px}
 .ltag{font-size:7px;padding:1px 3px;border-radius:2px;font-weight:700;text-transform:uppercase}
-.ltag.sent{background:rgba(0,229,255,.1);color:var(–c1)}
-.ltag.result{background:rgba(16,185,129,.1);color:var(–c3)}
-.ltag.err{background:rgba(239,68,68,.1);color:var(–c5)}
-.ltag.sys{background:var(–bg4);color:var(–text3)}
-.ltag.ai{background:rgba(124,58,237,.1);color:var(–c2)}
-.le-time{font-size:7px;color:var(–text3);margin-left:auto}
-.le-body{color:var(–text2);line-height:1.4;word-break:break-all}
-
-/* Center: Editor */
-.panel-mid{display:flex;flex-direction:column;overflow:hidden;background:var(–bg)}
-.editor-toolbar{padding:6px 8px;border-bottom:.5px solid var(–border);display:flex;align-items:center;gap:4px;flex-shrink:0;background:var(–bg2);flex-wrap:wrap}
-.ebtn{background:transparent;border:.5px solid var(–border);color:var(–text2);border-radius:5px;padding:3px 9px;font-family:var(–fm);font-size:9px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
-.ebtn:hover{border-color:var(–c1);color:var(–c1)}
-.ebtn.prim{background:var(–c1);color:#050709;border-color:var(–c1);font-weight:700}
+.ltag.sent{background:rgba(0,229,255,.1);color:var(--c1)}
+.ltag.result{background:rgba(16,185,129,.1);color:var(--c3)}
+.ltag.err{background:rgba(239,68,68,.1);color:var(--c5)}
+.ltag.sys{background:var(--bg4);color:var(--text3)}
+.ltag.ai{background:rgba(124,58,237,.1);color:var(--c2)}
+.le-time{font-size:7px;color:var(--text3);margin-left:auto}
+.le-body{color:var(--text2);line-height:1.4;word-break:break-all}
+.panel-mid{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.editor-toolbar{padding:6px 8px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:4px;flex-shrink:0;background:var(--bg2);flex-wrap:wrap}
+.ebtn{background:transparent;border:.5px solid var(--border);color:var(--text2);border-radius:5px;padding:3px 9px;font-family:var(--fm);font-size:9px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:3px;white-space:nowrap}
+.ebtn:hover{border-color:var(--c1);color:var(--c1)}
+.ebtn.prim{background:var(--c1);color:#050709;border-color:var(--c1);font-weight:700}
 .ebtn.prim:hover{background:#00b4d8;box-shadow:0 0 16px rgba(0,229,255,.3)}
-.ebtn.grn{background:rgba(16,185,129,.1);color:var(–c3);border-color:rgba(16,185,129,.25)}
-.ebtn.grn:hover{background:var(–c3);color:#050709}
+.ebtn.grn{background:rgba(16,185,129,.1);color:var(--c3);border-color:rgba(16,185,129,.25)}
+.ebtn.grn:hover{background:var(--c3);color:#050709}
 .ebtn:disabled{opacity:.35;cursor:not-allowed}
-.esep{width:.5px;height:14px;background:var(–border);margin:0 2px;flex-shrink:0}
-
-/* Script type chips */
-.stype-bar{display:flex;gap:4px;padding:5px 8px;border-bottom:.5px solid var(–border);flex-shrink:0;background:var(–bg2);align-items:center}
-.stype-lbl{font-size:8px;color:var(–text3);letter-spacing:.08em;margin-right:4px}
-.stype-chip{display:flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font-size:8px;cursor:pointer;border:.5px solid var(–border);color:var(–text3);transition:all .15s}
-.stype-chip:hover{border-color:var(–c1);color:var(–c1)}
-.stype-chip.on.s{border-color:var(–c3);color:var(–c3);background:rgba(16,185,129,.08)}
-.stype-chip.on.ls{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
-.stype-chip.on.ms{border-color:var(–c2);color:var(–c2);background:var(–c2d)}
-
-/* AI prompt bar */
-.ai-bar{display:flex;gap:5px;padding:5px 8px;border-bottom:.5px solid var(–border);background:var(–bg2);flex-shrink:0;align-items:center}
-.ai-bar-inp{flex:1;background:var(–bg3);border:.5px solid rgba(124,58,237,.2);border-radius:5px;padding:5px 10px;font-family:var(–fm);font-size:10px;color:var(–text);outline:none;transition:border-color .2s}
-.ai-bar-inp:focus{border-color:var(–c2)}
-.ai-bar-inp::placeholder{color:var(–text3)}
-.ai-spin-wrap{display:none;align-items:center;gap:5px;font-size:9px;color:var(–c2);flex-shrink:0}
+.esep{width:.5px;height:14px;background:var(--border);margin:0 2px;flex-shrink:0}
+.stype-bar{display:flex;gap:4px;padding:5px 8px;border-bottom:.5px solid var(--border);flex-shrink:0;background:var(--bg2);align-items:center}
+.stype-lbl{font-size:8px;color:var(--text3);letter-spacing:.08em;margin-right:4px}
+.stype-chip{display:flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font-size:8px;cursor:pointer;border:.5px solid var(--border);color:var(--text3);transition:all .15s}
+.stype-chip:hover{border-color:var(--c1);color:var(--c1)}
+.stype-chip.on.s{border-color:var(--c3);color:var(--c3);background:rgba(16,185,129,.08)}
+.stype-chip.on.ls{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
+.stype-chip.on.ms{border-color:var(--c2);color:var(--c2);background:var(--c2d)}
+.ai-bar{display:flex;gap:5px;padding:5px 8px;border-bottom:.5px solid var(--border);background:var(--bg2);flex-shrink:0;align-items:center}
+.ai-bar-inp{flex:1;background:var(--bg3);border:.5px solid rgba(124,58,237,.2);border-radius:5px;padding:5px 10px;font-family:var(--fm);font-size:10px;color:var(--text);outline:none;transition:border-color .2s}
+.ai-bar-inp:focus{border-color:var(--c2)}
+.ai-bar-inp::placeholder{color:var(--text3)}
+.ai-spin-wrap{display:none;align-items:center;gap:5px;font-size:9px;color:var(--c2);flex-shrink:0}
 .ai-spin-wrap.on{display:flex}
-.ai-spin{width:9px;height:9px;border:1.5px solid rgba(124,58,237,.3);border-top-color:var(–c2);border-radius:50%;animation:spin .6s linear infinite}
+.ai-spin{width:9px;height:9px;border:1.5px solid rgba(124,58,237,.3);border-top-color:var(--c2);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* Code editor */
 .editor-wrap{flex:1;display:flex;overflow:hidden;min-height:0;position:relative}
-.line-nums{width:38px;background:var(–bg2);border-right:.5px solid var(–border);overflow:hidden;flex-shrink:0;padding:10px 6px 10px 0;display:flex;flex-direction:column;align-items:flex-end}
-.ln{font-size:10px;color:var(–text3);line-height:1.72;min-height:17.2px;user-select:none}
-.code-ta{flex:1;background:var(–bg);border:none;padding:10px 12px;font-family:var(–fm);font-size:11px;color:var(–text);outline:none;resize:none;line-height:1.72;tab-size:2;overflow-y:auto;overflow-x:auto;white-space:pre;letter-spacing:.01em}
-.code-ta::placeholder{color:var(–text3)}
-.editor-status{padding:3px 8px;border-top:.5px solid var(–border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(–bg2)}
-.estat{font-size:8px;color:var(–text3)}
-.estat span{color:var(–text2)}
-.qcmds{padding:4px 6px;border-top:.5px solid var(–border);display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0;background:var(–bg2)}
-.qcmd{background:transparent;border:.5px solid var(–border);color:var(–text3);border-radius:3px;padding:2px 6px;font-size:8px;cursor:pointer;transition:all .12s}
-.qcmd:hover{border-color:var(–c1);color:var(–c1)}
-
-/* Right: 3D viewer + props */
-.panel-right{display:flex;flex-direction:column;border-left:.5px solid var(–border);overflow:hidden}
-.viewport3d{flex:0 0 200px;position:relative;border-bottom:.5px solid var(–border);background:#040609;overflow:hidden}
-.vp-toolbar{padding:4px 6px;border-bottom:.5px solid var(–border);display:flex;align-items:center;gap:3px;background:var(–bg2);flex-shrink:0;flex-wrap:wrap}
-.vtbtn{background:transparent;border:.5px solid var(–border);color:var(–text3);border-radius:4px;padding:2px 6px;font-size:8px;cursor:pointer;transition:all .12s;font-family:var(–fm)}
-.vtbtn:hover{border-color:var(–c1);color:var(–c1)}
-.vtbtn.active{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
+.line-nums{width:38px;background:var(--bg2);border-right:.5px solid var(--border);overflow:hidden;flex-shrink:0;padding:10px 6px 10px 0;display:flex;flex-direction:column;align-items:flex-end}
+.ln{font-size:10px;color:var(--text3);line-height:1.72;min-height:17.2px;user-select:none}
+.code-ta{flex:1;background:var(--bg);border:none;padding:10px 12px;font-family:var(--fm);font-size:11px;color:var(--text);outline:none;resize:none;line-height:1.72;tab-size:2;overflow-y:auto;overflow-x:auto;white-space:pre;letter-spacing:.01em}
+.code-ta::placeholder{color:var(--text3)}
+.editor-status{padding:3px 8px;border-top:.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg2)}
+.estat{font-size:8px;color:var(--text3)}
+.estat span{color:var(--text2)}
+.qcmds{padding:4px 6px;border-top:.5px solid var(--border);display:flex;gap:3px;flex-wrap:wrap;flex-shrink:0;background:var(--bg2)}
+.qcmd{background:transparent;border:.5px solid var(--border);color:var(--text3);border-radius:3px;padding:2px 6px;font-size:8px;cursor:pointer;transition:all .12s}
+.qcmd:hover{border-color:var(--c1);color:var(--c1)}
+.panel-right{display:flex;flex-direction:column;border-left:.5px solid var(--border);overflow:hidden}
+.viewport3d{flex:0 0 200px;position:relative;border-bottom:.5px solid var(--border);background:#040609;overflow:hidden}
+.vp-toolbar{padding:4px 6px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:3px;background:var(--bg2);flex-shrink:0;flex-wrap:wrap}
+.vtbtn{background:transparent;border:.5px solid var(--border);color:var(--text3);border-radius:4px;padding:2px 6px;font-size:8px;cursor:pointer;transition:all .12s;font-family:var(--fm)}
+.vtbtn:hover{border-color:var(--c1);color:var(--c1)}
+.vtbtn.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
 canvas#mc{width:100%;height:100%;display:block;cursor:crosshair}
 .vp-canvas{position:absolute;inset:0;top:30px}
 .vp-info-bar{position:absolute;bottom:4px;left:4px;pointer-events:none;display:flex;gap:4px}
-.vp-badge{background:rgba(5,7,9,.85);border:.5px solid var(–border);border-radius:3px;padding:2px 6px;font-size:7px;color:var(–text3)}
-.insert-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:6px;border-bottom:.5px solid var(–border)}
-.ins-btn{background:var(–bg3);border:.5px solid var(–border);border-radius:5px;padding:4px 2px;cursor:pointer;text-align:center;transition:all .15s}
-.ins-btn:hover{border-color:var(–c1);background:var(–c1d)}
+.vp-badge{background:rgba(5,7,9,.85);border:.5px solid var(--border);border-radius:3px;padding:2px 6px;font-size:7px;color:var(--text3)}
+.insert-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:6px;border-bottom:.5px solid var(--border)}
+.ins-btn{background:var(--bg3);border:.5px solid var(--border);border-radius:5px;padding:4px 2px;cursor:pointer;text-align:center;transition:all .15s}
+.ins-btn:hover{border-color:var(--c1);background:var(--c1d)}
 .ins-icon{font-size:12px;display:block}
-.ins-lbl{font-size:7px;color:var(–text3);margin-top:1px}
-.r-tabs{display:flex;border-bottom:.5px solid var(–border);flex-shrink:0}
-.rtab{flex:1;padding:5px 2px;font-size:8px;font-family:var(–fm);color:var(–text3);cursor:pointer;text-align:center;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .12s;letter-spacing:.04em;text-transform:uppercase}
-.rtab:hover{color:var(–text2)}
-.rtab.active{color:var(–c1);border-bottom-color:var(–c1)}
+.ins-lbl{font-size:7px;color:var(--text3);margin-top:1px}
+.r-tabs{display:flex;border-bottom:.5px solid var(--border);flex-shrink:0}
+.rtab{flex:1;padding:5px 2px;font-size:8px;font-family:var(--fm);color:var(--text3);cursor:pointer;text-align:center;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;transition:all .12s;letter-spacing:.04em;text-transform:uppercase}
+.rtab:hover{color:var(--text2)}
+.rtab.active{color:var(--c1);border-bottom-color:var(--c1)}
 .rpanel{display:none;flex:1;flex-direction:column;overflow:hidden;min-height:0}
 .rpanel.active{display:flex}
 .props-area{flex:1;overflow-y:auto;padding:6px 8px}
-.pgrp{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(–text3);margin:8px 0 4px;padding-bottom:2px;border-bottom:.5px solid var(–border)}
+.pgrp{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:8px 0 4px;padding-bottom:2px;border-bottom:.5px solid var(--border)}
 .pgrp:first-child{margin-top:0}
 .prow{display:flex;align-items:center;gap:4px;padding:2px 0}
-.plbl{font-size:8px;color:var(–text2);min-width:50px}
+.plbl{font-size:8px;color:var(--text2);min-width:50px}
 .pinputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;flex:1}
-.pinp{background:var(–bg3);border:.5px solid var(–border);border-radius:3px;padding:2px 4px;font-family:var(–fm);font-size:9px;color:var(–text);outline:none;width:100%;transition:border-color .12s}
-.pinp:focus{border-color:var(–c1)}
+.pinp{background:var(--bg3);border:.5px solid var(--border);border-radius:3px;padding:2px 4px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;width:100%;transition:border-color .12s}
+.pinp:focus{border-color:var(--c1)}
 .pinp.full{grid-column:1/-1}
 .pacts{display:flex;gap:4px;margin-top:6px}
-.pact{flex:1;background:var(–bg3);border:.5px solid var(–border);color:var(–text2);border-radius:5px;padding:3px;font-size:8px;cursor:pointer;text-align:center;transition:all .12s;font-family:var(–fm)}
-.pact:hover{border-color:var(–c1);color:var(–c1)}
-.pact.del:hover{border-color:var(–c5);color:var(–c5)}
+.pact{flex:1;background:var(--bg3);border:.5px solid var(--border);color:var(--text2);border-radius:5px;padding:3px;font-size:8px;cursor:pointer;text-align:center;transition:all .12s;font-family:var(--fm)}
+.pact:hover{border-color:var(--c1);color:var(--c1)}
+.pact.del:hover{border-color:var(--c5);color:var(--c5)}
 .tmpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:6px}
-.tmpl{background:var(–bg3);border:.5px solid var(–border);border-radius:6px;padding:6px 8px;cursor:pointer;transition:all .15s}
-.tmpl:hover{border-color:var(–c2);background:var(–c2d);transform:translateY(-1px)}
-.tmpl-name{font-size:9px;color:var(–text);font-weight:600}
-.tmpl-desc{font-size:7px;color:var(–text3);margin-top:1px}
+.tmpl{background:var(--bg3);border:.5px solid var(--border);border-radius:6px;padding:6px 8px;cursor:pointer;transition:all .15s}
+.tmpl:hover{border-color:var(--c2);background:var(--c2d);transform:translateY(-1px)}
+.tmpl-name{font-size:9px;color:var(--text);font-weight:600}
+.tmpl-desc{font-size:7px;color:var(--text3);margin-top:1px}
 .snip-list{display:flex;flex-direction:column;gap:2px;padding:6px}
-.snip{background:var(–bg3);border:.5px solid var(–border);color:var(–text3);border-radius:3px;padding:4px 7px;font-size:9px;cursor:pointer;transition:all .12s}
-.snip:hover{border-color:var(–c1);color:var(–c1)}
-.tree-item{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;cursor:pointer;font-size:9px;color:var(–text2);transition:all .1s}
-.tree-item:hover{background:var(–bg3)}
-.tree-item.selected{background:var(–c1d);color:var(–c1)}
-.ti-cls{font-size:7px;color:var(–text3);margin-left:auto}
+.snip{background:var(--bg3);border:.5px solid var(--border);color:var(--text3);border-radius:3px;padding:4px 7px;font-size:9px;cursor:pointer;transition:all .12s}
+.snip:hover{border-color:var(--c1);color:var(--c1)}
+.tree-item{display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;cursor:pointer;font-size:9px;color:var(--text2);transition:all .1s}
+.tree-item:hover{background:var(--bg3)}
+.tree-item.selected{background:var(--c1d);color:var(--c1)}
+.ti-cls{font-size:7px;color:var(--text3);margin-left:auto}
 
-/* ═══════════════════════════════════
-3D AI MODEL VIEWER
-═══════════════════════════════════ */
+/* 3D MODEL VIEWER */
 .model3d-view{flex:1;display:flex;overflow:hidden;min-height:0}
-.model3d-sidebar{width:260px;border-right:.5px solid var(–border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(–bg)}
+.model3d-sidebar{width:260px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--bg)}
 .model3d-main{flex:1;position:relative;background:#020304;overflow:hidden;display:flex;flex-direction:column}
 .model3d-canvas-wrap{flex:1;position:relative;overflow:hidden}
 canvas#model3d-canvas{width:100%;height:100%;display:block}
 .model3d-overlay{position:absolute;bottom:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
-.m3d-badge{background:rgba(5,7,9,.85);border:.5px solid var(–border2);border-radius:4px;padding:3px 8px;font-size:8px;color:var(–text2)}
-.model3d-toolbar{padding:8px 12px;border-bottom:.5px solid var(–border);display:flex;align-items:center;gap:6px;flex-shrink:0;background:var(–bg2);flex-wrap:wrap}
+.m3d-badge{background:rgba(5,7,9,.85);border:.5px solid var(--border2);border-radius:4px;padding:3px 8px;font-size:8px;color:var(--text2)}
+.model3d-toolbar{padding:8px 12px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0;background:var(--bg2);flex-wrap:wrap}
 .model3d-controls{flex:1;overflow-y:auto;padding:10px}
-.m3d-section-title{font-size:8px;font-weight:600;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;margin-top:10px;padding-bottom:4px;border-bottom:.5px solid var(–border)}
+.m3d-section-title{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;margin-top:10px;padding-bottom:4px;border-bottom:.5px solid var(--border)}
 .m3d-section-title:first-child{margin-top:0}
 .m3d-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:6px}
-.m3d-opt{background:var(–bg3);border:.5px solid var(–border);border-radius:4px;padding:5px 8px;font-size:9px;color:var(–text2);cursor:pointer;text-align:center;transition:all .12s}
-.m3d-opt:hover{border-color:var(–c1)}
-.m3d-opt.active{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
+.m3d-opt{background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px 8px;font-size:9px;color:var(--text2);cursor:pointer;text-align:center;transition:all .12s}
+.m3d-opt:hover{border-color:var(--c1)}
+.m3d-opt.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
 .m3d-slider-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.m3d-slider-lbl{font-size:9px;color:var(–text2);min-width:70px}
-.m3d-slider{flex:1;-webkit-appearance:none;height:2px;background:var(–bg4);border-radius:2px;outline:none}
-.m3d-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(–c1);cursor:pointer}
-.m3d-slider-val{font-size:9px;color:var(–c1);min-width:28px;text-align:right}
-.m3d-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(–c1),var(–c2));border:none;border-radius:6px;color:#050709;font-family:var(–fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:8px;transition:all .18s;letter-spacing:.04em}
+.m3d-slider-lbl{font-size:9px;color:var(--text2);min-width:70px}
+.m3d-slider{flex:1;-webkit-appearance:none;height:2px;background:var(--bg4);border-radius:2px;outline:none}
+.m3d-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--c1);cursor:pointer}
+.m3d-slider-val{font-size:9px;color:var(--c1);min-width:28px;text-align:right}
+.m3d-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--c1),var(--c2));border:none;border-radius:6px;color:#050709;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:8px;transition:all .18s;letter-spacing:.04em}
 .m3d-gen-btn:hover{opacity:.85;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,229,255,.2)}
-.m3d-export-btn{width:100%;padding:7px;background:var(–c3d);border:.5px solid rgba(16,185,129,.2);border-radius:5px;color:var(–c3);font-family:var(–fm);font-size:9px;cursor:pointer;margin-top:5px;transition:all .15s}
-.m3d-export-btn:hover{background:var(–c3);color:#050709}
-.m3d-right{width:240px;border-left:.5px solid var(–border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;background:var(–bg)}
+.m3d-export-btn{width:100%;padding:7px;background:var(--c3d);border:.5px solid rgba(16,185,129,.2);border-radius:5px;color:var(--c3);font-family:var(--fm);font-size:9px;cursor:pointer;margin-top:5px;transition:all .15s}
+.m3d-export-btn:hover{background:var(--c3);color:#050709}
+.m3d-right{width:240px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;background:var(--bg)}
 .m3d-props-pad{padding:10px}
-.m3d-ai-prompt{width:100%;background:var(–bg3);border:.5px solid rgba(0,229,255,.2);border-radius:5px;padding:7px 10px;font-family:var(–fm);font-size:9px;color:var(–text);outline:none;resize:none;height:70px;line-height:1.5;transition:border-color .15s;margin-bottom:6px}
-.m3d-ai-prompt:focus{border-color:var(–c1)}
-.m3d-ai-prompt::placeholder{color:var(–text3)}
-.m3d-ai-gen-btn{width:100%;padding:7px;background:var(–c1);color:#050709;border:none;border-radius:5px;font-family:var(–fd);font-size:9px;font-weight:800;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.m3d-ai-prompt{width:100%;background:var(--bg3);border:.5px solid rgba(0,229,255,.2);border-radius:5px;padding:7px 10px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:70px;line-height:1.5;transition:border-color .15s;margin-bottom:6px}
+.m3d-ai-prompt:focus{border-color:var(--c1)}
+.m3d-ai-prompt::placeholder{color:var(--text3)}
+.m3d-ai-gen-btn{width:100%;padding:7px;background:var(--c1);color:#050709;border:none;border-radius:5px;font-family:var(--fd);font-size:9px;font-weight:800;cursor:pointer;transition:all .15s;margin-bottom:8px}
 .m3d-ai-gen-btn:hover{background:#00b4d8}
 .m3d-presets{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:8px}
-.m3d-preset{background:var(–bg3);border:.5px solid var(–border);border-radius:5px;padding:6px;text-align:center;cursor:pointer;transition:all .12px;font-size:9px;color:var(–text2)}
-.m3d-preset:hover{border-color:var(–c1);background:var(–c1d);color:var(–c1)}
+.m3d-preset{background:var(--bg3);border:.5px solid var(--border);border-radius:5px;padding:6px;text-align:center;cursor:pointer;transition:all .12px;font-size:9px;color:var(--text2)}
+.m3d-preset:hover{border-color:var(--c1);background:var(--c1d);color:var(--c1)}
 .m3d-part-list{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
-.m3d-part{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:9px;color:var(–text2);transition:all .1s;background:var(–bg3);border:.5px solid var(–border)}
-.m3d-part:hover{border-color:var(–c1);color:var(–c1)}
-.m3d-part.selected{background:var(–c1d);border-color:var(–c1);color:var(–c1)}
+.m3d-part{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:9px;color:var(--text2);transition:all .1s;background:var(--bg3);border:.5px solid var(--border)}
+.m3d-part:hover{border-color:var(--c1);color:var(--c1)}
+.m3d-part.selected{background:var(--c1d);border-color:var(--c1);color:var(--c1)}
 .m3d-color-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.m3d-progress{height:2px;background:var(–bg4);border-radius:1px;overflow:hidden;margin-bottom:8px;display:none}
+.m3d-progress{height:2px;background:var(--bg4);border-radius:1px;overflow:hidden;margin-bottom:8px;display:none}
 .m3d-progress.on{display:block}
-.m3d-progress-bar{height:100%;background:linear-gradient(90deg,var(–c2),var(–c1));border-radius:1px;transition:width .3s;animation:pbar 1.5s infinite}
+.m3d-progress-bar{height:100%;background:linear-gradient(90deg,var(--c2),var(--c1));border-radius:1px;transition:width .3s;animation:pbar 1.5s infinite}
 @keyframes pbar{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
 
-/* ═══════════════════════════════════
-TERRAIN
-═══════════════════════════════════ */
+/* TERRAIN */
 .terrain-view{flex:1;display:flex;overflow:hidden;min-height:0}
-.terrain-sidebar{width:230px;border-right:.5px solid var(–border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.terrain-sidebar{width:230px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .terrain-canvas-wrap{flex:1;position:relative;overflow:hidden}
 canvas#tc{width:100%;height:100%;display:block}
 .terrain-controls{flex:1;overflow-y:auto;padding:10px}
 .t-sec{margin-bottom:10px}
-.t-sec-title{font-size:8px;font-weight:600;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;padding-bottom:3px;border-bottom:.5px solid var(–border)}
+.t-sec-title{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;padding-bottom:3px;border-bottom:.5px solid var(--border)}
 .biome-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.biome-btn{background:var(–bg3);border:.5px solid var(–border);border-radius:4px;padding:5px;cursor:pointer;text-align:center;font-size:9px;color:var(–text2);transition:all .12s}
-.biome-btn:hover{border-color:var(–c1)}
-.biome-btn.active{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
+.biome-btn{background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px;cursor:pointer;text-align:center;font-size:9px;color:var(--text2);transition:all .12s}
+.biome-btn:hover{border-color:var(--c1)}
+.biome-btn.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
 .tsl-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.tsl-lbl{font-size:9px;color:var(–text2);min-width:70px}
-.tsl{flex:1;-webkit-appearance:none;height:2px;background:var(–bg4);border-radius:2px;outline:none}
-.tsl::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(–c1);cursor:pointer}
-.tsl-val{font-size:9px;color:var(–c1);min-width:28px;text-align:right}
+.tsl-lbl{font-size:9px;color:var(--text2);min-width:70px}
+.tsl{flex:1;-webkit-appearance:none;height:2px;background:var(--bg4);border-radius:2px;outline:none}
+.tsl::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--c1);cursor:pointer}
+.tsl-val{font-size:9px;color:var(--c1);min-width:28px;text-align:right}
 .t-tools{display:flex;gap:3px;flex-wrap:wrap}
-.t-tool{background:var(–bg3);border:.5px solid var(–border);color:var(–text3);border-radius:4px;padding:3px 8px;font-size:8px;cursor:pointer;transition:all .12s}
-.t-tool:hover{border-color:var(–c1);color:var(–c1)}
-.t-tool.active{background:var(–c1d);color:var(–c1);border-color:rgba(0,229,255,.3)}
-.t-gen-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(–c1),var(–c2));border:none;border-radius:6px;color:#050709;font-family:var(–fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px}
-.t-lua-btn{width:100%;padding:6px;background:var(–c3d);border:.5px solid rgba(16,185,129,.2);border-radius:5px;color:var(–c3);font-family:var(–fm);font-size:9px;cursor:pointer;margin-top:5px;transition:all .15s}
-.t-lua-btn:hover{background:var(–c3);color:#050709}
+.t-tool{background:var(--bg3);border:.5px solid var(--border);color:var(--text3);border-radius:4px;padding:3px 8px;font-size:8px;cursor:pointer;transition:all .12s}
+.t-tool:hover{border-color:var(--c1);color:var(--c1)}
+.t-tool.active{background:var(--c1d);color:var(--c1);border-color:rgba(0,229,255,.3)}
+.t-gen-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(--c1),var(--c2));border:none;border-radius:6px;color:#050709;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px}
+.t-lua-btn{width:100%;padding:6px;background:var(--c3d);border:.5px solid rgba(16,185,129,.2);border-radius:5px;color:var(--c3);font-family:var(--fm);font-size:9px;cursor:pointer;margin-top:5px;transition:all .15s}
+.t-lua-btn:hover{background:var(--c3);color:#050709}
 
-/* ═══════════════════════════════════
-GUI BUILDER
-═══════════════════════════════════ */
+/* GUI BUILDER */
 .gui-view{flex:1;display:flex;overflow:hidden;min-height:0}
-.gui-sidebar{width:180px;border-right:.5px solid var(–border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.gui-sidebar{width:180px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .gui-canvas-wrap{flex:1;position:relative;background:#0a0d18;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .gui-screen{width:580px;height:360px;background:#111827;border:.5px solid rgba(255,255,255,.06);border-radius:4px;position:relative;overflow:hidden;cursor:crosshair;flex-shrink:0}
 .gui-el{position:absolute;cursor:move;border:1px solid transparent;transition:border-color .1s;user-select:none}
 .gui-el:hover{border-color:rgba(0,229,255,.3)}
-.gui-el.sel{border-color:var(–c1)!important;outline:1px solid rgba(0,229,255,.15)}
-.gui-right{width:200px;border-left:.5px solid var(–border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.gui-el.sel{border-color:var(--c1)!important;outline:1px solid rgba(0,229,255,.15)}
+.gui-right{width:200px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .gui-props{flex:1;overflow-y:auto;padding:8px}
 .gui-elements-panel{flex:1;overflow-y:auto;padding:8px}
 
-/* ═══════════════════════════════════
-NPC CREATOR
-═══════════════════════════════════ */
+/* NPC */
 .npc-view{flex:1;display:flex;overflow:hidden;min-height:0}
-.npc-sidebar{width:210px;border-right:.5px solid var(–border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
+.npc-sidebar{width:210px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
 .npc-preview-wrap{flex:1;background:#040609;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden}
-canvas#npc-c{border:.5px solid var(–border);border-radius:8px}
-.npc-right{width:210px;border-left:.5px solid var(–border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
-.npc-stitle{font-size:8px;font-weight:600;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;margin-top:10px;padding-bottom:3px;border-bottom:.5px solid var(–border)}
+canvas#npc-c{border:.5px solid var(--border);border-radius:8px}
+.npc-right{width:210px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
+.npc-stitle{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;margin-top:10px;padding-bottom:3px;border-bottom:.5px solid var(--border)}
 .npc-stitle:first-child{margin-top:0}
 .npc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:6px}
-.npc-opt{background:var(–bg3);border:.5px solid var(–border);border-radius:3px;padding:4px 6px;font-size:8px;color:var(–text2);cursor:pointer;text-align:center;transition:all .12s}
-.npc-opt:hover{border-color:var(–c1)}
-.npc-opt.active{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
-.npc-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(–c2),var(–c1));border:none;border-radius:6px;color:white;font-family:var(–fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px;transition:all .15s}
+.npc-opt{background:var(--bg3);border:.5px solid var(--border);border-radius:3px;padding:4px 6px;font-size:8px;color:var(--text2);cursor:pointer;text-align:center;transition:all .12s}
+.npc-opt:hover{border-color:var(--c1)}
+.npc-opt.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
+.npc-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--c2),var(--c1));border:none;border-radius:6px;color:white;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px;transition:all .15s}
 .npc-gen-btn:hover{opacity:.85}
 
-/* ═══════════════════════════════════
-ADMIN
-═══════════════════════════════════ */
+/* ADMIN */
 .admin-view{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;padding:1rem}
-.admin-hdr{font-family:var(–fd);font-size:14px;font-weight:800;color:var(–c4);margin-bottom:.4rem;display:flex;align-items:center;gap:8px}
-.admin-sub{font-size:10px;color:var(–text2);margin-bottom:1rem}
+.admin-hdr{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--c4);margin-bottom:.4rem;display:flex;align-items:center;gap:8px}
+.admin-sub{font-size:10px;color:var(--text2);margin-bottom:1rem}
 .admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;overflow-y:auto;flex:1}
-.admin-card{background:var(–bg2);border:.5px solid var(–border2);border-radius:var(–rlg);padding:1rem;cursor:pointer;transition:all .18s}
-.admin-card:hover{border-color:var(–c4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.08)}
+.admin-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:1rem;cursor:pointer;transition:all .18s}
+.admin-card:hover{border-color:var(--c4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.08)}
 .admin-card-icon{font-size:22px;margin-bottom:6px}
-.admin-card-name{font-family:var(–fd);font-size:10px;font-weight:800;color:var(–text);margin-bottom:4px}
-.admin-card-desc{font-size:9px;color:var(–text2);line-height:1.5}
-.admin-card-badge{display:inline-block;font-size:7px;padding:2px 6px;border-radius:3px;margin-top:5px;background:rgba(245,158,11,.1);color:var(–c4)}
+.admin-card-name{font-family:var(--fd);font-size:10px;font-weight:800;color:var(--text);margin-bottom:4px}
+.admin-card-desc{font-size:9px;color:var(--text2);line-height:1.5}
+.admin-card-badge{display:inline-block;font-size:7px;padding:2px 6px;border-radius:3px;margin-top:5px;background:rgba(245,158,11,.1);color:var(--c4)}
 
-/* ═══════════════════════════════════
-MODAL + TOASTS
-═══════════════════════════════════ */
+/* MODAL + TOASTS */
 .modal-bg{position:fixed;inset:0;background:rgba(5,7,9,.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-bg.open{opacity:1;pointer-events:all}
-.modal{background:var(–bg2);border:.5px solid var(–border2);border-radius:var(–rlg);padding:1.5rem;width:420px;transform:translateY(10px);transition:transform .25s;position:relative;max-height:85vh;overflow-y:auto}
+.modal{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:1.5rem;width:420px;transform:translateY(10px);transition:transform .25s;position:relative;max-height:85vh;overflow-y:auto}
 .modal-bg.open .modal{transform:translateY(0)}
-.modal-title{font-family:var(–fd);font-size:14px;font-weight:800;margin-bottom:4px}
-.modal-sub{font-size:10px;color:var(–text2);margin-bottom:1rem}
-.modal-x{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(–text3);cursor:pointer;font-size:12px}
-.modal-x:hover{color:var(–text)}
+.modal-title{font-family:var(--fd);font-size:14px;font-weight:800;margin-bottom:4px}
+.modal-sub{font-size:10px;color:var(--text2);margin-bottom:1rem}
+.modal-x{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px}
+.modal-x:hover{color:var(--text)}
 .mbtns{display:flex;gap:6px;margin-top:1rem}
-.mbtn{flex:1;background:var(–bg3);border:.5px solid var(–border2);color:var(–text);border-radius:6px;padding:8px;font-family:var(–fm);font-size:10px;cursor:pointer;transition:all .12s}
-.mbtn:hover{border-color:var(–c1);color:var(–c1)}
-.mbtn.prim{background:var(–c1);color:#050709;font-weight:700;border-color:var(–c1)}
+.mbtn{flex:1;background:var(--bg3);border:.5px solid var(--border2);color:var(--text);border-radius:6px;padding:8px;font-family:var(--fm);font-size:10px;cursor:pointer;transition:all .12s}
+.mbtn:hover{border-color:var(--c1);color:var(--c1)}
+.mbtn.prim{background:var(--c1);color:#050709;font-weight:700;border-color:var(--c1)}
 #toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:5px;z-index:999}
-.toast{background:var(–bg2);border:.5px solid var(–border2);border-radius:6px;padding:7px 12px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
-.toast.ok{border-left:2px solid var(–c3)}
-.toast.bad{border-left:2px solid var(–c5)}
-.toast.info{border-left:2px solid var(–c1)}
-.toast.ai{border-left:2px solid var(–c2)}
-.toast.gold{border-left:2px solid var(–c4)}
+.toast{background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:7px 12px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
+.toast.ok{border-left:2px solid var(--c3)}
+.toast.bad{border-left:2px solid var(--c5)}
+.toast.info{border-left:2px solid var(--c1)}
+.toast.ai{border-left:2px solid var(--c2)}
+.toast.gold{border-left:2px solid var(--c4)}
 @keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 select.pinp{cursor:pointer}
-input[type=range]{-webkit-appearance:none;height:2px;background:var(–bg4);border-radius:2px;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(–c1);cursor:pointer}
+input[type=range]{-webkit-appearance:none;height:2px;background:var(--bg4);border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--c1);cursor:pointer}
 </style>
-
 </head>
 <body>
 <div id="root">
 
 <!-- AUTH -->
-
 <div id="auth">
   <div class="auth-glow"></div>
   <div class="auth-wrap">
@@ -405,7 +370,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
     <div class="auth-card">
       <h2>The Ultimate Roblox Dev Studio</h2>
-      <p>AI expert with deep Roblox knowledge, 3D model viewer, terrain builder, GUI designer, NPC creator & admin suite — all in one.</p>
+      <p>AI expert with deep Roblox knowledge, 3D model viewer, terrain builder, GUI designer, NPC creator &amp; admin suite — all in one.</p>
       <div class="field"><label>Your Name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')startApp()"/></div>
       <div id="auth-err" class="auth-err">Please enter your name.</div>
       <button class="btn-main" onclick="startApp()">Open Studio →</button>
@@ -414,7 +379,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 </div>
 
 <!-- APP -->
-
 <div id="app">
   <div class="topbar">
     <div class="topbar-brand">
@@ -450,10 +414,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 
   <!-- EDITOR VIEW -->
-
   <div class="view active" id="view-editor">
     <div class="editor-layout">
-      <!-- LEFT: AI Chat -->
       <div class="panel-left">
         <div class="panel-hdr">
           <span class="panel-hdr-title"><span class="phdr-badge"></span> Genius AI</span>
@@ -497,122 +459,116 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         </div>
       </div>
 
-```
-  <!-- MID: Code Editor -->
-  <div class="panel-mid">
-    <div class="editor-toolbar">
-      <button class="ebtn" onclick="aiAction('fix')">🔧 Fix</button>
-      <button class="ebtn" onclick="aiAction('comment')">💬 Comment</button>
-      <button class="ebtn" onclick="aiAction('optimize')">⚡ Optimize</button>
-      <button class="ebtn" onclick="aiAction('explain')">📖 Explain</button>
-      <button class="ebtn" onclick="fmtCode()">⇥ Format</button>
-      <button class="ebtn" onclick="cpyCode()">⎘ Copy</button>
-      <div class="esep"></div>
-      <span style="font-size:8px;color:var(--text2)" id="es-type-badge">Auto</span>
-      <button class="ebtn prim" onclick="sendToStudio()" id="send-btn" style="margin-left:auto">▶ Send to Studio</button>
-    </div>
-    <div class="stype-bar">
-      <span class="stype-lbl">Types:</span>
-      <div class="stype-chip s on" id="sc-s" onclick="toggleST('script',this)">Script</div>
-      <div class="stype-chip ls on" id="sc-ls" onclick="toggleST('localscript',this)">LocalScript</div>
-      <div class="stype-chip ms" id="sc-ms" onclick="toggleST('modulescript',this)">Module</div>
-      <span style="font-size:8px;color:var(--text3);margin-left:auto">AI auto-orders ↑</span>
-    </div>
-    <div class="ai-bar">
-      <span style="font-size:9px;color:var(--c2);white-space:nowrap;cursor:pointer" onclick="toast('AI: Llama 3.3 70B via Groq — lightning fast','ai')">✦ AI</span>
-      <input class="ai-bar-inp" id="ai-prompt" placeholder="Describe what to build (e.g. coin system with leaderboard)…" onkeydown="if(event.key==='Enter')genScript()"/>
-      <div class="ai-spin-wrap" id="ai-ind"><div class="ai-spin"></div><span id="ai-ind-txt">Thinking</span></div>
-      <button class="ebtn" style="background:var(--c2);color:white;border-color:var(--c2);flex-shrink:0" onclick="genScript()">Generate</button>
-    </div>
-    <div class="editor-wrap">
-      <div class="line-nums" id="line-nums"><span class="ln">1</span></div>
-      <textarea class="code-ta" id="code-area" placeholder="-- Your scripts appear here…" spellcheck="false" oninput="onCE()" onscroll="syncLN()" onkeydown="tabKey(event)"></textarea>
-    </div>
-    <div class="editor-status">
-      <span class="estat">Lines: <span id="es-lines">0</span></span>
-      <span class="estat">Chars: <span id="es-chars">0</span></span>
-      <span class="estat" id="es-status" style="margin-left:auto"></span>
-    </div>
-    <div class="qcmds">
-      <span style="font-size:7px;color:var(--text3);margin-right:3px">Quick:</span>
-      <span class="qcmd" onclick="inSnip('remote')">RemoteEvent</span>
-      <span class="qcmd" onclick="inSnip('debounce')">Debounce</span>
-      <span class="qcmd" onclick="inSnip('tween')">TweenService</span>
-      <span class="qcmd" onclick="inSnip('anim')">Animation</span>
-      <span class="qcmd" onclick="inSnip('npc')">NPC</span>
-      <span class="qcmd" onclick="inSnip('gui')">GUI Frame</span>
-      <span class="qcmd" onclick="inSnip('ds')">DataStore</span>
-    </div>
-  </div>
-
-  <!-- RIGHT: 3D viewport + props -->
-  <div class="panel-right">
-    <div class="viewport3d">
-      <div class="vp-toolbar">
-        <button class="vtbtn active" id="vt-sel" onclick="setTool('select')">↖</button>
-        <button class="vtbtn" id="vt-mov" onclick="setTool('move')">✥</button>
-        <button class="vtbtn" id="vt-rot" onclick="setTool('rotate')">↻</button>
-        <span style="width:.5px;height:10px;background:var(--border);margin:0 1px"></span>
-        <button class="vtbtn" onclick="setView('p')">3D</button>
-        <button class="vtbtn" onclick="setView('t')">Top</button>
-        <button class="vtbtn" onclick="setView('f')">Front</button>
-        <button class="vtbtn" onclick="toggleGrid()" style="margin-left:auto">⊞</button>
-        <button class="vtbtn" onclick="exportScene()" style="color:var(--c3)">⬇</button>
+      <div class="panel-mid">
+        <div class="editor-toolbar">
+          <button class="ebtn" onclick="aiAction('fix')">🔧 Fix</button>
+          <button class="ebtn" onclick="aiAction('comment')">💬 Comment</button>
+          <button class="ebtn" onclick="aiAction('optimize')">⚡ Optimize</button>
+          <button class="ebtn" onclick="aiAction('explain')">📖 Explain</button>
+          <button class="ebtn" onclick="fmtCode()">⇥ Format</button>
+          <button class="ebtn" onclick="cpyCode()">⎘ Copy</button>
+          <div class="esep"></div>
+          <span style="font-size:8px;color:var(--text2)" id="es-type-badge">Auto</span>
+          <button class="ebtn prim" onclick="sendToStudio()" id="send-btn" style="margin-left:auto">▶ Send to Studio</button>
+        </div>
+        <div class="stype-bar">
+          <span class="stype-lbl">Types:</span>
+          <div class="stype-chip s on" id="sc-s" onclick="toggleST('script',this)">Script</div>
+          <div class="stype-chip ls on" id="sc-ls" onclick="toggleST('localscript',this)">LocalScript</div>
+          <div class="stype-chip ms" id="sc-ms" onclick="toggleST('modulescript',this)">Module</div>
+          <span style="font-size:8px;color:var(--text3);margin-left:auto">AI auto-orders ↑</span>
+        </div>
+        <div class="ai-bar">
+          <span style="font-size:9px;color:var(--c2);white-space:nowrap;cursor:pointer" onclick="toast('AI: Claude via Anthropic','ai')">✦ AI</span>
+          <input class="ai-bar-inp" id="ai-prompt" placeholder="Describe what to build (e.g. coin system with leaderboard)…" onkeydown="if(event.key==='Enter')genScript()"/>
+          <div class="ai-spin-wrap" id="ai-ind"><div class="ai-spin"></div><span id="ai-ind-txt">Thinking</span></div>
+          <button class="ebtn" style="background:var(--c2);color:white;border-color:var(--c2);flex-shrink:0" onclick="genScript()">Generate</button>
+        </div>
+        <div class="editor-wrap">
+          <div class="line-nums" id="line-nums"><span class="ln">1</span></div>
+          <textarea class="code-ta" id="code-area" placeholder="-- Your scripts appear here…" spellcheck="false" oninput="onCE()" onscroll="syncLN()" onkeydown="tabKey(event)"></textarea>
+        </div>
+        <div class="editor-status">
+          <span class="estat">Lines: <span id="es-lines">0</span></span>
+          <span class="estat">Chars: <span id="es-chars">0</span></span>
+          <span class="estat" id="es-status" style="margin-left:auto"></span>
+        </div>
+        <div class="qcmds">
+          <span style="font-size:7px;color:var(--text3);margin-right:3px">Quick:</span>
+          <span class="qcmd" onclick="inSnip('remote')">RemoteEvent</span>
+          <span class="qcmd" onclick="inSnip('debounce')">Debounce</span>
+          <span class="qcmd" onclick="inSnip('tween')">TweenService</span>
+          <span class="qcmd" onclick="inSnip('anim')">Animation</span>
+          <span class="qcmd" onclick="inSnip('npc')">NPC</span>
+          <span class="qcmd" onclick="inSnip('gui')">GUI Frame</span>
+          <span class="qcmd" onclick="inSnip('ds')">DataStore</span>
+        </div>
       </div>
-      <div class="vp-canvas"><canvas id="mc"></canvas></div>
-      <div class="vp-info-bar"><div class="vp-badge" id="vp-pos">X:0 Y:0 Z:0</div></div>
-    </div>
-    <div class="insert-grid">
-      <div class="ins-btn" onclick="addPart('Part','block')"><span class="ins-icon">⬛</span><div class="ins-lbl">Block</div></div>
-      <div class="ins-btn" onclick="addPart('Part','sphere')"><span class="ins-icon">⚫</span><div class="ins-lbl">Sphere</div></div>
-      <div class="ins-btn" onclick="addPart('Part','cyl')"><span class="ins-icon">🔘</span><div class="ins-lbl">Cyl</div></div>
-      <div class="ins-btn" onclick="addPart('WedgePart','wedge')"><span class="ins-icon">📐</span><div class="ins-lbl">Wedge</div></div>
-      <div class="ins-btn" onclick="addPart('SpawnLocation','spawn')"><span class="ins-icon">📍</span><div class="ins-lbl">Spawn</div></div>
-      <div class="ins-btn" onclick="addLight()"><span class="ins-icon">💡</span><div class="ins-lbl">Light</div></div>
-    </div>
-    <div class="r-tabs">
-      <button class="rtab active" onclick="switchRT('props',this)">Props</button>
-      <button class="rtab" onclick="switchRT('scene',this)">Scene</button>
-      <button class="rtab" onclick="switchRT('templates',this)">Tmpls</button>
-      <button class="rtab" onclick="switchRT('snippets',this)">Snips</button>
-    </div>
-    <div class="rpanel active" id="rpanel-props"><div class="props-area" id="props-area"><div style="font-size:9px;color:var(--text3)">Select a part.</div></div></div>
-    <div class="rpanel" id="rpanel-scene"><div class="props-area" id="scene-tree"><div style="font-size:9px;color:var(--text3)">No objects.</div></div></div>
-    <div class="rpanel" id="rpanel-templates">
-      <div style="overflow-y:auto;flex:1">
-        <div class="tmpl-grid">
-          <div class="tmpl" onclick="loadTmpl('door')"><div class="tmpl-name">🚪 Door</div><div class="tmpl-desc">Tween open</div></div>
-          <div class="tmpl" onclick="loadTmpl('leaderboard')"><div class="tmpl-name">🏆 Stats</div><div class="tmpl-desc">Leaderboard+DS</div></div>
-          <div class="tmpl" onclick="loadTmpl('gui')"><div class="tmpl-name">🖥 GUI</div><div class="tmpl-desc">Animated</div></div>
-          <div class="tmpl" onclick="loadTmpl('npc')"><div class="tmpl-name">🤖 NPC</div><div class="tmpl-desc">Pathfinding</div></div>
-          <div class="tmpl" onclick="loadTmpl('datastore')"><div class="tmpl-name">💾 Data</div><div class="tmpl-desc">Save/load</div></div>
-          <div class="tmpl" onclick="loadTmpl('round')"><div class="tmpl-name">🎮 Rounds</div><div class="tmpl-desc">Full system</div></div>
-          <div class="tmpl" onclick="loadTmpl('admin')"><div class="tmpl-name">👑 Admin</div><div class="tmpl-desc">Rank+cmds</div></div>
-          <div class="tmpl" onclick="loadTmpl('shop')"><div class="tmpl-name">🛒 Shop</div><div class="tmpl-desc">GUI+DS</div></div>
+
+      <div class="panel-right">
+        <div class="viewport3d">
+          <div class="vp-toolbar">
+            <button class="vtbtn active" id="vt-sel" onclick="setTool('select')">↖</button>
+            <button class="vtbtn" id="vt-mov" onclick="setTool('move')">✥</button>
+            <button class="vtbtn" id="vt-rot" onclick="setTool('rotate')">↻</button>
+            <span style="width:.5px;height:10px;background:var(--border);margin:0 1px"></span>
+            <button class="vtbtn" onclick="setView('p')">3D</button>
+            <button class="vtbtn" onclick="setView('t')">Top</button>
+            <button class="vtbtn" onclick="setView('f')">Front</button>
+            <button class="vtbtn" onclick="toggleGrid()" style="margin-left:auto">⊞</button>
+            <button class="vtbtn" onclick="exportScene()" style="color:var(--c3)">⬇</button>
+          </div>
+          <div class="vp-canvas"><canvas id="mc"></canvas></div>
+          <div class="vp-info-bar"><div class="vp-badge" id="vp-pos">X:0 Y:0 Z:0</div></div>
+        </div>
+        <div class="insert-grid">
+          <div class="ins-btn" onclick="addPart('Part','block')"><span class="ins-icon">⬛</span><div class="ins-lbl">Block</div></div>
+          <div class="ins-btn" onclick="addPart('Part','sphere')"><span class="ins-icon">⚫</span><div class="ins-lbl">Sphere</div></div>
+          <div class="ins-btn" onclick="addPart('Part','cyl')"><span class="ins-icon">🔘</span><div class="ins-lbl">Cyl</div></div>
+          <div class="ins-btn" onclick="addPart('WedgePart','wedge')"><span class="ins-icon">📐</span><div class="ins-lbl">Wedge</div></div>
+          <div class="ins-btn" onclick="addPart('SpawnLocation','spawn')"><span class="ins-icon">📍</span><div class="ins-lbl">Spawn</div></div>
+          <div class="ins-btn" onclick="addLight()"><span class="ins-icon">💡</span><div class="ins-lbl">Light</div></div>
+        </div>
+        <div class="r-tabs">
+          <button class="rtab active" onclick="switchRT('props',this)">Props</button>
+          <button class="rtab" onclick="switchRT('scene',this)">Scene</button>
+          <button class="rtab" onclick="switchRT('templates',this)">Tmpls</button>
+          <button class="rtab" onclick="switchRT('snippets',this)">Snips</button>
+        </div>
+        <div class="rpanel active" id="rpanel-props"><div class="props-area" id="props-area"><div style="font-size:9px;color:var(--text3)">Select a part.</div></div></div>
+        <div class="rpanel" id="rpanel-scene"><div class="props-area" id="scene-tree"><div style="font-size:9px;color:var(--text3)">No objects.</div></div></div>
+        <div class="rpanel" id="rpanel-templates">
+          <div style="overflow-y:auto;flex:1">
+            <div class="tmpl-grid">
+              <div class="tmpl" onclick="loadTmpl('door')"><div class="tmpl-name">🚪 Door</div><div class="tmpl-desc">Tween open</div></div>
+              <div class="tmpl" onclick="loadTmpl('leaderboard')"><div class="tmpl-name">🏆 Stats</div><div class="tmpl-desc">Leaderboard+DS</div></div>
+              <div class="tmpl" onclick="loadTmpl('gui')"><div class="tmpl-name">🖥 GUI</div><div class="tmpl-desc">Animated</div></div>
+              <div class="tmpl" onclick="loadTmpl('npc')"><div class="tmpl-name">🤖 NPC</div><div class="tmpl-desc">Pathfinding</div></div>
+              <div class="tmpl" onclick="loadTmpl('datastore')"><div class="tmpl-name">💾 Data</div><div class="tmpl-desc">Save/load</div></div>
+              <div class="tmpl" onclick="loadTmpl('round')"><div class="tmpl-name">🎮 Rounds</div><div class="tmpl-desc">Full system</div></div>
+              <div class="tmpl" onclick="loadTmpl('admin')"><div class="tmpl-name">👑 Admin</div><div class="tmpl-desc">Rank+cmds</div></div>
+              <div class="tmpl" onclick="loadTmpl('shop')"><div class="tmpl-name">🛒 Shop</div><div class="tmpl-desc">GUI+DS</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="rpanel" id="rpanel-snippets">
+          <div style="overflow-y:auto;flex:1">
+            <div class="snip-list">
+              <div class="snip" onclick="inSnip('remote')">RemoteEvent boilerplate</div>
+              <div class="snip" onclick="inSnip('anim')">Play animation</div>
+              <div class="snip" onclick="inSnip('tween')">TweenService</div>
+              <div class="snip" onclick="inSnip('npc')">NPC health bar</div>
+              <div class="snip" onclick="inSnip('gui')">GUI frame</div>
+              <div class="snip" onclick="inSnip('debounce')">Debounce</div>
+              <div class="snip" onclick="inSnip('ds')">DataStore save/load</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="rpanel" id="rpanel-snippets">
-      <div style="overflow-y:auto;flex:1">
-        <div class="snip-list">
-          <div class="snip" onclick="inSnip('remote')">RemoteEvent boilerplate</div>
-          <div class="snip" onclick="inSnip('anim')">Play animation</div>
-          <div class="snip" onclick="inSnip('tween')">TweenService</div>
-          <div class="snip" onclick="inSnip('npc')">NPC health bar</div>
-          <div class="snip" onclick="inSnip('gui')">GUI frame</div>
-          <div class="snip" onclick="inSnip('debounce')">Debounce</div>
-          <div class="snip" onclick="inSnip('ds')">DataStore save/load</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
   </div>
 
   <!-- 3D MODEL AI VIEW -->
-
   <div class="view" id="view-model3d">
     <div class="model3d-view">
       <div class="model3d-sidebar">
@@ -653,9 +609,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <span style="font-size:9px;color:var(--text3);margin-left:8px" id="m3d-stats">0 parts</span>
           <button class="vtbtn" style="margin-left:auto;color:var(--c1)" onclick="exportModelToLua()">⬇ to Editor</button>
         </div>
-        <div class="model3d-canvas-wrap">
-          <canvas id="model3d-canvas"></canvas>
-        </div>
+        <div class="model3d-canvas-wrap"><canvas id="model3d-canvas"></canvas></div>
         <div class="model3d-overlay">
           <div class="m3d-badge" id="m3d-cam-info">Drag to orbit · Scroll to zoom</div>
           <div class="m3d-badge" id="m3d-sel-info"></div>
@@ -686,7 +640,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 
   <!-- TERRAIN VIEW -->
-
   <div class="view" id="view-terrain">
     <div class="terrain-view">
       <div class="terrain-sidebar">
@@ -729,7 +682,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 
   <!-- GUI BUILDER VIEW -->
-
   <div class="view" id="view-gui">
     <div class="gui-view">
       <div class="gui-sidebar">
@@ -768,7 +720,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 
   <!-- NPC CREATOR VIEW -->
-
   <div class="view" id="view-npc">
     <div class="npc-view">
       <div class="npc-sidebar">
@@ -815,7 +766,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
   </div>
 
   <!-- ADMIN VIEW -->
-
   <div class="view" id="view-admin">
     <div class="admin-view">
       <div class="admin-hdr">👑 Admin Command Suite</div>
@@ -883,7 +833,7 @@ function toast(msg,type='info',dur=3200){
 function sv(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
 function lv(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ── AUTH ──
+// AUTH
 function startApp(){
   const inp=$('rbx-username');const u=(inp.value||'').trim();
   if(!u){$('auth-err').style.display='block';inp.focus();return;}
@@ -909,13 +859,13 @@ function enterApp(){
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
 lv();if(user&&sessionToken)enterApp();
 
-// ── POLLING ──
+// POLLING
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();d.connected&&!pluginConnected?setConn(true):!d.connected&&pluginConnected?setConn(false):null;}catch{}},2500);}
 function stopPolling(){clearInterval(pollInterval);}
 function setConn(v){pluginConnected=v;const d=$('conn-dot');d.className='conn-dot '+(v?'on':'wait');$('conn-txt').textContent=v?'Studio connected':'Not connected';v&&(toast('Studio connected!','ok'),addLog('sys','Studio connected.'));}
 function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
-// ── LOG ──
+// LOG
 function addLog(kind,msg){
   const el=document.createElement('div');
   el.className=`le ${kind}`;
@@ -925,7 +875,7 @@ function addLog(kind,msg){
 }
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-cnt').textContent='0';}
 
-// ── VIEW SWITCH ──
+// VIEW SWITCH
 function gotoView(name,btn){
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -936,50 +886,41 @@ function gotoView(name,btn){
 }
 function toggleST(type,el){activeST[type]=!activeST[type];el.classList.toggle('on',activeST[type]);toast((activeST[type]?'Enabled ':'Disabled ')+type,'info');}
 
-// ── AI — ONLY THIS FUNCTION CHANGED ──
-// Routes through Railway backend which proxies to Groq using llama-3.3-70b-versatile
+// AI
 const GENIUS_SYSTEM = `You are an expert in EVERYTHING:
 - Roblox Lua scripting: every API, service, best practice, framework
-- Roblox frameworks: Cmdr (command system by evaera), Knit (framework by sleitnick), ProfileService (by loleris), DataStore2 (by Kampfkarren), Rojo (file sync by Roblox), Promise (by evaera), t (typechecking), ReactLua, Matter (ECS)
-- Roblox name tags: custom BillboardGui, overhead GUI, rank displays, how streamingEnabled affects them
-- Roblox YouTubers: AlvinBlox (tutorials), PeasFactory (advanced dev), TheDevKing (beginner), ObliviousHD, GnomeCode, CodeWithEllie, ContextLost, BanTech, RoBuilder, Sub (Roblox dev tips)
-- Roblox tools: Argon (like Rojo), Wally (package manager), Selene (linter), StyLua (formatter)
-- General programming: algorithms, data structures, design patterns, OOP, functional programming
-- Game design: economy design, progression systems, monetization, UX, loop design
-- Math for games: vectors, quaternions, raycasting, pathfinding, noise, physics
-- Web tech, computer science, and any other topic
-
-When answering about Roblox frameworks or tools, give specific accurate details about the actual API. When mentioning YouTubers, give accurate info about their content style and focus. For scripts, always return production-ready Lua. Be conversational, detailed, and insightful.`;
+- Roblox frameworks: Cmdr, Knit, ProfileService, DataStore2, Rojo, Promise, t, ReactLua, Matter (ECS)
+- Roblox name tags, YouTubers (AlvinBlox, PeasFactory, TheDevKing, GnomeCode etc.)
+- General programming, game design, math for games
+When answering give specific accurate details. For scripts, always return production-ready Lua. Be conversational, detailed, and insightful.`;
 
 async function callAI(prompt, sysOverride=null, maxTok=2000) {
   try {
-    const r = await fetch(BACKEND + '/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: "claude-sonnet-4-20250514",
         max_tokens: maxTok,
         system: sysOverride || GENIUS_SYSTEM,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: "user", content: prompt }]
       })
     });
-    if (!r.ok) {
-      const e = await r.text().catch(() => '');
-      throw new Error('API ' + r.status + ': ' + e.slice(0, 120));
+    if (!response.ok) {
+      const e = await response.text().catch(() => '');
+      throw new Error('API ' + response.status + ': ' + e.slice(0, 120));
     }
-    const d = await r.json();
-    // Support both Groq (choices) and Anthropic (content) response shapes
-    return d.choices?.[0]?.message?.content || d.content?.[0]?.text || null;
+    const d = await response.json();
+    return d.content?.[0]?.text || null;
   } catch(e) {
     addLog('err', 'AI: ' + e.message);
     return null;
   }
 }
 
-// Strip markdown fences but leave ===MARKERS=== intact
 function cc(c){return(c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();}
 
-// ── SEND TO STUDIO ──
+// SEND TO STUDIO
 function wrapInsert(code,type){
   const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const parentMap={
@@ -999,7 +940,6 @@ function detectType(b){
   if(/return module/.test(lb))return'modulescript';
   return'script';
 }
-
 function splitBlocks(code){
   const sm=code.match(/===SCRIPT_SERVER===([\s\S]*?)(?====SCRIPT_LOCAL===|===SCRIPT_MODULE===|$)/);
   const lm=code.match(/===SCRIPT_LOCAL===([\s\S]*?)(?====SCRIPT_SERVER===|===SCRIPT_MODULE===|$)/);
@@ -1011,7 +951,6 @@ function splitBlocks(code){
   if(!secs.length)secs.push({code:cc(code),type:detectType(code)});
   return secs;
 }
-
 async function sendToStudio(){
   const code=$('code-area').value.trim();
   if(!code){toast('Nothing to send.','bad');return;}
@@ -1039,7 +978,7 @@ async function sendToStudio(){
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// ── GENERATE SCRIPT ──
+// GENERATE SCRIPT
 async function genScript(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -1065,10 +1004,7 @@ Return production-ready, commented Lua. No markdown fences.`;
   const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
   const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const secs=splitBlocks(raw);
-  const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗
--- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║
--- ║  Place in: ${loc.padEnd(28)}║
--- ╚═══════════════════════════════════════╝`;
+  const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
   $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
   onCE();$('es-status').textContent=`✓ ${secs.length} script(s) ready`;
   $('es-type-badge').textContent='AI: '+secs.map(s=>lblMap[s.type]).join(' + ');
@@ -1089,16 +1025,13 @@ async function aiAction(action){
   const r=await callAI(prompts[action]);
   $('ai-ind').classList.remove('on');
   if(r){
-    if(action==='explain'){
-      appendMsg('ai',r);toast('Explanation in chat!','ok');
-    }else{
-      $('code-area').value=cc(r);onCE();toast(action+' done!','ok');
-    }
+    if(action==='explain'){appendMsg('ai',r);toast('Explanation in chat!','ok');}
+    else{$('code-area').value=cc(r);onCE();toast(action+' done!','ok');}
     $('es-status').textContent='✓ Done';
   }else toast('Failed.','bad');
 }
 
-// ── CODE EDITOR ──
+// CODE EDITOR
 function cpyCode(){navigator.clipboard.writeText($('code-area').value);toast('Copied!','ok');}
 function onCE(){const v=$('code-area').value;$('es-lines').textContent=v.split('\n').length;$('es-chars').textContent=v.length;updateLN();}
 function updateLN(){const n=$('code-area').value.split('\n').length;$('line-nums').innerHTML=Array.from({length:Math.max(n,1)},(_,i)=>`<span class="ln">${i+1}</span>`).join('');}
@@ -1110,7 +1043,7 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function cq(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Chat cleared','info');}
 
-// ── AI CHAT ──
+// AI CHAT
 async function sendChat(){
   const inp=$('chat-input');const msg=inp.value.trim();if(!msg)return;
   inp.value='';inp.style.height='auto';
@@ -1119,7 +1052,7 @@ async function sendChat(){
   const tid='t_'+Date.now();appendTyping(tid);
   const r=await callAI(msg,GENIUS_SYSTEM,1500);
   removeTyping(tid);$('chat-send').disabled=false;
-  appendMsg('ai',r||"AI offline. Check Railway backend.");
+  appendMsg('ai',r||"AI offline.");
 }
 function appendMsg(role,text){
   const c=$('chat-msgs');const d=document.createElement('div');
@@ -1127,175 +1060,336 @@ function appendMsg(role,text){
   const av=role==='ai'?'✦':(user?user.avatar:'U');
   const cls=role==='ai'?'ai':'user';
   const fmt=(text||'').replace(/```lua\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
-
-d.innerHTML=`<div class="cava ${cls}">${av}</div><div><div class="cbub">${fmt}</div></div>`;
-c.appendChild(d);c.scrollTop=c.scrollHeight;
+  d.innerHTML=`<div class="cava ${cls}">${av}</div><div><div class="cbub">${fmt}</div></div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
-function appendTyping(id){const c=$(‘chat-msgs’);const d=document.createElement(‘div’);d.className=‘cmsg’;d.id=id;d.innerHTML=`<div class="cava ai">✦</div><div><div class="cbub"><div class="typing"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function appendTyping(id){const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;d.innerHTML=`<div class="cava ai">✦</div><div><div class="cbub"><div class="typing"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// ── TEMPLATES & SNIPPETS ──
+// TEMPLATES & SNIPPETS
 const TMPLS={
-door:`-- SCRIPT: Touch-activated door with TweenService local TweenService = game:GetService("TweenService") local door = script.Parent local debounce = false local openPos = door.CFrame * CFrame.new(0, 8, 0) local closePos = door.CFrame local info = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out) door.Touched:Connect(function(hit) if hit.Parent:FindFirstChild("Humanoid") and not debounce then debounce = true TweenService:Create(door, info, {CFrame = openPos}):Play() task.wait(3) TweenService:Create(door, info, {CFrame = closePos}):Play() task.wait(0.5) debounce = false end end)`,
-leaderboard:`-- SCRIPT: Leaderboard + DataStore with retry local Players = game:GetService("Players") local DS = game:GetService("DataStoreService") local store = DS:GetDataStore("Stats_v1") local cache = {} local DEFAULT = {coins=0, wins=0, level=1} Players.PlayerAdded:Connect(function(player) local ok, data for i=1,3 do ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end) if ok then break end task.wait(2) end cache[player.UserId] = (ok and data) or table.clone(DEFAULT) local ls = Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player local c = Instance.new("IntValue"); c.Name="Coins"; c.Value=cache[player.UserId].coins; c.Parent=ls end) Players.PlayerRemoving:Connect(function(p) pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end) end) game:BindToClose(function() for _, p in Players:GetPlayers() do pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end) end end)`,
-gui:`-- LOCALSCRIPT: Animated ScreenGui (place in StarterPlayerScripts) local Players = game:GetService("Players") local TweenService = game:GetService("TweenService") local player = Players.LocalPlayer local gui = Instance.new("ScreenGui"); gui.ResetOnSpawn=false; gui.Parent=player.PlayerGui local frame = Instance.new("Frame") frame.Size = UDim2.new(0,300,0,180) frame.Position = UDim2.new(0.5,-150,0.6,-90) frame.BackgroundColor3 = Color3.fromRGB(10,13,22) frame.BackgroundTransparency = 1 frame.BorderSizePixel = 0 frame.Parent = gui Instance.new("UICorner",frame).CornerRadius = UDim.new(0,14) local stroke = Instance.new("UIStroke",frame) stroke.Color = Color3.fromRGB(0,200,240); stroke.Thickness = 1 local title = Instance.new("TextLabel",frame) title.Size = UDim2.new(1,0,0,40); title.BackgroundTransparency=1 title.Text = "Hello World!"; title.TextColor3=Color3.new(1,1,1) title.Font = Enum.Font.GothamBold; title.TextSize = 16 TweenService:Create(frame, TweenInfo.new(0.5,Enum.EasingStyle.Back), {Position=UDim2.new(0.5,-150,0.5,-90),BackgroundTransparency=0}):Play()`,
-npc:`-- SCRIPT: NPC with pathfinding + health bar local PathfindingService = game:GetService("PathfindingService") local Players = game:GetService("Players") local RunService = game:GetService("RunService") local npc = script.Parent local humanoid = npc:WaitForChild("Humanoid") local root = npc:WaitForChild("HumanoidRootPart") humanoid.MaxHealth = 100; humanoid.Health = 100 local DETECT = 30; local ATTACK = 5; local DAMAGE = 10 local lastAtk = 0 RunService.Heartbeat:Connect(function() if humanoid.Health <= 0 then return end for _, p in Players:GetPlayers() do local c = p.Character if c then local hr = c:FindFirstChild("HumanoidRootPart") local hm = c:FindFirstChildOfClass("Humanoid") if hr and hm and hm.Health > 0 then local d = (hr.Position - root.Position).Magnitude if d <= ATTACK then if tick()-lastAtk >= 1.5 then lastAtk=tick(); hm:TakeDamage(DAMAGE) end elseif d <= DETECT then humanoid:MoveTo(hr.Position) end end end end end)`,
-datastore:`-- SCRIPT: DataStore with full retry + BindToClose local DS = game:GetService("DataStoreService") local Players = game:GetService("Players") local store = DS:GetDataStore("GameData_v2") local cache = {} local DEFAULT = {coins=0, level=1, xp=0} Players.PlayerAdded:Connect(function(player) for i=1,3 do local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end) if ok then cache[player.UserId]=data or table.clone(DEFAULT); break end task.wait(2) end local ls=Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player local c=Instance.new("IntValue"); c.Name="Coins"; c.Value=cache[player.UserId].coins; c.Parent=ls end) Players.PlayerRemoving:Connect(function(p) pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end) cache[p.UserId]=nil end) game:BindToClose(function() for _,p in Players:GetPlayers() do pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end) end end)`,
-round:`-- SCRIPT: Complete round system local Players = game:GetService("Players") local RS = game:GetService("ReplicatedStorage") local MIN=2; local LOBBY=20; local ROUND=180 local ev=Instance.new("RemoteEvent"); ev.Name="StatusUpdate"; ev.Parent=RS task.spawn(function() while true do repeat ev:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN..")") task.wait(2) until #Players:GetPlayers()>=MIN for i=LOBBY,1,-1 do ev:FireAllClients("Starting in "..i.."s!") task.wait(1) end ev:FireAllClients("Round started!") task.wait(ROUND) ev:FireAllClients("Round over!") task.wait(10) end end)`,
-admin:`-- SCRIPT: Admin command system local Players = game:GetService("Players") local RANKS = {[1234567890]=5} local function getRank(p) return RANKS[p.UserId] or 0 end local function find(name) for _,p in Players:GetPlayers() do if p.Name:lower():find(name:lower()) then return p end end end local CMDS = { kick={rank=3,fn=function(a,args) local t=find(args[1]);if t then t:Kick(args[2]or"Kicked") end end}, tp  ={rank=3,fn=function(a,args) local t=find(args[1]);if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end}, god ={rank=4,fn=function(a,args) local t=find(args[1]);if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid");if h then h.MaxHealth=math.huge;h.Health=math.huge end end end}, day ={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="14:00:00" end}, night={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="02:00:00" end}, } Players.PlayerAdded:Connect(function(player) player.Chatted:Connect(function(msg) if msg:sub(1,1)~="/" then return end local parts=msg:sub(2):split(" ") local cmd=CMDS[parts[1]:lower()] if cmd and getRank(player)>=cmd.rank then pcall(cmd.fn,player,{table.unpack(parts,2)}) end end) end)`,
-shop:`-- SCRIPT: Shop with DataStore local Players = game:GetService("Players") local RS = game:GetService("ReplicatedStorage") local ev=Instance.new("RemoteEvent"); ev.Name="BuyItem"; ev.Parent=RS local ITEMS = { speed={cost=100,fn=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid");if h then h.WalkSpeed=24 end end end}, } ev.OnServerEvent:Connect(function(player,itemId) local item=ITEMS[itemId]; if not item then return end local ls=player:FindFirstChild("leaderstats") local coins=ls and ls:FindFirstChild("Coins") if not coins or coins.Value<item.cost then ev:FireClient(player,"err","Not enough coins!") return end coins.Value-=item.cost; item.fn(player); ev:FireClient(player,"ok",itemId) end)`,
+door:`-- SCRIPT: Touch-activated door with TweenService
+local TweenService = game:GetService("TweenService")
+local door = script.Parent
+local debounce = false
+local openPos = door.CFrame * CFrame.new(0, 8, 0)
+local closePos = door.CFrame
+local info = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+door.Touched:Connect(function(hit)
+  if hit.Parent:FindFirstChild("Humanoid") and not debounce then
+    debounce = true
+    TweenService:Create(door, info, {CFrame = openPos}):Play()
+    task.wait(3)
+    TweenService:Create(door, info, {CFrame = closePos}):Play()
+    task.wait(0.5)
+    debounce = false
+  end
+end)`,
+leaderboard:`-- SCRIPT: Leaderboard + DataStore with retry
+local Players = game:GetService("Players")
+local DS = game:GetService("DataStoreService")
+local store = DS:GetDataStore("Stats_v1")
+local cache = {}
+local DEFAULT = {coins=0, wins=0, level=1}
+Players.PlayerAdded:Connect(function(player)
+  local ok, data
+  for i=1,3 do
+    ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
+    if ok then break end
+    task.wait(2)
+  end
+  cache[player.UserId] = (ok and data) or table.clone(DEFAULT)
+  local ls = Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player
+  local c = Instance.new("IntValue"); c.Name="Coins"; c.Value=cache[player.UserId].coins; c.Parent=ls
+end)
+Players.PlayerRemoving:Connect(function(p)
+  pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+end)
+game:BindToClose(function()
+  for _, p in Players:GetPlayers() do
+    pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+  end
+end)`,
+gui:`-- LOCALSCRIPT: Animated ScreenGui
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local gui = Instance.new("ScreenGui"); gui.ResetOnSpawn=false; gui.Parent=player.PlayerGui
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0,300,0,180)
+frame.Position = UDim2.new(0.5,-150,0.6,-90)
+frame.BackgroundColor3 = Color3.fromRGB(10,13,22)
+frame.BackgroundTransparency = 1
+frame.BorderSizePixel = 0
+frame.Parent = gui
+Instance.new("UICorner",frame).CornerRadius = UDim.new(0,14)
+local stroke = Instance.new("UIStroke",frame)
+stroke.Color = Color3.fromRGB(0,200,240); stroke.Thickness = 1
+local title = Instance.new("TextLabel",frame)
+title.Size = UDim2.new(1,0,0,40); title.BackgroundTransparency=1
+title.Text = "Hello World!"; title.TextColor3=Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold; title.TextSize = 16
+TweenService:Create(frame, TweenInfo.new(0.5,Enum.EasingStyle.Back), {Position=UDim2.new(0.5,-150,0.5,-90),BackgroundTransparency=0}):Play()`,
+npc:`-- SCRIPT: NPC with pathfinding + health bar
+local PathfindingService = game:GetService("PathfindingService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local npc = script.Parent
+local humanoid = npc:WaitForChild("Humanoid")
+local root = npc:WaitForChild("HumanoidRootPart")
+humanoid.MaxHealth = 100; humanoid.Health = 100
+local DETECT = 30; local ATTACK = 5; local DAMAGE = 10
+local lastAtk = 0
+RunService.Heartbeat:Connect(function()
+  if humanoid.Health <= 0 then return end
+  for _, p in Players:GetPlayers() do
+    local c = p.Character
+    if c then
+      local hr = c:FindFirstChild("HumanoidRootPart")
+      local hm = c:FindFirstChildOfClass("Humanoid")
+      if hr and hm and hm.Health > 0 then
+        local d = (hr.Position - root.Position).Magnitude
+        if d <= ATTACK then
+          if tick()-lastAtk >= 1.5 then lastAtk=tick(); hm:TakeDamage(DAMAGE) end
+        elseif d <= DETECT then
+          humanoid:MoveTo(hr.Position)
+        end
+      end
+    end
+  end
+end)`,
+datastore:`-- SCRIPT: DataStore with full retry + BindToClose
+local DS = game:GetService("DataStoreService")
+local Players = game:GetService("Players")
+local store = DS:GetDataStore("GameData_v2")
+local cache = {}
+local DEFAULT = {coins=0, level=1, xp=0}
+Players.PlayerAdded:Connect(function(player)
+  for i=1,3 do
+    local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
+    if ok then cache[player.UserId]=data or table.clone(DEFAULT); break end
+    task.wait(2)
+  end
+  local ls=Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player
+  local c=Instance.new("IntValue"); c.Name="Coins"; c.Value=cache[player.UserId].coins; c.Parent=ls
+end)
+Players.PlayerRemoving:Connect(function(p)
+  pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)
+  cache[p.UserId]=nil
+end)
+game:BindToClose(function()
+  for _,p in Players:GetPlayers() do
+    pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)
+  end
+end)`,
+round:`-- SCRIPT: Complete round system
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
+local MIN=2; local LOBBY=20; local ROUND=180
+local ev=Instance.new("RemoteEvent"); ev.Name="StatusUpdate"; ev.Parent=RS
+task.spawn(function()
+  while true do
+    repeat
+      ev:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN..")")
+      task.wait(2)
+    until #Players:GetPlayers()>=MIN
+    for i=LOBBY,1,-1 do ev:FireAllClients("Starting in "..i.."s!") task.wait(1) end
+    ev:FireAllClients("Round started!")
+    task.wait(ROUND)
+    ev:FireAllClients("Round over!")
+    task.wait(10)
+  end
+end)`,
+admin:`-- SCRIPT: Admin command system
+local Players = game:GetService("Players")
+local RANKS = {[1234567890]=5}
+local function getRank(p) return RANKS[p.UserId] or 0 end
+local function find(name)
+  for _,p in Players:GetPlayers() do
+    if p.Name:lower():find(name:lower()) then return p end
+  end
+end
+local CMDS = {
+  kick={rank=3,fn=function(a,args) local t=find(args[1]);if t then t:Kick(args[2]or"Kicked") end end},
+  tp  ={rank=3,fn=function(a,args) local t=find(args[1]);if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end},
+  god ={rank=4,fn=function(a,args) local t=find(args[1]);if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid");if h then h.MaxHealth=math.huge;h.Health=math.huge end end end},
+  day ={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="14:00:00" end},
+  night={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="02:00:00" end},
+}
+Players.PlayerAdded:Connect(function(player)
+  player.Chatted:Connect(function(msg)
+    if msg:sub(1,1)~="/" then return end
+    local parts=msg:sub(2):split(" ")
+    local cmd=CMDS[parts[1]:lower()]
+    if cmd and getRank(player)>=cmd.rank then pcall(cmd.fn,player,{table.unpack(parts,2)}) end
+  end)
+end)`,
+shop:`-- SCRIPT: Shop with DataStore
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
+local ev=Instance.new("RemoteEvent"); ev.Name="BuyItem"; ev.Parent=RS
+local ITEMS = {
+  speed={cost=100,fn=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid");if h then h.WalkSpeed=24 end end end},
+}
+ev.OnServerEvent:Connect(function(player,itemId)
+  local item=ITEMS[itemId]; if not item then return end
+  local ls=player:FindFirstChild("leaderstats")
+  local coins=ls and ls:FindFirstChild("Coins")
+  if not coins or coins.Value<item.cost then ev:FireClient(player,"err","Not enough coins!") return end
+  coins.Value-=item.cost; item.fn(player); ev:FireClient(player,"ok",itemId)
+end)`,
 };
-function loadTmpl(name){if(!TMPLS[name])return;$(‘code-area’).value=TMPLS[name];onCE();document.querySelector(’.nav-tab’).click();toast(’Template: ’+name,‘ok’);}
+function loadTmpl(name){if(!TMPLS[name])return;$('code-area').value=TMPLS[name];onCE();document.querySelector('.nav-tab').click();toast('Template: '+name,'ok');}
 
 const SNIPS={
-remote:`– REMOTEVENT BOILERPLATE
-– SERVER (Script):
-local RS = game:GetService(“ReplicatedStorage”)
-local myEvent = Instance.new(“RemoteEvent”)
-myEvent.Name = “MyEvent”; myEvent.Parent = RS
+remote:`-- REMOTEEVENT BOILERPLATE
+-- SERVER (Script):
+local RS = game:GetService("ReplicatedStorage")
+local myEvent = Instance.new("RemoteEvent")
+myEvent.Name = "MyEvent"; myEvent.Parent = RS
 myEvent.OnServerEvent:Connect(function(player, data)
-print(player.Name, “sent:”, data)
+  print(player.Name, "sent:", data)
 end)
-
-– CLIENT (LocalScript):
-– local myEvent = game:GetService(“ReplicatedStorage”):WaitForChild(“MyEvent”)
-– myEvent:FireServer({message = “hello”})`, debounce:`– DEBOUNCE PATTERN
+-- CLIENT (LocalScript):
+-- local myEvent = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
+-- myEvent:FireServer({message = "hello"})`,
+debounce:`-- DEBOUNCE PATTERN
 local debounce = false
 script.Parent.Touched:Connect(function(hit)
-if debounce then return end
-if not hit.Parent:FindFirstChildOfClass(“Humanoid”) then return end
-debounce = true
-– your code here
-task.wait(1)
-debounce = false
-end)`, tween:`– TWEENSERVICE
-local TweenService = game:GetService(“TweenService”)
+  if debounce then return end
+  if not hit.Parent:FindFirstChildOfClass("Humanoid") then return end
+  debounce = true
+  -- your code here
+  task.wait(1)
+  debounce = false
+end)`,
+tween:`-- TWEENSERVICE
+local TweenService = game:GetService("TweenService")
 local info = TweenInfo.new(
-0.5,                        – Time
-Enum.EasingStyle.Quart,     – Style
-Enum.EasingDirection.Out,   – Direction
-0,                          – Repeat count
-false,                      – Reverses
-0                           – Delay
+  0.5,
+  Enum.EasingStyle.Quart,
+  Enum.EasingDirection.Out,
+  0, false, 0
 )
-TweenService:Create(part, info, {Position = Vector3.new(0, 10, 0)}):Play()`, anim:`– PLAY ANIMATION
-local anim = Instance.new(“Animation”)
-anim.AnimationId = “rbxassetid://YOUR_ANIMATION_ID”
-local humanoid = character:FindFirstChildOfClass(“Humanoid”)
-local animator = humanoid:FindFirstChildOfClass(“Animator”)
-or Instance.new(“Animator”, humanoid)
+TweenService:Create(part, info, {Position = Vector3.new(0, 10, 0)}):Play()`,
+anim:`-- PLAY ANIMATION
+local anim = Instance.new("Animation")
+anim.AnimationId = "rbxassetid://YOUR_ANIMATION_ID"
+local humanoid = character:FindFirstChildOfClass("Humanoid")
+local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
 local track = animator:LoadAnimation(anim)
 track.Priority = Enum.AnimationPriority.Action
-track:Play()
-track.Stopped:Wait() – optional: wait for it to finish`, npc:`– NPC HEALTH BAR (BillboardGui)
+track:Play()`,
+npc:`-- NPC HEALTH BAR (BillboardGui)
 local npc = script.Parent
-local humanoid = npc:WaitForChild(“Humanoid”)
-local bb = Instance.new(“BillboardGui”)
+local humanoid = npc:WaitForChild("Humanoid")
+local bb = Instance.new("BillboardGui")
 bb.Size = UDim2.new(0, 100, 0, 18)
 bb.StudsOffset = Vector3.new(0, 3.5, 0)
-bb.Parent = npc:WaitForChild(“HumanoidRootPart”)
-local bar = Instance.new(“Frame”); bar.Size=UDim2.new(1,0,1,0)
+bb.Parent = npc:WaitForChild("HumanoidRootPart")
+local bar = Instance.new("Frame"); bar.Size=UDim2.new(1,0,1,0)
 bar.BackgroundColor3=Color3.fromRGB(210,40,40); bar.BorderSizePixel=0; bar.Parent=bb
-Instance.new(“UICorner”,bar).CornerRadius=UDim.new(1,0)
+Instance.new("UICorner",bar).CornerRadius=UDim.new(1,0)
 humanoid.HealthChanged:Connect(function(hp)
-bar.Size=UDim2.new(math.clamp(hp/humanoid.MaxHealth,0,1),0,1,0)
-end)`, gui:`– GUI FRAME
-local Players = game:GetService(“Players”)
+  bar.Size=UDim2.new(math.clamp(hp/humanoid.MaxHealth,0,1),0,1,0)
+end)`,
+gui:`-- GUI FRAME
+local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local frame = Instance.new(“Frame”)
+local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 300, 0, 200)
 frame.Position = UDim2.new(0.5, -150, 0.5, -100)
 frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 frame.BorderSizePixel = 0
-frame.Parent = player.PlayerGui:WaitForChild(“ScreenGui”)
-Instance.new(“UICorner”, frame).CornerRadius = UDim.new(0, 12)`, ds:`– DATASTORE SAVE/LOAD
-local DS = game:GetService(“DataStoreService”)
-local store = DS:GetDataStore(“PlayerData_v1”)
-– Load:
+frame.Parent = player.PlayerGui:WaitForChild("ScreenGui")
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)`,
+ds:`-- DATASTORE SAVE/LOAD
+local DS = game:GetService("DataStoreService")
+local store = DS:GetDataStore("PlayerData_v1")
+-- Load:
 local ok, data = pcall(function()
-return store:GetAsync(tostring(player.UserId))
+  return store:GetAsync(tostring(player.UserId))
 end)
-if ok and data then print(“Loaded:”, data) end
-– Save:
+if ok and data then print("Loaded:", data) end
+-- Save:
 local ok2, err = pcall(function()
-store:SetAsync(tostring(player.UserId), {coins=100, level=5})
+  store:SetAsync(tostring(player.UserId), {coins=100, level=5})
 end)
-if not ok2 then warn(“Save failed:”, err) end`,
+if not ok2 then warn("Save failed:", err) end`,
 };
-function inSnip(n){if(!SNIPS[n])return;const cur=$(‘code-area’).value;$(‘code-area’).value=cur+(cur?’\n\n’:’’)+SNIPS[n];onCE();toast(‘Snippet inserted’,‘ok’);}
+function inSnip(n){if(!SNIPS[n])return;const cur=$('code-area').value;$('code-area').value=cur+(cur?'\n\n':'')+SNIPS[n];onCE();toast('Snippet inserted','ok');}
 
-// ── 3D VIEWPORT ──
+// 3D VIEWPORT
 function initViewport(){
-vpCanvas=$(‘mc’);const vp=vpCanvas.parentElement;
-vpCanvas.width=vp.clientWidth||280;vpCanvas.height=vp.clientHeight||200;
-new ResizeObserver(()=>{vpCanvas.width=vp.clientWidth;vpCanvas.height=vp.clientHeight;render3d();}).observe(vp);
-vpEvents();
-addPartSilent(‘BasePart’,‘block’,{x:0,y:-0.5,z:0,sx:28,sy:1,sz:28,color:’#2a2f45’,name:‘Floor’,anchored:true,material:‘SmoothPlastic’,transparency:0});
-render3d();
+  vpCanvas=$('mc');const vp=vpCanvas.parentElement;
+  vpCanvas.width=vp.clientWidth||280;vpCanvas.height=vp.clientHeight||200;
+  new ResizeObserver(()=>{vpCanvas.width=vp.clientWidth;vpCanvas.height=vp.clientHeight;render3d();}).observe(vp);
+  vpEvents();
+  addPartSilent('BasePart','block',{x:0,y:-0.5,z:0,sx:28,sy:1,sz:28,color:'#2a2f45',name:'Floor',anchored:true,material:'SmoothPlastic',transparency:0});
+  render3d();
 }
 function proj3d(x,y,z,cam,c){
-const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z;
-let tmp=rx*cos(cam.ry)-rz*sin(cam.ry);rz=rx*sin(cam.ry)+rz*cos(cam.ry);rx=tmp;
-tmp=ry*cos(cam.rx)-rz*sin(cam.rx);rz=ry*sin(cam.rx)+rz*cos(cam.rx);ry=tmp;
-rz+=cam.z;rx+=cam.x;ry-=cam.y;
-if(rz<=0)return null;
-const fov=260*cam.zoom;
-return{sx:c.width/2+rx*fov/rz,sy:c.height/2+ry*fov/rz,depth:rz};
+  const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z;
+  let tmp=rx*cos(cam.ry)-rz*sin(cam.ry);rz=rx*sin(cam.ry)+rz*cos(cam.ry);rx=tmp;
+  tmp=ry*cos(cam.rx)-rz*sin(cam.rx);rz=ry*sin(cam.rx)+rz*cos(cam.rx);ry=tmp;
+  rz+=cam.z;rx+=cam.x;ry-=cam.y;
+  if(rz<=0)return null;
+  const fov=260*cam.zoom;
+  return{sx:c.width/2+rx*fov/rz,sy:c.height/2+ry*fov/rz,depth:rz};
 }
 function render3d(){
-if(!vpCanvas)return;vpCtx=vpCanvas.getContext(‘2d’);
-vpCtx.clearRect(0,0,vpCanvas.width,vpCanvas.height);vpCtx.fillStyle=’#040609’;vpCtx.fillRect(0,0,vpCanvas.width,vpCanvas.height);
-if(showGrid)drawGrid(vpCtx,vpCanvas,camera);
-[…sceneObjects].sort((a,b)=>{const pa=proj3d(a.x,a.y,a.z,camera,vpCanvas),pb=proj3d(b.x,b.y,b.z,camera,vpCanvas);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawObj3d(vpCtx,vpCanvas,camera,o,o.id===selectedObjId));
-drawAxes(vpCtx,vpCanvas,camera);
+  if(!vpCanvas)return;vpCtx=vpCanvas.getContext('2d');
+  vpCtx.clearRect(0,0,vpCanvas.width,vpCanvas.height);vpCtx.fillStyle='#040609';vpCtx.fillRect(0,0,vpCanvas.width,vpCanvas.height);
+  if(showGrid)drawGrid(vpCtx,vpCanvas,camera);
+  [...sceneObjects].sort((a,b)=>{const pa=proj3d(a.x,a.y,a.z,camera,vpCanvas),pb=proj3d(b.x,b.y,b.z,camera,vpCanvas);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawObj3d(vpCtx,vpCanvas,camera,o,o.id===selectedObjId));
+  drawAxes(vpCtx,vpCanvas,camera);
 }
 function drawGrid(ctx,c,cam){
-ctx.strokeStyle=‘rgba(255,255,255,0.03)’;ctx.lineWidth=0.5;
-for(let i=-16;i<=16;i+=2){
-const a=proj3d(i,0,-16,cam,c),b=proj3d(i,0,16,cam,c),c2=proj3d(-16,0,i,cam,c),d=proj3d(16,0,i,cam,c);
-if(a&&b){ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);ctx.stroke();}
-if(c2&&d){ctx.beginPath();ctx.moveTo(c2.sx,c2.sy);ctx.lineTo(d.sx,d.sy);ctx.stroke();}
-}
+  ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=0.5;
+  for(let i=-16;i<=16;i+=2){
+    const a=proj3d(i,0,-16,cam,c),b=proj3d(i,0,16,cam,c),c2=proj3d(-16,0,i,cam,c),d=proj3d(16,0,i,cam,c);
+    if(a&&b){ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);ctx.stroke();}
+    if(c2&&d){ctx.beginPath();ctx.moveTo(c2.sx,c2.sy);ctx.lineTo(d.sx,d.sy);ctx.stroke();}
+  }
 }
 function drawAxes(ctx,c,cam){
-const o=proj3d(0,0,0,cam,c);if(!o)return;
-[[3,0,0,’#ef4444’,‘X’],[0,3,0,’#10b981’,‘Y’],[0,0,3,’#00e5ff’,‘Z’]].forEach(([x,y,z,col,l])=>{
-const p=proj3d(x,y,z,cam,c);if(!p)return;
-ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(o.sx,o.sy);ctx.lineTo(p.sx,p.sy);ctx.stroke();
-ctx.fillStyle=col;ctx.font=‘8px JetBrains Mono,monospace’;ctx.fillText(l,p.sx+2,p.sy-2);
-});
+  const o=proj3d(0,0,0,cam,c);if(!o)return;
+  [[3,0,0,'#ef4444','X'],[0,3,0,'#10b981','Y'],[0,0,3,'#00e5ff','Z']].forEach(([x,y,z,col,l])=>{
+    const p=proj3d(x,y,z,cam,c);if(!p)return;
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(o.sx,o.sy);ctx.lineTo(p.sx,p.sy);ctx.stroke();
+    ctx.fillStyle=col;ctx.font='8px JetBrains Mono,monospace';ctx.fillText(l,p.sx+2,p.sy-2);
+  });
 }
 function drawObj3d(ctx,c,cam,obj,selected){
-const hw=obj.sx/2,hh=obj.sy/2,hd=obj.sz/2;
-const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>proj3d(obj.x+vx,obj.y+vy,obj.z+vz,cam,c));
-if(verts.some(v=>!v))return;
-const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
-const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];
-const hex=obj.color||’#8899aa’;
-const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-faces.forEach(([a,b2,cd,d],fi)=>{
-const pts=[verts[a],verts[b2],verts[cd],verts[d]];
-const light=Math.max(0.2,0.3+normals[fi][1]*0.5+(normals[fi][2]+normals[fi][0])*0.1);
-ctx.beginPath();ctx.moveTo(pts[0].sx,pts[0].sy);pts.forEach(p=>ctx.lineTo(p.sx,p.sy));ctx.closePath();
-ctx.fillStyle=`rgba(${Math.round(r*light)},${Math.round(g*light)},${Math.round(b*light)},${1-(obj.transparency||0)})`;ctx.fill();
-ctx.strokeStyle=selected?‘rgba(0,229,255,.7)’:‘rgba(0,0,0,.12)’;ctx.lineWidth=selected?1.5:0.3;ctx.stroke();
-});
+  const hw=obj.sx/2,hh=obj.sy/2,hd=obj.sz/2;
+  const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>proj3d(obj.x+vx,obj.y+vy,obj.z+vz,cam,c));
+  if(verts.some(v=>!v))return;
+  const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
+  const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];
+  const hex=obj.color||'#8899aa';
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  faces.forEach(([a,b2,cd,d],fi)=>{
+    const pts=[verts[a],verts[b2],verts[cd],verts[d]];
+    const light=Math.max(0.2,0.3+normals[fi][1]*0.5+(normals[fi][2]+normals[fi][0])*0.1);
+    ctx.beginPath();ctx.moveTo(pts[0].sx,pts[0].sy);pts.forEach(p=>ctx.lineTo(p.sx,p.sy));ctx.closePath();
+    ctx.fillStyle=`rgba(${Math.round(r*light)},${Math.round(g*light)},${Math.round(b*light)},${1-(obj.transparency||0)})`;ctx.fill();
+    ctx.strokeStyle=selected?'rgba(0,229,255,.7)':'rgba(0,0,0,.12)';ctx.lineWidth=selected?1.5:0.3;ctx.stroke();
+  });
 }
 function addPartSilent(cls,shape,props={}){
-const pal=[’#6688aa’,’#dd5555’,’#5599ee’,’#44cc77’,’#ddaa33’,’#aa55ee’,’#ee8833’];
-const id=‘o’+nextId++;
-const obj={id,name:cls+’_’+(nextId-1),className:cls,shape,x:0,y:2,z:0,sx:4,sy:4,sz:4,color:pal[nextId%pal.length],material:‘SmoothPlastic’,anchored:true,transparency:0,…props};
-sceneObjects.push(obj);return obj;
+  const pal=['#6688aa','#dd5555','#5599ee','#44cc77','#ddaa33','#aa55ee','#ee8833'];
+  const id='o'+nextId++;
+  const obj={id,name:cls+'_'+(nextId-1),className:cls,shape,x:0,y:2,z:0,sx:4,sy:4,sz:4,color:pal[nextId%pal.length],material:'SmoothPlastic',anchored:true,transparency:0,...props};
+  sceneObjects.push(obj);return obj;
 }
-function addPart(cls,shape){const o=addPartSilent(cls,shape);selObj(o.id);render3d();updateSceneTree();toast(cls+’ added’,‘ok’);}
-function addLight(){const o=addPartSilent(‘PointLight’,‘sphere’,{x:0,y:6,z:0,sx:1.5,sy:1.5,sz:1.5,color:’#ffffaa’,material:‘Neon’});selObj(o.id);render3d();updateSceneTree();toast(‘Light added’,‘ok’);}
+function addPart(cls,shape){const o=addPartSilent(cls,shape);selObj(o.id);render3d();updateSceneTree();toast(cls+' added','ok');}
+function addLight(){const o=addPartSilent('PointLight','sphere',{x:0,y:6,z:0,sx:1.5,sy:1.5,sz:1.5,color:'#ffffaa',material:'Neon'});selObj(o.id);render3d();updateSceneTree();toast('Light added','ok');}
 function selObj(id){
-selectedObjId=id;
-const obj=sceneObjects.find(o=>o.id===id);
-const area=$(‘props-area’);
-if(obj){
-area.innerHTML=`<div class="pgrp">Transform</div>
-
+  selectedObjId=id;
+  const obj=sceneObjects.find(o=>o.id===id);
+  const area=$('props-area');
+  if(obj){
+    area.innerHTML=`<div class="pgrp">Transform</div>
 <div class="prow"><span class="plbl">Position</span><div class="pinputs"><input class="pinp" type="number" value="${obj.x}" step=".5" onchange="uprop('x',this.value)"><input class="pinp" type="number" value="${obj.y}" step=".5" onchange="uprop('y',this.value)"><input class="pinp" type="number" value="${obj.z}" step=".5" onchange="uprop('z',this.value)"></div></div>
 <div class="prow"><span class="plbl">Size</span><div class="pinputs"><input class="pinp" type="number" value="${obj.sx}" step=".5" min=".1" onchange="uprop('sx',this.value)"><input class="pinp" type="number" value="${obj.sy}" step=".5" min=".1" onchange="uprop('sy',this.value)"><input class="pinp" type="number" value="${obj.sz}" step=".5" min=".1" onchange="uprop('sz',this.value)"></div></div>
 <div class="pgrp">Appearance</div>
@@ -1330,289 +1424,288 @@ function pickObj3d(e){
 }
 function switchRT(name,btn){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.rpanel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('rpanel-'+name).classList.add('active');}
 
-// ── 3D MODEL VIEWER ──
+// 3D MODEL VIEWER
 function initM3dViewer(){
-m3dCanvas=$(‘model3d-canvas’);if(!m3dCanvas)return;
-const wrap=m3dCanvas.parentElement;
-m3dCanvas.width=wrap.clientWidth||800;m3dCanvas.height=wrap.clientHeight||500;
-new ResizeObserver(()=>{m3dCanvas.width=wrap.clientWidth;m3dCanvas.height=wrap.clientHeight;renderM3d();}).observe(wrap);
-m3dEvents();
+  m3dCanvas=$('model3d-canvas');if(!m3dCanvas)return;
+  const wrap=m3dCanvas.parentElement;
+  m3dCanvas.width=wrap.clientWidth||800;m3dCanvas.height=wrap.clientHeight||500;
+  new ResizeObserver(()=>{m3dCanvas.width=wrap.clientWidth;m3dCanvas.height=wrap.clientHeight;renderM3d();}).observe(wrap);
+  m3dEvents();
 }
 function m3dProj(x,y,z){
-const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z,tmp;
-tmp=rx*cos(m3dCamera.ry)-rz*sin(m3dCamera.ry);rz=rx*sin(m3dCamera.ry)+rz*cos(m3dCamera.ry);rx=tmp;
-tmp=ry*cos(m3dCamera.rx)-rz*sin(m3dCamera.rx);rz=ry*sin(m3dCamera.rx)+rz*cos(m3dCamera.rx);ry=tmp;
-rz+=m3dCamera.z;rx+=m3dCamera.x;ry-=m3dCamera.y;
-if(rz<=0)return null;
-const fov=320*m3dCamera.zoom;
-return{sx:m3dCanvas.width/2+rx*fov/rz,sy:m3dCanvas.height/2+ry*fov/rz,depth:rz};
+  const cos=Math.cos,sin=Math.sin;let rx=x,ry=y,rz=z,tmp;
+  tmp=rx*cos(m3dCamera.ry)-rz*sin(m3dCamera.ry);rz=rx*sin(m3dCamera.ry)+rz*cos(m3dCamera.ry);rx=tmp;
+  tmp=ry*cos(m3dCamera.rx)-rz*sin(m3dCamera.rx);rz=ry*sin(m3dCamera.rx)+rz*cos(m3dCamera.rx);ry=tmp;
+  rz+=m3dCamera.z;rx+=m3dCamera.x;ry-=m3dCamera.y;
+  if(rz<=0)return null;
+  const fov=320*m3dCamera.zoom;
+  return{sx:m3dCanvas.width/2+rx*fov/rz,sy:m3dCanvas.height/2+ry*fov/rz,depth:rz};
 }
 function renderM3d(){
-if(!m3dCanvas)return;m3dCtx=m3dCanvas.getContext(‘2d’);
-m3dCtx.clearRect(0,0,m3dCanvas.width,m3dCanvas.height);
-const bg=m3dCtx.createRadialGradient(m3dCanvas.width/2,m3dCanvas.height/2,0,m3dCanvas.width/2,m3dCanvas.height/2,m3dCanvas.width*.6);
-bg.addColorStop(0,’#070a12’);bg.addColorStop(1,’#020304’);
-m3dCtx.fillStyle=bg;m3dCtx.fillRect(0,0,m3dCanvas.width,m3dCanvas.height);
-drawM3dGrid();
-[…m3dObjects].sort((a,b)=>{const pa=m3dProj(a.x,a.y,a.z),pb=m3dProj(b.x,b.y,b.z);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawM3dObj(o));
-drawM3dAxes();
-$(‘m3d-stats’).textContent=m3dObjects.length+’ parts’;
+  if(!m3dCanvas)return;m3dCtx=m3dCanvas.getContext('2d');
+  m3dCtx.clearRect(0,0,m3dCanvas.width,m3dCanvas.height);
+  const bg=m3dCtx.createRadialGradient(m3dCanvas.width/2,m3dCanvas.height/2,0,m3dCanvas.width/2,m3dCanvas.height/2,m3dCanvas.width*.6);
+  bg.addColorStop(0,'#070a12');bg.addColorStop(1,'#020304');
+  m3dCtx.fillStyle=bg;m3dCtx.fillRect(0,0,m3dCanvas.width,m3dCanvas.height);
+  drawM3dGrid();
+  [...m3dObjects].sort((a,b)=>{const pa=m3dProj(a.x,a.y,a.z),pb=m3dProj(b.x,b.y,b.z);return(pb?pb.depth:0)-(pa?pa.depth:0);}).forEach(o=>drawM3dObj(o));
+  drawM3dAxes();
+  $('m3d-stats').textContent=m3dObjects.length+' parts';
 }
 function drawM3dGrid(){
-m3dCtx.strokeStyle=‘rgba(0,229,255,0.04)’;m3dCtx.lineWidth=0.5;
-for(let i=-20;i<=20;i+=2){
-const a=m3dProj(i,0,-20),b=m3dProj(i,0,20),c=m3dProj(-20,0,i),d=m3dProj(20,0,i);
-if(a&&b){m3dCtx.beginPath();m3dCtx.moveTo(a.sx,a.sy);m3dCtx.lineTo(b.sx,b.sy);m3dCtx.stroke();}
-if(c&&d){m3dCtx.beginPath();m3dCtx.moveTo(c.sx,c.sy);m3dCtx.lineTo(d.sx,d.sy);m3dCtx.stroke();}
-}
-const o=m3dProj(0,-0.05,0);if(o){m3dCtx.beginPath();m3dCtx.ellipse(o.sx,o.sy,80,20,0,0,Math.PI*2);m3dCtx.fillStyle=‘rgba(0,229,255,0.03)’;m3dCtx.fill();}
+  m3dCtx.strokeStyle='rgba(0,229,255,0.04)';m3dCtx.lineWidth=0.5;
+  for(let i=-20;i<=20;i+=2){
+    const a=m3dProj(i,0,-20),b=m3dProj(i,0,20),c=m3dProj(-20,0,i),d=m3dProj(20,0,i);
+    if(a&&b){m3dCtx.beginPath();m3dCtx.moveTo(a.sx,a.sy);m3dCtx.lineTo(b.sx,b.sy);m3dCtx.stroke();}
+    if(c&&d){m3dCtx.beginPath();m3dCtx.moveTo(c.sx,c.sy);m3dCtx.lineTo(d.sx,d.sy);m3dCtx.stroke();}
+  }
+  const o=m3dProj(0,-0.05,0);if(o){m3dCtx.beginPath();m3dCtx.ellipse(o.sx,o.sy,80,20,0,0,Math.PI*2);m3dCtx.fillStyle='rgba(0,229,255,0.03)';m3dCtx.fill();}
 }
 function drawM3dAxes(){
-const o=m3dProj(0,0,0);if(!o)return;
-[[4,0,0,’#ef4444’,‘X’],[0,4,0,’#10b981’,‘Y’],[0,0,4,’#00e5ff’,‘Z’]].forEach(([x,y,z,col,l])=>{
-const p=m3dProj(x,y,z);if(!p)return;
-m3dCtx.strokeStyle=col+‘44’;m3dCtx.lineWidth=1;m3dCtx.beginPath();m3dCtx.moveTo(o.sx,o.sy);m3dCtx.lineTo(p.sx,p.sy);m3dCtx.stroke();
-m3dCtx.fillStyle=col+‘aa’;m3dCtx.font=‘9px JetBrains Mono,monospace’;m3dCtx.fillText(l,p.sx+2,p.sy-2);
-});
+  const o=m3dProj(0,0,0);if(!o)return;
+  [[4,0,0,'#ef4444','X'],[0,4,0,'#10b981','Y'],[0,0,4,'#00e5ff','Z']].forEach(([x,y,z,col,l])=>{
+    const p=m3dProj(x,y,z);if(!p)return;
+    m3dCtx.strokeStyle=col+'44';m3dCtx.lineWidth=1;m3dCtx.beginPath();m3dCtx.moveTo(o.sx,o.sy);m3dCtx.lineTo(p.sx,p.sy);m3dCtx.stroke();
+    m3dCtx.fillStyle=col+'aa';m3dCtx.font='9px JetBrains Mono,monospace';m3dCtx.fillText(l,p.sx+2,p.sy-2);
+  });
 }
 function drawM3dObj(obj){
-const hw=obj.w/2,hh=obj.h/2,hd=obj.d/2;
-const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>m3dProj(obj.x+vx,obj.y+vy,obj.z+vz));
-if(verts.some(v=>!v))return;
-const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
-const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];
-const hex=obj.color||’#6688aa’;
-const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-const sel=obj.id===m3dSelectedId;
-faces.forEach(([a,b2,c,d],fi)=>{
-const pts=[verts[a],verts[b2],verts[c],verts[d]];
-const light=Math.max(0.18,0.28+normals[fi][1]*0.55+(normals[fi][2]+normals[fi][0])*0.12);
-const rim=Math.max(0,normals[fi][2]*-0.15);
-const fr=Math.round(r*light+20*rim),fg=Math.round(g*light+30*rim),fb=Math.round(b*light+50*rim);
-m3dCtx.beginPath();m3dCtx.moveTo(pts[0].sx,pts[0].sy);pts.forEach(p=>m3dCtx.lineTo(p.sx,p.sy));m3dCtx.closePath();
-m3dCtx.fillStyle=`rgb(${Math.min(255,fr)},${Math.min(255,fg)},${Math.min(255,fb)})`;m3dCtx.fill();
-m3dCtx.strokeStyle=sel?‘rgba(0,229,255,.9)’:‘rgba(0,0,0,.2)’;m3dCtx.lineWidth=sel?1.5:.4;m3dCtx.stroke();
-});
+  const hw=obj.w/2,hh=obj.h/2,hd=obj.d/2;
+  const verts=[[-hw,-hh,-hd],[hw,-hh,-hd],[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]].map(([vx,vy,vz])=>m3dProj(obj.x+vx,obj.y+vy,obj.z+vz));
+  if(verts.some(v=>!v))return;
+  const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
+  const normals=[[0,0,-1],[0,0,1],[0,-1,0],[0,1,0],[1,0,0],[-1,0,0]];
+  const hex=obj.color||'#6688aa';
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  const sel=obj.id===m3dSelectedId;
+  faces.forEach(([a,b2,c,d],fi)=>{
+    const pts=[verts[a],verts[b2],verts[c],verts[d]];
+    const light=Math.max(0.18,0.28+normals[fi][1]*0.55+(normals[fi][2]+normals[fi][0])*0.12);
+    const rim=Math.max(0,normals[fi][2]*-0.15);
+    const fr=Math.round(r*light+20*rim),fg=Math.round(g*light+30*rim),fb=Math.round(b*light+50*rim);
+    m3dCtx.beginPath();m3dCtx.moveTo(pts[0].sx,pts[0].sy);pts.forEach(p=>m3dCtx.lineTo(p.sx,p.sy));m3dCtx.closePath();
+    m3dCtx.fillStyle=`rgb(${Math.min(255,fr)},${Math.min(255,fg)},${Math.min(255,fb)})`;m3dCtx.fill();
+    m3dCtx.strokeStyle=sel?'rgba(0,229,255,.9)':'rgba(0,0,0,.2)';m3dCtx.lineWidth=sel?1.5:.4;m3dCtx.stroke();
+  });
 }
 function m3dToggle(group,val,el){
-m3dParams[group]=val;
-document.querySelectorAll(’[id^=“ms-”]’).forEach(x=>x.classList.remove(‘active’));
-document.querySelectorAll(’[id^=“mst-”]’).forEach(x=>x.classList.remove(‘active’));
-el.classList.add(‘active’);
-genModel3d();
+  m3dParams[group]=val;
+  document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[id^="mst-"]').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  genModel3d();
 }
 function genModel3d(){
-m3dObjects=[];m3dNextId=1;
-const{base,complexity,scale,parts}=m3dParams;
-const builders={humanoid:buildHumanoid,monster:buildMonster,robot:buildRobot,vehicle:buildVehicle,building:buildBuilding,weapon:buildWeapon};
-const fn=builders[base]||buildHumanoid;
-fn(scale,complexity,parts);
-updateM3dPartList();renderM3d();
+  m3dObjects=[];m3dNextId=1;
+  const{base,complexity,scale,parts}=m3dParams;
+  const builders={humanoid:buildHumanoid,monster:buildMonster,robot:buildRobot,vehicle:buildVehicle,building:buildBuilding,weapon:buildWeapon};
+  const fn=builders[base]||buildHumanoid;
+  fn(scale,complexity,parts);
+  updateM3dPartList();renderM3d();
 }
-function m3dPart(name,x,y,z,w,h,d,color){m3dObjects.push({id:‘m’+m3dNextId++,name,x,y,z,w,h,d,color});}
+function m3dPart(name,x,y,z,w,h,d,color){m3dObjects.push({id:'m'+m3dNextId++,name,x,y,z,w,h,d,color});}
 function buildHumanoid(sc,cx){
-const skin=’#c8956c’;const cloth=’#3a5a8a’;const dark=’#1a2a4a’;
-m3dPart(‘Head’,0,sc*3.2,0,sc*1.6,sc*1.6,sc*1.6,skin);
-m3dPart(‘Torso’,0,sc*1.4,0,sc*2,sc*2.4,sc*1.2,cloth);
-m3dPart(‘LArm’,-sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
-m3dPart(‘RArm’,sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
-m3dPart(‘LLeg’,-sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
-m3dPart(‘RLeg’,sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
-if(cx>=4){m3dPart(‘LFoot’,-sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);m3dPart(‘RFoot’,sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);}
-if(cx>=6){m3dPart(‘LHand’,-sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);m3dPart(‘RHand’,sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);}
-if(cx>=7){m3dPart(‘Hair’,0,sc*4.1,0,sc*1.7,sc*.5,sc*1.7,’#2a1a0a’);}
-if(cx>=8){m3dPart(‘Hat’,0,sc*4.5,0,sc*1.8,sc*1,sc*1.8,’#cc3a3a’);}
+  const skin='#c8956c';const cloth='#3a5a8a';const dark='#1a2a4a';
+  m3dPart('Head',0,sc*3.2,0,sc*1.6,sc*1.6,sc*1.6,skin);
+  m3dPart('Torso',0,sc*1.4,0,sc*2,sc*2.4,sc*1.2,cloth);
+  m3dPart('LArm',-sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
+  m3dPart('RArm',sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
+  m3dPart('LLeg',-sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
+  m3dPart('RLeg',sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
+  if(cx>=4){m3dPart('LFoot',-sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);m3dPart('RFoot',sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);}
+  if(cx>=6){m3dPart('LHand',-sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);m3dPart('RHand',sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);}
+  if(cx>=7){m3dPart('Hair',0,sc*4.1,0,sc*1.7,sc*.5,sc*1.7,'#2a1a0a');}
+  if(cx>=8){m3dPart('Hat',0,sc*4.5,0,sc*1.8,sc*1,sc*1.8,'#cc3a3a');}
 }
 function buildMonster(sc,cx){
-const body=’#2a4a2a’;const skin=’#3a6a3a’;const dark=’#1a2a1a’;
-m3dPart(‘Body’,0,0,0,sc*3,sc*3,sc*2,body);m3dPart(‘Head’,0,sc*2.2,0,sc*2.4,sc*2,sc*2,skin);
-m3dPart(‘LArm’,-sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);m3dPart(‘RArm’,sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
-m3dPart(‘LLeg’,-sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);m3dPart(‘RLeg’,sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
-if(cx>=5){m3dPart(‘Horns’,0,sc*3.4,0,sc*.5,sc*1.2,sc*.5,’#8a2a2a’);m3dPart(‘HornL’,-sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,’#8a2a2a’);m3dPart(‘HornR’,sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,’#8a2a2a’);}
-if(cx>=7){m3dPart(‘Tail’,sc*1.5,-sc*1.5,sc*1.2,sc*.6,sc*.6,sc*2.5,’#2a6a2a’);}
+  const body='#2a4a2a';const skin='#3a6a3a';const dark='#1a2a1a';
+  m3dPart('Body',0,0,0,sc*3,sc*3,sc*2,body);m3dPart('Head',0,sc*2.2,0,sc*2.4,sc*2,sc*2,skin);
+  m3dPart('LArm',-sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);m3dPart('RArm',sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
+  m3dPart('LLeg',-sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);m3dPart('RLeg',sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
+  if(cx>=5){m3dPart('Horns',0,sc*3.4,0,sc*.5,sc*1.2,sc*.5,'#8a2a2a');m3dPart('HornL',-sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');m3dPart('HornR',sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');}
+  if(cx>=7){m3dPart('Tail',sc*1.5,-sc*1.5,sc*1.2,sc*.6,sc*.6,sc*2.5,'#2a6a2a');}
 }
 function buildRobot(sc,cx){
-const metal=’#5a6a7a’;const dark=’#2a3040’;const light=’#8a9aaa’;const glow=’#00aaff’;
-m3dPart(‘Head’,0,sc*3,0,sc*1.8,sc*1.5,sc*1.8,dark);m3dPart(‘HeadVisor’,0,sc*3,sc*.92,sc*1.4,sc*1,sc*.3,glow);
-m3dPart(‘Chest’,0,sc*1.3,0,sc*2.4,sc*2.8,sc*1.4,metal);m3dPart(‘ChestPanel’,0,sc*1.5,sc*.72,sc*1.8,sc*1.8,sc*.3,dark);
-m3dPart(‘LArm’,-sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);m3dPart(‘RArm’,sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);
-m3dPart(‘LLeg’,-sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);m3dPart(‘RLeg’,sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);
-if(cx>=6){m3dPart(‘LShoulder’,-sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);m3dPart(‘RShoulder’,sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);}
+  const metal='#5a6a7a';const dark='#2a3040';const light='#8a9aaa';const glow='#00aaff';
+  m3dPart('Head',0,sc*3,0,sc*1.8,sc*1.5,sc*1.8,dark);m3dPart('HeadVisor',0,sc*3,sc*.92,sc*1.4,sc*1,sc*.3,glow);
+  m3dPart('Chest',0,sc*1.3,0,sc*2.4,sc*2.8,sc*1.4,metal);m3dPart('ChestPanel',0,sc*1.5,sc*.72,sc*1.8,sc*1.8,sc*.3,dark);
+  m3dPart('LArm',-sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);m3dPart('RArm',sc*1.8,sc*1.3,0,sc*1,sc*2.8,sc*1,light);
+  m3dPart('LLeg',-sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);m3dPart('RLeg',sc*.8,-sc*.8,0,sc*1.1,sc*2.8,sc*1.1,metal);
+  if(cx>=6){m3dPart('LShoulder',-sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);m3dPart('RShoulder',sc*1.8,sc*2.8,0,sc*1.4,sc*1,sc*1.4,dark);}
 }
 function buildVehicle(sc,cx){
-const body=’#cc3a22’;const dark=’#1a1a2a’;const glass=’#4488cc’;const chrome=’#aabbcc’;
-m3dPart(‘Body’,0,sc*.8,0,sc*4,sc*1.2,sc*2,body);m3dPart(‘Roof’,0,sc*1.7,-sc*.2,sc*2.8,sc*.8,sc*1.8,body);
-m3dPart(‘FLWheel’,-sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart(‘FRWheel’,sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);
-m3dPart(‘BLWheel’,-sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart(‘BRWheel’,sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
-m3dPart(‘Windshield’,0,sc*1.8,sc*.88,sc*2.4,sc*.7,sc*.1,glass);
-if(cx>=5){m3dPart(‘FBumper’,0,sc*.4,sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);m3dPart(‘BBumper’,0,sc*.4,-sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);}
-if(cx>=7){m3dPart(‘Spoiler’,0,sc*1.6,-sc*1.2,sc*3,sc*.2,sc*.4,’#0a0a0a’);}
+  const body='#cc3a22';const dark='#1a1a2a';const glass='#4488cc';const chrome='#aabbcc';
+  m3dPart('Body',0,sc*.8,0,sc*4,sc*1.2,sc*2,body);m3dPart('Roof',0,sc*1.7,-sc*.2,sc*2.8,sc*.8,sc*1.8,body);
+  m3dPart('FLWheel',-sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart('FRWheel',sc*1.5,sc*.1,sc*1.1,sc*1,sc*1,sc*.4,dark);
+  m3dPart('BLWheel',-sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart('BRWheel',sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
+  m3dPart('Windshield',0,sc*1.8,sc*.88,sc*2.4,sc*.7,sc*.1,glass);
+  if(cx>=5){m3dPart('FBumper',0,sc*.4,sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);m3dPart('BBumper',0,sc*.4,-sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);}
+  if(cx>=7){m3dPart('Spoiler',0,sc*1.6,-sc*1.2,sc*3,sc*.2,sc*.4,'#0a0a0a');}
 }
 function buildBuilding(sc,cx){
-const wall=’#8a8a9a’;const window=’#4499cc’;const roof=’#6a4a3a’;const door=’#5a3a2a’;
-m3dPart(‘Foundation’,0,-sc*.25,0,sc*5,sc*.5,sc*4,wall);m3dPart(‘WallBase’,0,sc*2.5,0,sc*4.8,sc*5,sc*3.8,wall);
-m3dPart(‘Roof’,0,sc*5.5,0,sc*5.5,sc*1,sc*4.5,roof);m3dPart(‘Door’,0,sc*1.5,sc*1.92,sc*1,sc*2.8,sc*.2,door);
-[‘W1’,‘W2’,‘W3’,‘W4’].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*3.5,sc*1.92,sc*.9,sc*1.2,sc*.1,window));
-if(cx>=5){[‘W5’,‘W6’,‘W7’,‘W8’].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*1.8,sc*1.92,sc*.9,sc*1.2,sc*.1,window));}
-if(cx>=7){m3dPart(‘Chimney’,sc*1.5,sc*6.5,-sc*.5,sc*.8,sc*2,sc*.8,’#5a5a6a’);}
+  const wall='#8a8a9a';const window_c='#4499cc';const roof='#6a4a3a';const door='#5a3a2a';
+  m3dPart('Foundation',0,-sc*.25,0,sc*5,sc*.5,sc*4,wall);m3dPart('WallBase',0,sc*2.5,0,sc*4.8,sc*5,sc*3.8,wall);
+  m3dPart('Roof',0,sc*5.5,0,sc*5.5,sc*1,sc*4.5,roof);m3dPart('Door',0,sc*1.5,sc*1.92,sc*1,sc*2.8,sc*.2,door);
+  ['W1','W2','W3','W4'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*3.5,sc*1.92,sc*.9,sc*1.2,sc*.1,window_c));
+  if(cx>=5){['W5','W6','W7','W8'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*1.8,sc*1.92,sc*.9,sc*1.2,sc*.1,window_c));}
+  if(cx>=7){m3dPart('Chimney',sc*1.5,sc*6.5,-sc*.5,sc*.8,sc*2,sc*.8,'#5a5a6a');}
 }
 function buildWeapon(sc,cx){
-const light=’#9aaabc’;const grip=’#4a3020’;const gold=’#cc9922’;
-m3dPart(‘Blade’,0,sc*2,0,sc*.4,sc*5,sc*.2,light);m3dPart(‘BladeEdge’,sc*.22,sc*2,0,sc*.08,sc*5,sc*.15,light);
-m3dPart(‘Guard’,0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);m3dPart(‘Grip’,0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);
-m3dPart(‘Pommel’,0,-sc*2.5,0,sc*.7,sc*.7,sc*.7,gold);
-if(cx>=5){m3dPart(‘Gem’,0,sc*.15,sc*.28,sc*.4,sc*.4,sc*.4,’#aa2288’);}
-if(cx>=7){m3dPart(‘EngL’,-sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);m3dPart(‘EngR’,sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);}
+  const light='#9aaabc';const grip='#4a3020';const gold='#cc9922';
+  m3dPart('Blade',0,sc*2,0,sc*.4,sc*5,sc*.2,light);m3dPart('BladeEdge',sc*.22,sc*2,0,sc*.08,sc*5,sc*.15,light);
+  m3dPart('Guard',0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);m3dPart('Grip',0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);
+  m3dPart('Pommel',0,-sc*2.5,0,sc*.7,sc*.7,sc*.7,gold);
+  if(cx>=5){m3dPart('Gem',0,sc*.15,sc*.28,sc*.4,sc*.4,sc*.4,'#aa2288');}
+  if(cx>=7){m3dPart('EngL',-sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);m3dPart('EngR',sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);}
 }
 function updateM3dPartList(){
-const list=$(‘m3d-part-list’);
-list.innerHTML=m3dObjects.slice(0,12).map(o=>`<div class="m3d-part${o.id===m3dSelectedId?' selected':''}" onclick="m3dSelPart('${o.id}')"><div class="m3d-color-dot" style="background:${o.color}"></div><span>${o.name}</span><span style="margin-left:auto;font-size:7px;color:var(--text3)">${o.w.toFixed(1)}×${o.h.toFixed(1)}×${o.d.toFixed(1)}</span></div>`).join(’’);
-if(m3dObjects.length>12)list.innerHTML+=`<div style="font-size:8px;color:var(--text3);padding:3px 6px">+${m3dObjects.length-12} more parts…</div>`;
-$(‘m3d-info’).textContent=`${m3dObjects.length} parts total. AI can generate custom shapes.`;
+  const list=$('m3d-part-list');
+  list.innerHTML=m3dObjects.slice(0,12).map(o=>`<div class="m3d-part${o.id===m3dSelectedId?' selected':''}" onclick="m3dSelPart('${o.id}')"><div class="m3d-color-dot" style="background:${o.color}"></div><span>${o.name}</span><span style="margin-left:auto;font-size:7px;color:var(--text3)">${o.w.toFixed(1)}×${o.h.toFixed(1)}×${o.d.toFixed(1)}</span></div>`).join('');
+  if(m3dObjects.length>12)list.innerHTML+=`<div style="font-size:8px;color:var(--text3);padding:3px 6px">+${m3dObjects.length-12} more parts…</div>`;
+  $('m3d-info').textContent=`${m3dObjects.length} parts total.`;
 }
 function m3dSelPart(id){m3dSelectedId=id;updateM3dPartList();renderM3d();}
-function m3dSetTool(t){document.querySelectorAll(’[id^=“m3d-vt-”]’).forEach(b=>b.classList.remove(‘active’));$(‘m3d-vt-’+t.slice(0,3)).classList.add(‘active’);}
+function m3dSetTool(t){document.querySelectorAll('[id^="m3d-vt-"]').forEach(b=>b.classList.remove('active'));$('m3d-vt-'+t.slice(0,3)).classList.add('active');}
 function m3dSetView(v){const views={front:{rx:0,ry:0,z:22},side:{rx:0,ry:1.57,z:22},top:{rx:-1.57,ry:0,z:22},iso:{rx:-.5,ry:.7,z:22}};const vd=views[v];if(vd)Object.assign(m3dCamera,vd);renderM3d();}
 function m3dEvents(){
-let drag=false,lx=0,ly=0;
-m3dCanvas.addEventListener(‘mousedown’,e=>{drag=true;lx=e.clientX;ly=e.clientY;});
-m3dCanvas.addEventListener(‘mousemove’,e=>{if(drag){m3dCamera.ry+=(e.clientX-lx)*.012;m3dCamera.rx+=(e.clientY-ly)*.012;m3dCamera.rx=Math.max(-1.5,Math.min(1.5,m3dCamera.rx));renderM3d();}lx=e.clientX;ly=e.clientY;});
-m3dCanvas.addEventListener(‘mouseup’,()=>drag=false);
-m3dCanvas.addEventListener(‘wheel’,e=>{m3dCamera.zoom=Math.max(.2,Math.min(6,m3dCamera.zoom-e.deltaY*.0008));renderM3d();e.preventDefault();},{passive:false});
+  let drag=false,lx=0,ly=0;
+  m3dCanvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+  m3dCanvas.addEventListener('mousemove',e=>{if(drag){m3dCamera.ry+=(e.clientX-lx)*.012;m3dCamera.rx+=(e.clientY-ly)*.012;m3dCamera.rx=Math.max(-1.5,Math.min(1.5,m3dCamera.rx));renderM3d();}lx=e.clientX;ly=e.clientY;});
+  m3dCanvas.addEventListener('mouseup',()=>drag=false);
+  m3dCanvas.addEventListener('wheel',e=>{m3dCamera.zoom=Math.max(.2,Math.min(6,m3dCamera.zoom-e.deltaY*.0008));renderM3d();e.preventDefault();},{passive:false});
 }
 function m3dPreset(name){
-const map={knight:‘humanoid’,spaceship:‘vehicle’,castle:‘building’,dragon:‘monster’,gun:‘weapon’,tree:‘building’};
-m3dParams.base=map[name]||‘humanoid’;
-document.querySelectorAll(’[id^=“ms-”]’).forEach(x=>x.classList.remove(‘active’));
-const el=$(‘ms-’+m3dParams.base);if(el)el.classList.add(‘active’);
-genModel3d();toast(‘Loaded preset: ‘+name,‘ok’);
+  const map={knight:'humanoid',spaceship:'vehicle',castle:'building',dragon:'monster',gun:'weapon',tree:'building'};
+  m3dParams.base=map[name]||'humanoid';
+  document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
+  const el=$('ms-'+m3dParams.base);if(el)el.classList.add('active');
+  genModel3d();toast('Loaded preset: '+name,'ok');
 }
 async function m3dAIGenerate(){
-const prompt=$(‘m3d-prompt’).value.trim();
-if(!prompt){toast(‘Describe a model.’,‘bad’);return;}
-const prog=$(‘m3d-prog’);prog.classList.add(‘on’);
-toast(‘AI analyzing your description…’,‘ai’);
-const sys=`You are a 3D model configuration AI. Based on the description, respond ONLY with a JSON object like: {"base":"humanoid|monster|robot|vehicle|building|weapon","style":"lowpoly|blocky|smooth","complexity":1-10,"scale":1-5,"parts":5-40} Choose the best base shape. Return only the JSON, nothing else.`;
-const r=await callAI(prompt,sys,200);
-prog.classList.remove(‘on’);
-if(r){
-try{
-const cfg=JSON.parse(r.replace(/`json|`/g,’’).trim());
-if(cfg.base)m3dParams.base=cfg.base;
-if(cfg.complexity)m3dParams.complexity=cfg.complexity;
-if(cfg.scale)m3dParams.scale=Math.min(5,cfg.scale);
-if(cfg.parts)m3dParams.parts=Math.min(40,cfg.parts);
-document.querySelectorAll(’[id^=“ms-”]’).forEach(x=>x.classList.remove(‘active’));
-const el=$(‘ms-’+m3dParams.base);if(el)el.classList.add(‘active’);
-genModel3d();toast(‘Model generated from AI description!’,‘ok’);
-}catch{genModel3d();toast(‘Generated!’,‘ok’);}
-}else{genModel3d();toast(‘Generated!’,‘ok’);}
+  const prompt=$('m3d-prompt').value.trim();
+  if(!prompt){toast('Describe a model.','bad');return;}
+  const prog=$('m3d-prog');prog.classList.add('on');
+  toast('AI analyzing your description…','ai');
+  const sys=`You are a 3D model configuration AI. Based on the description, respond ONLY with a JSON object like: {"base":"humanoid|monster|robot|vehicle|building|weapon","style":"lowpoly|blocky|smooth","complexity":1-10,"scale":1-5,"parts":5-40} Choose the best base shape. Return only the JSON, nothing else.`;
+  const r=await callAI(prompt,sys,200);
+  prog.classList.remove('on');
+  if(r){
+    try{
+      const cfg=JSON.parse(r.replace(/`json|`/g,'').trim());
+      if(cfg.base)m3dParams.base=cfg.base;
+      if(cfg.complexity)m3dParams.complexity=cfg.complexity;
+      if(cfg.scale)m3dParams.scale=Math.min(5,cfg.scale);
+      if(cfg.parts)m3dParams.parts=Math.min(40,cfg.parts);
+      document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
+      const el=$('ms-'+m3dParams.base);if(el)el.classList.add('active');
+      genModel3d();toast('Model generated from AI description!','ok');
+    }catch{genModel3d();toast('Generated!','ok');}
+  }else{genModel3d();toast('Generated!','ok');}
 }
 function exportModelToLua(){
-if(!m3dObjects.length){toast(‘No model generated.’,‘bad’);return;}
-let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Generated by Studio Bridge v3\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
-m3dObjects.forEach(o=>{
-const n=o.name.replace(/\W/g,’_’);
-const h=o.color.replace(’#’,’’);
-const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
-lua+=`local ${n}=Instance.new("Part")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.w.toFixed(2)},${o.h.toFixed(2)},${o.d.toFixed(2)})\n${n}.Position=Vector3.new(${o.x.toFixed(2)},${o.y.toFixed(2)},${o.z.toFixed(2)})\n${n}.BrickColor=BrickColor.new(Color3.fromRGB(${r},${g},${b}))\n${n}.Material=Enum.Material.SmoothPlastic\n${n}.Anchored=true\n${n}.Parent=model\n\n`;
-});
-lua+=`model.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
-$(‘code-area’).value=lua;onCE();
-document.querySelectorAll(’.nav-tab’)[0].click();
-toast(`Model exported! ${m3dObjects.length} parts.`,‘ok’);
+  if(!m3dObjects.length){toast('No model generated.','bad');return;}
+  let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Generated by Studio Bridge v3\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
+  m3dObjects.forEach(o=>{
+    const n=o.name.replace(/\W/g,'_');
+    const h=o.color.replace('#','');
+    const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+    lua+=`local ${n}=Instance.new("Part")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.w.toFixed(2)},${o.h.toFixed(2)},${o.d.toFixed(2)})\n${n}.Position=Vector3.new(${o.x.toFixed(2)},${o.y.toFixed(2)},${o.z.toFixed(2)})\n${n}.BrickColor=BrickColor.new(Color3.fromRGB(${r},${g},${b}))\n${n}.Material=Enum.Material.SmoothPlastic\n${n}.Anchored=true\n${n}.Parent=model\n\n`;
+  });
+  lua+=`model.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
+  $('code-area').value=lua;onCE();
+  document.querySelectorAll('.nav-tab')[0].click();
+  toast(`Model exported! ${m3dObjects.length} parts.`,'ok');
 }
 
-// ── TERRAIN ──
-function setBiome(b,el){tp.biome=b;document.querySelectorAll(’.biome-btn’).forEach(x=>x.classList.remove(‘active’));el.classList.add(‘active’);}
-function toggleFeat(f,el){tp.features[f]=!tp.features[f];el.classList.toggle(‘active’,tp.features[f]);}
+// TERRAIN
+function setBiome(b,el){tp.biome=b;document.querySelectorAll('.biome-btn').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+function toggleFeat(f,el){tp.features[f]=!tp.features[f];el.classList.toggle('active',tp.features[f]);}
 function initTerrainCanvas(){
-terrainCanvas=$(‘tc’);if(!terrainCanvas)return;
-const wrap=terrainCanvas.parentElement;
-terrainCanvas.width=Math.max(wrap.clientWidth||600,600);
-terrainCanvas.height=Math.max(wrap.clientHeight||400,400);
-terrainCtx=terrainCanvas.getContext(‘2d’);
+  terrainCanvas=$('tc');if(!terrainCanvas)return;
+  const wrap=terrainCanvas.parentElement;
+  terrainCanvas.width=Math.max(wrap.clientWidth||600,600);
+  terrainCanvas.height=Math.max(wrap.clientHeight||400,400);
+  terrainCtx=terrainCanvas.getContext('2d');
 }
 function noise2d(x,y,s,oct=4){let v=0,a=1,f=1,m=0;for(let i=0;i<oct;i++){v+=Math.sin(x*f*s+i*7.3)*Math.cos(y*f*s+i*13.7)*a;m+=a;a*=.5;f*=2;}return v/m;}
 function genTerrain(){
-if(!terrainCanvas)return;
-const W=terrainCanvas.width,H=terrainCanvas.height;
-const cols=Math.floor(W/4),rows=Math.floor(H/4);
-terrainMap=[];const s=.05+tp.roughness*.01;const wY=tp.water/100;const sd=Math.random()*100;
-for(let r=0;r<rows;r++){terrainMap[r]=[];for(let c=0;c<cols;c++){let v=(noise2d(c+sd,r+sd,s)+1)/2;if(tp.features.mountains)v=Math.pow(v,.7);if(tp.features.rivers&&Math.abs(c/cols-.5)<.05+noise2d(c*.1,r*.1,.05)*.03)v=Math.min(v,wY);terrainMap[r][c]=v;}}
-renderTerrain();
+  if(!terrainCanvas)return;
+  const W=terrainCanvas.width,H=terrainCanvas.height;
+  const cols=Math.floor(W/4),rows=Math.floor(H/4);
+  terrainMap=[];const s=.05+tp.roughness*.01;const wY=tp.water/100;const sd=Math.random()*100;
+  for(let r=0;r<rows;r++){terrainMap[r]=[];for(let c=0;c<cols;c++){let v=(noise2d(c+sd,r+sd,s)+1)/2;if(tp.features.mountains)v=Math.pow(v,.7);if(tp.features.rivers&&Math.abs(c/cols-.5)<.05+noise2d(c*.1,r*.1,.05)*.03)v=Math.min(v,wY);terrainMap[r][c]=v;}}
+  renderTerrain();
+  // Set up paint events after first gen
+  terrainCanvas.onmousedown=e=>{if(e.button===0)terrainPainting=true;};
+  terrainCanvas.onmouseup=()=>terrainPainting=false;
+  terrainCanvas.onmouseleave=()=>terrainPainting=false;
+  terrainCanvas.onmousemove=e=>{
+    if(!terrainPainting)return;
+    const r2=terrainCanvas.getBoundingClientRect();const mx=(e.clientX-r2.left)/terrainCanvas.width,my=(e.clientY-r2.top)/terrainCanvas.height;
+    const rows2=terrainMap.length,cols2=terrainMap[0]?.length||0;
+    const pr=Math.floor(my*rows2),pc=Math.floor(mx*cols2);const br=4;
+    for(let dr=-br;dr<=br;dr++)for(let dc=-br;dc<=br;dc++){
+      const nr=pr+dr,nc=pc+dc;
+      if(nr>=0&&nr<rows2&&nc>=0&&nc<cols2&&Math.hypot(dr,dc)<=br){
+        const str=.025*(1-Math.hypot(dr,dc)/br);
+        terrainMap[nr][nc]=Math.min(1,Math.max(0,terrainMap[nr][nc]+str));
+      }
+    }
+    renderTerrain();
+  };
 }
 function renderTerrain(){
-if(!terrainCtx||!terrainMap.length)return;
-const W=terrainCanvas.width,H=terrainCanvas.height,rows=terrainMap.length,cols=terrainMap[0].length;
-const cw=W/cols,ch=H/rows;const cs=BIOME_COLS[tp.biome]||BIOME_COLS.grassland;const wY=tp.water/100;
-terrainCtx.clearRect(0,0,W,H);
-for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){
-const v=terrainMap[r][c];
-const color=v<wY?cs.water:v<wY+.15?cs.low:v<.65?cs.mid:v<.82?cs.high:cs.peak;
-terrainCtx.fillStyle=color;terrainCtx.globalAlpha=.7+v*.3;
-terrainCtx.fillRect(Math.floor(c*cw),Math.floor(r*ch),Math.ceil(cw)+1,Math.ceil(ch)+1);
-}}
-terrainCtx.globalAlpha=1;
-if(tp.features.fog){const grad=terrainCtx.createRadialGradient(W/2,H/2,W*.1,W/2,H/2,W*.6);grad.addColorStop(0,‘rgba(180,200,220,0)’);grad.addColorStop(1,‘rgba(180,200,220,.5)’);terrainCtx.fillStyle=grad;terrainCtx.fillRect(0,0,W,H);}
-}
-setTimeout(()=>{
-if(!terrainCanvas)return;
-terrainCanvas.addEventListener(‘mousedown’,e=>{if(e.button===0)terrainPainting=true;});
-terrainCanvas.addEventListener(‘mouseup’,()=>terrainPainting=false);
-terrainCanvas.addEventListener(‘mouseleave’,()=>terrainPainting=false);
-terrainCanvas.addEventListener(‘mousemove’,e=>{
-if(!terrainPainting)return;
-const r2=terrainCanvas.getBoundingClientRect();const mx=(e.clientX-r2.left)/terrainCanvas.width,my=(e.clientY-r2.top)/terrainCanvas.height;
-const rows=terrainMap.length,cols=terrainMap[0]?.length||0;
-const pr=Math.floor(my*rows),pc=Math.floor(mx*cols);const br=4;
-for(let dr=-br;dr<=br;dr++)for(let dc=-br;dc<=br;dc++){
-const nr=pr+dr,nc=pc+dc;
-if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&Math.hypot(dr,dc)<=br){
-const str=.025*(1-Math.hypot(dr,dc)/br);
-terrainMap[nr][nc]=Math.min(1,Math.max(0,terrainMap[nr][nc]+str));
-}
-}
-renderTerrain();
-});
-},500);
-function exportTerrainLua(){
-const mats={grassland:[‘Grass’,‘Grass’,‘Ground’,‘Rock’,‘Snow’],desert:[‘Sand’,‘Sand’,‘Sandstone’,‘Rock’,‘Snow’],arctic:[‘Glacier’,‘Snow’,‘Snow’,‘Snow’,‘Snow’],volcano:[‘CrackedLava’,‘Basalt’,‘Basalt’,‘Rock’,‘Snow’],ocean:[‘Water’,‘Sand’,‘Rock’,‘Rock’,‘Snow’],forest:[‘LeafyGrass’,‘Grass’,‘Ground’,‘Rock’,‘Snow’]}[tp.biome]||[‘Grass’,‘Grass’,‘Ground’,‘Rock’,‘Snow’];
-const lua=`-- Terrain generator script\nlocal terrain=workspace.Terrain\nterrain:Clear()\nlocal function noise(x,z,s) return math.sin(x*s)*math.cos(z*s)*0.5+math.sin(x*s*2.1)*math.cos(z*s*1.8)*0.25 end\nfor x=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n  for z=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n    local h=math.floor((noise(x,z,0.03)+1)*0.5*${tp.height})\n    terrain:FillBlock(CFrame.new(x,h*0.5,z),Vector3.new(8,h,8),Enum.Material.${mats[1]})\n    task.wait()\n  end\nend\nprint("[Terrain] Generation complete!")`;
-$(‘code-area’).value=lua;onCE();document.querySelectorAll(’.nav-tab’)[0].click();toast(‘Terrain Lua exported!’,‘gold’);
+  if(!terrainCtx||!terrainMap.length)return;
+  const W=terrainCanvas.width,H=terrainCanvas.height,rows=terrainMap.length,cols=terrainMap[0].length;
+  const cw=W/cols,ch=H/rows;const cs=BIOME_COLS[tp.biome]||BIOME_COLS.grassland;const wY=tp.water/100;
+  terrainCtx.clearRect(0,0,W,H);
+  for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){
+    const v=terrainMap[r][c];
+    const color=v<wY?cs.water:v<wY+.15?cs.low:v<.65?cs.mid:v<.82?cs.high:cs.peak;
+    terrainCtx.fillStyle=color;terrainCtx.globalAlpha=.7+v*.3;
+    terrainCtx.fillRect(Math.floor(c*cw),Math.floor(r*ch),Math.ceil(cw)+1,Math.ceil(ch)+1);
+  }}
+  terrainCtx.globalAlpha=1;
+  if(tp.features.fog){const grad=terrainCtx.createRadialGradient(W/2,H/2,W*.1,W/2,H/2,W*.6);grad.addColorStop(0,'rgba(180,200,220,0)');grad.addColorStop(1,'rgba(180,200,220,.5)');terrainCtx.fillStyle=grad;terrainCtx.fillRect(0,0,W,H);}
 }
 
-// ── GUI BUILDER ──
-const GUI_DEF={Frame:{bg:’#1a2035’,w:200,h:150,text:’’,border:true},TextLabel:{bg:‘transparent’,w:150,h:30,text:‘Text Label’,border:false},TextButton:{bg:’#0055aa’,w:160,h:40,text:‘Click Me’,border:true},TextBox:{bg:’#0d1020’,w:160,h:36,text:’’,border:true},ImageLabel:{bg:’#333344’,w:100,h:100,text:‘🖼’,border:false},ProgressBar:{bg:’#0d1020’,w:200,h:18,text:’’,border:true,progress:.6}};
+// FIX: exportTerrainLua is now at global scope (not inside setTimeout)
+function exportTerrainLua(){
+  const mats={grassland:['Grass','Grass','Ground','Rock','Snow'],desert:['Sand','Sand','Sandstone','Rock','Snow'],arctic:['Glacier','Snow','Snow','Snow','Snow'],volcano:['CrackedLava','Basalt','Basalt','Rock','Snow'],ocean:['Water','Sand','Rock','Rock','Snow'],forest:['LeafyGrass','Grass','Ground','Rock','Snow']}[tp.biome]||['Grass','Grass','Ground','Rock','Snow'];
+  const lua=`-- Terrain generator script\nlocal terrain=workspace.Terrain\nterrain:Clear()\nlocal function noise(x,z,s) return math.sin(x*s)*math.cos(z*s)*0.5+math.sin(x*s*2.1)*math.cos(z*s*1.8)*0.25 end\nfor x=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n  for z=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n    local h=math.floor((noise(x,z,0.03)+1)*0.5*${tp.height})\n    terrain:FillBlock(CFrame.new(x,h*0.5,z),Vector3.new(8,h,8),Enum.Material.${mats[1]})\n    task.wait()\n  end\nend\nprint("[Terrain] Generation complete!")`;
+  $('code-area').value=lua;onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Terrain Lua exported!','gold');
+}
+
+// GUI BUILDER
+const GUI_DEF={Frame:{bg:'#1a2035',w:200,h:150,text:'',border:true},TextLabel:{bg:'transparent',w:150,h:30,text:'Text Label',border:false},TextButton:{bg:'#0055aa',w:160,h:40,text:'Click Me',border:true},TextBox:{bg:'#0d1020',w:160,h:36,text:'',border:true},ImageLabel:{bg:'#333344',w:100,h:100,text:'🖼',border:false},ProgressBar:{bg:'#0d1020',w:200,h:18,text:'',border:true,progress:.6}};
 function addGuiEl(type){
-const def=GUI_DEF[type]||{bg:’#1a2035’,w:120,h:60,text:type,border:true};
-const id=‘g’+guiNextId++;
-guiEls.push({id,type,x:Math.random()*250+80,y:Math.random()*150+60,w:def.w,h:def.h,bg:def.bg,text:def.text,border:def.border,progress:def.progress||null});
-renderGuiScreen();selGuiEl(id);updateGuiLayers();
+  const def=GUI_DEF[type]||{bg:'#1a2035',w:120,h:60,text:type,border:true};
+  const id='g'+guiNextId++;
+  guiEls.push({id,type,x:Math.random()*250+80,y:Math.random()*150+60,w:def.w,h:def.h,bg:def.bg,text:def.text,border:def.border,progress:def.progress||null});
+  renderGuiScreen();selGuiEl(id);updateGuiLayers();
 }
 function renderGuiScreen(){
-const screen=$(‘gui-screen’);screen.innerHTML=’’;
-guiEls.forEach(el=>{
-const div=document.createElement(‘div’);
-div.className=‘gui-el’+(el.id===selGuiId?’ sel’:’’);
-div.style.cssText=`left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;background:${el.bg==='transparent'?'transparent':el.bg};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#e8eaf2;overflow:hidden;font-family:'JetBrains Mono',monospace;`;
-if(el.border)div.style.border=‘1px solid rgba(0,200,240,.3)’;
-if(el.progress!==null){div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:6px"></div>`;}
-else if(el.text)div.textContent=el.text;
-div.dataset.id=el.id;
-div.addEventListener(‘mousedown’,e=>{selGuiEl(el.id);guiDragging=true;guiDragStart={x:e.clientX-el.x,y:e.clientY-el.y};guiDragEl=el;e.stopPropagation();});
-screen.appendChild(div);
-});
+  const screen=$('gui-screen');screen.innerHTML='';
+  guiEls.forEach(el=>{
+    const div=document.createElement('div');
+    div.className='gui-el'+(el.id===selGuiId?' sel':'');
+    div.style.cssText=`left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;background:${el.bg==='transparent'?'transparent':el.bg};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#e8eaf2;overflow:hidden;font-family:'JetBrains Mono',monospace;`;
+    if(el.border)div.style.border='1px solid rgba(0,200,240,.3)';
+    if(el.progress!==null){div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:6px"></div>`;}
+    else if(el.text)div.textContent=el.text;
+    div.dataset.id=el.id;
+    div.addEventListener('mousedown',e=>{selGuiEl(el.id);guiDragging=true;guiDragStart={x:e.clientX-el.x,y:e.clientY-el.y};guiDragEl=el;e.stopPropagation();});
+    screen.appendChild(div);
+  });
 }
 function guiScClick(e){if(!e.target.dataset.id){selGuiId=null;renderGuiScreen();updateGuiProps();}}
 function guiDrag(e){if(!guiDragging||!guiDragEl)return;guiDragEl.x=Math.max(0,Math.min(580-guiDragEl.w,e.clientX-guiDragStart.x));guiDragEl.y=Math.max(0,Math.min(360-guiDragEl.h,e.clientY-guiDragStart.y));renderGuiScreen();}
 function guiDE(){guiDragging=false;guiDragEl=null;}
 function selGuiEl(id){selGuiId=id;renderGuiScreen();updateGuiProps();updateGuiLayers();}
 function updateGuiProps(){
-const area=$(‘gui-props’);const el=guiEls.find(e=>e.id===selGuiId);
-if(!el){area.innerHTML=’<div style="font-size:9px;color:var(--text3)">Select an element.</div>’;return;}
-area.innerHTML=`<div class="pgrp">Layout</div>
-
+  const area=$('gui-props');const el=guiEls.find(e=>e.id===selGuiId);
+  if(!el){area.innerHTML='<div style="font-size:9px;color:var(--text3)">Select an element.</div>';return;}
+  area.innerHTML=`<div class="pgrp">Layout</div>
 <div class="prow"><span class="plbl">X/Y</span><div class="pinputs"><input class="pinp" type="number" value="${Math.round(el.x)}" onchange="guiProp('x',+this.value)"><input class="pinp" type="number" value="${Math.round(el.y)}" onchange="guiProp('y',+this.value)"></div></div>
 <div class="prow"><span class="plbl">W/H</span><div class="pinputs"><input class="pinp" type="number" value="${el.w}" onchange="guiProp('w',+this.value)"><input class="pinp" type="number" value="${el.h}" onchange="guiProp('h',+this.value)"></div></div>
 <div class="pgrp">Style</div>
@@ -1647,159 +1740,131 @@ function exportGuiLua(){
   $('code-area').value=lua;onCE();toast('GUI exported!','ok');document.querySelectorAll('.nav-tab')[0].click();
 }
 
-// ── NPC CREATOR ──
+// NPC CREATOR
 function npcT(group,val,el){
-np[group]=val;
-const prefix=group===‘type’?‘nt’:group===‘behavior’?‘nb’:group===‘combat’?‘nc’:‘n?’;
-document.querySelectorAll(`[id^="${prefix}-"]`).forEach(x=>x.classList.remove(‘active’));
-el.classList.add(‘active’);
-drawNPC();
+  np[group]=val;
+  const prefix=group==='type'?'nt':group==='behavior'?'nb':group==='combat'?'nc':'n?';
+  document.querySelectorAll(`[id^="${prefix}-"]`).forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  drawNPC();
 }
 function drawNPC(){
-const c=$(‘npc-c’);if(!c)return;
-const ctx2=c.getContext(‘2d’),W=280,H=400,cx=140;
-const cosA=Math.cos(npcAngle),sinA=Math.sin(npcAngle);
-ctx2.clearRect(0,0,W,H);ctx2.fillStyle=’#040609’;ctx2.fillRect(0,0,W,H);
-ctx2.strokeStyle=‘rgba(0,229,255,0.03)’;ctx2.lineWidth=.5;
-for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
-for(let i=0;i<H;i+=20){ctx2.beginPath();ctx2.moveTo(0,i);ctx2.lineTo(W,i);ctx2.stroke();}
-const sc=np.type===‘boss’?1.5:np.type===‘monster’?1.2:1;
-const cy=320;
-const skin=$(‘npc-col’)?.value||’#8B4513’;
-const cloth=np.type===‘monster’?’#2a4a2a’:np.type===‘boss’?’#1a0a2a’:’#3a5a8a’;
-const skew=sinA*12*sc;
-ctx2.beginPath();ctx2.ellipse(cx,cy+4,28*sc,8*sc,0,0,Math.PI*2);ctx2.fillStyle=‘rgba(0,0,0,.4)’;ctx2.fill();
-ctx2.fillStyle=cloth;
-ctx2.fillRect(cx-16*sc+skew,cy-44*sc,12*sc,44*sc);
-ctx2.fillRect(cx+4*sc+skew,cy-44*sc,12*sc,44*sc);
-ctx2.fillRect(cx-28*sc+skew,cy-110*sc,56*sc,66*sc);
-ctx2.fillStyle=skin;
-ctx2.fillRect(cx-44*sc+skew,cy-108*sc,14*sc,52*sc);
-ctx2.fillRect(cx+30*sc+skew,cy-108*sc,14*sc,52*sc);
-ctx2.beginPath();ctx2.roundRect(cx-24*sc+skew,cy-158*sc,48*sc,50*sc,np.type===‘robot’?6:12);ctx2.fill();
-ctx2.fillStyle=np.type===‘boss’?’#ff0000’:np.type===‘monster’?’#ffaa00’:’#1a1a2a’;
-ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-if(np.type===‘boss’){ctx2.fillStyle=’#6600aa’;ctx2.beginPath();ctx2.arc(cx-12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();}
-ctx2.fillStyle=‘white’;ctx2.font=`bold 12px JetBrains Mono,monospace`;ctx2.textAlign=‘center’;ctx2.fillText($(‘npc-name’)?.value||‘NPC’,cx,48);
-ctx2.fillStyle=‘rgba(255,255,255,.4)’;ctx2.font=`9px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-32);ctx2.fillText(np.behavior+’ · ’+np.combat,cx,H-18);ctx2.textAlign=‘left’;
+  const c=$('npc-c');if(!c)return;
+  const ctx2=c.getContext('2d'),W=280,H=400,cx=140;
+  const cosA=Math.cos(npcAngle),sinA=Math.sin(npcAngle);
+  ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#040609';ctx2.fillRect(0,0,W,H);
+  ctx2.strokeStyle='rgba(0,229,255,0.03)';ctx2.lineWidth=.5;
+  for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
+  for(let i=0;i<H;i+=20){ctx2.beginPath();ctx2.moveTo(0,i);ctx2.lineTo(W,i);ctx2.stroke();}
+  const sc=np.type==='boss'?1.5:np.type==='monster'?1.2:1;
+  const cy=320;
+  const skin=$('npc-col')?.value||'#8B4513';
+  const cloth=np.type==='monster'?'#2a4a2a':np.type==='boss'?'#1a0a2a':'#3a5a8a';
+  const skew=sinA*12*sc;
+  ctx2.beginPath();ctx2.ellipse(cx,cy+4,28*sc,8*sc,0,0,Math.PI*2);ctx2.fillStyle='rgba(0,0,0,.4)';ctx2.fill();
+  ctx2.fillStyle=cloth;
+  ctx2.fillRect(cx-16*sc+skew,cy-44*sc,12*sc,44*sc);
+  ctx2.fillRect(cx+4*sc+skew,cy-44*sc,12*sc,44*sc);
+  ctx2.fillRect(cx-28*sc+skew,cy-110*sc,56*sc,66*sc);
+  ctx2.fillStyle=skin;
+  ctx2.fillRect(cx-44*sc+skew,cy-108*sc,14*sc,52*sc);
+  ctx2.fillRect(cx+30*sc+skew,cy-108*sc,14*sc,52*sc);
+  ctx2.beginPath();ctx2.roundRect(cx-24*sc+skew,cy-158*sc,48*sc,50*sc,np.type==='robot'?6:12);ctx2.fill();
+  ctx2.fillStyle=np.type==='boss'?'#ff0000':np.type==='monster'?'#ffaa00':'#1a1a2a';
+  ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
+  ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
+  if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();}
+  ctx2.fillStyle='white';ctx2.font=`bold 12px JetBrains Mono,monospace`;ctx2.textAlign='center';ctx2.fillText($('npc-name')?.value||'NPC',cx,48);
+  ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`9px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-32);ctx2.fillText(np.behavior+' · '+np.combat,cx,H-18);ctx2.textAlign='left';
 }
 async function genNPC(){
-const name=$(‘npc-name’)?.value||‘EnemyNPC’;
-const prompt=`Create a complete, production-ready Roblox server Script for an NPC named “${name}” with these stats:
-
+  const name=$('npc-name')?.value||'EnemyNPC';
+  const prompt=`Create a complete, production-ready Roblox server Script for an NPC named "${name}" with these stats:
 - Health: ${np.health}, Speed: ${np.speed}, DetectRange: ${np.detect}, Damage: ${np.damage}
 - Behavior: ${np.behavior}, Combat: ${np.combat}, Type: ${np.type}
-  Include: PathfindingService for movement, Heartbeat for detection, proper health bar BillboardGui, BindToClose cleanup.
-  Return raw Lua only, no markdown fences.`;
-  toast(‘Generating NPC script…’,‘ai’);$(‘npc-out’).textContent=‘Generating…’;
+Include: PathfindingService for movement, Heartbeat for detection, proper health bar BillboardGui, BindToClose cleanup.
+Return raw Lua only, no markdown fences.`;
+  toast('Generating NPC script…','ai');$('npc-out').textContent='Generating…';
   const r=await callAI(prompt);
-  if(r){$(‘code-area’).value=cc(r);onCE();$(‘npc-out’).textContent=‘✓ Script ready in editor!’;document.querySelectorAll(’.nav-tab’)[0].click();toast(‘NPC script generated!’,‘ok’);}
-  else{$(‘npc-out’).textContent=‘Failed.’;toast(‘Failed’,‘bad’);}
-  }
-  const npcCv=$(‘npc-c’);if(npcCv){
-  npcCv.addEventListener(‘mousedown’,e=>{npcDragging=true;npcLastX=e.clientX;});
-  npcCv.addEventListener(‘mousemove’,e=>{if(!npcDragging)return;npcAngle+=(e.clientX-npcLastX)*.01;npcLastX=e.clientX;drawNPC();});
-  npcCv.addEventListener(‘mouseup’,()=>npcDragging=false);
-  }
+  if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Script ready in editor!';document.querySelectorAll('.nav-tab')[0].click();toast('NPC script generated!','ok');}
+  else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
+}
+const npcCv=$('npc-c');if(npcCv){
+  npcCv.addEventListener('mousedown',e=>{npcDragging=true;npcLastX=e.clientX;});
+  npcCv.addEventListener('mousemove',e=>{if(!npcDragging)return;npcAngle+=(e.clientX-npcLastX)*.01;npcLastX=e.clientX;drawNPC();});
+  npcCv.addEventListener('mouseup',()=>npcDragging=false);
+}
 
-// ── ADMIN SUITE ──
+// ADMIN SUITE
 async function genAdmin(type){
-const BANNED=`IMPORTANT RULES — follow strictly:
-
+  const BANNED=`IMPORTANT RULES:
 - Never use FontSize enum, use TextSize=number
 - Never use BackgroundColor, use BackgroundColor3
 - Never call :FireServer() from a server Script
-- Never use varargs (…) inside pcall
 - Always use task.wait() not wait()
 - All RemoteEvents must be created individually, not in loops
-- The local script must create a visible on-screen GUI with TweenService animations, not just print()`;
-  
+- The local script must create a visible on-screen GUI with TweenService animations`;
+
   const prompts={
-  full:`${BANNED}
-  Write a complete Roblox admin system as TWO scripts using EXACTLY these section markers (no extra text before them):
-  ===SCRIPT_SERVER===
-  (server Script here — ~150 lines)
-  ===SCRIPT_LOCAL===
-  (LocalScript here — ~200 lines)
-
-Server requirements: Folder named “AdminEvents” in ReplicatedStorage. Create each RemoteEvent individually by name. RANKS table keyed by UserId. Rank hierarchy check so lower ranks cannot target higher ranks. Handlers: Kick(name,reason), Ban(name,reason) with DataStore, Unban(name) looking up offline userId via a name→id DataStore, Tp, Bring, Kill, God, FF toggle, Speed(name,value), Announce, Day, Night, Freeze toggle using Attributes. PlayerAdded ban check.
-Local requirements: Dark panel (500×560) toggled with F9. Scrollable player list (clicking name fills target input). Separate target input and reason/value input. Buttons with TweenService hover effects for: Kick, Ban, Unban, Kill, God, FF, Freeze, TP, Bring, Speed, Day, Night. Announce text box + button. Notifications rendered on screen as sliding cards using TweenService — NOT print(). Announcement banner at top of screen.`,
-
-```
+full:`${BANNED}
+Write a complete Roblox admin system as TWO scripts:
+===SCRIPT_SERVER===
+(server Script ~150 lines)
+===SCRIPT_LOCAL===
+(LocalScript ~200 lines)
+Server: AdminEvents folder in ReplicatedStorage, RANKS table by UserId, kick/ban/tp/bring/kill/god/speed/day/night handlers.
+Local: Dark panel toggled with F9, player list, buttons with TweenService hover effects, sliding notification cards.`,
 ban:`${BANNED}
-```
-
 Write a Roblox ban system as TWO scripts:
 ===SCRIPT_SERVER===
 ===SCRIPT_LOCAL===
-Server: BanStore DataStore. NameStore DataStore mapping name→UserId for offline unbans. Folder+RemoteEvents. PlayerAdded ban check. Handlers: BanPlayer(name,reason), UnbanPlayer(name) that resolves offline players via NameStore, TempBan(name,secs,reason) using os.time()+secs, GetBanList returning array.
-Local: F8 toggle panel. Ban input, reason input, unban input, tempban+duration input. Ban list ScrollingFrame populated from GetBanList. On-screen toast notifications with TweenService.`,
-
-```
+Server: BanStore DataStore, PlayerAdded ban check, BanPlayer/UnbanPlayer/TempBan handlers.
+Local: F8 toggle panel, ban/unban inputs, ban list, toast notifications.`,
 anticheat:`${BANNED}
-```
-
 Write a Roblox anti-cheat as ONE script:
 ===SCRIPT_SERVER===
-Speed hack: WalkSpeed>120 detected via Heartbeat. Fly hack: character airborne >5 consecutive seconds. Teleport hack: HumanoidRootPart moves >400 studs in one frame.
-Flag system: warn at 2 flags (RemoteEvent notification), kick at 4, permanent DataStore ban at 6. Flag table resets every 300 seconds. ACNotify RemoteEvent fires warning text to the flagged player’s screen.`,
-
-```
+Speed hack (WalkSpeed>120), fly hack (airborne >5s), teleport hack (>400 studs/frame).
+Flag system: warn at 2, kick at 4, permanent ban at 6.`,
 emotes:`${BANNED}
-```
-
 Write an emote system as TWO scripts:
 ===SCRIPT_SERVER===
 ===SCRIPT_LOCAL===
-Server: PlayEmote and StopEmote RemoteEvents. Load animation by AssetId, play on Animator, stop on StopEmote or character death.
-Local: 12 emotes with names and placeholder AnimationIds. E key toggles circular wheel. Buttons arranged with math.cos/sin around center. TweenService open/close animation. Hovering scales button up. Clicking fires PlayEmote and closes wheel. Moving character fires StopEmote.`,
-
-```
+Server: PlayEmote/StopEmote RemoteEvents, load animation by AssetId.
+Local: 12 emotes, E key toggles circular wheel, TweenService open/close.`,
 ranks:`${BANNED}
-```
-
 Write a rank system as TWO scripts:
 ===SCRIPT_SERVER===
 ===SCRIPT_LOCAL===
-Server: 5 rank tiers with names and BrickColors. BillboardGui rank tag above head updated on rank change. SetRank, GetMyRank, RankChanged RemoteEvents. DataStore saves rank per UserId.
-Local: F7 toggle panel. Shows current player’s rank as a styled card. SetRank dropdown+button only visible to rank 5. RankChanged fires a pop animation on the rank card using TweenService.`,
-
-```
+Server: 5 tiers, BillboardGui rank tag, SetRank/GetMyRank RemoteEvents, DataStore saves rank.
+Local: F7 toggle panel, rank card with TweenService pop animation.`,
 notification:`${BANNED}
-```
-
 Write a notification system as TWO scripts:
 ===SCRIPT_SERVER===
 ===SCRIPT_LOCAL===
-Server: Folder+RemoteEvents: ShowToast(player,text,color), ShowAnnouncement(text), ShowHint(text), ShowDialog(player,title,body,buttons[]).
-Local: Toast stack (max 4 visible, slide in from right using TweenService Back easing, left-colored border, 4s auto-dismiss). Announcement: full-width top bar slides down, 6s dismiss. Hint: bottom-center fade in/out. Dialog: modal frame centered, dynamically creates buttons, fires DialogResponse RemoteEvent with button index.`,
-};
+Server: ShowToast/ShowAnnouncement/ShowHint/ShowDialog RemoteEvents.
+Local: Toast stack (slide in from right), announcement top bar, hint bottom-center, dialog modal.`,
+  };
 
-toast(‘Generating admin script…’,‘gold’);
-$(‘code-area’).value=’– Generating, please wait…’;
-onCE();
-document.querySelector(’.nav-tab’).click();
-
-const r=await callAI(prompts[type]||prompts.full, GENIUS_SYSTEM, 4000);
-
-if(r){
-$(‘code-area’).value=r;
-onCE();
-toast(‘Admin script ready! Review then Send to Studio.’,‘gold’);
-addLog(‘result’,‘Admin: ‘+type+’ generated’);
-}else{
-$(‘code-area’).value=’– Generation failed. Try again.’;
-toast(‘Failed’,‘bad’);
-}
+  toast('Generating admin script…','gold');
+  $('code-area').value='-- Generating, please wait…';
+  onCE();
+  document.querySelector('.nav-tab').click();
+  const r=await callAI(prompts[type]||prompts.full, GENIUS_SYSTEM, 4000);
+  if(r){
+    $('code-area').value=r;onCE();
+    toast('Admin script ready!','gold');
+    addLog('result','Admin: '+type+' generated');
+  }else{
+    $('code-area').value='-- Generation failed. Try again.';
+    toast('Failed','bad');
+  }
 }
 
-// ── MODAL ──
-function openModal(t,s,b,btns){$(‘modal-title’).textContent=t;$(‘modal-sub’).textContent=s||’’;$(‘modal-body’).innerHTML=b||’’;$(‘modal-btns’).innerHTML=btns||’’;$(‘modal-bg’).classList.add(‘open’);}
-function closeModal(){$(‘modal-bg’).classList.remove(‘open’);}
+// MODAL
+function openModal(t,s,b,btns){$('modal-title').textContent=t;$('modal-sub').textContent=s||'';$('modal-body').innerHTML=b||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
+function closeModal(){$('modal-bg').classList.remove('open');}
 
 onCE();
 </script>
-
 </body>
 </html>
