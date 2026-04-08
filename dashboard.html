@@ -61,7 +61,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .topbar-sep{width:.5px;height:18px;background:var(--border);margin:0 4px}
 .conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px;color:var(--text2)}
 .conn-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
-.conn-dot.on{background:var(--c3);box-shadow:0 0 6px var(--c3);animation:none}
+.conn-dot.on{background:var(--c3);box-shadow:0 0 6px var(--c3)}
 .conn-dot.wait{background:var(--c4);animation:pb 1.4s infinite}
 @keyframes pb{0%,100%{opacity:1}50%{opacity:.3}}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
@@ -106,7 +106,6 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .cmsg.user .cbub{background:rgba(0,229,255,0.07);border-color:rgba(0,229,255,0.12)}
 .cbub pre{background:var(--bg4);border:.5px solid var(--border);border-radius:6px;padding:7px;margin-top:6px;overflow-x:auto;font-size:9px;color:var(--c1);white-space:pre;line-height:1.6}
 .cbub code{background:var(--bg4);border-radius:3px;padding:1px 4px;color:var(--c1);font-size:9px}
-.cbub a{color:var(--c1);text-decoration:underline dotted}
 .typing{display:flex;gap:4px;padding:3px 0}
 .typing span{width:4px;height:4px;border-radius:50%;background:var(--c2);animation:td .9s infinite both}
 .typing span:nth-child(2){animation-delay:.2s}
@@ -266,9 +265,9 @@ canvas#model3d-canvas{width:100%;height:100%;display:block}
 
 /* TERRAIN */
 .terrain-view{flex:1;display:flex;overflow:hidden;min-height:0}
-.terrain-sidebar{width:230px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
-.terrain-canvas-wrap{flex:1;position:relative;overflow:hidden}
-canvas#tc{width:100%;height:100%;display:block}
+.terrain-sidebar{width:240px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.terrain-canvas-wrap{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+canvas#tc{flex:1;width:100%;display:block}
 .terrain-controls{flex:1;overflow-y:auto;padding:10px}
 .t-sec{margin-bottom:10px}
 .t-sec-title{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;padding-bottom:3px;border-bottom:.5px solid var(--border)}
@@ -288,11 +287,26 @@ canvas#tc{width:100%;height:100%;display:block}
 .t-gen-btn{width:100%;padding:8px;background:linear-gradient(135deg,var(--c1),var(--c2));border:none;border-radius:6px;color:#050709;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px}
 .t-lua-btn{width:100%;padding:6px;background:var(--c3d);border:.5px solid rgba(16,185,129,.2);border-radius:5px;color:var(--c3);font-family:var(--fm);font-size:9px;cursor:pointer;margin-top:5px;transition:all .15s}
 .t-lua-btn:hover{background:var(--c3);color:#050709}
+/* Terrain AI prompt bar */
+.terrain-ai-bar{padding:8px;border-top:.5px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.terrain-ai-inp{width:100%;background:var(--bg3);border:.5px solid rgba(124,58,237,.2);border-radius:5px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:42px;line-height:1.4;transition:border-color .15s}
+.terrain-ai-inp:focus{border-color:var(--c2)}
+.terrain-ai-inp::placeholder{color:var(--text3)}
+.terrain-ai-row{display:flex;gap:4px}
+.terrain-ai-btn{flex:1;padding:5px;background:var(--c2d);border:.5px solid rgba(124,58,237,.3);border-radius:4px;color:var(--c2);font-family:var(--fm);font-size:8px;cursor:pointer;transition:all .15s;font-weight:700}
+.terrain-ai-btn:hover{background:var(--c2);color:white}
 
 /* GUI BUILDER */
 .gui-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .gui-sidebar{width:180px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
-.gui-canvas-wrap{flex:1;position:relative;background:#0a0d18;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.gui-canvas-wrap{flex:1;position:relative;background:#0a0d18;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column;gap:0}
+.gui-ai-bar{width:100%;padding:6px 10px;background:var(--bg2);border-bottom:.5px solid var(--border);display:flex;gap:5px;align-items:center;flex-shrink:0}
+.gui-ai-inp{flex:1;background:var(--bg3);border:.5px solid rgba(124,58,237,.25);border-radius:5px;padding:5px 10px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;transition:border-color .15s}
+.gui-ai-inp:focus{border-color:var(--c2)}
+.gui-ai-inp::placeholder{color:var(--text3)}
+.gui-ai-btn{background:var(--c2);color:white;border:none;border-radius:5px;padding:5px 10px;font-family:var(--fd);font-size:9px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.gui-ai-btn:hover{background:#6d28d9}
+.gui-screen-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .gui-screen{width:580px;height:360px;background:#111827;border:.5px solid rgba(255,255,255,.06);border-radius:4px;position:relative;overflow:hidden;cursor:crosshair;flex-shrink:0}
 .gui-el{position:absolute;cursor:move;border:1px solid transparent;transition:border-color .1s;user-select:none}
 .gui-el:hover{border-color:rgba(0,229,255,.3)}
@@ -304,7 +318,12 @@ canvas#tc{width:100%;height:100%;display:block}
 /* NPC */
 .npc-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .npc-sidebar{width:210px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
-.npc-preview-wrap{flex:1;background:#040609;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden}
+.npc-preview-wrap{flex:1;background:#040609;display:flex;flex-direction:column;overflow:hidden}
+.npc-ai-bar{padding:8px;background:var(--bg2);border-bottom:.5px solid var(--border);display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.npc-ai-inp{width:100%;background:var(--bg3);border:.5px solid rgba(124,58,237,.2);border-radius:5px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:38px;line-height:1.4;transition:border-color .15s}
+.npc-ai-inp:focus{border-color:var(--c2)}
+.npc-ai-inp::placeholder{color:var(--text3)}
+.npc-preview-canvas{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
 canvas#npc-c{border:.5px solid var(--border);border-radius:8px}
 .npc-right{width:210px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
 .npc-stitle{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;margin-top:10px;padding-bottom:3px;border-bottom:.5px solid var(--border)}
@@ -316,17 +335,83 @@ canvas#npc-c{border:.5px solid var(--border);border-radius:8px}
 .npc-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--c2),var(--c1));border:none;border-radius:6px;color:white;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px;transition:all .15s}
 .npc-gen-btn:hover{opacity:.85}
 
-/* ADMIN */
-.admin-view{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;padding:1rem}
-.admin-hdr{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--c4);margin-bottom:.4rem;display:flex;align-items:center;gap:8px}
-.admin-sub{font-size:10px;color:var(--text2);margin-bottom:1rem}
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;overflow-y:auto;flex:1}
-.admin-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:1rem;cursor:pointer;transition:all .18s}
-.admin-card:hover{border-color:var(--c4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,158,11,.08)}
-.admin-card-icon{font-size:22px;margin-bottom:6px}
-.admin-card-name{font-family:var(--fd);font-size:10px;font-weight:800;color:var(--text);margin-bottom:4px}
-.admin-card-desc{font-size:9px;color:var(--text2);line-height:1.5}
-.admin-card-badge{display:inline-block;font-size:7px;padding:2px 6px;border-radius:3px;margin-top:5px;background:rgba(245,158,11,.1);color:var(--c4)}
+/* ══════════════════════════════════════
+   ADMIN SUITE — Completely rebuilt
+══════════════════════════════════════ */
+.admin-view{flex:1;display:flex;overflow:hidden;min-height:0}
+/* Sidebar */
+.admin-sidebar{width:220px;border-right:.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg2);flex-shrink:0;overflow:hidden}
+.admin-sidebar-hdr{padding:12px 14px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.admin-sidebar-title{font-family:var(--fd);font-size:13px;font-weight:800;color:var(--c4);display:flex;align-items:center;gap:6px}
+.admin-sidebar-sub{font-size:9px;color:var(--text3);margin-top:2px}
+.admin-cats{flex:1;overflow-y:auto;padding:6px}
+.admin-cat{border-radius:6px;margin-bottom:2px;overflow:hidden}
+.admin-cat-hdr{display:flex;align-items:center;gap:7px;padding:7px 10px;cursor:pointer;transition:background .15s;font-size:9px;color:var(--text2);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.admin-cat-hdr:hover{background:var(--bg3)}
+.admin-cat-hdr.active{background:var(--c4d);color:var(--c4)}
+.admin-cat-icon{font-size:12px;flex-shrink:0}
+.admin-items{display:flex;flex-direction:column;gap:2px;padding:3px 6px 6px 28px;display:none}
+.admin-items.open{display:flex}
+.admin-item{padding:5px 8px;border-radius:4px;font-size:9px;color:var(--text3);cursor:pointer;transition:all .12s;border:.5px solid transparent}
+.admin-item:hover{background:var(--bg3);color:var(--text2);border-color:var(--border)}
+.admin-item.selected{background:var(--c4d);color:var(--c4);border-color:rgba(245,158,11,.2)}
+/* Main panel */
+.admin-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.admin-main-hdr{padding:12px 16px;border-bottom:.5px solid var(--border);background:var(--bg2);flex-shrink:0}
+.admin-main-title{font-family:var(--fd);font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px}
+.admin-main-desc{font-size:9px;color:var(--text2);line-height:1.5}
+.admin-config-area{flex:1;overflow-y:auto;padding:16px}
+/* Config cards */
+.admin-cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.admin-cfg-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:10px 12px}
+.admin-cfg-label{font-size:8px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.admin-cfg-input{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;transition:border-color .15s}
+.admin-cfg-input:focus{border-color:var(--c4)}
+.admin-cfg-textarea{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:60px;line-height:1.5;transition:border-color .15s}
+.admin-cfg-textarea:focus{border-color:var(--c4)}
+.admin-cfg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.admin-cfg-row-lbl{font-size:9px;color:var(--text2);min-width:80px}
+.admin-toggle{display:flex;gap:3px}
+.admin-toggle-opt{padding:2px 8px;border-radius:3px;font-size:8px;cursor:pointer;border:.5px solid var(--border);color:var(--text3);transition:all .12s}
+.admin-toggle-opt:hover{border-color:var(--c4);color:var(--c4)}
+.admin-toggle-opt.on{background:var(--c4d);color:var(--c4);border-color:rgba(245,158,11,.3)}
+/* Rank editor */
+.rank-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.rank-row{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg3);border:.5px solid var(--border);border-radius:5px}
+.rank-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.rank-name-inp{flex:1;background:transparent;border:none;font-family:var(--fm);font-size:9px;color:var(--text);outline:none}
+.rank-color-inp{width:22px;height:18px;border-radius:3px;border:.5px solid var(--border);cursor:pointer;padding:1px}
+.rank-level{font-size:8px;color:var(--text3);min-width:16px;text-align:center}
+/* Commands list */
+.cmd-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.cmd-chip{padding:3px 8px;border:.5px solid var(--border);border-radius:3px;font-size:8px;color:var(--text3);cursor:pointer;transition:all .12s;user-select:none}
+.cmd-chip.on{background:var(--c4d);color:var(--c4);border-color:rgba(245,158,11,.3)}
+.cmd-chip:hover{border-color:var(--c4);color:var(--c4)}
+/* Generate bar */
+.admin-gen-bar{padding:12px 16px;border-top:.5px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.admin-prompt-inp{flex:1;background:var(--bg3);border:.5px solid rgba(245,158,11,.2);border-radius:5px;padding:7px 10px;font-family:var(--fm);font-size:10px;color:var(--text);outline:none;transition:border-color .15s}
+.admin-prompt-inp:focus{border-color:var(--c4)}
+.admin-prompt-inp::placeholder{color:var(--text3)}
+.admin-gen-btn{background:linear-gradient(135deg,var(--c4),#e08000);color:#050709;border:none;border-radius:6px;padding:9px 18px;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .18s;letter-spacing:.04em}
+.admin-gen-btn:hover{box-shadow:0 0 20px rgba(245,158,11,.3);transform:translateY(-1px)}
+.admin-gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* Section dividers */
+.admin-section{margin-bottom:14px}
+.admin-section-title{font-size:8px;font-weight:700;color:var(--text2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.admin-section-title::after{content:'';flex:1;height:.5px;background:var(--border)}
+.admin-full-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+/* Placeholder state */
+.admin-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:2rem;text-align:center}
+.admin-placeholder-icon{font-size:36px;opacity:.3}
+.admin-placeholder-title{font-family:var(--fd);font-size:13px;font-weight:800;color:var(--text3)}
+.admin-placeholder-sub{font-size:9px;color:var(--text3);max-width:220px;line-height:1.6}
+/* Quick generate cards */
+.admin-quick-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.admin-quick-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s;text-align:center}
+.admin-quick-card:hover{border-color:var(--c4);transform:translateY(-2px);box-shadow:0 6px 18px rgba(245,158,11,.07)}
+.admin-quick-icon{font-size:18px;margin-bottom:4px}
+.admin-quick-name{font-family:var(--fd);font-size:9px;font-weight:800;color:var(--text)}
+.admin-quick-desc{font-size:7px;color:var(--text3);margin-top:2px;line-height:1.4}
 
 /* MODAL + TOASTS */
 .modal-bg{position:fixed;inset:0;background:rgba(5,7,9,.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -479,7 +564,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <span style="font-size:8px;color:var(--text3);margin-left:auto">AI auto-orders ↑</span>
         </div>
         <div class="ai-bar">
-          <span style="font-size:9px;color:var(--c2);white-space:nowrap;cursor:pointer" onclick="toast('AI: Groq via Backend','ai')">✦ AI</span>
+          <span style="font-size:9px;color:var(--c2);white-space:nowrap;cursor:pointer">✦ AI</span>
           <input class="ai-bar-inp" id="ai-prompt" placeholder="Describe what to build (e.g. coin system with leaderboard)…" onkeydown="if(event.key==='Enter')genScript()"/>
           <div class="ai-spin-wrap" id="ai-ind"><div class="ai-spin"></div><span id="ai-ind-txt">Thinking</span></div>
           <button class="ebtn" style="background:var(--c2);color:white;border-color:var(--c2);flex-shrink:0" onclick="genScript()">Generate</button>
@@ -676,6 +761,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <button class="t-gen-btn" onclick="genTerrain()">✦ Generate</button>
           <button class="t-lua-btn" onclick="exportTerrainLua()">⬇ Export Lua</button>
         </div>
+        <!-- AI Prompt for Terrain -->
+        <div class="terrain-ai-bar">
+          <div style="font-size:8px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">✦ AI Terrain Script</div>
+          <textarea class="terrain-ai-inp" id="terrain-ai-inp" placeholder="e.g. A massive volcanic island with rivers of lava, floating rocks, and dense forest around the base…"></textarea>
+          <div class="terrain-ai-row">
+            <button class="terrain-ai-btn" onclick="genTerrainAI()">✦ Generate Advanced Lua</button>
+          </div>
+        </div>
       </div>
       <div class="terrain-canvas-wrap"><canvas id="tc"></canvas></div>
     </div>
@@ -706,7 +799,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         </div>
       </div>
       <div class="gui-canvas-wrap">
-        <div class="gui-screen" id="gui-screen" onclick="guiScClick(event)" onmousemove="guiDrag(event)" onmouseup="guiDE()"></div>
+        <!-- AI prompt bar at top of canvas -->
+        <div class="gui-ai-bar">
+          <span style="font-size:9px;color:var(--c2);white-space:nowrap">✦ AI</span>
+          <input class="gui-ai-inp" id="gui-ai-inp" placeholder="Describe a GUI: e.g. Dark inventory grid with slots, header bar, animated close button…" onkeydown="if(event.key==='Enter')genGuiAI()"/>
+          <button class="gui-ai-btn" onclick="genGuiAI()">Generate GUI Lua</button>
+        </div>
+        <div class="gui-screen-wrap">
+          <div class="gui-screen" id="gui-screen" onclick="guiScClick(event)" onmousemove="guiDrag(event)" onmouseup="guiDE()"></div>
+        </div>
       </div>
       <div class="gui-right">
         <div class="panel-hdr"><span class="panel-hdr-title">Properties</span><button class="ebtn grn" style="font-size:8px;padding:2px 5px" onclick="exportGuiLua()">⬇ Lua</button></div>
@@ -744,8 +845,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         <button class="npc-gen-btn" onclick="genNPC()">✦ Generate NPC Script</button>
       </div>
       <div class="npc-preview-wrap">
-        <canvas id="npc-c" width="280" height="400"></canvas>
-        <div style="font-size:9px;color:var(--text2)">NPC Preview — Rotate: drag</div>
+        <!-- AI Prompt bar for NPC -->
+        <div class="npc-ai-bar">
+          <div style="font-size:8px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">✦ AI Custom NPC</div>
+          <textarea class="npc-ai-inp" id="npc-ai-inp" placeholder="e.g. A boss zombie with 3 phases, ranged spit attack, scream AoE, and loot drop on death…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();genNPCAI();}"></textarea>
+          <div style="display:flex;gap:4px">
+            <button class="terrain-ai-btn" style="flex:1" onclick="genNPCAI()">✦ Generate Advanced NPC Lua</button>
+          </div>
+        </div>
+        <div class="npc-preview-canvas">
+          <canvas id="npc-c" width="280" height="300"></canvas>
+          <div style="font-size:9px;color:var(--text2)">NPC Preview — Rotate: drag</div>
+        </div>
       </div>
       <div class="npc-right">
         <div class="npc-stitle">Name</div>
@@ -765,18 +876,30 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
   </div>
 
-  <!-- ADMIN VIEW -->
+  <!-- ADMIN SUITE VIEW — Completely rebuilt -->
   <div class="view" id="view-admin">
     <div class="admin-view">
-      <div class="admin-hdr">👑 Admin Command Suite</div>
-      <div class="admin-sub">Click any card to generate a complete, production-ready admin script.</div>
-      <div class="admin-grid">
-        <div class="admin-card" onclick="genAdmin('full')"><div class="admin-card-icon">👑</div><div class="admin-card-name">Full Admin System</div><div class="admin-card-desc">Rank system, 40+ commands, GUI console, DataStore logging.</div><div class="admin-card-badge">Complete</div></div>
-        <div class="admin-card" onclick="genAdmin('ban')"><div class="admin-card-icon">🔨</div><div class="admin-card-name">Ban System</div><div class="admin-card-desc">Permanent/temp bans, DataStore, ban list GUI.</div><div class="admin-card-badge">DataStore</div></div>
-        <div class="admin-card" onclick="genAdmin('anticheat')"><div class="admin-card-icon">🛡</div><div class="admin-card-name">Anti-Cheat</div><div class="admin-card-desc">Speed, fly, noclip, damage exploit detection + bans.</div><div class="admin-card-badge">Security</div></div>
-        <div class="admin-card" onclick="genAdmin('emotes')"><div class="admin-card-icon">💃</div><div class="admin-card-name">Emote System</div><div class="admin-card-desc">20+ emotes, GUI wheel, cancel-on-move.</div><div class="admin-card-badge">Animations</div></div>
-        <div class="admin-card" onclick="genAdmin('ranks')"><div class="admin-card-icon">🎖</div><div class="admin-card-name">Rank Permissions</div><div class="admin-card-desc">5-tier ranks, group support, rank displays.</div><div class="admin-card-badge">Groups</div></div>
-        <div class="admin-card" onclick="genAdmin('notification')"><div class="admin-card-icon">📢</div><div class="admin-card-name">Notifications</div><div class="admin-card-desc">Announcements, hints, toasts, dialogs with animations.</div><div class="admin-card-badge">UI</div></div>
+      <!-- Sidebar -->
+      <div class="admin-sidebar">
+        <div class="admin-sidebar-hdr">
+          <div class="admin-sidebar-title">👑 Admin Suite</div>
+          <div class="admin-sidebar-sub">Production-ready admin systems</div>
+        </div>
+        <div class="admin-cats" id="admin-cats">
+          <!-- populated by JS -->
+        </div>
+      </div>
+      <!-- Main panel -->
+      <div class="admin-main">
+        <div id="admin-main-content">
+          <!-- populated by JS -->
+        </div>
+        <!-- Generate bar -->
+        <div class="admin-gen-bar">
+          <span style="font-size:9px;color:var(--c4);white-space:nowrap;flex-shrink:0">✦ AI</span>
+          <input class="admin-prompt-inp" id="admin-custom-prompt" placeholder="Describe custom admin feature (e.g. a VIP door that checks rank, a punishment system with logs)…" onkeydown="if(event.key==='Enter')genAdminCustom()"/>
+          <button class="admin-gen-btn" id="admin-gen-btn" onclick="genAdminCustom()">Generate Script</button>
+        </div>
       </div>
     </div>
   </div>
@@ -794,7 +917,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 <div id="toasts"></div>
 
 <script>
-// ── THE ONLY CHANGE: point AI calls to your Railway backend ──
 const BACKEND = "https://enesai-production.up.railway.app";
 
 let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
@@ -813,6 +935,7 @@ let guiNextId=1;
 let np={health:100,speed:16,detect:30,damage:10,behavior:'patrol',combat:'none',type:'humanoid'};
 let activeST={script:true,localscript:true,modulescript:false};
 let npcAngle=0, npcDragging=false, npcLastX=0;
+let selectedAdminItem=null;
 
 const BIOME_COLS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
@@ -856,17 +979,16 @@ function enterApp(){
   initM3dViewer();
   initTerrainCanvas();
   drawNPC();
+  initAdminSuite();
 }
 function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
 lv();if(user&&sessionToken)enterApp();
 
-// POLLING
 function startPolling(){pollInterval=setInterval(async()=>{try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();d.connected&&!pluginConnected?setConn(true):!d.connected&&pluginConnected?setConn(false):null;}catch{}},2500);}
 function stopPolling(){clearInterval(pollInterval);}
 function setConn(v){pluginConnected=v;const d=$('conn-dot');d.className='conn-dot '+(v?'on':'wait');$('conn-txt').textContent=v?'Studio connected':'Not connected';v&&(toast('Studio connected!','ok'),addLog('sys','Studio connected.'));}
 function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
-// LOG
 function addLog(kind,msg){
   const el=document.createElement('div');
   el.className=`le ${kind}`;
@@ -876,7 +998,6 @@ function addLog(kind,msg){
 }
 function clearLog(){$('log-inner').innerHTML='';logCount=0;$('log-cnt').textContent='0';}
 
-// VIEW SWITCH
 function gotoView(name,btn){
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -887,15 +1008,54 @@ function gotoView(name,btn){
 }
 function toggleST(type,el){activeST[type]=!activeST[type];el.classList.toggle('on',activeST[type]);toast((activeST[type]?'Enabled ':'Disabled ')+type,'info');}
 
-// ══════════════════════════════════════════════════════
-// AI — routes to YOUR backend /api/ai (Groq via Railway)
-// ══════════════════════════════════════════════════════
-const GENIUS_SYSTEM = `You are an expert in EVERYTHING:
-- Roblox Lua scripting: every API, service, best practice, framework
-- Roblox frameworks: Cmdr, Knit, ProfileService, DataStore2, Rojo, Promise, t, ReactLua, Matter (ECS)
-- Roblox name tags, YouTubers (AlvinBlox, PeasFactory, TheDevKing, GnomeCode etc.)
-- General programming, game design, math for games
-When answering give specific accurate details. For scripts, always return production-ready Lua. Be conversational, detailed, and insightful.`;
+// ══════════════════════════════════════════
+// AI SYSTEM PROMPT — Real Roblox Lua Expert
+// ══════════════════════════════════════════
+const GENIUS_SYSTEM = `You are an expert Roblox Luau developer. You write production-quality, correct Roblox Luau code.
+
+CRITICAL RULES — always follow these:
+- Use task.wait() NOT wait() (deprecated)
+- Use task.spawn() NOT spawn() (deprecated)
+- Use task.delay() NOT delay() (deprecated)
+- Use TextSize = number NOT FontSize enum
+- Use BackgroundColor3 = Color3.fromRGB() NOT BackgroundColor
+- Use Humanoid:TakeDamage() for damage
+- Use :FindFirstChildOfClass() NOT :FindFirstChild() for class checks
+- Never use game.Players, always game:GetService("Players")
+- Never use game.ReplicatedStorage, always game:GetService("ReplicatedStorage")
+- Use Instance.new() with parent set LAST (after all properties)
+- RemoteEvents/Functions must exist in ReplicatedStorage
+- Server Scripts go in ServerScriptService
+- LocalScripts go in StarterPlayer/StarterPlayerScripts or StarterGui
+- ModuleScripts are required via require()
+- Always use pcall() for DataStore calls
+- Always add BindToClose for DataStore saves
+- UDim2.new(scaleX, offsetX, scaleY, offsetY) — scale is 0-1, offset is pixels
+- Color3.fromRGB(r, g, b) — values 0-255
+- BrickColor.new() for part colors, Color3.fromRGB() for GUI colors
+- TweenInfo.new(time, EasingStyle, EasingDirection, repeatCount, reverses, delayTime)
+- PathfindingService:CreatePath() returns a Path object, call :ComputeAsync(start, goal) then :GetWaypoints()
+- Always disconnect events on cleanup using :Disconnect()
+- Use CollectionService for tagging parts
+- Always check if Character and HumanoidRootPart exist before use
+
+When generating GUI code:
+- Use ScreenGui with ResetOnSpawn = false
+- Use UICorner for rounded corners
+- Use UIStroke for borders
+- Use UIGradient for gradients (with NumberSequence for Color and NumberSequence for Transparency)
+- Use TweenService for all animations
+- TextScaled = true OR set TextSize manually
+- Use ZIndex for layering
+
+When generating NPC scripts:
+- PathfindingService with AgentRadius, AgentHeight params
+- RunService.Heartbeat for main loop
+- Proper cleanup with :Disconnect()
+- BillboardGui for health bars above head
+- Use Humanoid.Died event not health <= 0 polling
+
+You are conversational, detailed, and always return production-ready Lua. For scripts, always specify where they go.`;
 
 async function callAI(prompt, sysOverride=null, maxTok=2000) {
   try {
@@ -912,7 +1072,6 @@ async function callAI(prompt, sysOverride=null, maxTok=2000) {
       throw new Error('Backend ' + response.status + ': ' + e.slice(0, 120));
     }
     const d = await response.json();
-    // Backend returns { content: [{ text: "..." }] } — same shape as before
     return d.content?.[0]?.text || null;
   } catch(e) {
     addLog('err', 'AI: ' + e.message);
@@ -920,7 +1079,7 @@ async function callAI(prompt, sysOverride=null, maxTok=2000) {
   }
 }
 
-function cc(c){return(c||'').replace(/```lua\n?/g,'').replace(/```\n?/g,'').trim();}
+function cc(c){return(c||'').replace(/```lua\n?/g,'').replace(/```luau\n?/g,'').replace(/```\n?/g,'').trim();}
 
 // SEND TO STUDIO
 function wrapInsert(code,type){
@@ -980,7 +1139,6 @@ async function sendToStudio(){
   toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
 }
 
-// GENERATE SCRIPT
 async function genScript(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
@@ -998,7 +1156,7 @@ Use these exact separators and only include needed sections:
 (client code here)
 ===SCRIPT_MODULE===
 (module code here)
-Return production-ready, commented Lua. No markdown fences.`;
+Return production-ready, commented Luau. No markdown fences. Place comments indicating where each script goes.`;
   addLog('ai','Generating: '+prompt.slice(0,60));
   const raw=await callAI(userMsg);
   ind.classList.remove('on');
@@ -1018,13 +1176,13 @@ async function aiAction(action){
   const code=$('code-area').value.trim();
   if(!code){toast('No code.','bad');return;}
   const prompts={
-    fix:`Fix ALL bugs in this Roblox Lua. Return ONLY the fixed code, no markdown:\n\n${code}`,
-    comment:`Add clear, helpful inline comments to this Roblox Lua. Return ONLY the commented code:\n\n${code}`,
-    optimize:`Optimize this Roblox Lua for performance and readability. Return ONLY the optimized code:\n\n${code}`,
-    explain:`Explain what this Roblox Lua script does, what each major section does, and any potential issues:\n\n${code}`
+    fix:`Fix ALL bugs in this Roblox Luau. Follow all modern Roblox API rules (task.wait not wait, BackgroundColor3 not BackgroundColor, etc). Return ONLY the fixed code, no markdown:\n\n${code}`,
+    comment:`Add clear, helpful inline comments to every major section of this Roblox Luau. Return ONLY the commented code:\n\n${code}`,
+    optimize:`Optimize this Roblox Luau for performance, memory, and readability. Use modern APIs. Return ONLY the optimized code:\n\n${code}`,
+    explain:`Explain this Roblox Luau script in detail: what it does, what each section does, and any potential issues or improvements:`
   };
   $('ai-ind').classList.add('on');$('es-status').textContent=action+'ing…';
-  const r=await callAI(prompts[action]);
+  const r=await callAI(action==='explain'?prompts[action]+'\n\n'+code:prompts[action]);
   $('ai-ind').classList.remove('on');
   if(r){
     if(action==='explain'){appendMsg('ai',r);toast('Explanation in chat!','ok');}
@@ -1045,7 +1203,6 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function cq(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Chat cleared','info');}
 
-// AI CHAT
 async function sendChat(){
   const inp=$('chat-input');const msg=inp.value.trim();if(!msg)return;
   inp.value='';inp.style.height='auto';
@@ -1061,16 +1218,17 @@ function appendMsg(role,text){
   d.className='cmsg'+(role==='user'?' user':'');
   const av=role==='ai'?'✦':(user?user.avatar:'U');
   const cls=role==='ai'?'ai':'user';
-  const fmt=(text||'').replace(/```lua\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
+  const fmt=(text||'').replace(/```lua\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```luau\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
   d.innerHTML=`<div class="cava ${cls}">${av}</div><div><div class="cbub">${fmt}</div></div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
 function appendTyping(id){const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;d.innerHTML=`<div class="cava ai">✦</div><div><div class="cbub"><div class="typing"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// TEMPLATES & SNIPPETS
+// TEMPLATES
 const TMPLS={
-door:`-- SCRIPT: Touch-activated door with TweenService
+door:`-- Place in ServerScriptService
+-- SCRIPT: Touch-activated door with TweenService
 local TweenService = game:GetService("TweenService")
 local door = script.Parent
 local debounce = false
@@ -1078,7 +1236,7 @@ local openPos = door.CFrame * CFrame.new(0, 8, 0)
 local closePos = door.CFrame
 local info = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 door.Touched:Connect(function(hit)
-  if hit.Parent:FindFirstChild("Humanoid") and not debounce then
+  if hit.Parent:FindFirstChildOfClass("Humanoid") and not debounce then
     debounce = true
     TweenService:Create(door, info, {CFrame = openPos}):Play()
     task.wait(3)
@@ -1087,7 +1245,7 @@ door.Touched:Connect(function(hit)
     debounce = false
   end
 end)`,
-leaderboard:`-- SCRIPT: Leaderboard + DataStore with retry
+leaderboard:`-- Place in ServerScriptService
 local Players = game:GetService("Players")
 local DS = game:GetService("DataStoreService")
 local store = DS:GetDataStore("Stats_v1")
@@ -1106,43 +1264,57 @@ Players.PlayerAdded:Connect(function(player)
 end)
 Players.PlayerRemoving:Connect(function(p)
   pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+  cache[p.UserId] = nil
 end)
 game:BindToClose(function()
   for _, p in Players:GetPlayers() do
     pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
   end
 end)`,
-gui:`-- LOCALSCRIPT: Animated ScreenGui
+gui:`-- Place in StarterGui as LocalScript
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
-local gui = Instance.new("ScreenGui"); gui.ResetOnSpawn=false; gui.Parent=player.PlayerGui
+local gui = Instance.new("ScreenGui")
+gui.ResetOnSpawn = false
+gui.Name = "MainGui"
+gui.Parent = player.PlayerGui
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0,300,0,180)
-frame.Position = UDim2.new(0.5,-150,0.6,-90)
-frame.BackgroundColor3 = Color3.fromRGB(10,13,22)
+frame.Size = UDim2.new(0, 300, 0, 180)
+frame.Position = UDim2.new(0.5, -150, 0.6, -90)
+frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 frame.BackgroundTransparency = 1
 frame.BorderSizePixel = 0
 frame.Parent = gui
-Instance.new("UICorner",frame).CornerRadius = UDim.new(0,14)
-local stroke = Instance.new("UIStroke",frame)
-stroke.Color = Color3.fromRGB(0,200,240); stroke.Thickness = 1
-local title = Instance.new("TextLabel",frame)
-title.Size = UDim2.new(1,0,0,40); title.BackgroundTransparency=1
-title.Text = "Hello World!"; title.TextColor3=Color3.new(1,1,1)
-title.Font = Enum.Font.GothamBold; title.TextSize = 16
-TweenService:Create(frame, TweenInfo.new(0.5,Enum.EasingStyle.Back), {Position=UDim2.new(0.5,-150,0.5,-90),BackgroundTransparency=0}):Play()`,
-npc:`-- SCRIPT: NPC with pathfinding + health bar
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 240)
+stroke.Thickness = 1
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "Hello World!"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
+  Position = UDim2.new(0.5, -150, 0.5, -90),
+  BackgroundTransparency = 0
+}):Play()`,
+npc:`-- Place in ServerScriptService
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local npc = script.Parent
 local humanoid = npc:WaitForChild("Humanoid")
 local root = npc:WaitForChild("HumanoidRootPart")
-humanoid.MaxHealth = 100; humanoid.Health = 100
-local DETECT = 30; local ATTACK = 5; local DAMAGE = 10
+humanoid.MaxHealth = 100
+humanoid.Health = 100
+local DETECT = 30
+local ATTACK = 5
+local DAMAGE = 10
 local lastAtk = 0
-RunService.Heartbeat:Connect(function()
+local conn = RunService.Heartbeat:Connect(function()
   if humanoid.Health <= 0 then return end
   for _, p in Players:GetPlayers() do
     local c = p.Character
@@ -1152,110 +1324,139 @@ RunService.Heartbeat:Connect(function()
       if hr and hm and hm.Health > 0 then
         local d = (hr.Position - root.Position).Magnitude
         if d <= ATTACK then
-          if tick()-lastAtk >= 1.5 then lastAtk=tick(); hm:TakeDamage(DAMAGE) end
+          if tick() - lastAtk >= 1.5 then
+            lastAtk = tick()
+            hm:TakeDamage(DAMAGE)
+          end
         elseif d <= DETECT then
           humanoid:MoveTo(hr.Position)
         end
       end
     end
   end
+end)
+humanoid.Died:Connect(function()
+  conn:Disconnect()
+  task.wait(5)
+  npc:Destroy()
 end)`,
-datastore:`-- SCRIPT: DataStore with full retry + BindToClose
+datastore:`-- Place in ServerScriptService
 local DS = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local store = DS:GetDataStore("GameData_v2")
 local cache = {}
 local DEFAULT = {coins=0, level=1, xp=0}
 Players.PlayerAdded:Connect(function(player)
-  for i=1,3 do
+  for i = 1, 3 do
     local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
-    if ok then cache[player.UserId]=data or table.clone(DEFAULT); break end
+    if ok then
+      cache[player.UserId] = data or table.clone(DEFAULT)
+      break
+    end
     task.wait(2)
   end
-  local ls=Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player
-  local c=Instance.new("IntValue"); c.Name="Coins"; c.Value=cache[player.UserId].coins; c.Parent=ls
+  local ls = Instance.new("Folder"); ls.Name = "leaderstats"; ls.Parent = player
+  local c = Instance.new("IntValue"); c.Name = "Coins"; c.Value = cache[player.UserId].coins; c.Parent = ls
 end)
 Players.PlayerRemoving:Connect(function(p)
-  pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)
-  cache[p.UserId]=nil
+  pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
+  cache[p.UserId] = nil
 end)
 game:BindToClose(function()
-  for _,p in Players:GetPlayers() do
-    pcall(function() store:SetAsync(tostring(p.UserId),cache[p.UserId]) end)
+  for _, p in Players:GetPlayers() do
+    pcall(function() store:SetAsync(tostring(p.UserId), cache[p.UserId]) end)
   end
 end)`,
-round:`-- SCRIPT: Complete round system
+round:`-- Place in ServerScriptService
 local Players = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
-local MIN=2; local LOBBY=20; local ROUND=180
-local ev=Instance.new("RemoteEvent"); ev.Name="StatusUpdate"; ev.Parent=RS
+local MIN = 2; local LOBBY = 20; local ROUND = 180
+local ev = Instance.new("RemoteEvent"); ev.Name = "StatusUpdate"; ev.Parent = RS
 task.spawn(function()
   while true do
     repeat
-      ev:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN..")")
+      ev:FireAllClients("Waiting... (" .. #Players:GetPlayers() .. "/" .. MIN .. ")")
       task.wait(2)
-    until #Players:GetPlayers()>=MIN
-    for i=LOBBY,1,-1 do ev:FireAllClients("Starting in "..i.."s!") task.wait(1) end
+    until #Players:GetPlayers() >= MIN
+    for i = LOBBY, 1, -1 do
+      ev:FireAllClients("Starting in " .. i .. "s!")
+      task.wait(1)
+    end
     ev:FireAllClients("Round started!")
     task.wait(ROUND)
     ev:FireAllClients("Round over!")
     task.wait(10)
   end
 end)`,
-admin:`-- SCRIPT: Admin command system
+admin:`-- Place in ServerScriptService
 local Players = game:GetService("Players")
-local RANKS = {[1234567890]=5}
+local RANKS = {[1234567890] = 5} -- Add UserId = rank pairs
 local function getRank(p) return RANKS[p.UserId] or 0 end
-local function find(name)
-  for _,p in Players:GetPlayers() do
+local function findPlayer(name)
+  for _, p in Players:GetPlayers() do
     if p.Name:lower():find(name:lower()) then return p end
   end
 end
 local CMDS = {
-  kick={rank=3,fn=function(a,args) local t=find(args[1]);if t then t:Kick(args[2]or"Kicked") end end},
-  tp  ={rank=3,fn=function(a,args) local t=find(args[1]);if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end},
-  god ={rank=4,fn=function(a,args) local t=find(args[1]);if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid");if h then h.MaxHealth=math.huge;h.Health=math.huge end end end},
-  day ={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="14:00:00" end},
-  night={rank=2,fn=function() game:GetService("Lighting").TimeOfDay="02:00:00" end},
+  kick  = {rank=3, fn=function(a, args) local t=findPlayer(args[1]); if t then t:Kick(args[2] or "Kicked by admin") end end},
+  tp    = {rank=3, fn=function(a, args) local t=findPlayer(args[1]); if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end},
+  god   = {rank=4, fn=function(a, args) local t=findPlayer(args[1]); if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid"); if h then h.MaxHealth=math.huge; h.Health=math.huge end end end},
+  day   = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay = "14:00:00" end},
+  night = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay = "02:00:00" end},
 }
 Players.PlayerAdded:Connect(function(player)
   player.Chatted:Connect(function(msg)
-    if msg:sub(1,1)~="/" then return end
-    local parts=msg:sub(2):split(" ")
-    local cmd=CMDS[parts[1]:lower()]
-    if cmd and getRank(player)>=cmd.rank then pcall(cmd.fn,player,{table.unpack(parts,2)}) end
+    if msg:sub(1,1) ~= "/" then return end
+    local parts = msg:sub(2):split(" ")
+    local cmd = CMDS[parts[1]:lower()]
+    if cmd and getRank(player) >= cmd.rank then
+      pcall(cmd.fn, player, {table.unpack(parts, 2)})
+    end
   end)
 end)`,
-shop:`-- SCRIPT: Shop with DataStore
+shop:`-- Place in ServerScriptService
 local Players = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
-local ev=Instance.new("RemoteEvent"); ev.Name="BuyItem"; ev.Parent=RS
+local ev = Instance.new("RemoteEvent"); ev.Name = "BuyItem"; ev.Parent = RS
 local ITEMS = {
-  speed={cost=100,fn=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid");if h then h.WalkSpeed=24 end end end},
+  speed = {cost=100, fn=function(p)
+    if p.Character then
+      local h = p.Character:FindFirstChildOfClass("Humanoid")
+      if h then h.WalkSpeed = 24 end
+    end
+  end},
 }
-ev.OnServerEvent:Connect(function(player,itemId)
-  local item=ITEMS[itemId]; if not item then return end
-  local ls=player:FindFirstChild("leaderstats")
-  local coins=ls and ls:FindFirstChild("Coins")
-  if not coins or coins.Value<item.cost then ev:FireClient(player,"err","Not enough coins!") return end
-  coins.Value-=item.cost; item.fn(player); ev:FireClient(player,"ok",itemId)
+ev.OnServerEvent:Connect(function(player, itemId)
+  local item = ITEMS[itemId]
+  if not item then return end
+  local ls = player:FindFirstChild("leaderstats")
+  local coins = ls and ls:FindFirstChild("Coins")
+  if not coins or coins.Value < item.cost then
+    ev:FireClient(player, "err", "Not enough coins!")
+    return
+  end
+  coins.Value -= item.cost
+  item.fn(player)
+  ev:FireClient(player, "ok", itemId)
 end)`,
 };
 function loadTmpl(name){if(!TMPLS[name])return;$('code-area').value=TMPLS[name];onCE();document.querySelector('.nav-tab').click();toast('Template: '+name,'ok');}
 
 const SNIPS={
-remote:`-- REMOTEEVENT BOILERPLATE
--- SERVER (Script):
+remote:`-- ── REMOTE EVENT BOILERPLATE ──
+-- SERVER (Script in ServerScriptService):
 local RS = game:GetService("ReplicatedStorage")
 local myEvent = Instance.new("RemoteEvent")
-myEvent.Name = "MyEvent"; myEvent.Parent = RS
+myEvent.Name = "MyEvent"
+myEvent.Parent = RS
 myEvent.OnServerEvent:Connect(function(player, data)
   print(player.Name, "sent:", data)
 end)
--- CLIENT (LocalScript):
+
+-- CLIENT (LocalScript in StarterPlayerScripts):
 -- local myEvent = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
 -- myEvent:FireServer({message = "hello"})`,
-debounce:`-- DEBOUNCE PATTERN
+debounce:`-- ── DEBOUNCE PATTERN ──
 local debounce = false
 script.Parent.Touched:Connect(function(hit)
   if debounce then return end
@@ -1265,47 +1466,61 @@ script.Parent.Touched:Connect(function(hit)
   task.wait(1)
   debounce = false
 end)`,
-tween:`-- TWEENSERVICE
+tween:`-- ── TWEENSERVICE ──
 local TweenService = game:GetService("TweenService")
 local info = TweenInfo.new(
-  0.5,
-  Enum.EasingStyle.Quart,
-  Enum.EasingDirection.Out,
-  0, false, 0
+  0.5,                       -- time
+  Enum.EasingStyle.Quart,    -- style
+  Enum.EasingDirection.Out,  -- direction
+  0,                         -- repeatCount
+  false,                     -- reverses
+  0                          -- delayTime
 )
 TweenService:Create(part, info, {Position = Vector3.new(0, 10, 0)}):Play()`,
-anim:`-- PLAY ANIMATION
+anim:`-- ── PLAY ANIMATION ──
 local anim = Instance.new("Animation")
 anim.AnimationId = "rbxassetid://YOUR_ANIMATION_ID"
 local humanoid = character:FindFirstChildOfClass("Humanoid")
-local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+local animator = humanoid:FindFirstChildOfClass("Animator")
+  or Instance.new("Animator", humanoid)
 local track = animator:LoadAnimation(anim)
 track.Priority = Enum.AnimationPriority.Action
-track:Play()`,
-npc:`-- NPC HEALTH BAR (BillboardGui)
+track:Play()
+track.Stopped:Wait() -- optional: wait for it to finish`,
+npc:`-- ── NPC HEALTH BAR (BillboardGui) ──
 local npc = script.Parent
 local humanoid = npc:WaitForChild("Humanoid")
 local bb = Instance.new("BillboardGui")
 bb.Size = UDim2.new(0, 100, 0, 18)
 bb.StudsOffset = Vector3.new(0, 3.5, 0)
+bb.AlwaysOnTop = false
 bb.Parent = npc:WaitForChild("HumanoidRootPart")
-local bar = Instance.new("Frame"); bar.Size=UDim2.new(1,0,1,0)
-bar.BackgroundColor3=Color3.fromRGB(210,40,40); bar.BorderSizePixel=0; bar.Parent=bb
-Instance.new("UICorner",bar).CornerRadius=UDim.new(1,0)
+local bar = Instance.new("Frame")
+bar.Size = UDim2.new(1, 0, 1, 0)
+bar.BackgroundColor3 = Color3.fromRGB(210, 40, 40)
+bar.BorderSizePixel = 0
+bar.Parent = bb
+Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 humanoid.HealthChanged:Connect(function(hp)
-  bar.Size=UDim2.new(math.clamp(hp/humanoid.MaxHealth,0,1),0,1,0)
+  bar.Size = UDim2.new(math.clamp(hp / humanoid.MaxHealth, 0, 1), 0, 1, 0)
 end)`,
-gui:`-- GUI FRAME
+gui:`-- ── GUI FRAME (LocalScript in StarterGui) ──
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local sg = Instance.new("ScreenGui")
+sg.ResetOnSpawn = false
+sg.Parent = player.PlayerGui
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 300, 0, 200)
 frame.Position = UDim2.new(0.5, -150, 0.5, -100)
 frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 frame.BorderSizePixel = 0
-frame.Parent = player.PlayerGui:WaitForChild("ScreenGui")
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)`,
-ds:`-- DATASTORE SAVE/LOAD
+frame.Parent = sg
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(0, 200, 240)
+stroke.Thickness = 1`,
+ds:`-- ── DATASTORE SAVE/LOAD ──
 local DS = game:GetService("DataStoreService")
 local store = DS:GetDataStore("PlayerData_v1")
 -- Load:
@@ -1315,13 +1530,13 @@ end)
 if ok and data then print("Loaded:", data) end
 -- Save:
 local ok2, err = pcall(function()
-  store:SetAsync(tostring(player.UserId), {coins=100, level=5})
+  store:SetAsync(tostring(player.UserId), {coins = 100, level = 5})
 end)
 if not ok2 then warn("Save failed:", err) end`,
 };
 function inSnip(n){if(!SNIPS[n])return;const cur=$('code-area').value;$('code-area').value=cur+(cur?'\n\n':'')+SNIPS[n];onCE();toast('Snippet inserted','ok');}
 
-// 3D VIEWPORT
+// 3D VIEWPORT (unchanged from original)
 function initViewport(){
   vpCanvas=$('mc');const vp=vpCanvas.parentElement;
   vpCanvas.width=vp.clientWidth||280;vpCanvas.height=vp.clientHeight||200;
@@ -1588,12 +1803,12 @@ async function m3dAIGenerate(){
   if(!prompt){toast('Describe a model.','bad');return;}
   const prog=$('m3d-prog');prog.classList.add('on');
   toast('AI analyzing your description…','ai');
-  const sys=`You are a 3D model configuration AI. Based on the description, respond ONLY with a JSON object like: {"base":"humanoid|monster|robot|vehicle|building|weapon","style":"lowpoly|blocky|smooth","complexity":1-10,"scale":1-5,"parts":5-40} Choose the best base shape. Return only the JSON, nothing else.`;
+  const sys=`You are a 3D model configuration AI for Roblox. Based on the description, respond ONLY with a JSON object like: {"base":"humanoid|monster|robot|vehicle|building|weapon","style":"lowpoly|blocky|smooth","complexity":1-10,"scale":1-5,"parts":5-40} Choose the best base shape. Return only the JSON, nothing else.`;
   const r=await callAI(prompt,sys,200);
   prog.classList.remove('on');
   if(r){
     try{
-      const cfg=JSON.parse(r.replace(/`json|`/g,'').trim());
+      const cfg=JSON.parse(r.replace(/```json|```/g,'').trim());
       if(cfg.base)m3dParams.base=cfg.base;
       if(cfg.complexity)m3dParams.complexity=cfg.complexity;
       if(cfg.scale)m3dParams.scale=Math.min(5,cfg.scale);
@@ -1606,12 +1821,12 @@ async function m3dAIGenerate(){
 }
 function exportModelToLua(){
   if(!m3dObjects.length){toast('No model generated.','bad');return;}
-  let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Generated by Studio Bridge v3\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
+  let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Generated by Studio Bridge v3\n-- Place this Script in ServerScriptService\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
   m3dObjects.forEach(o=>{
     const n=o.name.replace(/\W/g,'_');
     const h=o.color.replace('#','');
     const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
-    lua+=`local ${n}=Instance.new("Part")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.w.toFixed(2)},${o.h.toFixed(2)},${o.d.toFixed(2)})\n${n}.Position=Vector3.new(${o.x.toFixed(2)},${o.y.toFixed(2)},${o.z.toFixed(2)})\n${n}.BrickColor=BrickColor.new(Color3.fromRGB(${r},${g},${b}))\n${n}.Material=Enum.Material.SmoothPlastic\n${n}.Anchored=true\n${n}.Parent=model\n\n`;
+    lua+=`local ${n} = Instance.new("Part")\n${n}.Name = "${o.name}"\n${n}.Size = Vector3.new(${o.w.toFixed(2)}, ${o.h.toFixed(2)}, ${o.d.toFixed(2)})\n${n}.Position = Vector3.new(${o.x.toFixed(2)}, ${o.y.toFixed(2)}, ${o.z.toFixed(2)})\n${n}.BrickColor = BrickColor.new(Color3.fromRGB(${r}, ${g}, ${b}))\n${n}.Material = Enum.Material.SmoothPlastic\n${n}.Anchored = true\n${n}.Parent = model\n\n`;
   });
   lua+=`model.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
   $('code-area').value=lua;onCE();
@@ -1671,8 +1886,73 @@ function renderTerrain(){
 }
 function exportTerrainLua(){
   const mats={grassland:['Grass','Grass','Ground','Rock','Snow'],desert:['Sand','Sand','Sandstone','Rock','Snow'],arctic:['Glacier','Snow','Snow','Snow','Snow'],volcano:['CrackedLava','Basalt','Basalt','Rock','Snow'],ocean:['Water','Sand','Rock','Rock','Snow'],forest:['LeafyGrass','Grass','Ground','Rock','Snow']}[tp.biome]||['Grass','Grass','Ground','Rock','Snow'];
-  const lua=`-- Terrain generator script\nlocal terrain=workspace.Terrain\nterrain:Clear()\nlocal function noise(x,z,s) return math.sin(x*s)*math.cos(z*s)*0.5+math.sin(x*s*2.1)*math.cos(z*s*1.8)*0.25 end\nfor x=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n  for z=-${Math.floor(tp.width/2)},${Math.floor(tp.width/2)},8 do\n    local h=math.floor((noise(x,z,0.03)+1)*0.5*${tp.height})\n    terrain:FillBlock(CFrame.new(x,h*0.5,z),Vector3.new(8,h,8),Enum.Material.${mats[1]})\n    task.wait()\n  end\nend\nprint("[Terrain] Generation complete!")`;
+  const lua=`-- Terrain Generator — Place as a Script in ServerScriptService and run ONCE
+-- WARNING: This will CLEAR existing terrain. Run in an empty place.
+local terrain = workspace.Terrain
+terrain:Clear()
+local function noise(x, z, seed)
+  return math.sin(x * 0.03 + seed) * math.cos(z * 0.03 + seed * 0.7) * 0.5
+    + math.sin(x * 0.06 + seed * 1.3) * math.cos(z * 0.06) * 0.25
+    + math.sin(x * 0.12) * math.cos(z * 0.12 + seed) * 0.125
+end
+local SEED = math.random(1, 999)
+local WIDTH = ${tp.width}
+local MAX_HEIGHT = ${tp.height}
+local HALF = WIDTH / 2
+local CELL = 8
+print("[Terrain] Generating ${tp.biome} terrain (" .. WIDTH .. "x" .. WIDTH .. ")...")
+for x = -HALF, HALF, CELL do
+  for z = -HALF, HALF, CELL do
+    local n = (noise(x, z, SEED) + 1) / 2
+    local h = math.floor(n * MAX_HEIGHT)
+    local mat
+    if h < MAX_HEIGHT * ${(tp.water/100).toFixed(2)} then
+      mat = Enum.Material.Water
+      terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    elseif h < MAX_HEIGHT * 0.35 then
+      mat = Enum.Material.${mats[0]}
+      terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    elseif h < MAX_HEIGHT * 0.65 then
+      mat = Enum.Material.${mats[1]}
+      terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    elseif h < MAX_HEIGHT * 0.82 then
+      mat = Enum.Material.${mats[2]}
+      terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    else
+      mat = Enum.Material.${mats[3]}
+      terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    end
+  end
+  task.wait()
+end
+print("[Terrain] Done!")`;
   $('code-area').value=lua;onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Terrain Lua exported!','gold');
+}
+
+// ── TERRAIN AI GENERATE ──
+async function genTerrainAI(){
+  const prompt=$('terrain-ai-inp').value.trim();
+  if(!prompt){toast('Describe your terrain.','bad');return;}
+  const btn=document.querySelector('.terrain-ai-btn');
+  btn.textContent='Generating…';btn.disabled=true;
+  toast('AI generating terrain script…','ai');
+  const sys=GENIUS_SYSTEM+`\n\nYou are generating a Roblox terrain generation Script. Use workspace.Terrain:FillBlock() and workspace.Terrain:FillWedge() with proper Enum.Material values. Use task.wait() between rows for performance. Include noise functions for natural-looking terrain. The script goes in ServerScriptService and runs once. Return ONLY the Lua code, no markdown fences.`;
+  const userMsg=`Generate a complete, advanced Roblox terrain generation script for: ${prompt}
+Use workspace.Terrain APIs. Include:
+- Proper noise function (multi-octave)
+- Multiple biome layers with correct Enum.Material values
+- Water filling for low areas if appropriate
+- task.wait() every row for performance
+- Print progress messages
+- Clear terrain first with terrain:Clear()
+Return only raw Lua code.`;
+  const r=await callAI(userMsg,sys,2500);
+  btn.textContent='✦ Generate Advanced Lua';btn.disabled=false;
+  if(r){
+    $('code-area').value=cc(r);onCE();
+    document.querySelectorAll('.nav-tab')[0].click();
+    toast('Terrain script generated!','gold');
+  }else toast('Generation failed.','bad');
 }
 
 // GUI BUILDER
@@ -1726,17 +2006,59 @@ function loadGuiPreset(name){
 }
 function exportGuiLua(){
   if(!guiEls.length){toast('No elements.','bad');return;}
-  let lua=`-- GUI Export from Studio Bridge v3\nlocal Players=game:GetService("Players")\nlocal sg=Instance.new("ScreenGui")\nsg.ResetOnSpawn=false\nsg.Parent=Players.LocalPlayer:WaitForChild("PlayerGui")\n\n`;
+  let lua=`-- GUI LocalScript — Place in StarterGui or StarterPlayerScripts
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local sg = Instance.new("ScreenGui")
+sg.ResetOnSpawn = false
+sg.Name = "GameGui"
+sg.Parent = player:WaitForChild("PlayerGui")\n\n`;
   guiEls.forEach((el,i)=>{
     const v=`el${i+1}`,cls=el.type==='ProgressBar'?'Frame':el.type;
     const sx=el.w/580,sy=el.h/360,px=el.x/580,py=el.y/360;
-    lua+=`local ${v}=Instance.new("${cls}")\n${v}.Size=UDim2.new(${sx.toFixed(4)},0,${sy.toFixed(4)},0)\n${v}.Position=UDim2.new(${px.toFixed(4)},0,${py.toFixed(4)},0)\n`;
-    if(el.bg!=='transparent'){const h=el.bg.replace('#','');lua+=`${v}.BackgroundColor3=Color3.fromRGB(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)})\n`;}else{lua+=`${v}.BackgroundTransparency=1\n`;}
-    lua+=`${v}.BorderSizePixel=0\n`;
-    if(el.text&&cls!=='Frame')lua+=`${v}.Text="${el.text}"\n${v}.TextColor3=Color3.new(1,1,1)\n${v}.Font=Enum.Font.GothamBold\n${v}.TextSize=13\n`;
-    lua+=`${v}.Parent=sg\nInstance.new("UICorner",${v}).CornerRadius=UDim.new(0,8)\n\n`;
+    lua+=`local ${v} = Instance.new("${cls}")\n${v}.Size = UDim2.new(${sx.toFixed(4)}, 0, ${sy.toFixed(4)}, 0)\n${v}.Position = UDim2.new(${px.toFixed(4)}, 0, ${py.toFixed(4)}, 0)\n`;
+    if(el.bg!=='transparent'){const h=el.bg.replace('#','');lua+=`${v}.BackgroundColor3 = Color3.fromRGB(${parseInt(h.slice(0,2),16)}, ${parseInt(h.slice(2,4),16)}, ${parseInt(h.slice(4,6),16)})\n`;}else{lua+=`${v}.BackgroundTransparency = 1\n`;}
+    lua+=`${v}.BorderSizePixel = 0\n`;
+    if(el.text&&cls!=='Frame')lua+=`${v}.Text = "${el.text}"\n${v}.TextColor3 = Color3.new(1, 1, 1)\n${v}.Font = Enum.Font.GothamBold\n${v}.TextSize = 13\n`;
+    lua+=`${v}.Parent = sg\nInstance.new("UICorner", ${v}).CornerRadius = UDim.new(0, 8)\n\n`;
   });
   $('code-area').value=lua;onCE();toast('GUI exported!','ok');document.querySelectorAll('.nav-tab')[0].click();
+}
+
+// ── GUI AI GENERATE ──
+async function genGuiAI(){
+  const prompt=$('gui-ai-inp').value.trim();
+  if(!prompt){toast('Describe your GUI.','bad');return;}
+  const btn=document.querySelector('.gui-ai-btn');
+  btn.textContent='Generating…';btn.disabled=true;
+  toast('AI generating GUI script…','ai');
+  const sys=GENIUS_SYSTEM+`\n\nYou are generating a Roblox GUI LocalScript. Use only valid Roblox GUI APIs. Return ONLY raw Lua code, no markdown.`;
+  const userMsg=`Generate a complete, production-ready Roblox GUI LocalScript for: ${prompt}
+
+Requirements:
+- Use ScreenGui with ResetOnSpawn = false, parent to player.PlayerGui
+- Use UICorner for rounded corners on all frames
+- Use UIStroke for glowing borders where appropriate  
+- Use UIGradient for gradient backgrounds
+- Use TweenService for open/close animations (slide in, fade in, scale)
+- Use UIListLayout or UIGridLayout for organized item lists
+- Proper TextSize numbers (not FontSize enum)
+- BackgroundColor3 = Color3.fromRGB() (not BackgroundColor)
+- Use ZIndex for proper layering
+- Include a close button with hover effect
+- Use Enum.Font.GothamBold for titles, Enum.Font.Gotham for body
+- Add UIPadding where appropriate
+- If it has buttons, add hover TweenService effects
+- Add comments explaining each major section
+Return ONLY raw Lua code. No markdown fences.`;
+  const r=await callAI(userMsg,sys,3000);
+  btn.textContent='Generate GUI Lua';btn.disabled=false;
+  if(r){
+    $('code-area').value=cc(r);onCE();
+    document.querySelectorAll('.nav-tab')[0].click();
+    toast('GUI script generated!','ok');
+  }else toast('Generation failed.','bad');
 }
 
 // NPC CREATOR
@@ -1749,115 +2071,561 @@ function npcT(group,val,el){
 }
 function drawNPC(){
   const c=$('npc-c');if(!c)return;
-  const ctx2=c.getContext('2d'),W=280,H=400,cx=140;
+  const ctx2=c.getContext('2d'),W=280,H=300,cx=140;
   const cosA=Math.cos(npcAngle),sinA=Math.sin(npcAngle);
   ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#040609';ctx2.fillRect(0,0,W,H);
   ctx2.strokeStyle='rgba(0,229,255,0.03)';ctx2.lineWidth=.5;
   for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
   for(let i=0;i<H;i+=20){ctx2.beginPath();ctx2.moveTo(0,i);ctx2.lineTo(W,i);ctx2.stroke();}
-  const sc=np.type==='boss'?1.5:np.type==='monster'?1.2:1;
-  const cy=320;
+  const sc=np.type==='boss'?1.3:np.type==='monster'?1.1:1;
+  const cy=260;
   const skin=$('npc-col')?.value||'#8B4513';
   const cloth=np.type==='monster'?'#2a4a2a':np.type==='boss'?'#1a0a2a':'#3a5a8a';
-  const skew=sinA*12*sc;
-  ctx2.beginPath();ctx2.ellipse(cx,cy+4,28*sc,8*sc,0,0,Math.PI*2);ctx2.fillStyle='rgba(0,0,0,.4)';ctx2.fill();
+  const skew=sinA*10*sc;
+  ctx2.beginPath();ctx2.ellipse(cx,cy+4,24*sc,7*sc,0,0,Math.PI*2);ctx2.fillStyle='rgba(0,0,0,.4)';ctx2.fill();
   ctx2.fillStyle=cloth;
-  ctx2.fillRect(cx-16*sc+skew,cy-44*sc,12*sc,44*sc);
-  ctx2.fillRect(cx+4*sc+skew,cy-44*sc,12*sc,44*sc);
-  ctx2.fillRect(cx-28*sc+skew,cy-110*sc,56*sc,66*sc);
+  ctx2.fillRect(cx-14*sc+skew,cy-40*sc,10*sc,40*sc);
+  ctx2.fillRect(cx+4*sc+skew,cy-40*sc,10*sc,40*sc);
+  ctx2.fillRect(cx-26*sc+skew,cy-100*sc,52*sc,60*sc);
   ctx2.fillStyle=skin;
-  ctx2.fillRect(cx-44*sc+skew,cy-108*sc,14*sc,52*sc);
-  ctx2.fillRect(cx+30*sc+skew,cy-108*sc,14*sc,52*sc);
-  ctx2.beginPath();ctx2.roundRect(cx-24*sc+skew,cy-158*sc,48*sc,50*sc,np.type==='robot'?6:12);ctx2.fill();
+  ctx2.fillRect(cx-40*sc+skew,cy-98*sc,12*sc,48*sc);
+  ctx2.fillRect(cx+28*sc+skew,cy-98*sc,12*sc,48*sc);
+  ctx2.beginPath();ctx2.roundRect(cx-22*sc+skew,cy-148*sc,44*sc,48*sc,np.type==='robot'?6:11);ctx2.fill();
   ctx2.fillStyle=np.type==='boss'?'#ff0000':np.type==='monster'?'#ffaa00':'#1a1a2a';
-  ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-  ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-138*sc,5*sc,0,Math.PI*2);ctx2.fill();
-  if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+12*sc+skew,cy-178*sc,7*sc,0,Math.PI*2);ctx2.fill();}
-  ctx2.fillStyle='white';ctx2.font=`bold 12px JetBrains Mono,monospace`;ctx2.textAlign='center';ctx2.fillText($('npc-name')?.value||'NPC',cx,48);
-  ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`9px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-32);ctx2.fillText(np.behavior+' · '+np.combat,cx,H-18);ctx2.textAlign='left';
+  ctx2.beginPath();ctx2.arc(cx-9*sc+skew,cy-128*sc,4.5*sc,0,Math.PI*2);ctx2.fill();
+  ctx2.beginPath();ctx2.arc(cx+9*sc+skew,cy-128*sc,4.5*sc,0,Math.PI*2);ctx2.fill();
+  if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-168*sc,6*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-168*sc,6*sc,0,Math.PI*2);ctx2.fill();}
+  ctx2.fillStyle='white';ctx2.font=`bold 11px JetBrains Mono,monospace`;ctx2.textAlign='center';ctx2.fillText($('npc-name')?.value||'NPC',cx,38);
+  ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`8px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-22);ctx2.fillText(np.behavior+' · '+np.combat,cx,H-10);ctx2.textAlign='left';
 }
 async function genNPC(){
   const name=$('npc-name')?.value||'EnemyNPC';
-  const prompt=`Create a complete, production-ready Roblox server Script for an NPC named "${name}" with these stats:
-- Health: ${np.health}, Speed: ${np.speed}, DetectRange: ${np.detect}, Damage: ${np.damage}
-- Behavior: ${np.behavior}, Combat: ${np.combat}, Type: ${np.type}
-Include: PathfindingService for movement, Heartbeat for detection, proper health bar BillboardGui, BindToClose cleanup.
-Return raw Lua only, no markdown fences.`;
+  const prompt=`Create a complete, production-ready Roblox server Script for an NPC named "${name}" with these settings:
+- MaxHealth: ${np.health}, WalkSpeed: ${np.speed}, DetectRange: ${np.detect}, Damage: ${np.damage}
+- Behavior: ${np.behavior} (${np.behavior==='patrol'?'patrol between random waypoints around spawn':np.behavior==='guard'?'stay near spawn, attack if provoked':np.behavior==='follow'?'follow nearest player':np.behavior==='attack'?'always chase and attack nearest player':''})
+- Combat: ${np.combat} (${np.combat==='melee'?'deal damage on touch':np.combat==='ranged'?'fire projectile Parts at player':np.combat==='none'?'no combat':'none'})
+- Type: ${np.type}
+
+Include:
+- PathfindingService:CreatePath() with AgentRadius and AgentHeight params
+- RunService.Heartbeat for main AI loop
+- BillboardGui health bar above the NPC head (Frame + UICorner, updates on HealthChanged)
+- humanoid.Died:Connect cleanup and task.wait(5) before Destroy
+- All connections stored and Disconnected on death
+Return ONLY raw Luau code, no markdown fences, no extra commentary.`;
   toast('Generating NPC script…','ai');$('npc-out').textContent='Generating…';
-  const r=await callAI(prompt);
+  const r=await callAI(prompt,GENIUS_SYSTEM,2500);
   if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Script ready in editor!';document.querySelectorAll('.nav-tab')[0].click();toast('NPC script generated!','ok');}
   else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
 }
+
+// ── NPC AI GENERATE (Custom via prompt) ──
+async function genNPCAI(){
+  const prompt=$('npc-ai-inp').value.trim();
+  if(!prompt){toast('Describe your NPC.','bad');return;}
+  const btn=document.querySelector('[onclick="genNPCAI()"]');
+  btn.textContent='Generating…';btn.disabled=true;
+  toast('AI generating custom NPC…','ai');$('npc-out').textContent='Generating…';
+  const sys=GENIUS_SYSTEM+`\n\nYou are generating an advanced Roblox NPC server Script. Return ONLY raw Luau code.`;
+  const userMsg=`Generate a complete, advanced Roblox NPC server Script for: ${prompt}
+
+Include ALL of the following that are relevant:
+- PathfindingService with AgentRadius, AgentHeight, AgentCanJump params
+- RunService.Heartbeat for main loop
+- Multiple phases/states if it's a boss
+- BillboardGui health bar with UICorner, smooth size tween on HealthChanged
+- Proper HealthChanged and Died event connections
+- All connections stored in a table and cleaned up on Died
+- task.wait() not wait()
+- Humanoid:TakeDamage() for damage
+- If ranged: Instance.new("Part") projectile with BodyVelocity
+- If AoE: use :GetPartBoundsInRadius()
+- Loot drops if mentioned (DropFolder in ReplicatedStorage with random items)
+- Print statements for debugging
+Return ONLY raw Luau code. No markdown.`;
+  const r=await callAI(userMsg,sys,3000);
+  btn.textContent='✦ Generate Advanced NPC Lua';btn.disabled=false;
+  if(r){
+    $('code-area').value=cc(r);onCE();
+    $('npc-out').textContent='✓ Custom NPC ready in editor!';
+    document.querySelectorAll('.nav-tab')[0].click();
+    toast('Custom NPC generated!','ok');
+  }else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
+}
+
 const npcCv=$('npc-c');if(npcCv){
   npcCv.addEventListener('mousedown',e=>{npcDragging=true;npcLastX=e.clientX;});
   npcCv.addEventListener('mousemove',e=>{if(!npcDragging)return;npcAngle+=(e.clientX-npcLastX)*.01;npcLastX=e.clientX;drawNPC();});
   npcCv.addEventListener('mouseup',()=>npcDragging=false);
 }
 
-// ADMIN SUITE
-async function genAdmin(type){
-  const BANNED=`IMPORTANT RULES:
-- Never use FontSize enum, use TextSize=number
-- Never use BackgroundColor, use BackgroundColor3
-- Never call :FireServer() from a server Script
-- Always use task.wait() not wait()
-- All RemoteEvents must be created individually, not in loops
-- The local script must create a visible on-screen GUI with TweenService animations`;
+// ══════════════════════════════════════════════
+// ADMIN SUITE — Completely rebuilt
+// ══════════════════════════════════════════════
+const ADMIN_CATEGORIES = [
+  {
+    id:'full', icon:'👑', label:'Full Admin System',
+    items:[
+      {id:'full_complete',label:'Complete Admin (Server+Client)',desc:'40+ commands, rank system, GUI console, DataStore logging'},
+      {id:'full_commands',label:'Commands Only (Server)',desc:'Text-command handler with rank gating'},
+      {id:'full_gui',label:'Admin Panel GUI (Client)',desc:'Animated F9 panel with player list and buttons'},
+    ]
+  },
+  {
+    id:'moderation', icon:'🔨', label:'Moderation',
+    items:[
+      {id:'mod_ban',label:'Ban System',desc:'Permanent/temp bans with DataStore, ban list GUI'},
+      {id:'mod_kick',label:'Kick + Warn System',desc:'Warn tracker, auto-kick at 3 warns, log GUI'},
+      {id:'mod_mute',label:'Mute System',desc:'Chat mute with duration, DataStore persistence'},
+      {id:'mod_anticheat',label:'Anti-Cheat',desc:'Speed, fly, teleport, damage exploit detection'},
+    ]
+  },
+  {
+    id:'ranks', icon:'🎖', label:'Ranks & Permissions',
+    items:[
+      {id:'rank_system',label:'Rank Permission System',desc:'5-tier ranks, group support, DataStore'},
+      {id:'rank_tags',label:'Rank Name Tags',desc:'BillboardGui above head with rank color'},
+      {id:'rank_gui',label:'Rank Panel GUI',desc:'Animated rank card with TweenService'},
+    ]
+  },
+  {
+    id:'notifications', icon:'📢', label:'Notifications',
+    items:[
+      {id:'notif_toast',label:'Toast Notifications',desc:'Stack from right, slide in/out animation'},
+      {id:'notif_announce',label:'Announcements',desc:'Top bar slide down, server-wide message'},
+      {id:'notif_dialog',label:'Dialog System',desc:'Modal with confirm/cancel, TweenService'},
+      {id:'notif_hint',label:'Hint System',desc:'Bottom-center tip bar with auto-dismiss'},
+    ]
+  },
+  {
+    id:'utilities', icon:'⚙', label:'Utilities',
+    items:[
+      {id:'util_emotes',label:'Emote System',desc:'20 emotes, E key wheel, cancel on move'},
+      {id:'util_spectate',label:'Spectate System',desc:'Dead players can spectate others'},
+      {id:'util_freecam',label:'Free Camera',desc:'F key free cam for admins, configurable speed'},
+      {id:'util_commandlog',label:'Command Logger',desc:'DataStore log of all admin actions'},
+    ]
+  },
+];
 
-  const prompts={
-full:`${BANNED}
-Write a complete Roblox admin system as TWO scripts:
+// State for admin config
+const adminConfig = {
+  gameName: 'My Game',
+  prefix: '/',
+  ranks: [
+    {level:1,name:'Member',color:'#aaaaaa'},
+    {level:2,name:'Moderator',color:'#44aaff'},
+    {level:3,name:'Admin',color:'#ffaa00'},
+    {level:4,name:'Head Admin',color:'#ff4444'},
+    {level:5,name:'Owner',color:'#aa44ff'},
+  ],
+  enabledCommands: ['kick','ban','tp','bring','kill','god','ungod','speed','day','night','freeze','unfreeze'],
+  guiKey: 'F9',
+  enableLogging: true,
+  enableAntiCheat: false,
+};
+
+function initAdminSuite(){
+  const cats=$('admin-cats');
+  cats.innerHTML = ADMIN_CATEGORIES.map(cat=>`
+    <div class="admin-cat" id="acat-${cat.id}">
+      <div class="admin-cat-hdr" onclick="toggleAdminCat('${cat.id}',this)">
+        <span class="admin-cat-icon">${cat.icon}</span>
+        <span>${cat.label}</span>
+        <span style="margin-left:auto;font-size:8px;color:var(--text3)">${cat.items.length}</span>
+      </div>
+      <div class="admin-items" id="aitems-${cat.id}">
+        ${cat.items.map(item=>`<div class="admin-item" id="aitem-${item.id}" onclick="selectAdminItem('${cat.id}','${item.id}')">${item.label}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  showAdminPlaceholder();
+  // Open first category by default
+  toggleAdminCat('full', document.querySelector('.admin-cat-hdr'));
+}
+
+function toggleAdminCat(catId, hdrEl){
+  const items=$('aitems-'+catId);
+  const isOpen=items.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.admin-items').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.admin-cat-hdr').forEach(x=>x.classList.remove('active'));
+  if(!isOpen){items.classList.add('open');hdrEl.classList.add('active');}
+}
+
+function selectAdminItem(catId, itemId){
+  selectedAdminItem = itemId;
+  document.querySelectorAll('.admin-item').forEach(x=>x.classList.remove('selected'));
+  const el=$('aitem-'+itemId);if(el)el.classList.add('selected');
+  renderAdminConfig(catId, itemId);
+}
+
+function showAdminPlaceholder(){
+  $('admin-main-content').innerHTML=`
+    <div class="admin-placeholder">
+      <div class="admin-placeholder-icon">👑</div>
+      <div class="admin-placeholder-title">Select a system</div>
+      <div class="admin-placeholder-sub">Choose a system from the sidebar, configure it, then click Generate Script. Or describe a custom feature in the bar below.</div>
+      <div style="margin-top:16px;width:100%;max-width:340px">
+        <div style="font-size:8px;color:var(--text3);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase">Quick Generate</div>
+        <div class="admin-quick-grid">
+          <div class="admin-quick-card" onclick="quickAdminGen('full_complete')">
+            <div class="admin-quick-icon">👑</div>
+            <div class="admin-quick-name">Full Admin</div>
+            <div class="admin-quick-desc">Complete system with GUI</div>
+          </div>
+          <div class="admin-quick-card" onclick="quickAdminGen('mod_ban')">
+            <div class="admin-quick-icon">🔨</div>
+            <div class="admin-quick-name">Ban System</div>
+            <div class="admin-quick-desc">DataStore bans + GUI</div>
+          </div>
+          <div class="admin-quick-card" onclick="quickAdminGen('mod_anticheat')">
+            <div class="admin-quick-icon">🛡</div>
+            <div class="admin-quick-name">Anti-Cheat</div>
+            <div class="admin-quick-desc">Exploit detection</div>
+          </div>
+          <div class="admin-quick-card" onclick="quickAdminGen('rank_system')">
+            <div class="admin-quick-icon">🎖</div>
+            <div class="admin-quick-name">Rank System</div>
+            <div class="admin-quick-desc">5 tiers + DataStore</div>
+          </div>
+          <div class="admin-quick-card" onclick="quickAdminGen('notif_toast')">
+            <div class="admin-quick-icon">📢</div>
+            <div class="admin-quick-name">Notifications</div>
+            <div class="admin-quick-desc">Toast + announcement</div>
+          </div>
+          <div class="admin-quick-card" onclick="quickAdminGen('util_emotes')">
+            <div class="admin-quick-icon">💃</div>
+            <div class="admin-quick-name">Emotes</div>
+            <div class="admin-quick-desc">20 emotes + wheel GUI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderAdminConfig(catId, itemId){
+  const cat = ADMIN_CATEGORIES.find(c=>c.id===catId);
+  const item = cat?.items.find(i=>i.id===itemId);
+  if(!item) return;
+
+  let configHtml = '';
+
+  // Common config
+  configHtml += `
+    <div class="admin-section">
+      <div class="admin-section-title">General Settings</div>
+      <div class="admin-cfg-grid">
+        <div class="admin-cfg-card">
+          <div class="admin-cfg-label">Game / System Name</div>
+          <input class="admin-cfg-input" id="adm-gamename" value="${adminConfig.gameName}" oninput="adminConfig.gameName=this.value" placeholder="My Game"/>
+        </div>
+        <div class="admin-cfg-card">
+          <div class="admin-cfg-label">Command Prefix</div>
+          <input class="admin-cfg-input" id="adm-prefix" value="${adminConfig.prefix}" oninput="adminConfig.prefix=this.value" placeholder="/" style="width:60px"/>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Rank config (show for rank-related or full admin)
+  if(['full_complete','full_commands','full_gui','rank_system','rank_tags','rank_gui','mod_ban','mod_kick','mod_mute','mod_anticheat'].includes(itemId)){
+    configHtml += `
+      <div class="admin-section">
+        <div class="admin-section-title">Rank Configuration</div>
+        <div class="admin-full-card">
+          <div class="rank-list">
+            ${adminConfig.ranks.map((r,i)=>`
+              <div class="rank-row">
+                <span class="rank-level" style="color:${r.color}">${r.level}</span>
+                <div class="rank-dot" style="background:${r.color}"></div>
+                <input class="rank-name-inp" value="${r.name}" oninput="adminConfig.ranks[${i}].name=this.value" placeholder="Rank name"/>
+                <input type="color" class="rank-color-inp" value="${r.color}" oninput="adminConfig.ranks[${i}].color=this.value;this.previousElementSibling.previousElementSibling.style.background=this.value;this.previousElementSibling.previousElementSibling.previousElementSibling.style.color=this.value"/>
+              </div>
+            `).join('')}
+          </div>
+          <div style="font-size:8px;color:var(--text3)">Level 5 = highest permission. Add your UserId at level 5 for full access.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Commands config for full admin
+  if(['full_complete','full_commands'].includes(itemId)){
+    const ALL_CMDS = ['kick','ban','unban','tp','bring','kill','god','ungod','speed','jump','day','night','fog','rain','freeze','unfreeze','respawn','announce','shutdown','time'];
+    configHtml += `
+      <div class="admin-section">
+        <div class="admin-section-title">Enabled Commands</div>
+        <div class="admin-full-card">
+          <div class="cmd-chips">
+            ${ALL_CMDS.map(cmd=>`<div class="cmd-chip${adminConfig.enabledCommands.includes(cmd)?' on':''}" onclick="toggleCmd('${cmd}',this)">${adminConfig.prefix}${cmd}</div>`).join('')}
+          </div>
+          <div style="font-size:8px;color:var(--text3)">Click to toggle. Selected commands will be included in the generated script.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // GUI key for GUI-related
+  if(['full_complete','full_gui','rank_gui'].includes(itemId)){
+    configHtml += `
+      <div class="admin-section">
+        <div class="admin-section-title">GUI Options</div>
+        <div class="admin-cfg-grid">
+          <div class="admin-cfg-card">
+            <div class="admin-cfg-label">Toggle Key</div>
+            <div class="admin-cfg-row" style="margin:0">
+              <div class="admin-toggle">
+                ${['F8','F9','F10','RightControl'].map(k=>`<div class="admin-toggle-opt${adminConfig.guiKey===k?' on':''}" onclick="adminConfig.guiKey='${k}';document.querySelectorAll('.admin-toggle-opt').forEach(x=>x.classList.remove('on'));this.classList.add('on')">${k}</div>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="admin-cfg-card">
+            <div class="admin-cfg-label">DataStore Logging</div>
+            <div class="admin-toggle" style="margin-top:4px">
+              <div class="admin-toggle-opt${adminConfig.enableLogging?' on':''}" onclick="adminConfig.enableLogging=true;this.nextElementSibling.classList.remove('on');this.classList.add('on')">On</div>
+              <div class="admin-toggle-opt${!adminConfig.enableLogging?' on':''}" onclick="adminConfig.enableLogging=false;this.previousElementSibling.classList.remove('on');this.classList.add('on')">Off</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  $('admin-main-content').innerHTML = `
+    <div class="admin-main-hdr">
+      <div class="admin-main-title">${item.label}</div>
+      <div class="admin-main-desc">${item.desc}</div>
+    </div>
+    <div class="admin-config-area">${configHtml}</div>
+  `;
+}
+
+function toggleCmd(cmd, el){
+  const idx = adminConfig.enabledCommands.indexOf(cmd);
+  if(idx>=0){adminConfig.enabledCommands.splice(idx,1);el.classList.remove('on');}
+  else{adminConfig.enabledCommands.push(cmd);el.classList.add('on');}
+}
+
+async function genAdminCustom(){
+  const prompt = $('admin-custom-prompt').value.trim();
+  if(!prompt){toast('Describe a custom admin feature.','bad');return;}
+  const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
+  toast('AI generating custom admin script…','gold');
+  const userMsg = `Generate a production-ready Roblox admin/moderation feature for: ${prompt}
+Game name: ${adminConfig.gameName}
+Command prefix: ${adminConfig.prefix}
+Rank levels: ${adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ')}
+Return scripts using these separators:
 ===SCRIPT_SERVER===
-(server Script ~150 lines)
+(server Script code)
 ===SCRIPT_LOCAL===
-(LocalScript ~200 lines)
-Server: AdminEvents folder in ReplicatedStorage, RANKS table by UserId, kick/ban/tp/bring/kill/god/speed/day/night handlers.
-Local: Dark panel toggled with F9, player list, buttons with TweenService hover effects, sliding notification cards.`,
-ban:`${BANNED}
-Write a Roblox ban system as TWO scripts:
+(LocalScript code, if needed)
+Rules:
+- task.wait() not wait()
+- BackgroundColor3 not BackgroundColor
+- TextSize not FontSize
+- All RemoteEvents in ReplicatedStorage
+- Use pcall() for DataStore
+- TweenService for all GUI animations
+Return only code with separators, no markdown.`;
+  const r = await callAI(userMsg, GENIUS_SYSTEM, 4000);
+  btn.disabled=false;btn.textContent='Generate Script';
+  if(r){
+    const secs = splitBlocks(r);
+    const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
+    const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+    const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
+    $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
+    onCE();
+    document.querySelectorAll('.nav-tab')[0].click();
+    toast('Admin script ready!','gold');
+    addLog('result','Admin custom: '+prompt.slice(0,40));
+  }else{toast('Failed','bad');}
+}
+
+async function quickAdminGen(itemId){
+  selectedAdminItem = itemId;
+  // find cat
+  for(const cat of ADMIN_CATEGORIES){
+    const item = cat.items.find(i=>i.id===itemId);
+    if(item){selectAdminItem(cat.id,itemId);break;}
+  }
+  await genAdminScript();
+}
+
+async function genAdminScript(){
+  if(!selectedAdminItem){toast('Select a system first.','bad');return;}
+  const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
+  toast('Generating admin script…','gold');
+
+  const ranks = adminConfig.ranks.map(r=>`[OWNER_USERID]=${r.level} -- ${r.name}`).join('\n');
+  const prefix = adminConfig.prefix;
+  const cmds = adminConfig.enabledCommands.join(', ');
+  const guiKey = adminConfig.guiKey;
+
+  const PROMPTS = {
+full_complete:`Generate a COMPLETE Roblox admin system as TWO scripts:
 ===SCRIPT_SERVER===
+-- Script in ServerScriptService (~200 lines)
+-- Ranks: ${adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ')}
+-- Command prefix: "${prefix}"
+-- Enabled commands: ${cmds}
+-- Features:
+  - RANKS table {[userId] = rankLevel}
+  - getRank(player) helper
+  - findPlayer(partialName) helper
+  - All these command handlers: ${cmds}
+  - Each command has required rank level and a function
+  - Commands fire through RemoteEvent in ReplicatedStorage folder "AdminEvents"
+  - DataStore logging if ${adminConfig.enableLogging}: store every command usage with timestamp
+  - PlayerAdded: set up chat listener for prefix commands
 ===SCRIPT_LOCAL===
-Server: BanStore DataStore, PlayerAdded ban check, BanPlayer/UnbanPlayer/TempBan handlers.
-Local: F8 toggle panel, ban/unban inputs, ban list, toast notifications.`,
-anticheat:`${BANNED}
-Write a Roblox anti-cheat as ONE script:
+-- LocalScript in StarterPlayerScripts (~200 lines)
+-- Toggle key: ${guiKey}
+-- Features:
+  - Dark themed ScreenGui panel (Color3.fromRGB(10, 13, 22))
+  - UICorner on all frames, UIStroke for borders
+  - Player list with kick/ban/tp buttons per player
+  - Command input box at bottom
+  - TweenService slide-in animation on open (from right)
+  - Smooth close animation
+  - Notification toast system (slides in from right, auto-dismiss)
+  - Status bar showing connected players
+Rules: task.wait() not wait(), BackgroundColor3 not BackgroundColor, TextSize not FontSize`,
+
+full_commands:`Generate a Roblox admin command system (Server Script only):
 ===SCRIPT_SERVER===
-Speed hack (WalkSpeed>120), fly hack (airborne >5s), teleport hack (>400 studs/frame).
-Flag system: warn at 2, kick at 4, permanent ban at 6.`,
-emotes:`${BANNED}
-Write an emote system as TWO scripts:
-===SCRIPT_SERVER===
+-- Features:
+  - RANKS table with placeholder UserId comments
+  - Command prefix: "${prefix}"
+  - Commands: ${cmds}
+  - Each command: {minRank=N, fn=function(caller, args)}
+  - findPlayer(name) searches by partial name
+  - Chatted listener for each player
+  - pcall wrapper for all command execution
+  - Print log of every command used
+  - task.wait() not wait()`,
+
+full_gui:`Generate a Roblox admin GUI panel (LocalScript only):
 ===SCRIPT_LOCAL===
-Server: PlayEmote/StopEmote RemoteEvents, load animation by AssetId.
-Local: 12 emotes, E key toggles circular wheel, TweenService open/close.`,
-ranks:`${BANNED}
-Write a rank system as TWO scripts:
+-- LocalScript in StarterPlayerScripts
+-- Toggle key: ${guiKey}
+-- Design: Dark panel (10,13,22), UICorner radius 12, UIStroke cyan border
+-- Features:
+  - Slide-in from right with TweenService (EasingStyle.Quart Out, 0.35s)
+  - Header with game name "${adminConfig.gameName}" and close button
+  - Player list with ScrollingFrame, each row: avatar circle, name, kick/ban/tp buttons
+  - Button hover effects with TweenService (slight scale + glow)
+  - Command input at bottom with send button
+  - Toast notification system: slides from right, stacks vertically, auto-remove after 3s
+  - Background blur: BlurEffect in Lighting toggled on open
+  - task.wait() not wait(), BackgroundColor3 not BackgroundColor, TextSize not FontSize`,
+
+mod_ban:`Generate a Roblox ban system as TWO scripts:
 ===SCRIPT_SERVER===
+-- BanStore = DataStoreService:GetDataStore("BanList_v1")
+-- PlayerAdded: check ban, kick with reason if banned
+-- RemoteEvents: BanPlayer(userId, reason, duration), UnbanPlayer(userId), GetBanList
+-- TempBan: store expiry timestamp, check on join
+-- Functions: banPlayer(userId, reason, expiry), unbanPlayer(userId), isBanned(userId)
+-- Print log all ban actions
 ===SCRIPT_LOCAL===
-Server: 5 tiers, BillboardGui rank tag, SetRank/GetMyRank RemoteEvents, DataStore saves rank.
-Local: F7 toggle panel, rank card with TweenService pop animation.`,
-notification:`${BANNED}
-Write a notification system as TWO scripts:
+-- Ban GUI panel toggle ${guiKey}
+-- Input: UserId/username, reason, duration (perm/1h/24h/7d)
+-- Ban list ScrollingFrame showing active bans with unban button
+-- Toast notifications for actions
+-- TweenService animations
+-- task.wait() not wait(), BackgroundColor3, TextSize`,
+
+mod_anticheat:`Generate a Roblox anti-cheat system (Server Script):
 ===SCRIPT_SERVER===
+-- Detection systems:
+  1. Speed hack: check WalkSpeed > 22 every 2s
+  2. Fly hack: character airborne > 4s without jumping (track last groundedTime)
+  3. Teleport hack: position delta > 100 studs in one Heartbeat
+  4. Damage hack: Humanoid.Health changes more than MaxHealth*0.5 at once from client side
+-- Flag system per player: {flags=0, lastWarned=0}
+-- Actions: 1-2 flags = warn in chat, 3 flags = kick, 4+ flags = DataStore ban
+-- RunService.Heartbeat for position/speed checks
+-- Humanoid.HealthChanged for damage checks
+-- pcall all DataStore operations
+-- Print all detections with player name and type`,
+
+rank_system:`Generate a Roblox rank system as TWO scripts:
+===SCRIPT_SERVER===
+-- RankStore DataStore, RANKS config table
+-- Ranks: ${adminConfig.ranks.map(r=>`{level=${r.level}, name="${r.name}", color=Color3.fromRGB(...)}`).join(', ')}
+-- SetRank(userId, level) and GetRank(userId) functions
+-- RemoteEvents: SetRank, GetMyRank, GetPlayerRank
+-- PlayerAdded: load rank from DataStore, apply BillboardGui tag
+-- BillboardGui: rank name above head with correct rank color, UICorner
 ===SCRIPT_LOCAL===
-Server: ShowToast/ShowAnnouncement/ShowHint/ShowDialog RemoteEvents.
-Local: Toast stack (slide in from right), announcement top bar, hint bottom-center, dialog modal.`,
+-- Rank panel toggle ${guiKey}
+-- Shows own rank card with TweenService pop animation
+-- Rank badge with gradient matching rank color
+-- TextSize not FontSize, BackgroundColor3 not BackgroundColor`,
+
+notif_toast:`Generate a Roblox notification system as TWO scripts:
+===SCRIPT_SERVER===
+-- RemoteEvents in ReplicatedStorage: ShowToast, ShowAnnouncement, ShowHint, ShowDialog
+-- Helper functions: announceAll(msg), hintAll(msg), toastPlayer(player, msg, type)
+===SCRIPT_LOCAL===
+-- ShowToast: slides from right, stacks (max 5), auto-removes after 3.5s
+  - Types: info (cyan), success (green), warn (yellow), error (red)
+  - UICorner 8, left colored border 3px
+-- ShowAnnouncement: full-width bar slides DOWN from top, auto-hides after 5s
+  - Semi-transparent dark background, centered white text, TweenService
+-- ShowHint: bottom-center, fade in/out, 4s duration, subtle
+-- ShowDialog: modal with dark background, confirm + cancel buttons, TweenService scale pop
+-- All use TweenService, BackgroundColor3, TextSize (not FontSize)`,
+
+util_emotes:`Generate a Roblox emote system as TWO scripts:
+===SCRIPT_SERVER===
+-- RemoteEvent "PlayEmote" in ReplicatedStorage
+-- Load animation by AnimationId, play on Animator
+-- Stop emote if player moves (Humanoid.MoveDirection ~= Vector3.zero)
+-- Emote list: wave=507770239, dance=507771019, laugh=507770818, point=507770453, cheer=507770677, salute=507770677, clap=507770132, sit=2506281703
+===SCRIPT_LOCAL===
+-- E key toggles circular emote wheel (8 emotes evenly spaced in circle)
+-- TweenService: wheel scales from 0 to 1 on open (EasingStyle.Back), reverse on close
+-- Each emote button: circular, icon + name, hover scale effect
+-- Click fires RemoteEvent to server
+-- Close wheel if player starts moving
+-- BackgroundColor3, TextSize, task.wait()`,
   };
 
-  toast('Generating admin script…','gold');
-  $('code-area').value='-- Generating, please wait…';
-  onCE();
-  document.querySelector('.nav-tab').click();
-  const r=await callAI(prompts[type]||prompts.full, null, 4000);
+  const promptText = PROMPTS[selectedAdminItem] || PROMPTS['full_complete'];
+  const r = await callAI(promptText, GENIUS_SYSTEM, 4000);
+  btn.disabled=false;btn.textContent='Generate Script';
   if(r){
-    $('code-area').value=r;onCE();
-    toast('Admin script ready!','gold');
-    addLog('result','Admin: '+type+' generated');
-  }else{
-    $('code-area').value='-- Generation failed. Try again.';
-    toast('Failed','bad');
-  }
+    const secs = splitBlocks(r);
+    const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
+    const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+    const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
+    $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
+    onCE();
+    document.querySelectorAll('.nav-tab')[0].click();
+    toast('Admin script ready! Check editor.','gold');
+    addLog('result','Admin: '+selectedAdminItem);
+  }else{toast('Failed','bad');}
 }
+
+// Wire up the Generate Script button in admin gen bar to the selected item
+document.querySelector('.admin-gen-btn').addEventListener('click', function(){
+  const customPrompt = $('admin-custom-prompt').value.trim();
+  if(customPrompt){
+    genAdminCustom();
+  }else if(selectedAdminItem){
+    genAdminScript();
+  }else{
+    toast('Select a system or type a custom prompt.','bad');
+  }
+});
+// Remove the original onclick since we add listener above
+document.querySelector('.admin-gen-btn').removeAttribute('onclick');
 
 // MODAL
 function openModal(t,s,b,btns){$('modal-title').textContent=t;$('modal-sub').textContent=s||'';$('modal-body').innerHTML=b||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
