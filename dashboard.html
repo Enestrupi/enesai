@@ -27,6 +27,8 @@ html,body{background:var(--bg);color:var(--text);font-family:var(--fm);font-size
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,229,255,0.04),transparent),radial-gradient(ellipse 60% 60% at 100% 100%,rgba(124,58,237,0.04),transparent);pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
 #root{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+
+/* ── AUTH ── */
 #auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(--bg)}
 #auth.gone{display:none}
 .auth-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,229,255,0.06) 0%,transparent 70%);pointer-events:none}
@@ -46,31 +48,46 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .btn-main{width:100%;background:linear-gradient(135deg,var(--c1),#00b4d8);color:#050709;border:none;border-radius:var(--r);padding:11px;font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .btn-main:hover{box-shadow:0 0 24px rgba(0,229,255,0.4);transform:translateY(-1px)}
 .auth-err{color:var(--c5);font-size:10px;margin-top:6px;display:none}
+
+/* ── APP SHELL ── */
 #app{display:none;flex:1;flex-direction:column;overflow:hidden}
 #app.show{display:flex}
+
+/* ── TOPBAR ── */
 .topbar{height:44px;border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.95);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
 .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
 .topbar-brand-name{font-family:var(--fd);font-size:11px;font-weight:800;color:var(--text);letter-spacing:.03em}
 .topbar-sep{width:.5px;height:18px;background:var(--border);margin:0 4px}
 .conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px;color:var(--text2)}
-.conn-dot{width:5px;height:5px;border-radius:50%;background:var(--c3);flex-shrink:0;box-shadow:0 0 6px var(--c3)}
+.conn-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.conn-dot.on{background:var(--c3);box-shadow:0 0 6px var(--c3)}
+.conn-dot.wait{background:var(--c4);animation:pb 1.4s infinite}
+@keyframes pb{0%,100%{opacity:1}50%{opacity:.3}}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px}
+.tok-val{color:var(--c1);font-size:9px;letter-spacing:.08em}
+.tok-btn{color:var(--text3);cursor:pointer;padding:1px 4px;border:.5px solid var(--border);border-radius:3px;transition:all .15s}
+.tok-btn:hover{border-color:var(--c1);color:var(--c1)}
 .user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px}
 .user-ava{width:22px;height:22px;border-radius:50%;background:var(--rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
 .user-name{font-size:10px;color:var(--text)}
 .logout-btn{color:var(--text3);cursor:pointer;margin-left:4px;font-size:10px}
 .logout-btn:hover{color:var(--c5)}
-.ai-status-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px;color:var(--text2)}
-.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--c3);box-shadow:0 0 6px var(--c3)}
+
+/* ── TABS ── */
 .nav-tabs{display:flex;gap:0;padding:0 1rem;background:var(--bg2);border-bottom:.5px solid var(--border);flex-shrink:0;overflow-x:auto}
 .nav-tab{padding:8px 16px;font-size:9px;font-family:var(--fm);color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;user-select:none;letter-spacing:.06em;text-transform:uppercase}
 .nav-tab:hover{color:var(--text2)}
 .nav-tab.active{color:var(--c1);border-bottom-color:var(--c1)}
 .nav-tab.gold{color:var(--c4)}
 .nav-tab.gold.active{color:var(--c4);border-bottom-color:var(--c4)}
+
+/* ── VIEWS ── */
 .view{display:none;flex:1;overflow:hidden;min-height:0}
 .view.active{display:flex}
+
+/* EDITOR */
 .editor-layout{flex:1;display:grid;grid-template-columns:280px 1fr 260px;overflow:hidden;min-height:0}
 .panel-left{display:flex;flex-direction:column;border-right:.5px solid var(--border);overflow:hidden}
 .panel-hdr{padding:8px 12px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
@@ -160,6 +177,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .vtbtn{background:transparent;border:.5px solid var(--border);color:var(--text3);border-radius:4px;padding:2px 6px;font-size:8px;cursor:pointer;transition:all .12s;font-family:var(--fm)}
 .vtbtn:hover{border-color:var(--c1);color:var(--c1)}
 .vtbtn.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
+canvas#mc{width:100%;height:100%;display:block;cursor:crosshair}
 .vp-canvas{position:absolute;inset:0;top:30px}
 .vp-info-bar{position:absolute;bottom:4px;left:4px;pointer-events:none;display:flex;gap:4px}
 .vp-badge{background:rgba(5,7,9,.85);border:.5px solid var(--border);border-radius:3px;padding:2px 6px;font-size:7px;color:var(--text3)}
@@ -199,6 +217,8 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .tree-item:hover{background:var(--bg3)}
 .tree-item.selected{background:var(--c1d);color:var(--c1)}
 .ti-cls{font-size:7px;color:var(--text3);margin-left:auto}
+
+/* 3D MODEL VIEWER */
 .model3d-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .model3d-sidebar{width:260px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;background:var(--bg)}
 .model3d-main{flex:1;position:relative;background:#020304;overflow:hidden;display:flex;flex-direction:column}
@@ -225,13 +245,13 @@ canvas#model3d-canvas{width:100%;height:100%;display:block}
 .m3d-export-btn:hover{background:var(--c3);color:#050709}
 .m3d-right{width:240px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;background:var(--bg)}
 .m3d-props-pad{padding:10px}
-.m3d-ai-prompt{width:100%;background:var(--bg3);border:.5px solid rgba(0,229,255,.2);border-radius:5px;padding:7px 10px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:70px;line-height:1.5;transition:border-color .15s;margin-bottom:6px}
+.m3d-ai-prompt{width:100%;background:var(--bg3);border:.5px solid rgba(0,229,255,.2);border-radius:5px;padding:7px 10px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:70px;line-height:1.5;transition:border-color .15px;margin-bottom:6px}
 .m3d-ai-prompt:focus{border-color:var(--c1)}
 .m3d-ai-prompt::placeholder{color:var(--text3)}
 .m3d-ai-gen-btn{width:100%;padding:7px;background:var(--c1);color:#050709;border:none;border-radius:5px;font-family:var(--fd);font-size:9px;font-weight:800;cursor:pointer;transition:all .15s;margin-bottom:8px}
 .m3d-ai-gen-btn:hover{background:#00b4d8}
 .m3d-presets{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:8px}
-.m3d-preset{background:var(--bg3);border:.5px solid var(--border);border-radius:5px;padding:6px;text-align:center;cursor:pointer;font-size:9px;color:var(--text2)}
+.m3d-preset{background:var(--bg3);border:.5px solid var(--border);border-radius:5px;padding:6px;text-align:center;cursor:pointer;transition:all .12px;font-size:9px;color:var(--text2)}
 .m3d-preset:hover{border-color:var(--c1);background:var(--c1d);color:var(--c1)}
 .m3d-part-list{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
 .m3d-part{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:9px;color:var(--text2);transition:all .1s;background:var(--bg3);border:.5px solid var(--border)}
@@ -240,8 +260,10 @@ canvas#model3d-canvas{width:100%;height:100%;display:block}
 .m3d-color-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 .m3d-progress{height:2px;background:var(--bg4);border-radius:1px;overflow:hidden;margin-bottom:8px;display:none}
 .m3d-progress.on{display:block}
-.m3d-progress-bar{height:100%;background:linear-gradient(90deg,var(--c2),var(--c1));border-radius:1px;animation:pbar 1.5s infinite}
+.m3d-progress-bar{height:100%;background:linear-gradient(90deg,var(--c2),var(--c1));border-radius:1px;transition:width .3s;animation:pbar 1.5s infinite}
 @keyframes pbar{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+
+/* TERRAIN */
 .terrain-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .terrain-sidebar{width:240px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .terrain-canvas-wrap{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
@@ -272,6 +294,8 @@ canvas#tc{flex:1;width:100%;display:block}
 .terrain-ai-row{display:flex;gap:4px}
 .terrain-ai-btn{flex:1;padding:5px;background:var(--c2d);border:.5px solid rgba(124,58,237,.3);border-radius:4px;color:var(--c2);font-family:var(--fm);font-size:8px;cursor:pointer;transition:all .15s;font-weight:700}
 .terrain-ai-btn:hover{background:var(--c2);color:white}
+
+/* GUI BUILDER */
 .gui-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .gui-sidebar{width:180px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .gui-canvas-wrap{flex:1;position:relative;background:#0a0d18;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column;gap:0}
@@ -289,6 +313,8 @@ canvas#tc{flex:1;width:100%;display:block}
 .gui-right{width:200px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
 .gui-props{flex:1;overflow-y:auto;padding:8px}
 .gui-elements-panel{flex:1;overflow-y:auto;padding:8px}
+
+/* NPC */
 .npc-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .npc-sidebar{width:210px;border-right:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
 .npc-preview-wrap{flex:1;background:#040609;display:flex;flex-direction:column;overflow:hidden}
@@ -297,6 +323,7 @@ canvas#tc{flex:1;width:100%;display:block}
 .npc-ai-inp:focus{border-color:var(--c2)}
 .npc-ai-inp::placeholder{color:var(--text3)}
 .npc-preview-canvas{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+canvas#npc-c{border:.5px solid var(--border);border-radius:8px}
 .npc-right{width:210px;border-left:.5px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;padding:10px}
 .npc-stitle{font-size:8px;font-weight:600;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;margin-top:10px;padding-bottom:3px;border-bottom:.5px solid var(--border)}
 .npc-stitle:first-child{margin-top:0}
@@ -306,6 +333,8 @@ canvas#tc{flex:1;width:100%;display:block}
 .npc-opt.active{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
 .npc-gen-btn{width:100%;padding:9px;background:linear-gradient(135deg,var(--c2),var(--c1));border:none;border-radius:6px;color:white;font-family:var(--fd);font-size:10px;font-weight:800;cursor:pointer;margin-top:6px;transition:all .15s}
 .npc-gen-btn:hover{opacity:.85}
+
+/* ADMIN SUITE */
 .admin-view{flex:1;display:flex;overflow:hidden;min-height:0}
 .admin-sidebar{width:220px;border-right:.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg2);flex-shrink:0;overflow:hidden}
 .admin-sidebar-hdr{padding:12px 14px;border-bottom:.5px solid var(--border);flex-shrink:0}
@@ -332,6 +361,8 @@ canvas#tc{flex:1;width:100%;display:block}
 .admin-cfg-label{font-size:8px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
 .admin-cfg-input{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;transition:border-color .15s}
 .admin-cfg-input:focus{border-color:var(--c4)}
+.admin-cfg-textarea{width:100%;background:var(--bg3);border:.5px solid var(--border);border-radius:4px;padding:5px 8px;font-family:var(--fm);font-size:9px;color:var(--text);outline:none;resize:none;height:60px;line-height:1.5;transition:border-color .15s}
+.admin-cfg-textarea:focus{border-color:var(--c4)}
 .admin-cfg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .admin-cfg-row-lbl{font-size:9px;color:var(--text2);min-width:80px}
 .admin-toggle{display:flex;gap:3px}
@@ -369,6 +400,8 @@ canvas#tc{flex:1;width:100%;display:block}
 .admin-quick-icon{font-size:18px;margin-bottom:4px}
 .admin-quick-name{font-family:var(--fd);font-size:9px;font-weight:800;color:var(--text)}
 .admin-quick-desc{font-size:7px;color:var(--text3);margin-top:2px;line-height:1.4}
+
+/* MODAL + TOASTS */
 .modal-bg{position:fixed;inset:0;background:rgba(5,7,9,.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-bg.open{opacity:1;pointer-events:all}
 .modal{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:1.5rem;width:420px;transform:translateY(10px);transition:transform .25s;position:relative;max-height:85vh;overflow-y:auto}
@@ -392,9 +425,6 @@ canvas#tc{flex:1;width:100%;display:block}
 select.pinp{cursor:pointer}
 input[type=range]{-webkit-appearance:none;height:2px;background:var(--bg4);border-radius:2px;outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--c1);cursor:pointer}
-/* Copy to Studio button special style */
-.copy-studio-btn{background:linear-gradient(135deg,var(--c3),#059669);color:#050709;border:none;border-radius:var(--r);padding:8px 14px;font-family:var(--fd);font-weight:800;font-size:10px;letter-spacing:.05em;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap}
-.copy-studio-btn:hover{box-shadow:0 0 18px rgba(16,185,129,.4);transform:translateY(-1px)}
 </style>
 </head>
 <body>
@@ -413,7 +443,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
     </div>
     <div class="auth-card">
       <h2>The Ultimate Roblox Dev Studio</h2>
-      <p>AI expert with deep Roblox knowledge, 3D model viewer, terrain builder, GUI designer, NPC creator &amp; admin suite — all in one. Powered by Claude AI.</p>
+      <p>AI expert with deep Roblox knowledge, 3D model viewer, terrain builder, GUI designer, NPC creator &amp; admin suite — all in one.</p>
       <div class="field"><label>Your Name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')startApp()"/></div>
       <div id="auth-err" class="auth-err">Please enter your name.</div>
       <button class="btn-main" onclick="startApp()">Open Studio →</button>
@@ -429,11 +459,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
       <div class="topbar-brand-name">Studio Bridge v3</div>
     </div>
     <div class="topbar-sep"></div>
-    <div class="ai-status-pill">
-      <span class="ai-dot"></span>
-      <span>Claude AI Ready</span>
+    <div class="conn-pill">
+      <span class="conn-dot wait" id="conn-dot"></span>
+      <span id="conn-txt">Not connected</span>
     </div>
     <div class="topbar-right">
+      <div class="tok-chip">
+        <span style="color:var(--text3);font-size:8px">TOKEN</span>
+        <span class="tok-val" id="tok-val">—</span>
+        <span class="tok-btn" onclick="copyToken()">copy</span>
+      </div>
       <div class="user-chip">
         <div class="user-ava" id="top-ava">?</div>
         <span class="user-name" id="top-name">—</span>
@@ -465,6 +500,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <span class="qtopic" onclick="cq('Explain ProfileService vs DataStore2')">ProfileService</span>
           <span class="qtopic" onclick="cq('What is Knit framework and when to use it?')">Knit</span>
           <span class="qtopic" onclick="cq('Rojo workflow for team development')">Rojo</span>
+          <span class="qtopic" onclick="cq('Top Roblox dev YouTubers to follow')">YouTubers</span>
           <span class="qtopic" onclick="cq('RemoteEvents full server/client flow with code')">Remotes</span>
           <span class="qtopic" onclick="cq('DataStore with cache, retry and BindToClose')">DataStore</span>
           <span class="qtopic" onclick="cq('Anti-exploit server-side validation best practices')">Anti-Cheat</span>
@@ -475,7 +511,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         <div class="chat-msgs" id="chat-msgs">
           <div class="cmsg">
             <div class="cava ai">✦</div>
-            <div><div class="cbub">Hey! I'm your expert Roblox AI powered by Claude. I know everything: Lua scripting, frameworks like <code>Cmdr</code>, <code>Knit</code>, <code>ProfileService</code>, <code>Rojo</code>, general coding, 3D math, game design, and more. Ask me anything!</div></div>
+            <div><div class="cbub">Hey! I'm your expert Roblox AI — I know everything: Lua scripting, frameworks like <code>Cmdr</code>, <code>Knit</code>, <code>ProfileService</code>, <code>Rojo</code>, YouTubers, general coding, 3D math, game design patterns, and more. Ask me anything!</div></div>
           </div>
         </div>
         <div class="chat-inp-row">
@@ -484,14 +520,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         </div>
         <div class="log-panel">
           <div class="panel-hdr">
-            <span class="panel-hdr-title">Activity Log</span>
+            <span class="panel-hdr-title">Command Log</span>
             <div style="display:flex;gap:5px;align-items:center">
               <span style="font-size:8px;color:var(--text3)" id="log-cnt">0</span>
               <button class="ebtn" style="font-size:7px;padding:1px 5px" onclick="clearLog()">Clear</button>
             </div>
           </div>
           <div class="log-inner" id="log-inner">
-            <div class="le sys"><div class="le-top"><span class="ltag sys">sys</span><span class="le-time" id="boot-time"></span></div><div class="le-body">Studio Bridge v3 ready. Claude AI connected.</div></div>
+            <div class="le sys"><div class="le-top"><span class="ltag sys">sys</span><span class="le-time" id="boot-time"></span></div><div class="le-body">Studio Bridge v3 ready.</div></div>
           </div>
         </div>
       </div>
@@ -506,24 +542,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <button class="ebtn" onclick="cpyCode()">⎘ Copy</button>
           <div class="esep"></div>
           <span style="font-size:8px;color:var(--text2)" id="es-type-badge">Auto</span>
-          <button class="copy-studio-btn" onclick="copyToStudio()" id="send-btn" style="margin-left:auto">📋 Copy to Clipboard</button>
+          <button class="ebtn prim" onclick="sendToStudio()" id="send-btn" style="margin-left:auto">▶ Send to Studio</button>
+          <button class="ebtn grn" onclick="copyScriptClipboard()" title="Copy script to clipboard then paste in Roblox Studio">📋 Copy Script</button>
         </div>
         <div class="stype-bar">
           <span class="stype-lbl">Types:</span>
           <div class="stype-chip s on" id="sc-s" onclick="toggleST('script',this)">Script</div>
           <div class="stype-chip ls on" id="sc-ls" onclick="toggleST('localscript',this)">LocalScript</div>
           <div class="stype-chip ms" id="sc-ms" onclick="toggleST('modulescript',this)">Module</div>
-          <span style="font-size:8px;color:var(--text3);margin-left:auto">Paste into Roblox Studio script editor ↑</span>
+          <span style="font-size:8px;color:var(--text3);margin-left:auto">AI auto-orders ↑</span>
         </div>
         <div class="ai-bar">
           <span style="font-size:9px;color:var(--c2);white-space:nowrap;cursor:pointer">✦ AI</span>
-          <input class="ai-bar-inp" id="ai-prompt" placeholder="Describe what to build (e.g. coin system with leaderboard, round system, admin commands)…" onkeydown="if(event.key==='Enter')genScript()"/>
-          <div class="ai-spin-wrap" id="ai-ind"><div class="ai-spin"></div><span id="ai-ind-txt">Thinking…</span></div>
-          <button class="ebtn" style="background:var(--c2);color:white;border-color:var(--c2);flex-shrink:0" onclick="genScript()" id="gen-script-btn">Generate</button>
+          <input class="ai-bar-inp" id="ai-prompt" placeholder="Describe what to build (e.g. coin system with leaderboard)…" onkeydown="if(event.key==='Enter')genScript()"/>
+          <div class="ai-spin-wrap" id="ai-ind"><div class="ai-spin"></div><span id="ai-ind-txt">Thinking</span></div>
+          <button class="ebtn" style="background:var(--c2);color:white;border-color:var(--c2);flex-shrink:0" onclick="genScript()" id="gen-btn">Generate</button>
         </div>
         <div class="editor-wrap">
           <div class="line-nums" id="line-nums"><span class="ln">1</span></div>
-          <textarea class="code-ta" id="code-area" placeholder="-- Your Roblox Luau scripts appear here…&#10;-- Use the AI bar above to generate scripts&#10;-- Or pick a template from the right panel&#10;-- Then click 📋 Copy to Clipboard and paste into Roblox Studio" spellcheck="false" oninput="onCE()" onscroll="syncLN()" onkeydown="tabKey(event)"></textarea>
+          <textarea class="code-ta" id="code-area" placeholder="-- Your scripts appear here…" spellcheck="false" oninput="onCE()" onscroll="syncLN()" onkeydown="tabKey(event)"></textarea>
         </div>
         <div class="editor-status">
           <span class="estat">Lines: <span id="es-lines">0</span></span>
@@ -547,6 +584,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <div class="vp-toolbar">
             <button class="vtbtn active" id="vt-sel" onclick="setTool('select')">↖</button>
             <button class="vtbtn" id="vt-mov" onclick="setTool('move')">✥</button>
+            <button class="vtbtn" id="vt-rot" onclick="setTool('rotate')">↻</button>
+            <span style="width:.5px;height:10px;background:var(--border);margin:0 1px"></span>
             <button class="vtbtn" onclick="setView('p')">3D</button>
             <button class="vtbtn" onclick="setView('t')">Top</button>
             <button class="vtbtn" onclick="setView('f')">Front</button>
@@ -554,7 +593,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
             <button class="vtbtn" onclick="exportScene()" style="color:var(--c3)">⬇</button>
           </div>
           <div class="vp-canvas"><canvas id="mc"></canvas></div>
-          <div class="vp-info-bar"><div class="vp-badge" id="vp-pos">Mini Viewport</div></div>
+          <div class="vp-info-bar"><div class="vp-badge" id="vp-pos">X:0 Y:0 Z:0</div></div>
         </div>
         <div class="insert-grid">
           <div class="ins-btn" onclick="addPart('Part','block')"><span class="ins-icon">⬛</span><div class="ins-lbl">Block</div></div>
@@ -646,7 +685,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
         </div>
         <div class="model3d-canvas-wrap"><canvas id="model3d-canvas"></canvas></div>
         <div class="model3d-overlay">
-          <div class="m3d-badge">Drag to orbit · Scroll to zoom</div>
+          <div class="m3d-badge" id="m3d-cam-info">Drag to orbit · Scroll to zoom</div>
           <div class="m3d-badge" id="m3d-sel-info"></div>
         </div>
       </div>
@@ -656,7 +695,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
           <div style="font-size:8px;color:var(--text3);margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase">Describe your model</div>
           <textarea class="m3d-ai-prompt" id="m3d-prompt" placeholder="e.g. A medieval castle with towers, a futuristic robot with wings, a cute blocky cat…"></textarea>
           <div class="m3d-progress" id="m3d-prog"><div class="m3d-progress-bar"></div></div>
-          <button class="m3d-ai-gen-btn" onclick="m3dAIGenerate()">✦ AI Generate</button>
+          <button class="m3d-ai-gen-btn" id="m3d-ai-btn" onclick="m3dAIGenerate()">✦ AI Generate</button>
           <div style="font-size:8px;color:var(--text3);margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase">Presets</div>
           <div class="m3d-presets">
             <div class="m3d-preset" onclick="m3dPreset('knight')">⚔ Knight</div>
@@ -857,10 +896,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;heigh
 <div id="toasts"></div>
 
 <script>
-// ─────────────────────────────────────────
-// DIRECT ANTHROPIC API — No backend needed
-// ─────────────────────────────────────────
-async function callAI(prompt, sysOverride, maxTok = 2000) {
+// ══════════════════════════════════════════════════════
+// BACKEND — Railway (auth, polling, send-to-studio)
+// ══════════════════════════════════════════════════════
+const BACKEND = "https://enesai-production.up.railway.app";
+
+// ══════════════════════════════════════════════════════
+// AI CORE — Direct Anthropic API (replaces broken /api/ai)
+// ══════════════════════════════════════════════════════
+async function callAI(prompt, sysOverride, maxTok) {
+  if (!maxTok) maxTok = 2000;
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -873,23 +918,25 @@ async function callAI(prompt, sysOverride, maxTok = 2000) {
       })
     });
     if (!response.ok) {
-      const err = await response.text().catch(() => '');
-      throw new Error('API ' + response.status + ': ' + err.slice(0, 120));
+      const errText = await response.text().catch(() => "");
+      throw new Error("API " + response.status + ": " + errText.slice(0, 120));
     }
     const d = await response.json();
-    const text = (d.content || []).map(b => b.type === 'text' ? b.text : '').join('');
+    const text = (d.content || []).filter(b => b.type === "text").map(b => b.text).join("");
     return text || null;
   } catch(e) {
-    addLog('err', 'AI error: ' + e.message);
+    addLog("err", "AI: " + e.message);
     return null;
   }
 }
 
-// ─── APP STATE ───
-let user = null;
-let logCount = 0;
-let sceneObjects = [], selectedObjId = null, nextId = 1, showGrid = true, currentTool = 'select';
-let camera = {x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};
+// ══════════════════════════════════════════════════════
+// APP STATE
+// ══════════════════════════════════════════════════════
+let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
+let logCount=0;
+let sceneObjects=[], selectedObjId=null, nextId=1, showGrid=true, currentTool='select';
+let camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};
 let vpCanvas, vpCtx;
 let m3dObjects=[], m3dSelectedId=null, m3dNextId=1;
 let m3dCamera={x:0,y:0,z:22,rx:-0.35,ry:0.4,zoom:1};
@@ -897,7 +944,8 @@ let m3dCanvas, m3dCtx;
 let m3dParams={base:'humanoid',style:'lowpoly',complexity:5,scale:2,parts:12};
 let tp={width:512,height:80,roughness:5,water:30,biome:'grassland',features:{mountains:true,rivers:true,caves:false,rocks:true,fog:false}};
 let terrainMap=[], terrainCanvas, terrainCtx, terrainPainting=false;
-let guiEls=[], selGuiId=null, guiDragging=false, guiDragStart={}, guiDragEl=null, guiNextId=1;
+let guiEls=[], selGuiId=null, guiDragging=false, guiDragStart={}, guiDragEl=null;
+let guiNextId=1;
 let np={health:100,speed:16,detect:30,damage:10,behavior:'patrol',combat:'none',type:'humanoid'};
 let activeST={script:true,localscript:true,modulescript:false};
 let npcAngle=0, npcDragging=false, npcLastX=0;
@@ -912,35 +960,64 @@ const BIOME_COLS={
   forest:{low:'#1a3a1a',mid:'#2a5a2a',high:'#4a7a2a',peak:'#9a9a5a',water:'#1a3a6a'},
 };
 
-const $ = id => document.getElementById(id);
-function ts(){ return new Date().toLocaleTimeString(); }
-function toast(msg, type='info', dur=3200){
-  const c=$('toasts'); const t=document.createElement('div');
-  t.className=`toast ${type}`; t.textContent=msg; c.appendChild(t);
+const $=id=>document.getElementById(id);
+function genTok(){return Math.random().toString(36).slice(2,8).toUpperCase();}
+function ts(){return new Date().toLocaleTimeString();}
+function toast(msg,type='info',dur=3200){
+  const c=$('toasts');const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);
   setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},dur);
 }
+function sv(){localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);}
+function lv(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');}catch{}}
 
-// ─── AUTH ───
+// ── AUTH (unchanged — uses Railway) ──
 function startApp(){
-  const inp=$('rbx-username'); const u=(inp.value||'').trim();
+  const inp=$('rbx-username');const u=(inp.value||'').trim();
   if(!u){$('auth-err').style.display='block';inp.focus();return;}
   $('auth-err').style.display='none';
   user={username:u,avatar:u[0].toUpperCase()};
+  sessionToken=genTok()+genTok();
   enterApp();
 }
 function enterApp(){
+  sv();
   $('auth').classList.add('gone');
   $('app').classList.add('show');
   $('top-ava').textContent=user.avatar;
   $('top-name').textContent=user.username;
+  $('tok-val').textContent=sessionToken;
   $('boot-time').textContent=ts();
+  startPolling();
   initViewport();
   initM3dViewer();
   initTerrainCanvas();
   drawNPC();
   initAdminSuite();
 }
-function logout(){user=null;$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
+function logout(){user=null;sessionToken=null;localStorage.clear();stopPolling();$('app').classList.remove('show');$('auth').classList.remove('gone');$('rbx-username').value='';}
+lv();if(user&&sessionToken)enterApp();
+
+// ── POLLING (unchanged — uses Railway) ──
+function startPolling(){
+  pollInterval=setInterval(async()=>{
+    try{
+      const r=await fetch(BACKEND+'/api/ping/'+sessionToken);
+      const d=await r.json();
+      if(d.connected&&!pluginConnected)setConn(true);
+      else if(!d.connected&&pluginConnected)setConn(false);
+    }catch{}
+  },2500);
+}
+function stopPolling(){clearInterval(pollInterval);}
+function setConn(v){
+  pluginConnected=v;
+  const d=$('conn-dot');
+  d.className='conn-dot '+(v?'on':'wait');
+  $('conn-txt').textContent=v?'Studio connected':'Not connected';
+  if(v){toast('Studio connected!','ok');addLog('sys','Studio connected.');}
+}
+function copyToken(){navigator.clipboard.writeText(sessionToken||'');toast('Token copied!','ok');}
 
 function addLog(kind,msg){
   const el=document.createElement('div');
@@ -961,7 +1038,7 @@ function gotoView(name,btn){
 }
 function toggleST(type,el){activeST[type]=!activeST[type];el.classList.toggle('on',activeST[type]);toast((activeST[type]?'Enabled ':'Disabled ')+type,'info');}
 
-// ─── GENIUS SYSTEM PROMPT ───
+// ── GENIUS SYSTEM PROMPT ──
 const GENIUS_SYSTEM = `You are an expert Roblox Luau developer. You write production-quality, correct Roblox Luau code.
 
 CRITICAL RULES — always follow these:
@@ -971,64 +1048,46 @@ CRITICAL RULES — always follow these:
 - Use TextSize = number NOT FontSize enum
 - Use BackgroundColor3 = Color3.fromRGB() NOT BackgroundColor
 - Use Humanoid:TakeDamage() for damage
-- Use :FindFirstChildOfClass() NOT :FindFirstChild() for class checks
-- Never use game.Players, always game:GetService("Players")
-- Never use game.ReplicatedStorage, always game:GetService("ReplicatedStorage")
+- Use :FindFirstChildOfClass() for class checks
+- Never use game.Players — always game:GetService("Players")
+- Never use game.ReplicatedStorage — always game:GetService("ReplicatedStorage")
 - Use Instance.new() with parent set LAST (after all properties)
 - RemoteEvents/Functions must exist in ReplicatedStorage
 - Server Scripts go in ServerScriptService
 - LocalScripts go in StarterPlayer/StarterPlayerScripts or StarterGui
-- ModuleScripts are required via require()
 - Always use pcall() for DataStore calls
 - Always add BindToClose for DataStore saves
-- UDim2.new(scaleX, offsetX, scaleY, offsetY) — scale is 0-1, offset is pixels
+- UDim2.new(scaleX, offsetX, scaleY, offsetY) — scale is 0-1
 - Color3.fromRGB(r, g, b) — values 0-255
 - TweenInfo.new(time, EasingStyle, EasingDirection, repeatCount, reverses, delayTime)
-- PathfindingService:CreatePath() returns a Path object, call :ComputeAsync(start, goal) then :GetWaypoints()
+- PathfindingService:CreatePath() then :ComputeAsync(start, goal) then :GetWaypoints()
 - Always disconnect events on cleanup using :Disconnect()
 
-When generating GUI code:
-- Use ScreenGui with ResetOnSpawn = false
-- Use UICorner for rounded corners
-- Use UIStroke for borders
-- Use UIGradient for gradients
-- Use TweenService for all animations
-- TextScaled = true OR set TextSize manually
+IMPORTANT OUTPUT FORMAT:
+- Return ONLY raw Luau code
+- Do NOT wrap in markdown code blocks (no backticks, no \`\`\`lua, no \`\`\`luau)
+- Use -- comments inside the code to explain placement and sections
+- For multi-script responses use these separators on their own line:
+  ===SCRIPT_SERVER===
+  ===SCRIPT_LOCAL===
+  ===SCRIPT_MODULE===`;
 
-When generating NPC scripts:
-- PathfindingService with AgentRadius, AgentHeight params
-- RunService.Heartbeat for main loop
-- Proper cleanup with :Disconnect()
-- BillboardGui for health bars above head
-
-IMPORTANT: Return ONLY raw Luau code. No markdown fences. No backticks. No \`\`\`lua or \`\`\`luau wrappers. Just pure Lua code with comments.`;
-
-function cc(c){ return (c||'').replace(/^```(?:lua|luau)?\n?/gm,'').replace(/^```\s*$/gm,'').trim(); }
-
-// ─── COPY TO STUDIO (clipboard) ───
-function copyToStudio(){
-  const code=$('code-area').value.trim();
-  if(!code){toast('Nothing to copy! Generate a script first.','bad');return;}
-  navigator.clipboard.writeText(code).then(()=>{
-    toast('✓ Script copied! Paste it into Roblox Studio script editor (Ctrl+V).','ok',5000);
-    addLog('result','Copied '+code.split('\n').length+' lines to clipboard.');
-  }).catch(()=>{
-    // fallback
-    const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
-    toast('✓ Copied! Paste into Roblox Studio.','ok',4000);
-  });
+// ── STRIP MARKDOWN from AI output ──
+function cc(c){
+  if(!c)return'';
+  return c
+    .replace(/^```(?:lua|luau|)\s*\n?/gim,'')
+    .replace(/^```\s*$/gim,'')
+    .replace(/`{3}(?:lua|luau)?[\s\S]*?`{3}/g, m => m.replace(/^```(?:lua|luau)?\n?/,'').replace(/\n?```$/,''))
+    .trim();
 }
 
-function cpyCode(){
-  navigator.clipboard.writeText($('code-area').value).then(()=>toast('Copied!','ok')).catch(()=>toast('Copy failed','bad'));
-}
-
-// ─── SCRIPT TYPE DETECTION ───
+// ── SCRIPT TYPE UTILS ──
 function detectType(b){
   const lb=b.toLowerCase();
   if(/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb))return'localscript';
   if(/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(lb))return'script';
-  if(/return\s+\w/.test(lb))return'modulescript';
+  if(/^return\s+\w/m.test(lb))return'modulescript';
   return'script';
 }
 function splitBlocks(code){
@@ -1043,16 +1102,76 @@ function splitBlocks(code){
   return secs;
 }
 
-// ─── GENERATE SCRIPT ───
+// ── SEND TO STUDIO (unchanged — uses Railway) ──
+function wrapInsert(code,type){
+  const clsMap={script:'Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+  const parentMap={
+    script:'game:GetService("ServerScriptService")',
+    localscript:'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")',
+    modulescript:'game:GetService("ServerScriptService")'
+  };
+  const cls=clsMap[type]||'Script';
+  const parent=parentMap[type];
+  const escaped=code.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'');
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGen_${cls}"\ns.Source="${escaped}"\ns.Parent=${parent}\nprint("[Bridge] ${cls} inserted")`;
+}
+async function sendToStudio(){
+  const code=$('code-area').value.trim();
+  if(!code){toast('Nothing to send.','bad');return;}
+  const btn=$('send-btn');btn.disabled=true;btn.textContent='Sending…';
+  const blocks=splitBlocks(code);
+  addLog('sent',`Sending ${blocks.length} script(s)…`);
+  for(let i=0;i<blocks.length;i++){
+    const{code:blk,type}=blocks[i];
+    const label=`[${i+1}/${blocks.length}] ${type}`;
+    try{
+      const res=await fetch(BACKEND+'/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sessionToken,type:'run_script',body:wrapInsert(blk,type)})});
+      const d=await res.json();if(!d.ok)throw new Error(d.error||'Server error');
+      let result=null;
+      for(let j=0;j<20;j++){
+        await new Promise(r=>setTimeout(r,500));
+        const rr=await fetch(BACKEND+'/api/result/'+sessionToken);
+        const rd=await rr.json();
+        if(rd.ready){result=rd;break;}
+      }
+      addLog(result?.success?'result':'err',label+': '+(result?.output||'No response'));
+    }catch(e){addLog('err',`${label}: `+e.message);}
+    if(i<blocks.length-1)await new Promise(r=>setTimeout(r,800));
+  }
+  btn.disabled=false;btn.textContent='▶ Send to Studio';
+  toast(blocks.length>1?`All ${blocks.length} scripts sent!`:'Script sent!','ok');
+}
+
+// ── COPY SCRIPT TO CLIPBOARD (paste into Roblox Studio manually) ──
+function copyScriptClipboard(){
+  const code=$('code-area').value.trim();
+  if(!code){toast('Nothing to copy. Generate a script first.','bad');return;}
+  const copy=(text)=>{
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(text);
+    }
+    const ta=document.createElement('textarea');ta.value=text;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');ta.remove();
+    return Promise.resolve();
+  };
+  copy(code).then(()=>{
+    toast('✓ Script copied! Open Roblox Studio → Script Editor → Ctrl+A → Ctrl+V','ok',5000);
+    addLog('result','Copied to clipboard ('+code.split('\n').length+' lines)');
+  }).catch(()=>toast('Copy failed — try Ctrl+A, Ctrl+C in the editor','bad'));
+}
+
+// ── GENERATE SCRIPT (fixed — no infinite spin) ──
 async function genScript(){
   const prompt=$('ai-prompt').value.trim();
   if(!prompt){toast('Describe what to build.','bad');return;}
 
   const ind=$('ai-ind');
-  const btn=$('gen-script-btn');
+  const btn=$('gen-btn');
   ind.classList.add('on');
   btn.disabled=true;
-  btn.textContent='...';
+  btn.textContent='…';
   $('es-status').textContent='Generating…';
 
   const typeList=[];
@@ -1062,16 +1181,14 @@ async function genScript(){
 
   const userMsg=`Build this Roblox feature: ${prompt}
 Script types needed: ${typeList.join(', ')||'Script(Server)'}
-
-Use these exact separators and only include needed sections:
+Use these separators and only include sections that are needed:
 ===SCRIPT_SERVER===
-(server code here)
+(server script code here)
 ===SCRIPT_LOCAL===
-(client code here)
+(client localscript code here)
 ===SCRIPT_MODULE===
-(module code here)
-
-CRITICAL: Return ONLY raw Luau code with the separators above. No markdown. No backticks. No explanations outside of code comments. Add comments inside the code explaining where each script goes.`;
+(module script code here)
+Return ONLY raw Luau code with the separators. No markdown. No backticks. Add -- comments inside explaining where each script goes.`;
 
   addLog('ai','Generating: '+prompt.slice(0,60));
   const raw = await callAI(userMsg, GENIUS_SYSTEM, 3000);
@@ -1082,31 +1199,36 @@ CRITICAL: Return ONLY raw Luau code with the separators above. No markdown. No b
 
   if(!raw){
     $('es-status').textContent='✗ Failed';
-    toast('Generation failed — check console','bad');
+    toast('AI generation failed. Check console.','bad');
     return;
   }
 
   const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
   const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
   const secs=splitBlocks(raw);
-  const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
+  const sep=(n,tot,type,loc)=>
+    `-- ╔═══════════════════════════════════════╗\n`+
+    `-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n`+
+    `-- ║  Place in: ${loc.padEnd(28)}║\n`+
+    `-- ╚═══════════════════════════════════════╝`;
+
   $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
   onCE();
-  $('es-status').textContent=`✓ ${secs.length} script(s) ready — click 📋 Copy to Clipboard`;
+  $('es-status').textContent=`✓ ${secs.length} script(s) ready`;
   $('es-type-badge').textContent='AI: '+secs.map(s=>lblMap[s.type]).join(' + ');
-  toast(`✓ ${secs.length} script(s) ready! Click 📋 Copy to Clipboard.`,'ok',5000);
+  toast(`✓ ${secs.length} script(s) generated!`,'ok');
   addLog('result','Generated: '+secs.map(s=>s.type).join(', '));
 }
 
-// ─── AI ACTIONS ───
+// ── AI ACTIONS (fixed button states) ──
 async function aiAction(action){
   const code=$('code-area').value.trim();
   if(!code){toast('No code in editor.','bad');return;}
   const prompts={
-    fix:`Fix ALL bugs in this Roblox Luau. Use modern APIs (task.wait not wait, BackgroundColor3 not BackgroundColor, TextSize not FontSize, etc). Return ONLY the fixed raw Lua code, no markdown, no backticks:\n\n${code}`,
-    comment:`Add clear inline comments to every major section of this Roblox Luau. Return ONLY the commented raw Lua code:\n\n${code}`,
-    optimize:`Optimize this Roblox Luau for performance, memory, and readability. Return ONLY the optimized raw Lua code:\n\n${code}`,
-    explain:`Explain this Roblox Luau script in detail — what it does, what each section does, and any potential issues:`
+    fix:`Fix ALL bugs in this Roblox Luau. Use modern APIs (task.wait not wait, BackgroundColor3 not BackgroundColor, TextSize not FontSize). Return ONLY the fixed raw Luau code, no markdown:\n\n${code}`,
+    comment:`Add clear inline comments to every major section. Return ONLY the commented raw Luau code:\n\n${code}`,
+    optimize:`Optimize this Roblox Luau for performance and readability. Return ONLY the optimized raw Luau code:\n\n${code}`,
+    explain:`Explain this Roblox Luau in detail — what it does, each section's purpose, and potential improvements:`
   };
   $('ai-ind').classList.add('on');$('es-status').textContent=action+'ing…';
   const r=await callAI(action==='explain'?prompts[action]+'\n\n'+code:prompts[action],GENIUS_SYSTEM,2000);
@@ -1118,7 +1240,8 @@ async function aiAction(action){
   }else toast('Failed.','bad');
 }
 
-// ─── CODE EDITOR ───
+// ── CODE EDITOR ──
+function cpyCode(){navigator.clipboard.writeText($('code-area').value);toast('Copied!','ok');}
 function onCE(){const v=$('code-area').value;$('es-lines').textContent=v.split('\n').length;$('es-chars').textContent=v.length;updateLN();}
 function updateLN(){const n=$('code-area').value.split('\n').length;$('line-nums').innerHTML=Array.from({length:Math.max(n,1)},(_,i)=>`<span class="ln">${i+1}</span>`).join('');}
 function syncLN(){$('line-nums').scrollTop=$('code-area').scrollTop;}
@@ -1129,31 +1252,37 @@ function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat
 function cq(t){$('chat-input').value=t;sendChat();}
 function clearChat(){$('chat-msgs').innerHTML='';toast('Chat cleared','info');}
 
-// ─── CHAT ───
+// ── CHAT ──
 async function sendChat(){
   const inp=$('chat-input');const msg=inp.value.trim();if(!msg)return;
   inp.value='';inp.style.height='auto';
   appendMsg('user',msg);
   $('chat-send').disabled=true;
   const tid='t_'+Date.now();appendTyping(tid);
-  addLog('ai','Chat: '+msg.slice(0,40));
   const r=await callAI(msg,GENIUS_SYSTEM,1500);
   removeTyping(tid);$('chat-send').disabled=false;
-  appendMsg('ai',r||"Sorry, AI request failed. Please try again.");
+  appendMsg('ai',r||'Sorry, AI request failed. Please try again.');
 }
 function appendMsg(role,text){
   const c=$('chat-msgs');const d=document.createElement('div');
   d.className='cmsg'+(role==='user'?' user':'');
   const av=role==='ai'?'✦':(user?user.avatar:'U');
   const cls=role==='ai'?'ai':'user';
-  const fmt=(text||'').replace(/```lua\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```luau\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>');
+  const fmt=(text||'')
+    .replace(/```lua\n?([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/```luau\n?([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/`([^`\n]+)`/g,'<code>$1</code>')
+    .replace(/\n/g,'<br>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>');
   d.innerHTML=`<div class="cava ${cls}">${av}</div><div><div class="cbub">${fmt}</div></div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
 function appendTyping(id){const c=$('chat-msgs');const d=document.createElement('div');d.className='cmsg';d.id=id;d.innerHTML=`<div class="cava ai">✦</div><div><div class="cbub"><div class="typing"><span></span><span></span><span></span></div></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
 function removeTyping(id){const el=$(id);if(el)el.remove();}
 
-// ─── TEMPLATES ───
+// ── TEMPLATES ──
 const TMPLS={
 door:`-- Place in ServerScriptService (Script)
 local TweenService = game:GetService("TweenService")
@@ -1203,44 +1332,31 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local gui = Instance.new("ScreenGui")
-gui.ResetOnSpawn = false
-gui.Name = "MainGui"
-gui.Parent = player.PlayerGui
+gui.ResetOnSpawn = false; gui.Name = "MainGui"; gui.Parent = player.PlayerGui
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 300, 0, 180)
 frame.Position = UDim2.new(0.5, -150, 0.6, -90)
 frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-frame.BackgroundTransparency = 1
-frame.BorderSizePixel = 0
-frame.Parent = gui
+frame.BackgroundTransparency = 1; frame.BorderSizePixel = 0; frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0, 200, 240)
-stroke.Thickness = 1
+stroke.Color = Color3.fromRGB(0, 200, 240); stroke.Thickness = 1
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 40)
-title.BackgroundTransparency = 1
-title.Text = "Hello World!"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
+title.Size = UDim2.new(1, 0, 0, 40); title.BackgroundTransparency = 1
+title.Text = "Hello World!"; title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold; title.TextSize = 16
 TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
-  Position = UDim2.new(0.5, -150, 0.5, -90),
-  BackgroundTransparency = 0
+  Position = UDim2.new(0.5, -150, 0.5, -90), BackgroundTransparency = 0
 }):Play()`,
-npc:`-- Place in ServerScriptService (Script), NPC model in Workspace
+npc:`-- Place in ServerScriptService (Script) — NPC model must be in Workspace
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local npc = script.Parent
 local humanoid = npc:WaitForChild("Humanoid")
 local root = npc:WaitForChild("HumanoidRootPart")
-humanoid.MaxHealth = 100
-humanoid.Health = 100
-local DETECT = 30
-local ATTACK = 5
-local DAMAGE = 10
-local lastAtk = 0
+humanoid.MaxHealth = 100; humanoid.Health = 100
+local DETECT = 30; local ATTACK = 5; local DAMAGE = 10; local lastAtk = 0
 local conn = RunService.Heartbeat:Connect(function()
   if humanoid.Health <= 0 then return end
   for _, p in Players:GetPlayers() do
@@ -1251,22 +1367,13 @@ local conn = RunService.Heartbeat:Connect(function()
       if hr and hm and hm.Health > 0 then
         local d = (hr.Position - root.Position).Magnitude
         if d <= ATTACK then
-          if tick() - lastAtk >= 1.5 then
-            lastAtk = tick()
-            hm:TakeDamage(DAMAGE)
-          end
-        elseif d <= DETECT then
-          humanoid:MoveTo(hr.Position)
-        end
+          if tick() - lastAtk >= 1.5 then lastAtk=tick(); hm:TakeDamage(DAMAGE) end
+        elseif d <= DETECT then humanoid:MoveTo(hr.Position) end
       end
     end
   end
 end)
-humanoid.Died:Connect(function()
-  conn:Disconnect()
-  task.wait(5)
-  npc:Destroy()
-end)`,
+humanoid.Died:Connect(function() conn:Disconnect(); task.wait(5); npc:Destroy() end)`,
 datastore:`-- Place in ServerScriptService (Script)
 local DS = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
@@ -1276,10 +1383,7 @@ local DEFAULT = {coins=0, level=1, xp=0}
 Players.PlayerAdded:Connect(function(player)
   for i = 1, 3 do
     local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
-    if ok then
-      cache[player.UserId] = data or table.clone(DEFAULT)
-      break
-    end
+    if ok then cache[player.UserId] = data or table.clone(DEFAULT); break end
     task.wait(2)
   end
   local ls = Instance.new("Folder"); ls.Name = "leaderstats"; ls.Parent = player
@@ -1301,44 +1405,32 @@ local MIN = 2; local LOBBY = 20; local ROUND = 180
 local ev = Instance.new("RemoteEvent"); ev.Name = "StatusUpdate"; ev.Parent = RS
 task.spawn(function()
   while true do
-    repeat
-      ev:FireAllClients("Waiting... (" .. #Players:GetPlayers() .. "/" .. MIN .. ")")
-      task.wait(2)
-    until #Players:GetPlayers() >= MIN
-    for i = LOBBY, 1, -1 do
-      ev:FireAllClients("Starting in " .. i .. "s!")
-      task.wait(1)
-    end
-    ev:FireAllClients("Round started!")
-    task.wait(ROUND)
-    ev:FireAllClients("Round over!")
-    task.wait(10)
+    repeat ev:FireAllClients("Waiting... ("..#Players:GetPlayers().."/"..MIN..")"); task.wait(2) until #Players:GetPlayers() >= MIN
+    for i = LOBBY, 1, -1 do ev:FireAllClients("Starting in "..i.."s!"); task.wait(1) end
+    ev:FireAllClients("Round started!"); task.wait(ROUND)
+    ev:FireAllClients("Round over!"); task.wait(10)
   end
 end)`,
 admin:`-- Place in ServerScriptService (Script)
 local Players = game:GetService("Players")
-local RANKS = {[1234567890] = 5} -- Replace with your UserId = rank
+local RANKS = {[1234567890] = 5} -- Replace 1234567890 with your UserId
 local function getRank(p) return RANKS[p.UserId] or 0 end
 local function findPlayer(name)
-  for _, p in Players:GetPlayers() do
-    if p.Name:lower():find(name:lower()) then return p end
-  end
+  for _, p in Players:GetPlayers() do if p.Name:lower():find(name:lower()) then return p end end
 end
 local CMDS = {
-  kick  = {rank=3, fn=function(a, args) local t=findPlayer(args[1]); if t then t:Kick(args[2] or "Kicked by admin") end end},
-  tp    = {rank=3, fn=function(a, args) local t=findPlayer(args[1]); if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end},
-  god   = {rank=4, fn=function(a, args) local t=findPlayer(args[1]); if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid"); if h then h.MaxHealth=math.huge; h.Health=math.huge end end end},
-  day   = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay = "14:00:00" end},
-  night = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay = "02:00:00" end},
+  kick  = {rank=3, fn=function(a,args) local t=findPlayer(args[1]); if t then t:Kick(args[2] or "Kicked") end end},
+  tp    = {rank=3, fn=function(a,args) local t=findPlayer(args[1]); if t and t.Character and a.Character then t.Character:PivotTo(a.Character:GetPivot()) end end},
+  god   = {rank=4, fn=function(a,args) local t=findPlayer(args[1]); if t and t.Character then local h=t.Character:FindFirstChildOfClass("Humanoid"); if h then h.MaxHealth=math.huge; h.Health=math.huge end end end},
+  day   = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay="14:00:00" end},
+  night = {rank=2, fn=function() game:GetService("Lighting").TimeOfDay="02:00:00" end},
 }
 Players.PlayerAdded:Connect(function(player)
   player.Chatted:Connect(function(msg)
-    if msg:sub(1,1) ~= "/" then return end
-    local parts = msg:sub(2):split(" ")
-    local cmd = CMDS[parts[1]:lower()]
-    if cmd and getRank(player) >= cmd.rank then
-      pcall(cmd.fn, player, {table.unpack(parts, 2)})
-    end
+    if msg:sub(1,1)~="/" then return end
+    local parts=msg:sub(2):split(" ")
+    local cmd=CMDS[parts[1]:lower()]
+    if cmd and getRank(player)>=cmd.rank then pcall(cmd.fn,player,{table.unpack(parts,2)}) end
   end)
 end)`,
 shop:`-- Place in ServerScriptService (Script)
@@ -1346,28 +1438,17 @@ local Players = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
 local ev = Instance.new("RemoteEvent"); ev.Name = "BuyItem"; ev.Parent = RS
 local ITEMS = {
-  speed = {cost=100, fn=function(p)
-    if p.Character then
-      local h = p.Character:FindFirstChildOfClass("Humanoid")
-      if h then h.WalkSpeed = 24 end
-    end
-  end},
+  speed = {cost=100, fn=function(p) if p.Character then local h=p.Character:FindFirstChildOfClass("Humanoid"); if h then h.WalkSpeed=24 end end end},
 }
 ev.OnServerEvent:Connect(function(player, itemId)
-  local item = ITEMS[itemId]
-  if not item then return end
+  local item = ITEMS[itemId]; if not item then return end
   local ls = player:FindFirstChild("leaderstats")
   local coins = ls and ls:FindFirstChild("Coins")
-  if not coins or coins.Value < item.cost then
-    ev:FireClient(player, "err", "Not enough coins!")
-    return
-  end
-  coins.Value -= item.cost
-  item.fn(player)
-  ev:FireClient(player, "ok", itemId)
+  if not coins or coins.Value < item.cost then ev:FireClient(player,"err","Not enough coins!"); return end
+  coins.Value -= item.cost; item.fn(player); ev:FireClient(player,"ok",itemId)
 end)`,
 };
-function loadTmpl(name){if(!TMPLS[name])return;$('code-area').value=TMPLS[name];onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Template loaded! Click 📋 Copy to Clipboard.','ok');}
+function loadTmpl(name){if(!TMPLS[name])return;$('code-area').value=TMPLS[name];onCE();document.querySelector('.nav-tab').click();toast('Template loaded!','ok');}
 
 const SNIPS={
 remote:`-- REMOTE EVENT BOILERPLATE
@@ -1379,7 +1460,7 @@ myEvent.Parent = RS
 myEvent.OnServerEvent:Connect(function(player, data)
   print(player.Name, "sent:", data)
 end)
--- CLIENT (LocalScript in StarterPlayerScripts):
+-- CLIENT (LocalScript):
 -- local myEvent = game:GetService("ReplicatedStorage"):WaitForChild("MyEvent")
 -- myEvent:FireServer({message = "hello"})`,
 debounce:`-- DEBOUNCE PATTERN
@@ -1408,14 +1489,11 @@ npc:`-- NPC HEALTH BAR (BillboardGui)
 local npc = script.Parent
 local humanoid = npc:WaitForChild("Humanoid")
 local bb = Instance.new("BillboardGui")
-bb.Size = UDim2.new(0, 100, 0, 18)
-bb.StudsOffset = Vector3.new(0, 3.5, 0)
+bb.Size = UDim2.new(0, 100, 0, 18); bb.StudsOffset = Vector3.new(0, 3.5, 0)
 bb.Parent = npc:WaitForChild("HumanoidRootPart")
 local bar = Instance.new("Frame")
-bar.Size = UDim2.new(1, 0, 1, 0)
-bar.BackgroundColor3 = Color3.fromRGB(210, 40, 40)
-bar.BorderSizePixel = 0
-bar.Parent = bb
+bar.Size = UDim2.new(1, 0, 1, 0); bar.BackgroundColor3 = Color3.fromRGB(210, 40, 40)
+bar.BorderSizePixel = 0; bar.Parent = bb
 Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 humanoid.HealthChanged:Connect(function(hp)
   bar.Size = UDim2.new(math.clamp(hp / humanoid.MaxHealth, 0, 1), 0, 1, 0)
@@ -1423,36 +1501,24 @@ end)`,
 gui:`-- GUI FRAME (LocalScript in StarterGui)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local sg = Instance.new("ScreenGui")
-sg.ResetOnSpawn = false
-sg.Parent = player.PlayerGui
+local sg = Instance.new("ScreenGui"); sg.ResetOnSpawn = false; sg.Parent = player.PlayerGui
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 200)
-frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-frame.BorderSizePixel = 0
-frame.Parent = sg
+frame.Size = UDim2.new(0, 300, 0, 200); frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(10, 13, 22); frame.BorderSizePixel = 0; frame.Parent = sg
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0, 200, 240)
-stroke.Thickness = 1`,
+stroke.Color = Color3.fromRGB(0, 200, 240); stroke.Thickness = 1`,
 ds:`-- DATASTORE SAVE/LOAD
 local DS = game:GetService("DataStoreService")
 local store = DS:GetDataStore("PlayerData_v1")
--- Load:
-local ok, data = pcall(function()
-  return store:GetAsync(tostring(player.UserId))
-end)
+local ok, data = pcall(function() return store:GetAsync(tostring(player.UserId)) end)
 if ok and data then print("Loaded:", data) end
--- Save:
-local ok2, err = pcall(function()
-  store:SetAsync(tostring(player.UserId), {coins = 100, level = 5})
-end)
+local ok2, err = pcall(function() store:SetAsync(tostring(player.UserId), {coins=100,level=5}) end)
 if not ok2 then warn("Save failed:", err) end`,
 };
 function inSnip(n){if(!SNIPS[n])return;const cur=$('code-area').value;$('code-area').value=cur+(cur?'\n\n':'')+SNIPS[n];onCE();toast('Snippet inserted','ok');}
 
-// ─── 3D VIEWPORT ───
+// ── 3D VIEWPORT ──
 function initViewport(){
   vpCanvas=$('mc');const vp=vpCanvas.parentElement;
   vpCanvas.width=vp.clientWidth||280;vpCanvas.height=vp.clientHeight||200;
@@ -1537,8 +1603,8 @@ function uprop(k,v){const o=sceneObjects.find(o=>o.id===selectedObjId);if(!o)ret
 function delObj(){sceneObjects=sceneObjects.filter(o=>o.id!==selectedObjId);selectedObjId=null;selObj(null);render3d();updateSceneTree();}
 function dupeObj(){const o=sceneObjects.find(o=>o.id===selectedObjId);if(!o)return;const id='o'+nextId++;sceneObjects.push({...o,id,name:o.name+'_copy',x:o.x+4});selObj(id);render3d();updateSceneTree();}
 function updateSceneTree(){const t=$('scene-tree');if(!sceneObjects.length){t.innerHTML='<div style="font-size:9px;color:var(--text3)">No objects.</div>';return;}t.innerHTML=sceneObjects.map(o=>`<div class="tree-item${o.id===selectedObjId?' selected':''}" onclick="selObj('${o.id}')" data-id="${o.id}"><span style="flex:1;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.name}</span><span class="ti-cls">${o.className}</span></div>`).join('');}
-function exportScene(){const parts=sceneObjects.filter(o=>o.name!=='Floor');if(!parts.length){toast('No objects.','bad');return;}let lua='-- Place in ServerScriptService (Script)\nlocal workspace = game.Workspace\n\n';parts.forEach(o=>{const n=o.name.replace(/\W/g,'_');lua+=`local ${n}=Instance.new("${o.className}")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position=Vector3.new(${o.x},${o.y},${o.z})\n${n}.Anchored=${o.anchored}\n${n}.Parent=workspace\n\n`;});$('code-area').value=lua;onCE();toast('Exported! Click 📋 Copy to Clipboard.','ok');document.querySelectorAll('.nav-tab')[0].click();}
-function setTool(t){currentTool=t;['sel','mov'].forEach(n=>{const el=$('vt-'+n);if(el)el.classList.toggle('active',n===t.slice(0,3));});}
+function exportScene(){const parts=sceneObjects.filter(o=>o.name!=='Floor');if(!parts.length){toast('No objects.','bad');return;}let lua='-- Place in ServerScriptService\nlocal workspace = game.Workspace\n\n';parts.forEach(o=>{const n=o.name.replace(/\W/g,'_');lua+=`local ${n}=Instance.new("${o.className}")\n${n}.Name="${o.name}"\n${n}.Size=Vector3.new(${o.sx},${o.sy},${o.sz})\n${n}.Position=Vector3.new(${o.x},${o.y},${o.z})\n${n}.Anchored=${o.anchored}\n${n}.Parent=workspace\n\n`;});$('code-area').value=lua;onCE();toast('Exported!','ok');document.querySelector('.nav-tab').click();}
+function setTool(t){currentTool=t;['sel','mov','rot'].forEach(n=>{const el=$('vt-'+n);if(el)el.classList.toggle('active',n===t.slice(0,3));});}
 function setView(v){if(v==='t'){camera={x:0,y:22,z:0.01,rx:-Math.PI/2,ry:0,zoom:1};}else if(v==='f'){camera={x:0,y:4,z:18,rx:0,ry:0,zoom:1};}else{camera={x:0,y:8,z:18,rx:-0.38,ry:0,zoom:1};}render3d();}
 function toggleGrid(){showGrid=!showGrid;render3d();}
 function vpEvents(){
@@ -1557,7 +1623,7 @@ function pickObj3d(e){
 }
 function switchRT(name,btn){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.rpanel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');$('rpanel-'+name).classList.add('active');}
 
-// ─── 3D MODEL VIEWER ───
+// ── 3D MODEL VIEWER ──
 function initM3dViewer(){
   m3dCanvas=$('model3d-canvas');if(!m3dCanvas)return;
   const wrap=m3dCanvas.parentElement;
@@ -1592,6 +1658,7 @@ function drawM3dGrid(){
     if(a&&b){m3dCtx.beginPath();m3dCtx.moveTo(a.sx,a.sy);m3dCtx.lineTo(b.sx,b.sy);m3dCtx.stroke();}
     if(c&&d){m3dCtx.beginPath();m3dCtx.moveTo(c.sx,c.sy);m3dCtx.lineTo(d.sx,d.sy);m3dCtx.stroke();}
   }
+  const o=m3dProj(0,-0.05,0);if(o){m3dCtx.beginPath();m3dCtx.ellipse(o.sx,o.sy,80,20,0,0,Math.PI*2);m3dCtx.fillStyle='rgba(0,229,255,0.03)';m3dCtx.fill();}
 }
 function drawM3dAxes(){
   const o=m3dProj(0,0,0);if(!o)return;
@@ -1624,30 +1691,25 @@ function m3dToggle(group,val,el){
   m3dParams[group]=val;
   document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('[id^="mst-"]').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  genModel3d();
+  el.classList.add('active');genModel3d();
 }
 function genModel3d(){
   m3dObjects=[];m3dNextId=1;
   const{base,complexity,scale,parts}=m3dParams;
   const builders={humanoid:buildHumanoid,monster:buildMonster,robot:buildRobot,vehicle:buildVehicle,building:buildBuilding,weapon:buildWeapon};
-  const fn=builders[base]||buildHumanoid;
-  fn(scale,complexity,parts);
+  const fn=builders[base]||buildHumanoid;fn(scale,complexity,parts);
   updateM3dPartList();renderM3d();
 }
 function m3dPart(name,x,y,z,w,h,d,color){m3dObjects.push({id:'m'+m3dNextId++,name,x,y,z,w,h,d,color});}
 function buildHumanoid(sc,cx){
   const skin='#c8956c';const cloth='#3a5a8a';const dark='#1a2a4a';
-  m3dPart('Head',0,sc*3.2,0,sc*1.6,sc*1.6,sc*1.6,skin);
-  m3dPart('Torso',0,sc*1.4,0,sc*2,sc*2.4,sc*1.2,cloth);
-  m3dPart('LArm',-sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
-  m3dPart('RArm',sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
-  m3dPart('LLeg',-sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
-  m3dPart('RLeg',sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
+  m3dPart('Head',0,sc*3.2,0,sc*1.6,sc*1.6,sc*1.6,skin);m3dPart('Torso',0,sc*1.4,0,sc*2,sc*2.4,sc*1.2,cloth);
+  m3dPart('LArm',-sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);m3dPart('RArm',sc*1.4,sc*1.4,0,sc*.8,sc*2.4,sc*.8,skin);
+  m3dPart('LLeg',-sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);m3dPart('RLeg',sc*.6,-sc*.6,0,sc*.9,sc*2.4,sc*.9,cloth);
   if(cx>=4){m3dPart('LFoot',-sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);m3dPart('RFoot',sc*.6,-sc*1.9,sc*.2,sc*.9,sc*.5,sc*1.4,dark);}
   if(cx>=6){m3dPart('LHand',-sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);m3dPart('RHand',sc*1.4,sc*.2,0,sc*.7,sc*.7,sc*.7,skin);}
-  if(cx>=7){m3dPart('Hair',0,sc*4.1,0,sc*1.7,sc*.5,sc*1.7,'#2a1a0a');}
-  if(cx>=8){m3dPart('Hat',0,sc*4.5,0,sc*1.8,sc*1,sc*1.8,'#cc3a3a');}
+  if(cx>=7)m3dPart('Hair',0,sc*4.1,0,sc*1.7,sc*.5,sc*1.7,'#2a1a0a');
+  if(cx>=8)m3dPart('Hat',0,sc*4.5,0,sc*1.8,sc*1,sc*1.8,'#cc3a3a');
 }
 function buildMonster(sc,cx){
   const body='#2a4a2a';const skin='#3a6a3a';const dark='#1a2a1a';
@@ -1655,7 +1717,7 @@ function buildMonster(sc,cx){
   m3dPart('LArm',-sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);m3dPart('RArm',sc*2.2,sc*.5,0,sc*1.2,sc*3.5,sc*1.2,dark);
   m3dPart('LLeg',-sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);m3dPart('RLeg',sc*.9,-sc*2,0,sc*1.2,sc*2.5,sc*1.2,body);
   if(cx>=5){m3dPart('Horns',0,sc*3.4,0,sc*.5,sc*1.2,sc*.5,'#8a2a2a');m3dPart('HornL',-sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');m3dPart('HornR',sc*.8,sc*3.2,0,sc*.4,sc*.9,sc*.4,'#8a2a2a');}
-  if(cx>=7){m3dPart('Tail',sc*1.5,-sc*1.5,sc*1.2,sc*.6,sc*.6,sc*2.5,'#2a6a2a');}
+  if(cx>=7)m3dPart('Tail',sc*1.5,-sc*1.5,sc*1.2,sc*.6,sc*.6,sc*2.5,'#2a6a2a');
 }
 function buildRobot(sc,cx){
   const metal='#5a6a7a';const dark='#2a3040';const light='#8a9aaa';const glow='#00aaff';
@@ -1672,25 +1734,28 @@ function buildVehicle(sc,cx){
   m3dPart('BLWheel',-sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);m3dPart('BRWheel',sc*1.5,sc*.1,-sc*1.1,sc*1,sc*1,sc*.4,dark);
   m3dPart('Windshield',0,sc*1.8,sc*.88,sc*2.4,sc*.7,sc*.1,glass);
   if(cx>=5){m3dPart('FBumper',0,sc*.4,sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);m3dPart('BBumper',0,sc*.4,-sc*1.12,sc*3.4,sc*.8,sc*.4,chrome);}
+  if(cx>=7)m3dPart('Spoiler',0,sc*1.6,-sc*1.2,sc*3,sc*.2,sc*.4,'#0a0a0a');
 }
 function buildBuilding(sc,cx){
-  const wall='#8a8a9a';const window_c='#4499cc';const roof='#6a4a3a';const door='#5a3a2a';
+  const wall='#8a8a9a';const wc='#4499cc';const roof='#6a4a3a';const door='#5a3a2a';
   m3dPart('Foundation',0,-sc*.25,0,sc*5,sc*.5,sc*4,wall);m3dPart('WallBase',0,sc*2.5,0,sc*4.8,sc*5,sc*3.8,wall);
   m3dPart('Roof',0,sc*5.5,0,sc*5.5,sc*1,sc*4.5,roof);m3dPart('Door',0,sc*1.5,sc*1.92,sc*1,sc*2.8,sc*.2,door);
-  ['W1','W2','W3','W4'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*3.5,sc*1.92,sc*.9,sc*1.2,sc*.1,window_c));
-  if(cx>=5){['W5','W6','W7','W8'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*1.8,sc*1.92,sc*.9,sc*1.2,sc*.1,window_c));}
-  if(cx>=7){m3dPart('Chimney',sc*1.5,sc*6.5,-sc*.5,sc*.8,sc*2,sc*.8,'#5a5a6a');}
+  ['W1','W2','W3','W4'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*3.5,sc*1.92,sc*.9,sc*1.2,sc*.1,wc));
+  if(cx>=5){['W5','W6','W7','W8'].forEach((n,i)=>m3dPart(n,-sc*1.5+i*sc,sc*1.8,sc*1.92,sc*.9,sc*1.2,sc*.1,wc));}
+  if(cx>=7)m3dPart('Chimney',sc*1.5,sc*6.5,-sc*.5,sc*.8,sc*2,sc*.8,'#5a5a6a');
 }
 function buildWeapon(sc,cx){
   const light='#9aaabc';const grip='#4a3020';const gold='#cc9922';
-  m3dPart('Blade',0,sc*2,0,sc*.4,sc*5,sc*.2,light);m3dPart('Guard',0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);
-  m3dPart('Grip',0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);m3dPart('Pommel',0,-sc*2.5,0,sc*.7,sc*.7,sc*.7,gold);
-  if(cx>=5){m3dPart('Gem',0,sc*.15,sc*.28,sc*.4,sc*.4,sc*.4,'#aa2288');}
+  m3dPart('Blade',0,sc*2,0,sc*.4,sc*5,sc*.2,light);m3dPart('BladeEdge',sc*.22,sc*2,0,sc*.08,sc*5,sc*.15,light);
+  m3dPart('Guard',0,sc*.1,0,sc*2,sc*.5,sc*.5,gold);m3dPart('Grip',0,-sc*1.2,0,sc*.45,sc*2.4,sc*.45,grip);
+  m3dPart('Pommel',0,-sc*2.5,0,sc*.7,sc*.7,sc*.7,gold);
+  if(cx>=5)m3dPart('Gem',0,sc*.15,sc*.28,sc*.4,sc*.4,sc*.4,'#aa2288');
+  if(cx>=7){m3dPart('EngL',-sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);m3dPart('EngR',sc*.5,sc*3,sc*.12,sc*.1,sc*1.5,sc*.05,gold);}
 }
 function updateM3dPartList(){
   const list=$('m3d-part-list');
   list.innerHTML=m3dObjects.slice(0,12).map(o=>`<div class="m3d-part${o.id===m3dSelectedId?' selected':''}" onclick="m3dSelPart('${o.id}')"><div class="m3d-color-dot" style="background:${o.color}"></div><span>${o.name}</span><span style="margin-left:auto;font-size:7px;color:var(--text3)">${o.w.toFixed(1)}×${o.h.toFixed(1)}×${o.d.toFixed(1)}</span></div>`).join('');
-  if(m3dObjects.length>12)list.innerHTML+=`<div style="font-size:8px;color:var(--text3);padding:3px 6px">+${m3dObjects.length-12} more…</div>`;
+  if(m3dObjects.length>12)list.innerHTML+=`<div style="font-size:8px;color:var(--text3);padding:3px 6px">+${m3dObjects.length-12} more parts…</div>`;
   $('m3d-info').textContent=`${m3dObjects.length} parts total.`;
 }
 function m3dSelPart(id){m3dSelectedId=id;updateM3dPartList();renderM3d();}
@@ -1713,39 +1778,42 @@ function m3dPreset(name){
 async function m3dAIGenerate(){
   const prompt=$('m3d-prompt').value.trim();
   if(!prompt){toast('Describe a model.','bad');return;}
-  const prog=$('m3d-prog');prog.classList.add('on');
-  toast('AI analyzing…','ai');
-  const sys=`You are a 3D model config AI. Respond ONLY with valid JSON like: {"base":"humanoid","style":"lowpoly","complexity":5,"scale":2}. No other text.`;
+  const btn=$('m3d-ai-btn');
+  const prog=$('m3d-prog');
+  btn.disabled=true;btn.textContent='Generating…';prog.classList.add('on');
+  toast('AI analyzing description…','ai');
+  const sys=`You are a 3D model config AI. Based on the description respond ONLY with valid JSON (no markdown): {"base":"humanoid|monster|robot|vehicle|building|weapon","style":"lowpoly|blocky|smooth","complexity":1-10,"scale":1-5}`;
   const r=await callAI(prompt,sys,200);
-  prog.classList.remove('on');
+  prog.classList.remove('on');btn.disabled=false;btn.textContent='✦ AI Generate';
   if(r){
     try{
       const txt=r.replace(/```json|```/g,'').trim();
       const cfg=JSON.parse(txt);
       if(cfg.base)m3dParams.base=cfg.base;
-      if(cfg.complexity)m3dParams.complexity=Math.min(10,cfg.complexity);
-      if(cfg.scale)m3dParams.scale=Math.min(5,cfg.scale);
+      if(cfg.complexity)m3dParams.complexity=Math.min(10,+cfg.complexity);
+      if(cfg.scale)m3dParams.scale=Math.min(5,+cfg.scale);
       document.querySelectorAll('[id^="ms-"]').forEach(x=>x.classList.remove('active'));
       const el=$('ms-'+m3dParams.base);if(el)el.classList.add('active');
-      genModel3d();toast('Model generated!','ok');
+      genModel3d();toast('AI model generated!','ok');
     }catch{genModel3d();toast('Generated!','ok');}
-  }else{genModel3d();toast('Generated!','ok');}
+  }else{genModel3d();toast('Generated (fallback)!','ok');}
 }
 function exportModelToLua(){
   if(!m3dObjects.length){toast('No model generated.','bad');return;}
-  let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Place in ServerScriptService (Script)\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
+  let lua=`-- 3D Model: ${m3dParams.base} (${m3dObjects.length} parts)\n-- Place in ServerScriptService\nlocal model = Instance.new("Model")\nmodel.Name = "${m3dParams.base.charAt(0).toUpperCase()+m3dParams.base.slice(1)}Model"\nmodel.Parent = workspace\n\n`;
   m3dObjects.forEach(o=>{
     const n=o.name.replace(/\W/g,'_');
     const h=o.color.replace('#','');
     const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
     lua+=`local ${n} = Instance.new("Part")\n${n}.Name = "${o.name}"\n${n}.Size = Vector3.new(${o.w.toFixed(2)}, ${o.h.toFixed(2)}, ${o.d.toFixed(2)})\n${n}.Position = Vector3.new(${o.x.toFixed(2)}, ${o.y.toFixed(2)}, ${o.z.toFixed(2)})\n${n}.BrickColor = BrickColor.new(Color3.fromRGB(${r}, ${g}, ${b}))\n${n}.Material = Enum.Material.SmoothPlastic\n${n}.Anchored = true\n${n}.Parent = model\n\n`;
   });
+  lua+=`model.PrimaryPart = model:FindFirstChild("Body") or model:FindFirstChild("Torso") or model:GetChildren()[1]\nprint("[Bridge] Model inserted:", model.Name, "with ${m3dObjects.length} parts")`;
   $('code-area').value=lua;onCE();
-  document.querySelectorAll('.nav-tab')[0].click();
-  toast(`Model exported! Click 📋 Copy to Clipboard.`,'ok');
+  document.querySelector('.nav-tab').click();
+  toast(`Model exported! ${m3dObjects.length} parts.`,'ok');
 }
 
-// ─── TERRAIN ───
+// ── TERRAIN ──
 function setBiome(b,el){tp.biome=b;document.querySelectorAll('.biome-btn').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
 function toggleFeat(f,el){tp.features[f]=!tp.features[f];el.classList.toggle('active',tp.features[f]);}
 function initTerrainCanvas(){
@@ -1774,8 +1842,7 @@ function genTerrain(){
     for(let dr=-br;dr<=br;dr++)for(let dc=-br;dc<=br;dc++){
       const nr=pr+dr,nc=pc+dc;
       if(nr>=0&&nr<rows2&&nc>=0&&nc<cols2&&Math.hypot(dr,dc)<=br){
-        const str=.025*(1-Math.hypot(dr,dc)/br);
-        terrainMap[nr][nc]=Math.min(1,Math.max(0,terrainMap[nr][nc]+str));
+        terrainMap[nr][nc]=Math.min(1,Math.max(0,terrainMap[nr][nc]+.025*(1-Math.hypot(dr,dc)/br)));
       }
     }
     renderTerrain();
@@ -1797,65 +1864,56 @@ function renderTerrain(){
 }
 function exportTerrainLua(){
   const mats={grassland:['Grass','Grass','Ground','Rock','Snow'],desert:['Sand','Sand','Sandstone','Rock','Snow'],arctic:['Glacier','Snow','Snow','Snow','Snow'],volcano:['CrackedLava','Basalt','Basalt','Rock','Snow'],ocean:['Water','Sand','Rock','Rock','Snow'],forest:['LeafyGrass','Grass','Ground','Rock','Snow']}[tp.biome]||['Grass','Grass','Ground','Rock','Snow'];
-  const lua=`-- Terrain Generator — Place as a Script in ServerScriptService and run ONCE
--- WARNING: This will CLEAR existing terrain. Back up first!
+  const lua=`-- Terrain Generator — Script in ServerScriptService, run ONCE
+-- WARNING: Clears existing terrain!
 local terrain = workspace.Terrain
 terrain:Clear()
 local function noise(x, z, seed)
-  return math.sin(x * 0.03 + seed) * math.cos(z * 0.03 + seed * 0.7) * 0.5
-    + math.sin(x * 0.06 + seed * 1.3) * math.cos(z * 0.06) * 0.25
-    + math.sin(x * 0.12) * math.cos(z * 0.12 + seed) * 0.125
+  return math.sin(x*0.03+seed)*math.cos(z*0.03+seed*0.7)*0.5
+    + math.sin(x*0.06+seed*1.3)*math.cos(z*0.06)*0.25
+    + math.sin(x*0.12)*math.cos(z*0.12+seed)*0.125
 end
-local SEED = math.random(1, 999)
-local WIDTH = ${tp.width}
-local MAX_HEIGHT = ${tp.height}
-local HALF = WIDTH / 2
-local CELL = 8
-print("[Terrain] Generating ${tp.biome} terrain (" .. WIDTH .. "x" .. WIDTH .. ")...")
+local SEED = math.random(1,999)
+local WIDTH = ${tp.width}; local MAX_HEIGHT = ${tp.height}
+local HALF = WIDTH/2; local CELL = 8
+print("[Terrain] Generating ${tp.biome} terrain...")
 for x = -HALF, HALF, CELL do
   for z = -HALF, HALF, CELL do
-    local n = (noise(x, z, SEED) + 1) / 2
-    local h = math.floor(n * MAX_HEIGHT)
+    local n = (noise(x,z,SEED)+1)/2
+    local h = math.floor(n*MAX_HEIGHT)
     local mat
-    if h < MAX_HEIGHT * ${(tp.water/100).toFixed(2)} then
-      mat = Enum.Material.Water
-    elseif h < MAX_HEIGHT * 0.35 then
-      mat = Enum.Material.${mats[0]}
-    elseif h < MAX_HEIGHT * 0.65 then
-      mat = Enum.Material.${mats[1]}
-    elseif h < MAX_HEIGHT * 0.82 then
-      mat = Enum.Material.${mats[2]}
-    else
-      mat = Enum.Material.${mats[3]}
-    end
-    terrain:FillBlock(CFrame.new(x, h / 2, z), Vector3.new(CELL, h, CELL), mat)
+    if h < MAX_HEIGHT*${(tp.water/100).toFixed(2)} then mat = Enum.Material.Water
+    elseif h < MAX_HEIGHT*0.35 then mat = Enum.Material.${mats[0]}
+    elseif h < MAX_HEIGHT*0.65 then mat = Enum.Material.${mats[1]}
+    elseif h < MAX_HEIGHT*0.82 then mat = Enum.Material.${mats[2]}
+    else mat = Enum.Material.${mats[3]} end
+    terrain:FillBlock(CFrame.new(x,h/2,z), Vector3.new(CELL,h,CELL), mat)
   end
   task.wait()
 end
 print("[Terrain] Done!")`;
-  $('code-area').value=lua;onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Terrain Lua exported! Click 📋 Copy to Clipboard.','gold');}
-
+  $('code-area').value=lua;onCE();document.querySelector('.nav-tab').click();toast('Terrain Lua exported!','gold');
+}
 async function genTerrainAI(){
   const prompt=$('terrain-ai-inp').value.trim();
   if(!prompt){toast('Describe your terrain.','bad');return;}
   const btn=$('terrain-ai-btn');btn.textContent='Generating…';btn.disabled=true;
   toast('AI generating terrain script…','ai');
-  const userMsg=`Generate a complete advanced Roblox terrain generation Script for ServerScriptService for: ${prompt}
+  const userMsg=`Generate a complete advanced Roblox terrain generation Script (for ServerScriptService) for: ${prompt}
 Requirements:
-- Use workspace.Terrain:FillBlock() with Enum.Material values
-- Multi-octave noise function
+- workspace.Terrain:FillBlock() with correct Enum.Material values
+- Multi-octave noise function for natural terrain
 - task.wait() every row for performance
-- terrain:Clear() at start
-- Print progress
-- BindToClose not needed for terrain gen
-Return ONLY raw Luau code. No markdown fences. No backticks.`;
+- terrain:Clear() at the start
+- Print progress messages
+Return ONLY raw Luau code. No markdown. No backticks.`;
   const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
   btn.textContent='✦ Generate Advanced Lua';btn.disabled=false;
-  if(r){$('code-area').value=cc(r);onCE();document.querySelectorAll('.nav-tab')[0].click();toast('Terrain script ready! Click 📋 Copy to Clipboard.','gold');}
+  if(r){$('code-area').value=cc(r);onCE();document.querySelector('.nav-tab').click();toast('Terrain script generated!','gold');}
   else toast('Generation failed.','bad');
 }
 
-// ─── GUI BUILDER ───
+// ── GUI BUILDER ──
 const GUI_DEF={Frame:{bg:'#1a2035',w:200,h:150,text:'',border:true},TextLabel:{bg:'transparent',w:150,h:30,text:'Text Label',border:false},TextButton:{bg:'#0055aa',w:160,h:40,text:'Click Me',border:true},TextBox:{bg:'#0d1020',w:160,h:36,text:'',border:true},ImageLabel:{bg:'#333344',w:100,h:100,text:'🖼',border:false},ProgressBar:{bg:'#0d1020',w:200,h:18,text:'',border:true,progress:.6}};
 function addGuiEl(type){
   const def=GUI_DEF[type]||{bg:'#1a2035',w:120,h:60,text:type,border:true};
@@ -1870,7 +1928,7 @@ function renderGuiScreen(){
     div.className='gui-el'+(el.id===selGuiId?' sel':'');
     div.style.cssText=`left:${el.x}px;top:${el.y}px;width:${el.w}px;height:${el.h}px;background:${el.bg==='transparent'?'transparent':el.bg};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#e8eaf2;overflow:hidden;font-family:'JetBrains Mono',monospace;`;
     if(el.border)div.style.border='1px solid rgba(0,200,240,.3)';
-    if(el.progress!==null){div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:6px"></div>`;}
+    if(el.progress!==null)div.innerHTML=`<div style="width:${el.progress*100}%;height:100%;background:linear-gradient(90deg,#00e5ff,#7c3aed);border-radius:6px"></div>`;
     else if(el.text)div.textContent=el.text;
     div.dataset.id=el.id;
     div.addEventListener('mousedown',e=>{selGuiEl(el.id);guiDragging=true;guiDragStart={x:e.clientX-el.x,y:e.clientY-el.y};guiDragEl=el;e.stopPropagation();});
@@ -1916,7 +1974,7 @@ function exportGuiLua(){
     if(el.text&&cls!=='Frame')lua+=`${v}.Text = "${el.text}"\n${v}.TextColor3 = Color3.new(1, 1, 1)\n${v}.Font = Enum.Font.GothamBold\n${v}.TextSize = 13\n`;
     lua+=`${v}.Parent = sg\nInstance.new("UICorner", ${v}).CornerRadius = UDim.new(0, 8)\n\n`;
   });
-  $('code-area').value=lua;onCE();toast('GUI exported! Click 📋 Copy to Clipboard.','ok');document.querySelectorAll('.nav-tab')[0].click();
+  $('code-area').value=lua;onCE();toast('GUI Lua exported!','ok');document.querySelector('.nav-tab').click();
 }
 async function genGuiAI(){
   const prompt=$('gui-ai-inp').value.trim();
@@ -1928,31 +1986,30 @@ Requirements:
 - ScreenGui with ResetOnSpawn = false, parent to player.PlayerGui
 - UICorner on all frames (radius 8-14)
 - UIStroke for glowing borders
-- TweenService for open/close animations
-- Proper TextSize numbers (NOT FontSize enum)
+- TweenService for open/close animations (slide in, fade in)
+- TextSize = number (NOT FontSize enum)
 - BackgroundColor3 = Color3.fromRGB() (NOT BackgroundColor)
-- Include a close button if appropriate
-- Add hover TweenService effects on buttons
-- Comments explaining each major section
+- Include close button with hover effect if appropriate
+- Hover TweenService effects on buttons
+- Add -- comments explaining each section
 Return ONLY raw Luau code. No markdown. No backticks.`;
   const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
   btn.textContent='Generate GUI Lua';btn.disabled=false;
-  if(r){$('code-area').value=cc(r);onCE();document.querySelectorAll('.nav-tab')[0].click();toast('GUI script ready! Click 📋 Copy to Clipboard.','ok');}
+  if(r){$('code-area').value=cc(r);onCE();document.querySelector('.nav-tab').click();toast('GUI script generated!','ok');}
   else toast('Generation failed.','bad');
 }
 
-// ─── NPC CREATOR ───
+// ── NPC CREATOR ──
 function npcT(group,val,el){
   np[group]=val;
   const prefix=group==='type'?'nt':group==='behavior'?'nb':group==='combat'?'nc':'n?';
   document.querySelectorAll(`[id^="${prefix}-"]`).forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  drawNPC();
+  el.classList.add('active');drawNPC();
 }
 function drawNPC(){
   const c=$('npc-c');if(!c)return;
   const ctx2=c.getContext('2d'),W=280,H=300,cx=140;
-  const cosA=Math.cos(npcAngle),sinA=Math.sin(npcAngle);
+  const sinA=Math.sin(npcAngle);
   ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#040609';ctx2.fillRect(0,0,W,H);
   ctx2.strokeStyle='rgba(0,229,255,0.03)';ctx2.lineWidth=.5;
   for(let i=0;i<W;i+=20){ctx2.beginPath();ctx2.moveTo(i,0);ctx2.lineTo(i,H);ctx2.stroke();}
@@ -1964,23 +2021,24 @@ function drawNPC(){
   const skew=sinA*10*sc;
   ctx2.beginPath();ctx2.ellipse(cx,cy+4,24*sc,7*sc,0,0,Math.PI*2);ctx2.fillStyle='rgba(0,0,0,.4)';ctx2.fill();
   ctx2.fillStyle=cloth;
-  ctx2.fillRect(cx-14*sc+skew,cy-40*sc,10*sc,40*sc);
-  ctx2.fillRect(cx+4*sc+skew,cy-40*sc,10*sc,40*sc);
+  ctx2.fillRect(cx-14*sc+skew,cy-40*sc,10*sc,40*sc);ctx2.fillRect(cx+4*sc+skew,cy-40*sc,10*sc,40*sc);
   ctx2.fillRect(cx-26*sc+skew,cy-100*sc,52*sc,60*sc);
   ctx2.fillStyle=skin;
-  ctx2.fillRect(cx-40*sc+skew,cy-98*sc,12*sc,48*sc);
-  ctx2.fillRect(cx+28*sc+skew,cy-98*sc,12*sc,48*sc);
+  ctx2.fillRect(cx-40*sc+skew,cy-98*sc,12*sc,48*sc);ctx2.fillRect(cx+28*sc+skew,cy-98*sc,12*sc,48*sc);
   ctx2.beginPath();ctx2.roundRect(cx-22*sc+skew,cy-148*sc,44*sc,48*sc,np.type==='robot'?6:11);ctx2.fill();
   ctx2.fillStyle=np.type==='boss'?'#ff0000':np.type==='monster'?'#ffaa00':'#1a1a2a';
   ctx2.beginPath();ctx2.arc(cx-9*sc+skew,cy-128*sc,4.5*sc,0,Math.PI*2);ctx2.fill();
   ctx2.beginPath();ctx2.arc(cx+9*sc+skew,cy-128*sc,4.5*sc,0,Math.PI*2);ctx2.fill();
   if(np.type==='boss'){ctx2.fillStyle='#6600aa';ctx2.beginPath();ctx2.arc(cx-10*sc+skew,cy-168*sc,6*sc,0,Math.PI*2);ctx2.fill();ctx2.beginPath();ctx2.arc(cx+10*sc+skew,cy-168*sc,6*sc,0,Math.PI*2);ctx2.fill();}
-  ctx2.fillStyle='white';ctx2.font=`bold 11px JetBrains Mono,monospace`;ctx2.textAlign='center';ctx2.fillText($('npc-name')?.value||'NPC',cx,38);
-  ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`8px JetBrains Mono,monospace`;ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-22);ctx2.fillText(np.behavior+' · '+np.combat,cx,H-10);ctx2.textAlign='left';
+  ctx2.fillStyle='white';ctx2.font=`bold 11px JetBrains Mono,monospace`;ctx2.textAlign='center';
+  ctx2.fillText($('npc-name')?.value||'NPC',cx,38);
+  ctx2.fillStyle='rgba(255,255,255,.4)';ctx2.font=`8px JetBrains Mono,monospace`;
+  ctx2.fillText(`HP:${np.health} · SPD:${np.speed} · DMG:${np.damage}`,cx,H-22);
+  ctx2.fillText(np.behavior+' · '+np.combat,cx,H-10);ctx2.textAlign='left';
 }
 async function genNPC(){
   const name=$('npc-name')?.value||'EnemyNPC';
-  const userMsg=`Generate a complete production-ready Roblox server Script for NPC "${name}":
+  const userMsg=`Generate a complete production-ready Roblox server Script for NPC named "${name}":
 - MaxHealth: ${np.health}, WalkSpeed: ${np.speed}, DetectRange: ${np.detect}, Damage: ${np.damage}
 - Behavior: ${np.behavior}
 - Combat: ${np.combat}
@@ -1988,13 +2046,13 @@ async function genNPC(){
 Include:
 - PathfindingService:CreatePath() with AgentRadius and AgentHeight
 - RunService.Heartbeat for main AI loop
-- BillboardGui health bar (Frame + UICorner, updates on HealthChanged)
-- humanoid.Died:Connect cleanup, task.wait(5), then Destroy
-- All connections stored and Disconnected on death
+- BillboardGui health bar above head (Frame + UICorner, updates on HealthChanged)
+- humanoid.Died:Connect with cleanup, task.wait(5), then Destroy
+- All connections disconnected on death
 Return ONLY raw Luau code. No markdown. No backticks.`;
   toast('Generating NPC script…','ai');$('npc-out').textContent='Generating…';
   const r=await callAI(userMsg,GENIUS_SYSTEM,2500);
-  if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Script ready! Click 📋 Copy to Clipboard.';document.querySelectorAll('.nav-tab')[0].click();toast('NPC script ready! Click 📋 Copy to Clipboard.','ok');}
+  if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Script ready in editor!';document.querySelector('.nav-tab').click();toast('NPC script generated!','ok');}
   else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
 }
 async function genNPCAI(){
@@ -2003,19 +2061,19 @@ async function genNPCAI(){
   const btn=$('npc-ai-btn');btn.textContent='Generating…';btn.disabled=true;
   toast('AI generating custom NPC…','ai');$('npc-out').textContent='Generating…';
   const userMsg=`Generate a complete advanced Roblox NPC server Script for: ${prompt}
-Include all relevant features:
-- PathfindingService with AgentRadius, AgentHeight, AgentCanJump params
+Include all relevant:
+- PathfindingService with AgentRadius, AgentHeight, AgentCanJump
 - RunService.Heartbeat for main loop
 - Multiple phases/states if boss
 - BillboardGui health bar with UICorner, smooth tween on HealthChanged
-- All connections in a table, cleaned up on Died
+- All connections in table, cleaned up on Died
 - task.wait() not wait()
 - If ranged: Instance.new("Part") projectile with BodyVelocity
 - If AoE: use :GetPartBoundsInRadius()
 Return ONLY raw Luau code. No markdown. No backticks.`;
   const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
   btn.textContent='✦ Generate Advanced NPC Lua';btn.disabled=false;
-  if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Custom NPC ready! Click 📋 Copy.';document.querySelectorAll('.nav-tab')[0].click();toast('Custom NPC ready! Click 📋 Copy to Clipboard.','ok');}
+  if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Custom NPC ready!';document.querySelector('.nav-tab').click();toast('Custom NPC generated!','ok');}
   else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
 }
 const npcCv=$('npc-c');if(npcCv){
@@ -2024,32 +2082,37 @@ const npcCv=$('npc-c');if(npcCv){
   npcCv.addEventListener('mouseup',()=>npcDragging=false);
 }
 
-// ─── ADMIN SUITE ───
+// ── ADMIN SUITE ──
 const ADMIN_CATEGORIES=[
   {id:'full',icon:'👑',label:'Full Admin System',items:[
-    {id:'full_complete',label:'Complete Admin System',desc:'40+ commands, rank system, GUI console, logging'},
+    {id:'full_complete',label:'Complete Admin (Server+Client)',desc:'40+ commands, rank system, GUI console, DataStore logging'},
     {id:'full_commands',label:'Commands Only (Server)',desc:'Text-command handler with rank gating'},
     {id:'full_gui',label:'Admin Panel GUI (Client)',desc:'Animated F9 panel with player list and buttons'},
   ]},
   {id:'moderation',icon:'🔨',label:'Moderation',items:[
-    {id:'mod_ban',label:'Ban System',desc:'Permanent/temp bans with DataStore and ban list GUI'},
-    {id:'mod_kick',label:'Kick + Warn System',desc:'Warn tracker, auto-kick at 3 warns'},
-    {id:'mod_anticheat',label:'Anti-Cheat',desc:'Speed, fly, teleport exploit detection'},
+    {id:'mod_ban',label:'Ban System',desc:'Permanent/temp bans with DataStore, ban list GUI'},
+    {id:'mod_kick',label:'Kick + Warn System',desc:'Warn tracker, auto-kick at 3 warns, log GUI'},
+    {id:'mod_mute',label:'Mute System',desc:'Chat mute with duration, DataStore persistence'},
+    {id:'mod_anticheat',label:'Anti-Cheat',desc:'Speed, fly, teleport, damage exploit detection'},
   ]},
   {id:'ranks',icon:'🎖',label:'Ranks & Permissions',items:[
-    {id:'rank_system',label:'Rank Permission System',desc:'5-tier ranks, DataStore, group support'},
+    {id:'rank_system',label:'Rank Permission System',desc:'5-tier ranks, group support, DataStore'},
     {id:'rank_tags',label:'Rank Name Tags',desc:'BillboardGui above head with rank color'},
+    {id:'rank_gui',label:'Rank Panel GUI',desc:'Animated rank card with TweenService'},
   ]},
   {id:'notifications',icon:'📢',label:'Notifications',items:[
     {id:'notif_toast',label:'Toast Notifications',desc:'Stack from right, slide in/out animation'},
     {id:'notif_announce',label:'Announcements',desc:'Top bar slide down, server-wide message'},
+    {id:'notif_dialog',label:'Dialog System',desc:'Modal with confirm/cancel, TweenService'},
   ]},
   {id:'utilities',icon:'⚙',label:'Utilities',items:[
-    {id:'util_emotes',label:'Emote System',desc:'Emote wheel GUI with E key toggle'},
+    {id:'util_emotes',label:'Emote System',desc:'20 emotes, E key wheel, cancel on move'},
+    {id:'util_spectate',label:'Spectate System',desc:'Dead players can spectate others'},
     {id:'util_freecam',label:'Free Camera',desc:'F key free cam for admins'},
+    {id:'util_commandlog',label:'Command Logger',desc:'DataStore log of all admin actions'},
   ]},
 ];
-const adminConfig={gameName:'My Game',prefix:'/',ranks:[{level:1,name:'Member',color:'#aaaaaa'},{level:2,name:'Moderator',color:'#44aaff'},{level:3,name:'Admin',color:'#ffaa00'},{level:4,name:'Head Admin',color:'#ff4444'},{level:5,name:'Owner',color:'#aa44ff'}],enabledCommands:['kick','ban','tp','bring','kill','god','ungod','speed','day','night','freeze','unfreeze'],guiKey:'F9'};
+const adminConfig={gameName:'My Game',prefix:'/',ranks:[{level:1,name:'Member',color:'#aaaaaa'},{level:2,name:'Moderator',color:'#44aaff'},{level:3,name:'Admin',color:'#ffaa00'},{level:4,name:'Head Admin',color:'#ff4444'},{level:5,name:'Owner',color:'#aa44ff'}],enabledCommands:['kick','ban','tp','bring','kill','god','ungod','speed','day','night','freeze','unfreeze'],guiKey:'F9',enableLogging:true};
 
 function initAdminSuite(){
   const cats=$('admin-cats');
@@ -2085,16 +2148,16 @@ function showAdminPlaceholder(){
     <div class="admin-placeholder">
       <div class="admin-placeholder-icon">👑</div>
       <div class="admin-placeholder-title">Select a system</div>
-      <div class="admin-placeholder-sub">Choose from the sidebar, configure it, then click Generate Script. Or type a custom feature below.</div>
+      <div class="admin-placeholder-sub">Choose a system from the sidebar, configure it, then click Generate Script. Or describe a custom feature below.</div>
       <div style="margin-top:16px;width:100%;max-width:340px">
         <div style="font-size:8px;color:var(--text3);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase">Quick Generate</div>
         <div class="admin-quick-grid">
-          <div class="admin-quick-card" onclick="quickAdminGen('full_complete')"><div class="admin-quick-icon">👑</div><div class="admin-quick-name">Full Admin</div><div class="admin-quick-desc">Complete system + GUI</div></div>
+          <div class="admin-quick-card" onclick="quickAdminGen('full_complete')"><div class="admin-quick-icon">👑</div><div class="admin-quick-name">Full Admin</div><div class="admin-quick-desc">Complete system with GUI</div></div>
           <div class="admin-quick-card" onclick="quickAdminGen('mod_ban')"><div class="admin-quick-icon">🔨</div><div class="admin-quick-name">Ban System</div><div class="admin-quick-desc">DataStore bans + GUI</div></div>
           <div class="admin-quick-card" onclick="quickAdminGen('mod_anticheat')"><div class="admin-quick-icon">🛡</div><div class="admin-quick-name">Anti-Cheat</div><div class="admin-quick-desc">Exploit detection</div></div>
           <div class="admin-quick-card" onclick="quickAdminGen('rank_system')"><div class="admin-quick-icon">🎖</div><div class="admin-quick-name">Rank System</div><div class="admin-quick-desc">5 tiers + DataStore</div></div>
-          <div class="admin-quick-card" onclick="quickAdminGen('notif_toast')"><div class="admin-quick-icon">📢</div><div class="admin-quick-name">Notifications</div><div class="admin-quick-desc">Toast + announcements</div></div>
-          <div class="admin-quick-card" onclick="quickAdminGen('util_emotes')"><div class="admin-quick-icon">💃</div><div class="admin-quick-name">Emotes</div><div class="admin-quick-desc">Emote wheel GUI</div></div>
+          <div class="admin-quick-card" onclick="quickAdminGen('notif_toast')"><div class="admin-quick-icon">📢</div><div class="admin-quick-name">Notifications</div><div class="admin-quick-desc">Toast + announcement</div></div>
+          <div class="admin-quick-card" onclick="quickAdminGen('util_emotes')"><div class="admin-quick-icon">💃</div><div class="admin-quick-name">Emotes</div><div class="admin-quick-desc">20 emotes + wheel GUI</div></div>
         </div>
       </div>
     </div>`;
@@ -2106,14 +2169,14 @@ function renderAdminConfig(catId,itemId){
   $('admin-main-content').innerHTML=`
     <div class="admin-main-hdr">
       <div class="admin-main-title">${item.label}</div>
-      <div class="admin-main-desc">${item.desc} — Configure below then click Generate Script.</div>
+      <div class="admin-main-desc">${item.desc}</div>
     </div>
     <div class="admin-config-area">
       <div class="admin-section">
         <div class="admin-section-title">General Settings</div>
         <div class="admin-cfg-grid">
           <div class="admin-cfg-card">
-            <div class="admin-cfg-label">Game Name</div>
+            <div class="admin-cfg-label">Game / System Name</div>
             <input class="admin-cfg-input" value="${adminConfig.gameName}" oninput="adminConfig.gameName=this.value" placeholder="My Game"/>
           </div>
           <div class="admin-cfg-card">
@@ -2128,11 +2191,11 @@ function renderAdminConfig(catId,itemId){
           <div class="rank-list">
             ${adminConfig.ranks.map((r,i)=>`<div class="rank-row"><span class="rank-level" style="color:${r.color}">${r.level}</span><div class="rank-dot" style="background:${r.color}"></div><input class="rank-name-inp" value="${r.name}" oninput="adminConfig.ranks[${i}].name=this.value"/><input type="color" class="rank-color-inp" value="${r.color}" oninput="adminConfig.ranks[${i}].color=this.value"/></div>`).join('')}
           </div>
-          <div style="font-size:8px;color:var(--text3)">Level 5 = highest. Add your UserId at level 5 in the generated script.</div>
+          <div style="font-size:8px;color:var(--text3)">Level 5 = highest permission. Add your UserId = 5 in the generated script.</div>
         </div>
       </div>
-      <div style="text-align:center;padding:12px">
-        <button class="admin-gen-btn" onclick="genAdminScript()" style="width:auto;padding:10px 28px">✦ Generate Script Now</button>
+      <div style="text-align:center;padding-top:8px">
+        <button class="admin-gen-btn" onclick="genAdminScript()" style="width:200px">✦ Generate Script</button>
       </div>
     </div>`;
 }
@@ -2143,63 +2206,133 @@ async function genAdminScript(){
   const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
   toast('Generating admin script…','gold');
   const ranks=adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ');
+  const prefix=adminConfig.prefix;
+  const cmds=adminConfig.enabledCommands.join(', ');
   const PROMPTS={
-full_complete:`Generate a COMPLETE Roblox admin system as two scripts using separators:
+full_complete:`Generate a COMPLETE Roblox admin system using separators:
 ===SCRIPT_SERVER===
--- Script in ServerScriptService
--- Ranks: ${ranks}
--- Prefix: "${adminConfig.prefix}"
--- Commands: ${adminConfig.enabledCommands.join(', ')}
--- Include: RANKS table, getRank(), findPlayer(), all command handlers, DataStore logging, PlayerAdded chat listener
--- Use RemoteEvents in ReplicatedStorage folder "AdminEvents"
+-- Script in ServerScriptService (~200+ lines)
+-- Ranks: ${ranks}, Prefix: "${prefix}", Commands: ${cmds}
+-- RANKS table, getRank(player), findPlayer(partialName)
+-- All command handlers with rank requirements
+-- RemoteEvents in ReplicatedStorage "AdminEvents" folder
+-- DataStore logging of all command usage with timestamps
+-- PlayerAdded chat listener
 ===SCRIPT_LOCAL===
--- LocalScript in StarterPlayerScripts
+-- LocalScript in StarterPlayerScripts (~200+ lines)
 -- Toggle key: ${adminConfig.guiKey}
--- Dark themed panel, UICorner, UIStroke, player list with kick/ban/tp buttons
--- TweenService slide-in from right animation (EasingStyle.Quart, 0.35s)
--- Toast notification system
--- task.wait() not wait(), BackgroundColor3, TextSize (not FontSize)
-Return ONLY raw Luau with separators. No markdown.`,
-full_commands:`Generate a Roblox admin command Script (Server only):
+-- Dark themed panel: Color3.fromRGB(10,13,22), UICorner, UIStroke cyan
+-- Player list ScrollingFrame, per-player kick/ban/tp buttons
+-- TweenService slide-in from right (EasingStyle.Quart Out, 0.35s)
+-- Toast notification system (slide from right, auto-dismiss 3.5s)
+-- Command input box at bottom
+-- task.wait() not wait(), BackgroundColor3, TextSize (NOT FontSize)
+Return ONLY raw Luau code with separators. No markdown.`,
+full_commands:`Generate Roblox admin command Script:
 ===SCRIPT_SERVER===
--- Prefix: "${adminConfig.prefix}", Ranks: ${ranks}
--- Commands: ${adminConfig.enabledCommands.join(', ')}
--- getRank(), findPlayer(), Chatted listener, pcall wrapper, print log
+-- Prefix: "${prefix}", Ranks: ${ranks}
+-- Commands: ${cmds}
+-- getRank(), findPlayer(), Chatted listener, pcall wrapper
 Return ONLY raw Luau with separator. No markdown.`,
-mod_ban:`Generate a ban system as two scripts:
-===SCRIPT_SERVER===
--- BanStore DataStore, PlayerAdded ban check, RemoteEvents for ban/unban
--- TempBan with expiry timestamp
+full_gui:`Generate Roblox admin GUI LocalScript:
 ===SCRIPT_LOCAL===
--- Ban GUI, player input, ban list ScrollingFrame, TweenService
-Return ONLY raw Luau with separators. No markdown.`,
+-- Toggle: ${adminConfig.guiKey}, Dark panel, UICorner, UIStroke cyan
+-- Slide-in TweenService from right, player list, command input, toast system
+-- BackgroundColor3, TextSize (NOT FontSize), task.wait()
+Return ONLY raw Luau with separator. No markdown.`,
+mod_ban:`Generate ban system:
+===SCRIPT_SERVER===
+-- BanStore DataStore, PlayerAdded check, TempBan with expiry
+===SCRIPT_LOCAL===
+-- Ban GUI, player/userId input, ban list, TweenService
+Return ONLY raw Luau. No markdown.`,
+mod_kick:`Generate kick+warn system:
+===SCRIPT_SERVER===
+-- Warn table, 3 warns = auto-kick, chat listener, rank check
+===SCRIPT_LOCAL===
+-- Warn GUI, history log, TweenService
+Return ONLY raw Luau. No markdown.`,
+mod_mute:`Generate mute system:
+===SCRIPT_SERVER===
+-- MuteStore DataStore, duration support, PlayerChatted block
+===SCRIPT_LOCAL===
+-- Mute GUI with duration picker
+Return ONLY raw Luau. No markdown.`,
 mod_anticheat:`Generate anti-cheat Script:
 ===SCRIPT_SERVER===
--- Speed/fly/teleport detection, flag system, warn/kick/ban progression
--- RunService.Heartbeat checks, pcall DataStore
-Return ONLY raw Luau with separator. No markdown.`,
-rank_system:`Generate rank system as two scripts:
+-- Speed hack: WalkSpeed > 22 every 2s via Heartbeat
+-- Fly hack: airborne > 4s detection
+-- Teleport hack: position delta > 100 studs per Heartbeat
+-- Flag system: 1-2 flags=warn, 3=kick, 4+=DataStore ban
+Return ONLY raw Luau. No markdown.`,
+rank_system:`Generate rank system:
 ===SCRIPT_SERVER===
--- RankStore DataStore, RANKS config: ${ranks}
--- SetRank, GetRank, RemoteEvents, BillboardGui name tag
+-- RankStore DataStore, Ranks: ${ranks}
+-- SetRank(userId,level), GetRank(userId), RemoteEvents
+-- PlayerAdded: load rank, apply BillboardGui name tag
 ===SCRIPT_LOCAL===
--- Rank card GUI with TweenService pop animation
-Return ONLY raw Luau with separators. No markdown.`,
-notif_toast:`Generate notification system as two scripts:
+-- Rank card popup GUI, TweenService scale animation
+Return ONLY raw Luau. No markdown.`,
+rank_tags:`Generate rank name tag Script:
 ===SCRIPT_SERVER===
--- RemoteEvents: ShowToast, ShowAnnouncement
+-- RANKS config: ${ranks}
+-- PlayerAdded: BillboardGui above head, rank name + color
+-- StudsOffset, AlwaysOnTop = false, UICorner on background
+Return ONLY raw Luau. No markdown.`,
+rank_gui:`Generate rank panel GUI:
 ===SCRIPT_LOCAL===
--- Toast: slide from right, stack up to 5, auto-remove 3.5s, types: info/success/warn/error
--- Announcement: full-width bar slides down from top, 5s auto-hide
--- TweenService, BackgroundColor3, TextSize
-Return ONLY raw Luau with separators. No markdown.`,
-util_emotes:`Generate emote system as two scripts:
+-- Toggle ${adminConfig.guiKey}, shows own rank card
+-- Gradient matching rank color, TweenService pop animation
+-- BackgroundColor3, TextSize
+Return ONLY raw Luau. No markdown.`,
+notif_toast:`Generate notification system:
 ===SCRIPT_SERVER===
--- RemoteEvent PlayEmote, load animation by id, stop if player moves
+-- RemoteEvents: ShowToast(player,msg,type), ShowAnnouncement(msg)
 ===SCRIPT_LOCAL===
--- E key toggles circular emote wheel (8 emotes), TweenService scale pop
--- Hover effects, click fires server
-Return ONLY raw Luau with separators. No markdown.`,
+-- Toast: slide from right, stack 5 max, auto-remove 3.5s, types: info/success/warn/error
+-- Announcement: full-width bar slides down 5s then hides
+-- All TweenService, BackgroundColor3, TextSize
+Return ONLY raw Luau. No markdown.`,
+notif_announce:`Generate announcement system:
+===SCRIPT_SERVER===
+-- RemoteEvent AnnounceAll(msg), optional priority
+===SCRIPT_LOCAL===
+-- Top bar slides down, 5s auto-hide, TweenService
+Return ONLY raw Luau. No markdown.`,
+notif_dialog:`Generate dialog system:
+===SCRIPT_SERVER===
+-- RemoteEvent ShowDialog(player,title,body,onConfirm)
+===SCRIPT_LOCAL===
+-- Modal with blur, confirm/cancel buttons, TweenService scale pop
+Return ONLY raw Luau. No markdown.`,
+util_emotes:`Generate emote system:
+===SCRIPT_SERVER===
+-- RemoteEvent PlayEmote, load animation, stop if player moves
+-- Emotes: wave, dance, laugh, point, cheer, salute, clap, sit
+===SCRIPT_LOCAL===
+-- E key toggles circular wheel (8 emotes in circle)
+-- TweenService scale from 0 (EasingStyle.Back), hover effects
+-- Close on movement
+Return ONLY raw Luau. No markdown.`,
+util_spectate:`Generate spectate system:
+===SCRIPT_SERVER===
+-- Track dead players, RemoteEvent SpectateTarget
+===SCRIPT_LOCAL===
+-- Camera follow target, cycle through alive players, UI indicator
+Return ONLY raw Luau. No markdown.`,
+util_freecam:`Generate free camera Script:
+===SCRIPT_LOCAL===
+-- F key toggle for admins (check rank via RemoteFunction)
+-- WASD + QE movement, mouse look, configurable speed
+-- Disable player character during freecam
+Return ONLY raw Luau. No markdown.`,
+util_commandlog:`Generate command logger:
+===SCRIPT_SERVER===
+-- DataStore log every admin command: timestamp, commander, target, action
+-- RemoteFunction GetLog for authorized admins
+===SCRIPT_LOCAL===
+-- Log viewer GUI, ScrollingFrame, filter by player
+Return ONLY raw Luau. No markdown.`,
   };
   const p=PROMPTS[selectedAdminItem]||PROMPTS['full_complete'];
   const r=await callAI(p,GENIUS_SYSTEM,4000);
@@ -2210,10 +2343,10 @@ Return ONLY raw Luau with separators. No markdown.`,
     const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
     const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
     $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
-    onCE();document.querySelectorAll('.nav-tab')[0].click();
-    toast('Admin script ready! Click 📋 Copy to Clipboard.','gold');
+    onCE();document.querySelector('.nav-tab').click();
+    toast('Admin script ready! Check the Script Editor.','gold');
     addLog('result','Admin: '+selectedAdminItem);
-  }else toast('Failed','bad');
+  }else toast('Generation failed.','bad');
 }
 async function quickAdminGen(itemId){
   selectedAdminItem=itemId;
@@ -2228,15 +2361,14 @@ async function genAdminCustom(){
   if(!prompt){toast('Describe a custom admin feature.','bad');return;}
   const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
   toast('AI generating custom admin script…','gold');
-  const userMsg=`Generate a production-ready Roblox admin/moderation script for: ${prompt}
-Game: ${adminConfig.gameName}, Prefix: ${adminConfig.prefix}, Ranks: ${adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ')}
+  const userMsg=`Generate production-ready Roblox admin feature: ${prompt}
+Game: ${adminConfig.gameName}, Prefix: ${adminConfig.prefix}
+Ranks: ${adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ')}
 Use separators if multiple scripts needed:
 ===SCRIPT_SERVER===
-(server code)
 ===SCRIPT_LOCAL===
-(client code if needed)
-Rules: task.wait(), BackgroundColor3, TextSize, pcall for DataStore, TweenService for GUI.
-Return ONLY raw Luau code with separators. No markdown.`;
+Rules: task.wait(), BackgroundColor3, TextSize, pcall DataStore, TweenService GUI.
+Return ONLY raw Luau with separators. No markdown.`;
   const r=await callAI(userMsg,GENIUS_SYSTEM,4000);
   btn.disabled=false;btn.textContent='Generate Script';
   if(r){
@@ -2245,22 +2377,21 @@ Return ONLY raw Luau code with separators. No markdown.`;
     const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
     const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
     $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
-    onCE();document.querySelectorAll('.nav-tab')[0].click();
-    toast('Custom admin script ready! Click 📋 Copy to Clipboard.','gold');
+    onCE();document.querySelector('.nav-tab').click();
+    toast('Custom admin script ready!','gold');
   }else toast('Failed','bad');
 }
 function adminGenClick(){
   const customPrompt=$('admin-custom-prompt').value.trim();
-  if(customPrompt){genAdminCustom();}
-  else if(selectedAdminItem){genAdminScript();}
-  else{toast('Select a system from the sidebar or type a custom feature.','bad');}
+  if(customPrompt)genAdminCustom();
+  else if(selectedAdminItem)genAdminScript();
+  else toast('Select a system from sidebar or type a custom feature below.','bad');
 }
 
 // MODAL
 function openModal(t,s,b,btns){$('modal-title').textContent=t;$('modal-sub').textContent=s||'';$('modal-body').innerHTML=b||'';$('modal-btns').innerHTML=btns||'';$('modal-bg').classList.add('open');}
 function closeModal(){$('modal-bg').classList.remove('open');}
 
-// INIT
 onCE();
 </script>
 </body>
