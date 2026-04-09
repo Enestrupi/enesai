@@ -77,6 +77,7 @@ app.post("/api/ai", async (req, res) => {
 
     clearTimeout(timeout);
     const data = await response.json();
+    console.log("OpenRouter response:", JSON.stringify(data));
 
     if (!response.ok) {
       console.error("OpenRouter error:", data);
