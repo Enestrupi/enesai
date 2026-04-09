@@ -2302,6 +2302,7 @@ async function genAdminScript(){
   if(!selectedAdminItem){toast('Select a system first.','bad');return;}
   const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
   toast('Generating admin script…','gold');
+  try{
   const ranks=adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ');
   const prefix=adminConfig.prefix;
   const cmds=adminConfig.enabledCommands.join(', ');
