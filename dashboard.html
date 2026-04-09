@@ -921,7 +921,7 @@ async function callAI(prompt, sysOverride, maxTok) {
       throw new Error("API " + response.status + ": " + errText.slice(0, 120));
     }
     const d = await response.json();
-    const text = (d.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+    const text = (d.content || []).map(b => b.text || "").join("").trim();
     return text || null;
   } catch(e) {
     addLog("err", "AI: " + e.message);
