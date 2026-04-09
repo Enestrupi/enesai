@@ -65,7 +65,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash:free",
+        model: "openrouter/auto",
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
