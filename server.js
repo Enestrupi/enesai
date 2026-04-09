@@ -191,5 +191,5 @@ setInterval(() => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Studio Bridge on port " + PORT);
-  console.log("Groq key: " + (process.env.GROQ_API_KEY ? "SET" : "MISSING"));
+ console.log("OpenRouter key: " + (process.env.OPENROUTER_API_KEY ? "SET" : "MISSING"));
 });
