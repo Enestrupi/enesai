@@ -907,14 +907,13 @@ const BACKEND = "https://enesai-production.up.railway.app";
 async function callAI(prompt, sysOverride, maxTok) {
   if (!maxTok) maxTok = 2000;
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(BACKEND + "/api/ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: maxTok,
+        prompt: prompt,
         system: sysOverride || GENIUS_SYSTEM,
-        messages: [{ role: "user", content: prompt }]
+        maxTokens: maxTok
       })
     });
     if (!response.ok) {
@@ -929,7 +928,6 @@ async function callAI(prompt, sysOverride, maxTok) {
     return null;
   }
 }
-
 // ══════════════════════════════════════════════════════
 // APP STATE
 // ══════════════════════════════════════════════════════
