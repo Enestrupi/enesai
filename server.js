@@ -76,7 +76,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+       model: "llama-3.1-8b-instant",
         max_tokens: MAX_OUTPUT_TOKENS,
         temperature: 0.2,
         messages: [
