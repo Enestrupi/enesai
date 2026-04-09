@@ -50,25 +50,14 @@ app.post("/api/ai", async (req, res) => {
   const { prompt, system } = req.body;
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return res.status(500).json({ error: "GROQ_API_KEY not set on server" });
-
-  // Budget: llama-3.3-70b free tier = ~6000 TPM
-  // System ~300 tokens + output ~4000 tokens = 1700 tokens left for user prompt
-  const MAX_OUTPUT_TOKENS = 4000;
-  const SYSTEM_TOKENS = estimateTokens(ROBLOX_SYSTEM);
-  const EXTRA_TOKENS = system ? Math.min(estimateTokens(system), 100) : 0;
-  const PROMPT_BUDGET = 6000 - SYSTEM_TOKENS - EXTRA_TOKENS - MAX_OUTPUT_TOKENS - 100; // 100 buffer
-
-  const extraSystem = system ? trimToTokens(system, 100) : "";
-  const fullSystem = ROBLOX_SYSTEM + (extraSystem ? "\n" + extraSystem : "");
-  const trimmedPrompt = trimToTokens(prompt, Math.max(PROMPT_BUDGET, 500));
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return res.status(500).json({ error: "OPENROUTER_API_KEY not set" });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       signal: controller.signal,
       headers: {
@@ -76,12 +65,12 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-       model: "llama-3.1-8b-instant",
-        max_tokens: MAX_OUTPUT_TOKENS,
+        model: "deepseek/deepseek-r1-0528:free",
+        max_tokens: 4000,
         temperature: 0.2,
         messages: [
-          { role: "system", content: fullSystem },
-          { role: "user",   content: trimmedPrompt }
+          { role: "system", content: system || ROBLOX_SYSTEM },
+          { role: "user", content: prompt }
         ]
       })
     });
@@ -90,8 +79,8 @@ app.post("/api/ai", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Groq error:", data);
-      return res.status(500).json({ error: data.error?.message || "Groq API error" });
+      console.error("OpenRouter error:", data);
+      return res.status(500).json({ error: data.error?.message || "OpenRouter API error" });
     }
 
     const text = data.choices?.[0]?.message?.content || "";
