@@ -65,7 +65,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-r1-0528:free",
+        model: "google/gemini-2.0-flash-exp:free",
         max_tokens: 4000,
         temperature: 0.2,
         messages: [
