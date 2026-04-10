@@ -949,6 +949,40 @@ let activeST={script:true,localscript:true,modulescript:false};
 let npcAngle=0, npcDragging=false, npcLastX=0;
 let selectedAdminItem=null;
 
+// ── ADMIN SUITE ──
+const ADMIN_CATEGORIES=[
+  {id:'full',icon:'👑',label:'Full Admin System',items:[
+    {id:'full_complete',label:'Complete Admin (Server+Client)',desc:'40+ commands, rank system, GUI console, DataStore logging'},
+    {id:'full_commands',label:'Commands Only (Server)',desc:'Text-command handler with rank gating'},
+    {id:'full_gui',label:'Admin Panel GUI (Client)',desc:'Animated F9 panel with player list and buttons'},
+  ]},
+  {id:'moderation',icon:'🔨',label:'Moderation',items:[
+    {id:'mod_ban',label:'Ban System',desc:'Permanent/temp bans with DataStore, ban list GUI'},
+    {id:'mod_kick',label:'Kick + Warn System',desc:'Warn tracker, auto-kick at 3 warns, log GUI'},
+    {id:'mod_mute',label:'Mute System',desc:'Chat mute with duration, DataStore persistence'},
+    {id:'mod_anticheat',label:'Anti-Cheat',desc:'Speed, fly, teleport, damage exploit detection'},
+  ]},
+  {id:'ranks',icon:'🎖',label:'Ranks & Permissions',items:[
+    {id:'rank_system',label:'Rank Permission System',desc:'5-tier ranks, group support, DataStore'},
+    {id:'rank_tags',label:'Rank Name Tags',desc:'BillboardGui above head with rank color'},
+    {id:'rank_gui',label:'Rank Panel GUI',desc:'Animated rank card with TweenService'},
+  ]},
+  {id:'notifications',icon:'📢',label:'Notifications',items:[
+    {id:'notif_toast',label:'Toast Notifications',desc:'Stack from right, slide in/out animation'},
+    {id:'notif_announce',label:'Announcements',desc:'Top bar slide down, server-wide message'},
+    {id:'notif_dialog',label:'Dialog System',desc:'Modal with confirm/cancel, TweenService'},
+  ]},
+  {id:'utilities',icon:'⚙',label:'Utilities',items:[
+    {id:'util_emotes',label:'Emote System',desc:'20 emotes, E key wheel, cancel on move'},
+    {id:'util_spectate',label:'Spectate System',desc:'Dead players can spectate others'},
+    {id:'util_freecam',label:'Free Camera',desc:'F key free cam for admins'},
+    {id:'util_commandlog',label:'Command Logger',desc:'DataStore log of all admin actions'},
+  ]},
+];
+const adminConfig={gameName:'My Game',prefix:'/',ranks:[{level:1,name:'Member',color:'#aaaaaa'},{level:2,name:'Moderator',color:'#44aaff'},{level:3,name:'Admin',color:'#ffaa00'},{level:4,name:'Head Admin',color:'#ff4444'},{level:5,name:'Owner',color:'#aa44ff'}],enabledCommands:['kick','ban','tp','bring','kill','god','ungod','speed','day','night','freeze','unfreeze'],guiKey:'F9',enableLogging:true};
+
+const BIOME_COLS={
+
 const BIOME_COLS={
   grassland:{low:'#2d5a27',mid:'#4a8a3f',high:'#8a6a3f',peak:'#cccccc',water:'#1a4a8a'},
   desert:{low:'#c4a24a',mid:'#d4b45a',high:'#b08020',peak:'#ffffff',water:'#3a7aaa'},
@@ -2178,38 +2212,6 @@ const npcCv=$('npc-c');if(npcCv){
   npcCv.addEventListener('mousemove',e=>{if(!npcDragging)return;npcAngle+=(e.clientX-npcLastX)*.01;npcLastX=e.clientX;drawNPC();});
   npcCv.addEventListener('mouseup',()=>npcDragging=false);
 }
-
-// ── ADMIN SUITE ──
-const ADMIN_CATEGORIES=[
-  {id:'full',icon:'👑',label:'Full Admin System',items:[
-    {id:'full_complete',label:'Complete Admin (Server+Client)',desc:'40+ commands, rank system, GUI console, DataStore logging'},
-    {id:'full_commands',label:'Commands Only (Server)',desc:'Text-command handler with rank gating'},
-    {id:'full_gui',label:'Admin Panel GUI (Client)',desc:'Animated F9 panel with player list and buttons'},
-  ]},
-  {id:'moderation',icon:'🔨',label:'Moderation',items:[
-    {id:'mod_ban',label:'Ban System',desc:'Permanent/temp bans with DataStore, ban list GUI'},
-    {id:'mod_kick',label:'Kick + Warn System',desc:'Warn tracker, auto-kick at 3 warns, log GUI'},
-    {id:'mod_mute',label:'Mute System',desc:'Chat mute with duration, DataStore persistence'},
-    {id:'mod_anticheat',label:'Anti-Cheat',desc:'Speed, fly, teleport, damage exploit detection'},
-  ]},
-  {id:'ranks',icon:'🎖',label:'Ranks & Permissions',items:[
-    {id:'rank_system',label:'Rank Permission System',desc:'5-tier ranks, group support, DataStore'},
-    {id:'rank_tags',label:'Rank Name Tags',desc:'BillboardGui above head with rank color'},
-    {id:'rank_gui',label:'Rank Panel GUI',desc:'Animated rank card with TweenService'},
-  ]},
-  {id:'notifications',icon:'📢',label:'Notifications',items:[
-    {id:'notif_toast',label:'Toast Notifications',desc:'Stack from right, slide in/out animation'},
-    {id:'notif_announce',label:'Announcements',desc:'Top bar slide down, server-wide message'},
-    {id:'notif_dialog',label:'Dialog System',desc:'Modal with confirm/cancel, TweenService'},
-  ]},
-  {id:'utilities',icon:'⚙',label:'Utilities',items:[
-    {id:'util_emotes',label:'Emote System',desc:'20 emotes, E key wheel, cancel on move'},
-    {id:'util_spectate',label:'Spectate System',desc:'Dead players can spectate others'},
-    {id:'util_freecam',label:'Free Camera',desc:'F key free cam for admins'},
-    {id:'util_commandlog',label:'Command Logger',desc:'DataStore log of all admin actions'},
-  ]},
-];
-const adminConfig={gameName:'My Game',prefix:'/',ranks:[{level:1,name:'Member',color:'#aaaaaa'},{level:2,name:'Moderator',color:'#44aaff'},{level:3,name:'Admin',color:'#ffaa00'},{level:4,name:'Head Admin',color:'#ff4444'},{level:5,name:'Owner',color:'#aa44ff'}],enabledCommands:['kick','ban','tp','bring','kill','god','ungod','speed','day','night','freeze','unfreeze'],guiKey:'F9',enableLogging:true};
 
 function initAdminSuite(){
   const cats=$('admin-cats');
