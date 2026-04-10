@@ -905,7 +905,7 @@ const BACKEND = "https://enesai-production.up.railway.app";
 // AI CORE — Direct Anthropic API (replaces broken /api/ai)
 // ══════════════════════════════════════════════════════
 async function callAI(prompt, sysOverride, maxTok) {
-  if (!maxTok) maxTok = 2000;
+  if (!maxTok) maxTok = 6000;
   try {
     const response = await fetch(BACKEND + "/api/ai", {
       method: "POST",
@@ -2042,7 +2042,7 @@ Requirements:
 - terrain:Clear() at the start
 - Print progress messages
 Return ONLY raw Luau code. No markdown. No backticks.`;
-  const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
+  const r=await callAI(userMsg,GENIUS_SYSTEM,6000);
   btn.textContent='✦ Generate Advanced Lua';btn.disabled=false;
   if(r){$('code-area').value=cc(r);onCE();document.querySelector('.nav-tab').click();toast('Terrain script generated!','gold');}
   else toast('Generation failed.','bad');
@@ -2128,7 +2128,7 @@ Requirements:
 - Hover TweenService effects on buttons
 - Add -- comments explaining each section
 Return ONLY raw Luau code. No markdown. No backticks.`;
-  const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
+  const r=await callAI(userMsg,GENIUS_SYSTEM,6000);
   btn.textContent='Generate GUI Lua';btn.disabled=false;
   if(r){$('code-area').value=cc(r);onCE();document.querySelector('.nav-tab').click();toast('GUI script generated!','ok');}
   else toast('Generation failed.','bad');
@@ -2206,7 +2206,7 @@ Include all relevant:
 - If ranged: Instance.new("Part") projectile with BodyVelocity
 - If AoE: use :GetPartBoundsInRadius()
 Return ONLY raw Luau code. No markdown. No backticks.`;
-  const r=await callAI(userMsg,GENIUS_SYSTEM,3000);
+  const r=await callAI(userMsg,GENIUS_SYSTEM,6000);
   btn.textContent='✦ Generate Advanced NPC Lua';btn.disabled=false;
   if(r){$('code-area').value=cc(r);onCE();$('npc-out').textContent='✓ Custom NPC ready!';document.querySelector('.nav-tab').click();toast('Custom NPC generated!','ok');}
   else{$('npc-out').textContent='Failed.';toast('Failed','bad');}
