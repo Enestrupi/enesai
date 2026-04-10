@@ -65,7 +65,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-chat-v3-0324:free",
+        model: "openrouter/auto",
         max_tokens: 12000,
         temperature: 0.2,
         messages: [
