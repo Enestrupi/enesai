@@ -2442,9 +2442,9 @@ Return ONLY raw Luau. No markdown.`,
     const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
     $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
     onCE();document.querySelector('.nav-tab').click();
-    toast('Admin script ready! Check the Script Editor.','gold');
-    addLog('result','Admin: '+selectedAdminItem);
-  }else toast('Generation failed.','bad');
+}else toast('Generation failed.','bad');
+  }catch(e){toast('Error: '+e.message,'bad');addLog('err',e.message);}
+  finally{btn.disabled=false;btn.textContent='Generate Script';}
 }
 async function quickAdminGen(itemId){
   selectedAdminItem=itemId;
