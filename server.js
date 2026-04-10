@@ -66,7 +66,7 @@ app.post("/api/ai", async (req, res) => {
       },
       body: JSON.stringify({
         model: "anthropic/claude-sonnet-4.5",
-        max_tokens: 12000,
+        max_tokens: 16000,
         temperature: 0.2,
         messages: [
           { role: "system", content: system || ROBLOX_SYSTEM },
