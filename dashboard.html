@@ -1308,17 +1308,23 @@ async function genScript(){
   if(activeST.localscript)typeList.push('LocalScript(Client)');
   if(activeST.modulescript)typeList.push('ModuleScript');
 
-  const userMsg=`Build this Roblox feature: ${prompt}
-Script types needed: ${typeList.join(', ')||'Script(Server)'}
-Use these separators and only include sections that are needed:
-===SCRIPT_SERVER===
-(server script code here)
-===SCRIPT_LOCAL===
-(client localscript code here)
-===SCRIPT_MODULE===
-(module script code here)
-Return ONLY raw Luau code with the separators. No markdown. No backticks. Add -- comments inside explaining where each script goes.`;
+  const needsLocal = activeST.localscript;
+const needsModule = activeST.modulescript;
 
+const userMsg=`Build this Roblox feature: ${prompt}
+
+REQUIRED OUTPUT FORMAT — you MUST include ALL of these sections that are enabled:
+${activeST.script ? `===SCRIPT_SERVER===\n-- Complete server Script for ServerScriptService (100+ lines minimum)` : ''}
+${needsLocal ? `===SCRIPT_LOCAL===\n-- Complete LocalScript for StarterPlayerScripts (100+ lines minimum)` : ''}
+${needsModule ? `===SCRIPT_MODULE===\n-- Complete ModuleScript for ServerScriptService` : ''}
+
+RULES:
+- Output EVERY enabled section above — skipping any is WRONG
+- Each section must be fully complete and functional on its own
+- Server script handles: RemoteEvents creation, server logic, DataStore
+- LocalScript handles: GUI, UserInputService, FireServer calls, client feedback
+- Return ONLY raw Luau code with the separators above
+- ZERO markdown, ZERO backticks, ZERO explanations outside -- comments`;
   addLog('ai','Generating: '+prompt.slice(0,60));
   const raw = await callAI(userMsg, GENIUS_SYSTEM, 3000);
 
