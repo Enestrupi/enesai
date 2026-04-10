@@ -65,7 +65,7 @@ app.post("/api/ai", async (req, res) => {
         "Authorization": "Bearer " + key
       },
       body: JSON.stringify({
-        model: "openrouter/auto",
+        model: "anthropic/claude-sonnet-4.5",
         max_tokens: 12000,
         temperature: 0.2,
         messages: [
