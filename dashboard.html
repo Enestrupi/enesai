@@ -2498,148 +2498,585 @@ async function genAdminScript(){
   const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
   toast('Generating admin script…','gold');
   try{
-  const ranks=adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ');
-  const prefix=adminConfig.prefix;
-  const cmds=adminConfig.enabledCommands.join(', ');
-  const PROMPTS={
-full_complete:`Generate a COMPLETE Roblox admin system using separators:
+    const ranks=adminConfig.ranks.map(r=>`${r.level}=${r.name}`).join(', ');
+    const prefix=adminConfig.prefix;
+    const rankNames=adminConfig.ranks.map(r=>`[${r.level}]="${r.name}"`).join(',');
+
+    const PROMPTS={
+full_complete:`Generate a COMPLETE Roblox admin system minimum 600 lines total. Use separators:
+
 ===SCRIPT_SERVER===
--- Script in ServerScriptService (~200+ lines)
--- Ranks: ${ranks}, Prefix: "${prefix}", Commands: ${cmds}
--- RANKS table, getRank(player), findPlayer(partialName)
--- All command handlers with rank requirements
--- RemoteEvents in ReplicatedStorage "AdminEvents" folder
--- DataStore logging of all command usage with timestamps
--- PlayerAdded chat listener
+-- Script in ServerScriptService minimum 300 lines
+-- RANKS: ${ranks}, Prefix: "${prefix}"
+-- CRITICAL ORDER RULES — follow exactly:
+--   Step 1: All service variables at top
+--   Step 2: All DataStore variables
+--   Step 3: All cache tables (playerRanks={}, bannedPlayers={}, connections={}, godMode={}, frozen={}, speeds={}, jumpPowers={}, warnCounts={}, mutedPlayers={})
+--   Step 4: RANKS table = {${rankNames},[0]="Guest"}
+--   Step 5: OWNER_IDS = {1234567890} -- REPLACE WITH YOUR USERID
+--   Step 6: DataStore helper functions (saveData, loadData with 3 retries pcall)
+--   Step 7: logCommand(executor, command, target, details) function
+--   Step 8: getRank(player) function
+--   Step 9: findPlayer(partialName) function
+--   Step 10: kickPlayer(player, reason) function  ← MUST BE HERE BEFORE executeCommand
+--   Step 11: banPlayer, unbanPlayer, warnPlayer, mutePlayer, unmutePlayer functions
+--   Step 12: applyGodMode(player, enabled), applyFreeze(player, enabled) functions
+--   Step 13: executeCommand(player, commandName, args) function — calls all above
+--   Step 14: setupPlayer(player) function
+--   Step 15: Players.PlayerAdded:Connect(setupPlayer)
+--   Step 16: existing players loop
+--   Step 17: ClientCommand.OnServerEvent handler
+--   Step 18: game:BindToClose() save all data
+
+-- COMMANDS WITH RANK REQUIREMENTS (enforce server-side):
+-- kick=2, ban=3, tp=1, bring=1, kill=2, heal=1, god=2, ungod=2
+-- speed=1, jumppower=1, freeze=2, unfreeze=2, respawn=1
+-- announce=3, shutdown=5, day=1, night=1, mute=2, unmute=2, warn=2, unwarn=3
+
+-- DATASTORE RULES:
+-- GetAsync per player on PlayerAdded — NEVER GetSortedAsync on regular DataStore
+-- SetAsync on PlayerRemoving with pcall and 3 retries
+-- BindToClose with task.wait(2) before saving all cached data
+-- Ban format: {reason="...", timestamp=tick(), expiry=nil or tick()+seconds}
+-- Check expiry: if banData.expiry and tick() > banData.expiry then unban automatically
+
+-- TELEPORT RULES:
+-- ALWAYS use PivotTo() — NEVER SetPrimaryPartCFrame (deprecated)
+-- char:PivotTo(targetChar:GetPivot() * CFrame.new(0,5,0))
+
+-- LIGHTING RULES:
+-- ALWAYS use game:GetService("Lighting") — NEVER game.Lighting
+
+-- REMOTE EVENTS:
+-- Create folder: local AdminEvents = Instance.new("Folder"); AdminEvents.Name="AdminEvents"; AdminEvents.Parent=ReplicatedStorage
+-- ClientCommand = Instance.new("RemoteEvent") in AdminEvents
+-- ServerCommand = Instance.new("RemoteEvent") in AdminEvents
+-- Create ALL remotes server-side only
+
+-- CONNECTIONS CLEANUP:
+-- local connections = {} in setupPlayer per player
+-- connections[#connections+1] = event:Connect(fn) for every connection
+-- PlayerRemoving: for _,c in ipairs(connections) do c:Disconnect() end
+
+-- Do NOT truncate. Complete the entire script fully.
+
 ===SCRIPT_LOCAL===
--- LocalScript in StarterPlayerScripts (~200+ lines)
+-- LocalScript in StarterPlayerScripts minimum 300 lines
 -- Toggle key: ${adminConfig.guiKey}
--- Dark themed panel: Color3.fromRGB(10,13,22), UICorner, UIStroke cyan
--- Player list ScrollingFrame, per-player kick/ban/tp buttons
--- TweenService slide-in from right (EasingStyle.Quart Out, 0.35s)
--- Toast notification system (slide from right, auto-dismiss 3.5s)
--- Command input box at bottom
--- task.wait() not wait(), BackgroundColor3, TextSize (NOT FontSize)
-Return ONLY raw Luau code with separators. No markdown.`,
-full_commands:`Generate Roblox admin command Script:
+
+-- RANKS TABLE mirrored locally (do NOT rely on server for rank names):
+-- local RANKS = {[0]="Guest",${rankNames}}
+-- local playerRankCache = {} -- key=UserId value=rankNumber for EVERY player
+-- local currentRank = 0
+
+-- PANEL LAYOUT:
+-- ScreenGui: ResetOnSpawn=false, Name="AdminGui", parent=player.PlayerGui LAST
+-- Main frame: Size=UDim2.new(0,420,0,580), Position starts UDim2.new(1.2,0,0.05,0)
+-- Open tween: Position→UDim2.new(0.55,0,0.05,0), TweenInfo(0.35,EasingStyle.Back,Out)
+-- Close tween: Position→UDim2.new(1.2,0,0.05,0), TweenInfo(0.3,Quart,In), Completed→Visible=false
+-- BackgroundColor3=Color3.fromRGB(10,13,22)
+-- UICorner CornerRadius=UDim.new(0,14)
+-- UIStroke Color=Color3.fromRGB(0,229,255) Thickness=1
+-- UIGradient: ColorSequence dark to darker Rotation=90
+
+-- TITLE BAR:
+-- Height 44px, GothamBold 16px, "👑 Admin Panel" text
+-- Close X button top-right: 28x28, hover→Color3.fromRGB(200,40,40) TweenService
+
+-- TWO TABS (Commands / Players):
+-- Tab bar: 36px tall, horizontal UIListLayout
+-- Active tab: underline bar Color3.fromRGB(0,229,255) 2px
+-- Inactive tab: no underline, dimmer text
+
+-- COMMANDS TAB:
+-- ScrollingFrame filling most of panel
+-- UIListLayout inside, auto CanvasSize:
+--   commandScroll.CanvasSize = UDim2.new(0,0,0,commandLayout.AbsoluteContentSize.Y+16)
+-- Each command row: dark frame, command name GothamBold, description Gotham smaller
+-- Command input TextBox at bottom: placeholder "Type /command args..."
+-- FocusLost enterPressed: parse prefix+command+args, FireServer, clear text
+
+-- PLAYERS TAB:
+-- ScrollingFrame with UIListLayout
+-- Players.PlayerAdded and PlayerRemoving update list
+-- Each player row (44px tall frame):
+--   Avatar thumbnail via Players:GetUserThumbnailAsync (pcall wrapped)
+--   Player name label left side
+--   Rank label: RANKS[playerRankCache[p.UserId]] or "Guest"  ← use playerRankCache NOT currentRank
+--   Action buttons right side: only show if currentRank >= requirement
+--   Kick(rank>=2), Ban(rank>=3), TP(rank>=1), Bring(rank>=1), Kill(rank>=2), Heal(rank>=1)
+-- Reason input: use a TextBox popup frame, NOT game:GetService("Chat"):Chat()
+
+-- TOAST SYSTEM (correct positioning — UIListLayout does it automatically):
+-- toastArea: AnchorPoint=Vector2.new(1,1), Position=UDim2.new(1,-16,1,-80), Size=UDim2.new(0,280,0,400)
+-- UIListLayout inside: SortOrder=LayoutOrder, VerticalAlignment=Bottom, Padding=UDim.new(0,8)
+-- showToast(message, toastType):
+--   Create frame Size=UDim2.new(1,0,0,44)
+--   Start: Position=UDim2.new(1.2,0,0,0) — DO NOT manually calculate Y offset
+--   Tween to: Position=UDim2.new(0,0,0,0)
+--   UIListLayout handles stacking automatically
+--   Border color by type: info=cyan, success=green(0,200,80), warn=amber(245,158,11), error=red(239,68,68)
+--   Max 5 toasts: if #toastArea:GetChildren()-1 > 5 then toastArea:GetChildren()[2]:Destroy() end
+--   Auto dismiss: task.delay(3.5, ...) fade BackgroundTransparency to 1, then Destroy
+
+-- ANNOUNCEMENT UI:
+-- Separate from toasts, full width bar top of screen
+-- Frame: Size=UDim2.new(1,0,0,48), Position starts UDim2.new(0,0,-1,0)
+-- Slide down to UDim2.new(0,0,0,0), hold 5s, slide back up, Destroy
+
+-- SERVER RESPONSES in ServerCommand.OnClientEvent:
+-- "UpdateRank": currentRank=args[1]; playerRankCache[player.UserId]=args[1]
+-- "PlayerRankUpdate": playerRankCache[tonumber(args[1])]=args[2] (for other players)
+-- All success messages → showToast(msg, "success")
+-- All error messages → showToast(msg, "error")
+-- "Announce" → show announcement bar
+-- "Banned"/"Kicked" → showToast(msg,"error") then adminGui.Enabled=false
+
+-- BUTTON HOVER EFFECTS (every single button):
+-- MouseEnter: TweenService brighten BackgroundColor3, scale ImageLabel if avatar
+-- MouseLeave: TweenService restore original BackgroundColor3
+-- Press: quick scale tween 0.95 then back
+
+-- Do NOT truncate. Complete the entire local script fully.
+Return ONLY raw Luau with separators. ZERO markdown. ZERO backticks.`,
+
+full_commands:`Generate COMPLETE Roblox admin command server Script minimum 280 lines:
 ===SCRIPT_SERVER===
 -- Prefix: "${prefix}", Ranks: ${ranks}
--- Commands: ${cmds}
--- getRank(), findPlayer(), Chatted listener, pcall wrapper
-Return ONLY raw Luau with separator. No markdown.`,
-full_gui:`Generate Roblox admin GUI LocalScript:
+-- DEFINE IN THIS ORDER: services → caches → RANKS table → OWNER_IDS → DataStore helpers → logCommand → getRank → findPlayer → kickPlayer → banPlayer → executeCommand → setupPlayer → PlayerAdded → BindToClose
+-- kickPlayer MUST be defined before executeCommand
+-- PivotTo() for teleports NEVER SetPrimaryPartCFrame
+-- game:GetService("Lighting") NEVER game.Lighting
+-- GetAsync per player NEVER GetSortedAsync
+-- pcall() + 3 retries on every DataStore call
+-- All connections in table, disconnect on PlayerRemoving
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+full_gui:`Generate COMPLETE Roblox admin GUI LocalScript minimum 280 lines:
 ===SCRIPT_LOCAL===
--- Toggle: ${adminConfig.guiKey}, Dark panel, UICorner, UIStroke cyan
--- Slide-in TweenService from right, player list, command input, toast system
--- BackgroundColor3, TextSize (NOT FontSize), task.wait()
-Return ONLY raw Luau with separator. No markdown.`,
-mod_ban:`Generate ban system:
+-- Toggle: ${adminConfig.guiKey}
+-- local RANKS = {[0]="Guest",${rankNames}} mirrored locally
+-- local playerRankCache = {} — per-player rank storage
+-- local currentRank = 0
+-- Panel: 420x580, slide from right UDim2.new(1.2,0,0.05,0)→UDim2.new(0.55,0,0.05,0) EasingStyle.Back
+-- Close: reverse tween → Completed callback sets Visible=false
+-- BackgroundColor3=Color3.fromRGB(10,13,22), UICorner(0,14), UIStroke cyan, UIGradient dark
+-- Commands tab + Players tab
+-- Player list uses RANKS[playerRankCache[p.UserId]] NOT currentRank
+-- Toast: UIListLayout positions automatically, slide from right, 5 max, 3.5s dismiss
+-- TextBox for reason input NOT Chat:Chat()
+-- All buttons have MouseEnter/MouseLeave TweenService hover
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+mod_ban:`Generate COMPLETE ban system minimum 250 lines:
 ===SCRIPT_SERVER===
--- BanStore DataStore, PlayerAdded check, TempBan with expiry
+-- BanStore DataStore, GetAsync per player on PlayerAdded
+-- Ban format: {reason=string, timestamp=tick(), expiry=tick()+seconds or nil}
+-- Check expiry on PlayerAdded: if banData.expiry and tick()>banData.expiry then unban
+-- kickPlayer() defined FIRST then banPlayer() then unbanPlayer() then tempBanPlayer()
+-- pcall() + 3 retries on every DataStore call
+-- BindToClose saves all ban data
+-- RemoteEvents in AdminEvents folder
 ===SCRIPT_LOCAL===
--- Ban GUI, player/userId input, ban list, TweenService
-Return ONLY raw Luau. No markdown.`,
-mod_kick:`Generate kick+warn system:
+-- Ban panel: UICorner, UIStroke cyan, UIGradient dark
+-- TextBox for player name (NOT Chat:Chat())
+-- TextBox for reason
+-- Duration selector: buttons for 1h/24h/7d/Permanent
+-- Active bans ScrollingFrame: shows name, reason, expiry, unban button
+-- TweenService slide animations, hover effects on all buttons
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+mod_kick:`Generate COMPLETE kick and warn system minimum 220 lines:
 ===SCRIPT_SERVER===
--- Warn table, 3 warns = auto-kick, chat listener, rank check
+-- WarnStore DataStore: {warns=0, history={{reason,timestamp,executor}}}
+-- warnPlayer() defined before kickPlayer() before executeCommand()
+-- 3 warns = auto kick with reason "Exceeded warn limit"
+-- 5 warns = tempban 1 hour, save to BanStore DataStore
+-- pcall() + 3 retries on all DataStore calls
+-- RemoteEvents for client feedback
 ===SCRIPT_LOCAL===
--- Warn GUI, history log, TweenService
-Return ONLY raw Luau. No markdown.`,
-mod_mute:`Generate mute system:
+-- Warn history panel: UICorner, UIStroke, UIGradient
+-- Player list with warn count badges
+-- TextBox for reason (NOT Chat:Chat())
+-- History ScrollingFrame per player showing all warn entries with timestamps
+-- TweenService animations, hover effects
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+mod_mute:`Generate COMPLETE mute system minimum 200 lines:
 ===SCRIPT_SERVER===
--- MuteStore DataStore, duration support, PlayerChatted block
+-- MuteStore DataStore: {muted=true, expiry=tick()+seconds or nil, reason=string}
+-- mutePlayer(player, durationSeconds, reason), unmutePlayer(player)
+-- PlayerAdded: check MuteStore, restore mute if not expired
+-- Player.Chatted:Connect: if mutedPlayers[userId] then return end (block chat)
+-- pcall() + 3 retries on all DataStore calls
 ===SCRIPT_LOCAL===
--- Mute GUI with duration picker
-Return ONLY raw Luau. No markdown.`,
-mod_anticheat:`Generate anti-cheat Script:
+-- Mute panel: UICorner, UIStroke cyan, UIGradient
+-- TextBox for player name and reason (NOT Chat:Chat())
+-- Duration buttons: 5min / 30min / 1hr / 6hr / Permanent
+-- Active mutes ScrollingFrame: player name, time remaining countdown (update every second via RunService)
+-- Unmute button per row
+-- TweenService animations, hover effects
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+mod_anticheat:`Generate COMPLETE anti-cheat Script minimum 220 lines:
 ===SCRIPT_SERVER===
--- Speed hack: WalkSpeed > 22 every 2s via Heartbeat
--- Fly hack: airborne > 4s detection
--- Teleport hack: position delta > 100 studs per Heartbeat
--- Flag system: 1-2 flags=warn, 3=kick, 4+=DataStore ban
-Return ONLY raw Luau. No markdown.`,
-rank_system:`Generate rank system:
+-- Services at top: Players, RunService, DataStoreService
+-- local flagCounts = {} — per player flag count
+-- local lastPositions = {} — per player last HumanoidRootPart position
+-- local airborneTime = {} — per player airborne duration
+-- BanStore DataStore for flag bans
+-- WHITELIST_RANKS = 2 — ranks >= this are immune from checks
+
+-- CHECK 1 Speed hack (every 2s):
+-- if humanoid.WalkSpeed > 24 and getRank(player) < WHITELIST_RANKS then flag
+
+-- CHECK 2 Fly hack (every Heartbeat):
+-- track if player is airborne (not touching ground via RaycastParams down)
+-- if airborne > 4 continuous seconds: flag
+
+-- CHECK 3 Teleport hack (every Heartbeat):
+-- delta = (currentPos - lastPositions[userId]).Magnitude
+-- if delta > 150 in one frame and not recently respawned: flag
+
+-- CHECK 4 Noclip hack (every 3s):
+-- use workspace:GetPartsInPart() on HumanoidRootPart
+-- if any solid part overlaps that is not the character: flag
+
+-- FLAG HANDLING:
+-- 1-2 flags: warn() to server log only
+-- 3 flags: kick with reason "Exploiting detected"
+-- 4+ flags: banPlayer() with 24hr expiry, log to DataStore
+
+-- CLEANUP: PlayerRemoving clears all tables for that userId
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+rank_system:`Generate COMPLETE rank system minimum 230 lines:
 ===SCRIPT_SERVER===
--- RankStore DataStore, Ranks: ${ranks}
--- SetRank(userId,level), GetRank(userId), RemoteEvents
--- PlayerAdded: load rank, apply BillboardGui name tag
+-- RankStore DataStore, GetAsync per player on PlayerAdded
+-- RANKS = {[0]="Guest",${rankNames}}
+-- OWNER_IDS = {1234567890} — always rank 5
+-- getRank(player), setRank(player, level) with DataStore save
+-- RemoteFunction GetMyRank returns rank number to client
+-- RemoteEvent RankUpdated fires to specific player when rank changes
+-- PlayerAdded: load rank, create BillboardGui name tag above HumanoidRootPart
+-- BillboardGui: StudsOffset=Vector3.new(0,3,0), AlwaysOnTop=false
+--   Rank label: rank color, GothamBold 13px
+--   Name label: white, Gotham 12px
+--   Background Frame: dark UICorner(0,6) UIStroke matching rank color
+-- CharacterAdded: recreate BillboardGui on new character
+-- pcall() + 3 retries all DataStore calls, BindToClose
 ===SCRIPT_LOCAL===
--- Rank card popup GUI, TweenService scale animation
-Return ONLY raw Luau. No markdown.`,
-rank_tags:`Generate rank name tag Script:
+-- Rank card popup: F key or RemoteEvent trigger
+-- TweenService scale from 0→1 EasingStyle.Back
+-- Shows: rank icon, rank name, rank level, permissions for that rank
+-- UIGradient matching rank color family
+-- UICorner(0,14), UIStroke matching rank color
+-- Close button with red hover effect
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+rank_tags:`Generate COMPLETE rank name tag Script minimum 130 lines:
 ===SCRIPT_SERVER===
--- RANKS config: ${ranks}
--- PlayerAdded: BillboardGui above head, rank name + color
--- StudsOffset, AlwaysOnTop = false, UICorner on background
-Return ONLY raw Luau. No markdown.`,
-rank_gui:`Generate rank panel GUI:
+-- RANKS with names and colors: ${adminConfig.ranks.map(r=>`${r.name}=${r.color}`).join(', ')}
+-- local RANK_COLORS = {[0]=Color3.fromRGB(150,150,150), [1]=Color3.fromRGB(...), ...} match config colors
+-- PlayerAdded + CharacterAdded: create/recreate BillboardGui
+-- BillboardGui parent = HumanoidRootPart
+-- StudsOffset = Vector3.new(0,3.2,0), AlwaysOnTop=false, Size=UDim2.new(0,120,0,36)
+-- Background Frame: Color3.fromRGB(10,13,22), UICorner(0,6), UIStroke color=rank color, Thickness=1
+-- Rank label: TextColor3=rank color, Font=GothamBold, TextSize=11, top half of frame
+-- Name label: TextColor3=Color3.fromRGB(221,225,240), Font=Gotham, TextSize=11, bottom half
+-- PlayerRemoving: cleanup BillboardGui
+-- getRank() from DataStore or default 0
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+rank_gui:`Generate COMPLETE rank panel GUI LocalScript minimum 160 lines:
 ===SCRIPT_LOCAL===
--- Toggle ${adminConfig.guiKey}, shows own rank card
--- Gradient matching rank color, TweenService pop animation
--- BackgroundColor3, TextSize
-Return ONLY raw Luau. No markdown.`,
-notif_toast:`Generate notification system:
+-- Toggle ${adminConfig.guiKey} to show own rank card
+-- Query rank via RemoteFunction GetMyRank on open
+-- RANKS = {[0]="Guest",${rankNames}}
+-- RANK_COLORS matching config
+-- Rank card: Size=UDim2.new(0,300,0,200), centered screen
+-- TweenService scale pop: start Size=UDim2.new(0,0,0,0)→final, EasingStyle.Back Out 0.35s
+-- Close: reverse tween → Completed→Visible=false
+-- UIGradient using rank color family
+-- UICorner(0,16), UIStroke color=rank color Thickness=1
+-- Rank icon large label center (emoji or rank number styled)
+-- Rank name GothamBold 20px
+-- "Level X" Gotham 14px secondary color
+-- Permissions list: ScrollingFrame, shows what commands rank can use
+-- Close button top-right with red hover TweenService
+-- BackgroundColor3, TextSize always, ResetOnSpawn=false
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+notif_toast:`Generate COMPLETE notification system minimum 230 lines:
 ===SCRIPT_SERVER===
--- RemoteEvents: ShowToast(player,msg,type), ShowAnnouncement(msg)
+-- AdminEvents folder in ReplicatedStorage (create if not exists)
+-- RemoteEvent ShowToast(player, message, toastType) — types: info/success/warn/error
+-- RemoteEvent ShowAnnouncement(message, duration, priority)
+-- Helper: fireToastAll(message, toastType) fires to all players
+-- Helper: fireAnnounceAll(message, duration) fires to all players
 ===SCRIPT_LOCAL===
--- Toast: slide from right, stack 5 max, auto-remove 3.5s, types: info/success/warn/error
--- Announcement: full-width bar slides down 5s then hides
--- All TweenService, BackgroundColor3, TextSize
-Return ONLY raw Luau. No markdown.`,
-notif_announce:`Generate announcement system:
+-- TOAST SYSTEM:
+--   toastArea Frame: AnchorPoint=Vector2.new(1,1), Position=UDim2.new(1,-16,1,-80)
+--   Size=UDim2.new(0,280,0,400), BackgroundTransparency=1
+--   UIListLayout: SortOrder=LayoutOrder, VerticalAlignment=Bottom, Padding=UDim.new(0,8)
+--   showToast(message, toastType):
+--     frame Size=UDim2.new(1,0,0,44), BackgroundColor3=Color3.fromRGB(15,19,30)
+--     UICorner(0,8), left border UIStroke by type:
+--       info=Color3.fromRGB(0,229,255), success=Color3.fromRGB(0,200,80)
+--       warn=Color3.fromRGB(245,158,11), error=Color3.fromRGB(239,68,68)
+--     Start Position=UDim2.new(1.2,0,0,0) tween to UDim2.new(0,0,0,0) — DO NOT manually offset Y
+--     Icon label left (ℹ/✓/⚠/✕ by type), message label right
+--     Max 5: if count>5 remove oldest child (skip UIListLayout)
+--     task.delay(3.5): fade transparency 0→1 over 0.4s then Destroy
+-- ANNOUNCEMENT:
+--   announcementFrame: Size=UDim2.new(1,0,0,48), Position start UDim2.new(0,0,-1,0)
+--   UIGradient dark, UIStroke cyan, GothamBold 15px message text
+--   Slide down tween to UDim2.new(0,0,0,0) EasingStyle.Back Out 0.4s
+--   task.delay(duration): slide back up UDim2.new(0,0,-1,0) then Destroy
+--   priority "urgent": UIStroke color=Color3.fromRGB(239,68,68) instead of cyan
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+notif_announce:`Generate COMPLETE announcement system minimum 150 lines:
 ===SCRIPT_SERVER===
--- RemoteEvent AnnounceAll(msg), optional priority
+-- AdminEvents folder in ReplicatedStorage
+-- RemoteEvent AnnounceAll(message, priority, duration)
+-- priority: "normal" or "urgent"
+-- FireAllClients to all players
 ===SCRIPT_LOCAL===
--- Top bar slides down, 5s auto-hide, TweenService
-Return ONLY raw Luau. No markdown.`,
-notif_dialog:`Generate dialog system:
+-- Full-width announcement bar top of screen
+-- Size=UDim2.new(1,0,0,48)
+-- Starts at UDim2.new(0,0,-1,0), slides to UDim2.new(0,0,0,0) EasingStyle.Back Out
+-- UIGradient dark to darker, UIStroke
+-- normal: UIStroke cyan Color3.fromRGB(0,229,255)
+-- urgent: UIStroke red Color3.fromRGB(239,68,68), background tint red
+-- GothamBold 15px centered message text
+-- Small "ANNOUNCEMENT" label above message in secondary color
+-- Auto slide back up after duration seconds then Destroy
+-- Queue system: if announcement showing, wait for it to finish before showing next
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+notif_dialog:`Generate COMPLETE dialog system minimum 170 lines:
 ===SCRIPT_SERVER===
--- RemoteEvent ShowDialog(player,title,body,onConfirm)
+-- AdminEvents folder
+-- RemoteEvent ShowDialog(player, dialogId, title, body, dialogType)
+-- dialogType: "confirm" "info" "warn"
+-- RemoteEvent DialogResponse(player, dialogId, confirmed)
+-- Track pending dialogs: pendingDialogs[player][dialogId]
 ===SCRIPT_LOCAL===
--- Modal with blur, confirm/cancel buttons, TweenService scale pop
-Return ONLY raw Luau. No markdown.`,
-util_emotes:`Generate emote system:
+-- Backdrop Frame: full screen, BackgroundTransparency=0.5, BackgroundColor3=Color3.fromRGB(0,0,0)
+-- Fades in transparency 1→0.5
+-- Dialog box: Size=UDim2.new(0,360,0,220), AnchorPoint=Vector2.new(0.5,0.5), Position=UDim2.new(0.5,0,0.5,0)
+-- TweenService scale pop: start Size=UDim2.new(0,0,0,0)→final EasingStyle.Back Out 0.3s
+-- BackgroundColor3=Color3.fromRGB(15,19,30), UICorner(0,14)
+-- UIStroke: info=cyan, warn=amber, confirm=cyan
+-- Title GothamBold 16px, body Gotham 13px secondary color
+-- Confirm button: Color3.fromRGB(0,160,180) hover brighter TweenService
+-- Cancel button: Color3.fromRGB(60,60,80) hover red TweenService (hidden for info type)
+-- Close on backdrop click for info type only
+-- Dismiss: reverse scale tween → Completed→Destroy backdrop
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+util_emotes:`Generate COMPLETE emote system minimum 230 lines:
 ===SCRIPT_SERVER===
--- RemoteEvent PlayEmote, load animation, stop if player moves
--- Emotes: wave, dance, laugh, point, cheer, salute, clap, sit
+-- AdminEvents folder
+-- EMOTE_WHITELIST table: {wave=rbxassetid://..., dance=rbxassetid://..., ...} -- REPLACE IDs
+-- RemoteEvent PlayEmote(animationId, emoteName): validate id in whitelist, load via Animator server-side
+-- RemoteEvent StopEmote(): stop current emote track
+-- Stop emote automatically if humanoid.MoveDirection.Magnitude > 0.1 in Heartbeat
+-- Track currentEmoteTrack per player, stop old one before playing new
 ===SCRIPT_LOCAL===
--- E key toggles circular wheel (8 emotes in circle)
--- TweenService scale from 0 (EasingStyle.Back), hover effects
--- Close on movement
-Return ONLY raw Luau. No markdown.`,
-util_spectate:`Generate spectate system:
+-- E key toggle emote wheel
+-- Wheel: circular Frame Size=UDim2.new(0,240,0,240), center screen
+-- 8 emote buttons arranged using math.cos/math.sin:
+--   for i=1,8: angle=(i-1)*(2*math.pi/8); x=math.cos(angle)*90; y=math.sin(angle)*90
+--   each button: Size=UDim2.new(0,54,0,54), Position=UDim2.new(0.5,x-27,0.5,y-27)
+-- Wheel open: TweenService scale from Size=UDim2.new(0,0,0,0)→final EasingStyle.Back Out 0.3s
+-- Wheel close: reverse tween → Completed→Visible=false
+-- Each button hover: scale 1→1.15, BackgroundColor3 brighten TweenService
+-- Button click: FireServer PlayEmote, close wheel
+-- Center label showing current emote name
+-- Close wheel: E key again OR movement detected in Heartbeat
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+util_spectate:`Generate COMPLETE spectate system minimum 200 lines:
 ===SCRIPT_SERVER===
--- Track dead players, RemoteEvent SpectateTarget
+-- AdminEvents folder
+-- RemoteFunction GetAlivePlayers(): returns {{name=string, userId=number}} of alive players
+-- Track dead players: humanoid.Died:Connect per player in PlayerAdded
+-- RemoteEvent NotifyDeath fires to dead player automatically
 ===SCRIPT_LOCAL===
--- Camera follow target, cycle through alive players, UI indicator
-Return ONLY raw Luau. No markdown.`,
-util_freecam:`Generate free camera Script:
+-- On character death (humanoid.Died): show spectate UI after 2s delay
+-- SpectateUI: dark panel bottom center, Size=UDim2.new(0,320,0,64)
+-- UICorner, UIStroke cyan, UIGradient
+-- Left arrow button (◀), target name label center, right arrow button (▶)
+-- alive count label "Watching X / Y alive"
+-- currentTargetIndex tracks position in alive players list
+-- cycle: get fresh list from RemoteFunction, wrap around ends
+-- Camera control:
+--   workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+--   RunService.RenderStepped: CFrame.lookAt from target + offset to target HumanoidRootPart
+--   Smooth lerp: camera.CFrame = camera.CFrame:Lerp(targetCFrame, 0.1)
+-- Respawn button appears if allowed: FireServer RequestRespawn
+-- On character added (respawn): hide spectate UI, restore camera
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+util_freecam:`Generate COMPLETE free camera system minimum 170 lines:
 ===SCRIPT_LOCAL===
--- F key toggle for admins (check rank via RemoteFunction)
--- WASD + QE movement, mouse look, configurable speed
--- Disable player character during freecam
-Return ONLY raw Luau. No markdown.`,
-util_commandlog:`Generate command logger:
+-- Services: Players, UserInputService, RunService, TweenService
+-- RemoteFunction CheckAdminRank(): returns currentRank from server
+-- F key: if rank < 2 then showToast("No permission","error"); return end
+-- Toggle freecam on/off
+
+-- FREECAM ON:
+-- workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+-- UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+-- local freecamPos = camera.CFrame.Position
+-- local freecamAngles = Vector2.new(0,0) -- yaw, pitch
+
+-- MOVEMENT (RenderStepped):
+-- local speed = 1
+-- if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then speed=3 end
+-- if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then speed=0.3 end
+-- WASD for XZ movement relative to camera yaw
+-- Q=down E=up on Y axis
+-- MouseDelta via UserInputService:GetMouseDelta() for look
+-- freecamAngles.X -= mouseDelta.Y * 0.003 (pitch, clamp -pi/2 to pi/2)
+-- freecamAngles.Y -= mouseDelta.X * 0.003 (yaw)
+-- camera.CFrame = CFrame.new(freecamPos) * CFrame.fromEulerAnglesYXZ(freecamAngles.X, freecamAngles.Y, 0)
+
+-- SCROLL WHEEL: changes speed multiplier 0.5 to 10
+
+-- FREECAM OFF:
+-- workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+-- UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+
+-- HUD label bottom-left showing "[FREECAM] Speed: X" when active, hidden when off
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+
+util_commandlog:`Generate COMPLETE command logger minimum 210 lines:
 ===SCRIPT_SERVER===
--- DataStore log every admin command: timestamp, commander, target, action
--- RemoteFunction GetLog for authorized admins
+-- LogStore DataStore key="AdminLog_v1"
+-- logCommand(executor, command, target, details):
+--   local entry = {executor=executor, command=command, target=target or "none", details=details, timestamp=tick()}
+--   UpdateAsync to append to array (load existing, table.insert, save back)
+--   pcall() + 3 retries
+-- RemoteFunction GetLogs(player): if getRank(player) < 3 then return nil end
+--   Load log array from DataStore, return last 50 entries
+-- RemoteEvent ClearLogs(player): if getRank(player) < 5 then return end
+--   DataStore:RemoveAsync("AdminLog_v1")
 ===SCRIPT_LOCAL===
--- Log viewer GUI, ScrollingFrame, filter by player
-Return ONLY raw Luau. No markdown.`,
-  };
-  const p=PROMPTS[selectedAdminItem]||PROMPTS['full_complete'];
-  const r=await callAI(p,GENIUS_SYSTEM,4000);
+-- Log viewer panel: Size=UDim2.new(0,500,0,400), slide from right EasingStyle.Back
+-- UICorner, UIStroke cyan, UIGradient dark
+-- Refresh button: calls GetLogs RemoteFunction, shows loading spinner during call
+-- Loading spinner: rotating Frame via RenderStepped, hidden when done
+-- ScrollingFrame for log entries, UIListLayout
+-- Each entry row (36px):
+--   Timestamp label: os.date("%H:%M:%S", entry.timestamp) formatted
+--   Executor label: GothamBold
+--   Command label: color coded — destructive(kick/ban/kill)=red, info=cyan, neutral=white
+--   Target label: secondary color
+-- Filter TextBox: filters by executor OR target name (case insensitive)
+-- Clear logs button: only visible if currentRank >= 5
+-- Do NOT truncate. Return ONLY raw Luau. No markdown.`,
+    };
+
+    const p=PROMPTS[selectedAdminItem]||PROMPTS['full_complete'];
+    const r=await callAI(p,GENIUS_SYSTEM,8000);
+
+    if(r){
+      const secs=splitBlocks(r);
+      const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
+      const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
+      const sep=(n,tot,type,loc)=>
+        `-- ╔═══════════════════════════════════════╗\n`+
+        `-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n`+
+        `-- ║  Place in: ${loc.padEnd(28)}║\n`+
+        `-- ╚═══════════════════════════════════════╝`;
+      $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
+      onCE();
+      document.querySelector('.nav-tab').click();
+      toast(`Admin script ready! ${secs.length} script(s).`,'gold');
+      addLog('result','Admin: '+selectedAdminItem+' ('+secs.length+' scripts)');
+    }else{
+      toast('Generation failed. Try again.','bad');
+      addLog('err','Admin generation failed: '+selectedAdminItem);
+    }
+  }catch(e){
+    toast('Error: '+e.message,'bad');
+    addLog('err','Admin error: '+e.message);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Generate Script';
+  }
+}
+
+async function quickAdminGen(itemId){
+  selectedAdminItem=itemId;
+  for(const cat of ADMIN_CATEGORIES){
+    const item=cat.items.find(i=>i.id===itemId);
+    if(item){selectAdminItem(cat.id,itemId);break;}
+  }
+  await genAdminScript();
+}
+
+async function genAdminCustom(){
+  const prompt=$('admin-custom-prompt').value.trim();
+  if(!prompt){toast('Describe a custom admin feature.','bad');return;}
+  const btn=$('admin-gen-btn');btn.disabled=true;btn.textContent='Generating…';
+  toast('AI generating custom admin script…','gold');
+  const rankNames=adminConfig.ranks.map(r=>`[${r.level}]="${r.name}"`).join(',');
+  const userMsg=`Generate COMPLETE production-ready Roblox admin feature minimum 250 lines: ${prompt}
+
+Game: ${adminConfig.gameName}, Prefix: ${adminConfig.prefix}
+RANKS = {[0]="Guest",${rankNames}}
+OWNER_IDS = {1234567890} -- REPLACE
+
+CRITICAL RULES:
+- Define helper functions BEFORE functions that call them
+- kickPlayer() BEFORE executeCommand()
+- PivotTo() NEVER SetPrimaryPartCFrame
+- game:GetService("Lighting") NEVER game.Lighting
+- GetAsync per player NEVER GetSortedAsync on regular DataStore
+- pcall() + 3 retries on every DataStore call
+- All connections in table, disconnect on PlayerRemoving
+- UIListLayout handles toast Y positioning automatically
+- TextBox for user input NEVER Chat:Chat()
+- BackgroundColor3=Color3.fromRGB() always, TextSize=number always
+- TweenService for all animations
+- Do NOT truncate. Complete everything fully.
+
+Use separators if multiple scripts:
+===SCRIPT_SERVER===
+===SCRIPT_LOCAL===
+Return ONLY raw Luau with separators. ZERO markdown. ZERO backticks.`;
+
+  const r=await callAI(userMsg,GENIUS_SYSTEM,8000);
   btn.disabled=false;btn.textContent='Generate Script';
   if(r){
     const secs=splitBlocks(r);
     const locMap={script:'ServerScriptService',localscript:'StarterPlayer/StarterPlayerScripts',modulescript:'ServerScriptService'};
     const lblMap={script:'Server Script',localscript:'LocalScript',modulescript:'ModuleScript'};
-    const sep=(n,tot,type,loc)=>`-- ╔═══════════════════════════════════════╗\n-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n-- ║  Place in: ${loc.padEnd(28)}║\n-- ╚═══════════════════════════════════════╝`;
+    const sep=(n,tot,type,loc)=>
+      `-- ╔═══════════════════════════════════════╗\n`+
+      `-- ║  [${n}/${tot}] ${lblMap[type].padEnd(22)}║\n`+
+      `-- ║  Place in: ${loc.padEnd(28)}║\n`+
+      `-- ╚═══════════════════════════════════════╝`;
     $('code-area').value=secs.map((s,i)=>sep(i+1,secs.length,s.type,locMap[s.type])+'\n'+s.code).join('\n\n\n');
-    onCE();document.querySelector('.nav-tab').click();
-}else toast('Generation failed.','bad');
-  }catch(e){toast('Error: '+e.message,'bad');addLog('err',e.message);}
-  finally{btn.disabled=false;btn.textContent='Generate Script';}
+    onCE();
+    document.querySelector('.nav-tab').click();
+    toast('Custom admin script ready!','gold');
+    addLog('result','Custom admin: '+prompt.slice(0,40));
+  }else{
+    toast('Generation failed.','bad');
+    addLog('err','Custom admin failed');
+  }
+}
+
+function adminGenClick(){
+  const customPrompt=$('admin-custom-prompt').value.trim();
+  if(customPrompt)genAdminCustom();
+  else if(selectedAdminItem)genAdminScript();
+  else toast('Select a system from sidebar or type a custom feature below.','bad');
 }
 async function quickAdminGen(itemId){
   selectedAdminItem=itemId;
