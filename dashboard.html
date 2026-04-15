@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -39,98 +38,98 @@ body::before{
 /* ── MODEL BADGE ── */
 .model-badge{
 display:flex;align-items:center;gap:4px;padding:3px 8px;
-background:var(–bg3);border:.5px solid var(–border);border-radius:20px;
-font-size:9px;color:var(–text2);transition:all .3s
+background:var(--bg3);border:.5px solid var(--border);border-radius:20px;
+font-size:9px;color:var(--text2);transition:all .3s
 }
-.model-badge.fast{border-color:rgba(16,185,129,.3);color:var(–c3)}
-.model-badge.balanced{border-color:rgba(0,229,255,.3);color:var(–c1)}
+.model-badge.fast{border-color:rgba(16,185,129,.3);color:var(--c3)}
+.model-badge.balanced{border-color:rgba(0,229,255,.3);color:var(--c1)}
 .model-badge.genius{border-color:rgba(124,58,237,.4);color:#a78bfa;
 box-shadow:0 0 10px rgba(124,58,237,.2)}
 .model-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
 
 /* ── AUTH ── */
-#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(–bg)}
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(--bg)}
 #auth.gone{display:none}
 .auth-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none}
 .auth-wrap{width:400px;position:relative;z-index:2}
 .auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
-.auth-brand-mark{width:34px;height:34px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 28px rgba(0,229,255,0.25)}
-.auth-brand-name{font-family:var(–fd);font-size:15px;font-weight:800;color:var(–text)}
-.auth-brand-ver{font-size:9px;color:var(–text2);margin-top:1px;letter-spacing:.15em}
-.auth-card{background:var(–bg2);border:.5px solid var(–border2);border-radius:var(–rlg);padding:2rem;backdrop-filter:blur(20px)}
-.auth-card h2{font-family:var(–fd);font-size:17px;font-weight:800;margin-bottom:.35rem}
-.auth-card p{font-size:10px;color:var(–text2);margin-bottom:1.5rem;line-height:1.7}
+.auth-brand-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 28px rgba(0,229,255,0.25)}
+.auth-brand-name{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--text)}
+.auth-brand-ver{font-size:9px;color:var(--text2);margin-top:1px;letter-spacing:.15em}
+.auth-card{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--rlg);padding:2rem;backdrop-filter:blur(20px)}
+.auth-card h2{font-family:var(--fd);font-size:17px;font-weight:800;margin-bottom:.35rem}
+.auth-card p{font-size:10px;color:var(--text2);margin-bottom:1.5rem;line-height:1.7}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:9px;color:var(–text2);margin-bottom:5px;letter-spacing:.12em;text-transform:uppercase}
-.field input{width:100%;background:var(–bg3);border:.5px solid var(–border2);border-radius:var(–r);padding:10px 12px;font-family:var(–fm);font-size:12px;color:var(–text);outline:none;transition:border-color .2s}
-.field input:focus{border-color:var(–c1)}
-.field input::placeholder{color:var(–text3)}
-.btn-main{width:100%;background:linear-gradient(135deg,var(–c1),#00b4d8);color:#050709;border:none;border-radius:var(–r);padding:11px;font-family:var(–fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.field label{display:block;font-size:9px;color:var(--text2);margin-bottom:5px;letter-spacing:.12em;text-transform:uppercase}
+.field input{width:100%;background:var(--bg3);border:.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:var(--fm);font-size:12px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--c1)}
+.field input::placeholder{color:var(--text3)}
+.btn-main{width:100%;background:linear-gradient(135deg,var(--c1),#00b4d8);color:#050709;border:none;border-radius:var(--r);padding:11px;font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
 .btn-main:hover{box-shadow:0 0 24px rgba(0,229,255,0.4);transform:translateY(-1px)}
-.auth-err{color:var(–c5);font-size:10px;margin-top:6px;display:none}
+.auth-err{color:var(--c5);font-size:10px;margin-top:6px;display:none}
 
 /* ── APP SHELL ── */
 #app{display:none;height:100%;flex-direction:column;position:relative;z-index:1}
 #app.show{display:flex}
 
 /* ── TOPBAR ── */
-.topbar{height:var(–topbar);border-bottom:.5px solid var(–border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.97);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
+.topbar{height:var(--topbar);border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.97);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
 .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
-.topbar-brand-name{font-family:var(–fd);font-size:11px;font-weight:800;color:var(–text);letter-spacing:.03em}
-.topbar-sep{width:.5px;height:18px;background:var(–border);margin:0 4px}
-.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;color:var(–text2)}
-.conn-dot{width:5px;height:5px;border-radius:50%;background:var(–text3);flex-shrink:0}
-.conn-dot.on{background:var(–c3);box-shadow:0 0 6px var(–c3)}
-.conn-dot.wait{background:var(–c4);animation:pb 1.4s infinite}
+.topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.topbar-brand-name{font-family:var(--fd);font-size:11px;font-weight:800;color:var(--text);letter-spacing:.03em}
+.topbar-sep{width:.5px;height:18px;background:var(--border);margin:0 4px}
+.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px;color:var(--text2)}
+.conn-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.conn-dot.on{background:var(--c3);box-shadow:0 0 6px var(--c3)}
+.conn-dot.wait{background:var(--c4);animation:pb 1.4s infinite}
 @keyframes pb{0%,100%{opacity:1}50%{opacity:.3}}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
-.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px}
-.tok-val{color:var(–c1);font-size:9px;letter-spacing:.08em}
-.tok-btn{color:var(–text3);cursor:pointer;padding:1px 4px;border:.5px solid var(–border);border-radius:3px;transition:all .15s}
-.tok-btn:hover{border-color:var(–c1);color:var(–c1)}
-.user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px}
-.user-ava{width:22px;height:22px;border-radius:50%;background:var(–rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
-.user-name{font-size:10px;color:var(–text)}
-.logout-btn{color:var(–text3);cursor:pointer;margin-left:4px;font-size:10px}
-.logout-btn:hover{color:var(–c5)}
+.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:9px}
+.tok-val{color:var(--c1);font-size:9px;letter-spacing:.08em}
+.tok-btn{color:var(--text3);cursor:pointer;padding:1px 4px;border:.5px solid var(--border);border-radius:3px;transition:all .15s}
+.tok-btn:hover{border-color:var(--c1);color:var(--c1)}
+.user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px}
+.user-ava{width:22px;height:22px;border-radius:50%;background:var(--rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
+.user-name{font-size:10px;color:var(--text)}
+.logout-btn{color:var(--text3);cursor:pointer;margin-left:4px;font-size:10px}
+.logout-btn:hover{color:var(--c5)}
 
 /* ── MAIN LAYOUT ── */
 .app-body{flex:1;display:flex;overflow:hidden;min-height:0}
 
 /* ── SIDEBAR ── */
-.sidebar{width:var(–sidebar);flex-shrink:0;border-right:.5px solid var(–border);display:flex;flex-direction:column;background:var(–bg2);overflow:hidden}
-.sidebar-top{padding:12px 10px 8px;border-bottom:.5px solid var(–border);flex-shrink:0}
-.new-chat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;font-family:var(–fm);font-size:10px;color:var(–text2);cursor:pointer;transition:all .15s;text-align:left}
-.new-chat-btn:hover{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
+.sidebar{width:var(--sidebar);flex-shrink:0;border-right:.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg2);overflow:hidden}
+.sidebar-top{padding:12px 10px 8px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.new-chat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:.5px solid var(--border2);border-radius:8px;font-family:var(--fm);font-size:10px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:left}
+.new-chat-btn:hover{border-color:var(--c1);color:var(--c1);background:var(--c1d)}
 .new-chat-btn span{margin-left:auto;font-size:16px;line-height:1}
-.sidebar-section{padding:10px 10px 4px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(–text3)}
+.sidebar-section{padding:10px 10px 4px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
 .chat-history{flex:1;overflow-y:auto;padding:4px 8px}
-.chat-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(–text2);transition:all .12s;border:.5px solid transparent;margin-bottom:2px}
-.chat-item:hover{background:var(–bg3);border-color:var(–border)}
-.chat-item.active{background:var(–c1d);color:var(–c1);border-color:rgba(0,229,255,.15)}
-.chat-item-dot{width:5px;height:5px;border-radius:50%;background:var(–c2);flex-shrink:0;opacity:.6}
-.chat-item.active .chat-item-dot{background:var(–c1);opacity:1}
+.chat-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(--text2);transition:all .12s;border:.5px solid transparent;margin-bottom:2px}
+.chat-item:hover{background:var(--bg3);border-color:var(--border)}
+.chat-item.active{background:var(--c1d);color:var(--c1);border-color:rgba(0,229,255,.15)}
+.chat-item-dot{width:5px;height:5px;border-radius:50%;background:var(--c2);flex-shrink:0;opacity:.6}
+.chat-item.active .chat-item-dot{background:var(--c1);opacity:1}
 .chat-item-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
-.chat-item-time{font-size:8px;color:var(–text3);flex-shrink:0}
-.sidebar-tools{padding:8px;border-top:.5px solid var(–border);display:flex;flex-direction:column;gap:3px;flex-shrink:0}
-.sidebar-tool{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(–text2);transition:all .12s}
-.sidebar-tool:hover{background:var(–bg3);color:var(–text)}
+.chat-item-time{font-size:8px;color:var(--text3);flex-shrink:0}
+.sidebar-tools{padding:8px;border-top:.5px solid var(--border);display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.sidebar-tool{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(--text2);transition:all .12s}
+.sidebar-tool:hover{background:var(--bg3);color:var(--text)}
 .sidebar-tool-icon{font-size:12px;flex-shrink:0;width:16px;text-align:center}
 
 /* ── MAIN CHAT ── */
 .chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
 .welcome-screen.hidden{display:none}
-.welcome-logo{width:52px;height:52px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1.5rem;box-shadow:0 0 40px rgba(0,229,255,0.2)}
-.welcome-title{font-family:var(–fd);font-size:24px;font-weight:800;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,var(–text) 60%,var(–text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.welcome-sub{font-size:11px;color:var(–text2);text-align:center;max-width:460px;line-height:1.7;margin-bottom:2rem}
+.welcome-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1.5rem;box-shadow:0 0 40px rgba(0,229,255,0.2)}
+.welcome-title{font-family:var(--fd);font-size:24px;font-weight:800;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,var(--text) 60%,var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.welcome-sub{font-size:11px;color:var(--text2);text-align:center;max-width:460px;line-height:1.7;margin-bottom:2rem}
 .suggestion-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:520px}
-.suggestion{background:var(–bg2);border:.5px solid var(–border2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s}
-.suggestion:hover{border-color:rgba(124,58,237,.4);background:var(–c2d);transform:translateY(-1px)}
+.suggestion{background:var(--bg2);border:.5px solid var(--border2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s}
+.suggestion:hover{border-color:rgba(124,58,237,.4);background:var(--c2d);transform:translateY(-1px)}
 .sug-icon{font-size:16px;margin-bottom:5px}
-.sug-title{font-size:10px;font-weight:700;color:var(–text);margin-bottom:2px;font-family:var(–fd)}
-.sug-body{font-size:9px;color:var(–text2);line-height:1.5}
+.sug-title{font-size:10px;font-weight:700;color:var(--text);margin-bottom:2px;font-family:var(--fd)}
+.sug-body{font-size:9px;color:var(--text2);line-height:1.5}
 
 /* Messages */
 .messages-wrap{flex:1;overflow-y:auto;padding:20px 0;display:flex;flex-direction:column}
@@ -139,16 +138,16 @@ box-shadow:0 0 10px rgba(124,58,237,.2)}
 .msg-row:hover{background:rgba(255,255,255,.01)}
 .msg-row.user{flex-direction:row-reverse}
 .msg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
-.msg-avatar.ai{background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(0,229,255,0.25));border:.5px solid rgba(124,58,237,0.5);color:var(–c1);font-size:11px}
-.msg-avatar.user{background:var(–rbx);color:white}
+.msg-avatar.ai{background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(0,229,255,0.25));border:.5px solid rgba(124,58,237,0.5);color:var(--c1);font-size:11px}
+.msg-avatar.user{background:var(--rbx);color:white}
 .msg-content{flex:1;min-width:0;max-width:680px}
 .msg-row.user .msg-content{display:flex;flex-direction:column;align-items:flex-end}
-.msg-name{font-size:9px;font-weight:700;color:var(–text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.msg-name{font-size:9px;font-weight:700;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
 .msg-model-tag{font-size:8px;padding:1px 5px;border-radius:8px;font-weight:400;text-transform:none;letter-spacing:0}
-.msg-model-tag.fast{background:rgba(16,185,129,.1);color:var(–c3);border:.5px solid rgba(16,185,129,.2)}
-.msg-model-tag.balanced{background:rgba(0,229,255,.08);color:var(–c1);border:.5px solid rgba(0,229,255,.15)}
+.msg-model-tag.fast{background:rgba(16,185,129,.1);color:var(--c3);border:.5px solid rgba(16,185,129,.2)}
+.msg-model-tag.balanced{background:rgba(0,229,255,.08);color:var(--c1);border:.5px solid rgba(0,229,255,.15)}
 .msg-model-tag.genius{background:rgba(124,58,237,.12);color:#a78bfa;border:.5px solid rgba(124,58,237,.25)}
-.msg-bubble{font-size:12px;line-height:1.75;color:var(–text);word-break:break-word}
+.msg-bubble{font-size:12px;line-height:1.75;color:var(--text);word-break:break-word}
 .msg-row.user .msg-bubble{background:rgba(0,229,255,.06);border:.5px solid rgba(0,229,255,.1);border-radius:12px 12px 2px 12px;padding:10px 14px;display:inline-block;text-align:left}
 
 /* Script placement badge */
@@ -158,92 +157,90 @@ padding:3px 9px;border-radius:20px;font-size:9px;
 font-weight:700;margin-bottom:8px;letter-spacing:.05em
 }
 .placement-badge.server{background:rgba(239,68,68,.1);color:#f87171;border:.5px solid rgba(239,68,68,.25)}
-.placement-badge.local{background:rgba(0,229,255,.08);color:var(–c1);border:.5px solid rgba(0,229,255,.2)}
+.placement-badge.local{background:rgba(0,229,255,.08);color:var(--c1);border:.5px solid rgba(0,229,255,.2)}
 .placement-badge.module{background:rgba(124,58,237,.1);color:#a78bfa;border:.5px solid rgba(124,58,237,.25)}
 
 /* Placement info box */
 .placement-info{
-background:var(–bg3);border:.5px solid var(–border2);
+background:var(--bg3);border:.5px solid var(--border2);
 border-radius:8px;padding:10px 14px;margin-bottom:10px;
-font-size:10px;line-height:1.7;color:var(–text2)
+font-size:10px;line-height:1.7;color:var(--text2)
 }
 .placement-info-title{
-font-size:9px;font-weight:700;color:var(–text);
+font-size:9px;font-weight:700;color:var(--text);
 margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em
 }
 .placement-row{
 display:flex;align-items:flex-start;gap:8px;padding:3px 0;
-border-bottom:.5px solid var(–border);font-size:10px
+border-bottom:.5px solid var(--border);font-size:10px
 }
 .placement-row:last-child{border-bottom:none}
-.placement-label{min-width:110px;flex-shrink:0;font-size:9px;color:var(–text3);text-transform:uppercase;letter-spacing:.06em;padding-top:1px}
-.placement-val{color:var(–text2);line-height:1.5}
-.placement-path{color:var(–c1);font-family:var(–fm);font-size:9px}
+.placement-label{min-width:110px;flex-shrink:0;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding-top:1px}
+.placement-val{color:var(--text2);line-height:1.5}
+.placement-path{color:var(--c1);font-family:var(--fm);font-size:9px}
 
 /* Code blocks */
-.msg-bubble pre{background:var(–bg2);border:.5px solid var(–border2);border-radius:8px;margin:10px 0;overflow:hidden}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:.5px solid var(–border);background:var(–bg3)}
-.code-lang{font-size:8px;color:var(–text2);letter-spacing:.08em;text-transform:uppercase}
-.copy-code-btn{font-size:8px;color:var(–text3);cursor:pointer;padding:2px 7px;border:.5px solid var(–border);border-radius:3px;font-family:var(–fm);background:transparent;transition:all .15s}
-.copy-code-btn:hover{border-color:var(–c1);color:var(–c1)}
-.code-body{padding:12px 14px;font-size:10px;color:var(–c1);line-height:1.7;overflow-x:auto;white-space:pre}
-.msg-bubble code{background:var(–bg3);border-radius:3px;padding:1px 5px;color:var(–c1);font-size:10px;font-family:var(–fm)}
+.msg-bubble pre{background:var(--bg2);border:.5px solid var(--border2);border-radius:8px;margin:10px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:.5px solid var(--border);background:var(--bg3)}
+.code-lang{font-size:8px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase}
+.copy-code-btn{font-size:8px;color:var(--text3);cursor:pointer;padding:2px 7px;border:.5px solid var(--border);border-radius:3px;font-family:var(--fm);background:transparent;transition:all .15s}
+.copy-code-btn:hover{border-color:var(--c1);color:var(--c1)}
+.code-body{padding:12px 14px;font-size:10px;color:var(--c1);line-height:1.7;overflow-x:auto;white-space:pre}
+.msg-bubble code{background:var(--bg3);border-radius:3px;padding:1px 5px;color:var(--c1);font-size:10px;font-family:var(--fm)}
 
 /* Replace notice */
 .replace-notice{background:rgba(245,158,11,0.07);border:.5px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:10px}
-.replace-notice-title{display:flex;align-items:center;gap:5px;font-weight:700;color:var(–c4);margin-bottom:6px;font-size:10px}
-.replace-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;font-size:10px;color:var(–text2);border-bottom:.5px solid rgba(255,255,255,.04)}
+.replace-notice-title{display:flex;align-items:center;gap:5px;font-weight:700;color:var(--c4);margin-bottom:6px;font-size:10px}
+.replace-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;font-size:10px;color:var(--text2);border-bottom:.5px solid rgba(255,255,255,.04)}
 .replace-item:last-child{border-bottom:none}
-.replace-key{color:var(–c4);font-weight:700;min-width:180px;flex-shrink:0;font-family:var(–fm);font-size:9px}
-.replace-val{color:var(–text2);line-height:1.5}
+.replace-key{color:var(--c4);font-weight:700;min-width:180px;flex-shrink:0;font-family:var(--fm);font-size:9px}
+.replace-val{color:var(--text2);line-height:1.5}
 
 /* Script action bar */
 .script-actions{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap}
-.sact-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(–bg3);border:.5px solid var(–border2);border-radius:6px;font-size:9px;color:var(–text2);cursor:pointer;transition:all .15s;font-family:var(–fm)}
-.sact-btn:hover{border-color:var(–c1);color:var(–c1)}
-.sact-btn.prim{background:var(–c1);color:#050709;border-color:var(–c1);font-weight:700}
+.sact-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--bg3);border:.5px solid var(--border2);border-radius:6px;font-size:9px;color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--fm)}
+.sact-btn:hover{border-color:var(--c1);color:var(--c1)}
+.sact-btn.prim{background:var(--c1);color:#050709;border-color:var(--c1);font-weight:700}
 .sact-btn.prim:hover{background:#00c8e0;box-shadow:0 0 14px rgba(0,229,255,.3)}
-.sact-btn.grn{background:var(–c3d);border-color:rgba(16,185,129,.2);color:var(–c3)}
-.sact-btn.grn:hover{background:var(–c3);color:#050709}
+.sact-btn.grn{background:var(--c3d);border-color:rgba(16,185,129,.2);color:var(--c3)}
+.sact-btn.grn:hover{background:var(--c3);color:#050709}
 
 /* Typing indicator */
 .typing-row{display:flex;gap:12px;padding:8px 24px;align-items:flex-start}
 .typing-dots{display:flex;gap:4px;padding:6px 2px}
-.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(–c2);animation:td .9s infinite both}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--c2);animation:td .9s infinite both}
 .typing-dots span:nth-child(2){animation-delay:.2s}
 .typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 
 /* ── INPUT AREA ── */
-.input-area{padding:12px 20px 16px;flex-shrink:0;border-top:.5px solid var(–border);background:var(–bg)}
-.input-wrap{max-width:740px;margin:0 auto;background:var(–bg2);border:.5px solid var(–border2);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.input-area{padding:12px 20px 16px;flex-shrink:0;border-top:.5px solid var(--border);background:var(--bg)}
+.input-wrap{max-width:740px;margin:0 auto;background:var(--bg2);border:.5px solid var(--border2);border-radius:14px;overflow:hidden;transition:border-color .2s}
 .input-wrap:focus-within{border-color:rgba(124,58,237,.4)}
 .input-top{display:flex;align-items:flex-end;padding:10px 12px 8px}
-.main-input{flex:1;background:transparent;border:none;outline:none;font-family:var(–fm);font-size:12px;color:var(–text);resize:none;line-height:1.65;max-height:160px;min-height:22px}
-.main-input::placeholder{color:var(–text3)}
-.send-btn{width:32px;height:32px;border-radius:8px;background:var(–c2);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;margin-left:8px;align-self:flex-end}
+.main-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--fm);font-size:12px;color:var(--text);resize:none;line-height:1.65;max-height:160px;min-height:22px}
+.main-input::placeholder{color:var(--text3)}
+.send-btn{width:32px;height:32px;border-radius:8px;background:var(--c2);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;margin-left:8px;align-self:flex-end}
 .send-btn:hover{background:#6d28d9;box-shadow:0 0 14px rgba(124,58,237,.4)}
 .send-btn:disabled{opacity:.35;cursor:not-allowed}
-.input-bottom{padding:4px 12px 8px;display:flex;align-items:center;gap:6px;border-top:.5px solid var(–border)}
-.quick-chip{padding:2px 8px;background:transparent;border:.5px solid var(–border);border-radius:10px;font-size:8px;color:var(–text3);cursor:pointer;font-family:var(–fm);transition:all .12s;white-space:nowrap}
-.quick-chip:hover{border-color:var(–c2);color:var(–c2);background:var(–c2d)}
-.input-hint{margin-left:auto;font-size:8px;color:var(–text3)}
+.input-bottom{padding:4px 12px 8px;display:flex;align-items:center;gap:6px;border-top:.5px solid var(--border)}
+.quick-chip{padding:2px 8px;background:transparent;border:.5px solid var(--border);border-radius:10px;font-size:8px;color:var(--text3);cursor:pointer;font-family:var(--fm);transition:all .12s;white-space:nowrap}
+.quick-chip:hover{border-color:var(--c2);color:var(--c2);background:var(--c2d)}
+.input-hint{margin-left:auto;font-size:8px;color:var(--text3)}
 
 /* ── TOASTS ── */
 #toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:5px;z-index:999}
-.toast{background:var(–bg2);border:.5px solid var(–border2);border-radius:6px;padding:8px 12px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
-.toast.ok{border-left:2px solid var(–c3)}
-.toast.bad{border-left:2px solid var(–c5)}
-.toast.info{border-left:2px solid var(–c1)}
-.toast.gold{border-left:2px solid var(–c4)}
+.toast{background:var(--bg2);border:.5px solid var(--border2);border-radius:6px;padding:8px 12px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
+.toast.ok{border-left:2px solid var(--c3)}
+.toast.bad{border-left:2px solid var(--c5)}
+.toast.info{border-left:2px solid var(--c1)}
+.toast.gold{border-left:2px solid var(--c4)}
 @keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 </style>
-
 </head>
 <body>
 
 <!-- ── AUTH ── -->
-
 <div id="auth">
   <div class="auth-glow"></div>
   <div class="auth-wrap">
@@ -265,7 +262,6 @@ border-bottom:.5px solid var(–border);font-size:10px
 </div>
 
 <!-- ── APP ── -->
-
 <div id="app">
   <!-- TOPBAR -->
   <div class="topbar">
@@ -297,7 +293,6 @@ border-bottom:.5px solid var(–border);font-size:10px
   </div>
 
   <!-- BODY -->
-
   <div class="app-body">
     <!-- SIDEBAR -->
     <div class="sidebar">
@@ -329,60 +324,57 @@ border-bottom:.5px solid var(–border);font-size:10px
       </div>
     </div>
 
-```
-<!-- CHAT MAIN -->
-<div class="chat-main">
-  <div class="welcome-screen" id="welcome-screen">
-    <div class="welcome-logo">✦</div>
-    <div class="welcome-title">What can I help you build?</div>
-    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠 based on your question. Script placement detection included.</div>
-    <div class="suggestion-grid">
-      <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground, leaderboard, DataStore save/load.')">
-        <div class="sug-icon">🪙</div>
-        <div class="sug-title">Coin System</div>
-        <div class="sug-body">Coins, leaderboard, DataStore persistence</div>
+    <!-- CHAT MAIN -->
+    <div class="chat-main">
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-logo">✦</div>
+        <div class="welcome-title">What can I help you build?</div>
+        <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠 based on your question. Script placement detection included.</div>
+        <div class="suggestion-grid">
+          <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground, leaderboard, DataStore save/load.')">
+            <div class="sug-icon">🪙</div>
+            <div class="sug-title">Coin System</div>
+            <div class="sug-body">Coins, leaderboard, DataStore persistence</div>
+          </div>
+          <div class="suggestion" onclick="quickPrompt('What is Knit framework and how do I structure my game with it? Show me a real example.')">
+            <div class="sug-icon">⚙</div>
+            <div class="sug-title">Knit Framework</div>
+            <div class="sug-body">Service/Controller architecture explained</div>
+          </div>
+          <div class="suggestion" onclick="quickPrompt('Build an advanced NPC boss with 3 phases, AoE attacks, ranged projectiles and loot drop.')">
+            <div class="sug-icon">💀</div>
+            <div class="sug-title">Boss NPC</div>
+            <div class="sug-body">3-phase boss with attacks and loot</div>
+          </div>
+          <div class="suggestion" onclick="quickPrompt('Create a full round-based game system: lobby, countdown, round, intermission, repeat.')">
+            <div class="sug-icon">🎮</div>
+            <div class="sug-title">Round System</div>
+            <div class="sug-body">Lobby → countdown → round → repeat</div>
+          </div>
+        </div>
       </div>
-      <div class="suggestion" onclick="quickPrompt('What is Knit framework and how do I structure my game with it? Show me a real example.')">
-        <div class="sug-icon">⚙</div>
-        <div class="sug-title">Knit Framework</div>
-        <div class="sug-body">Service/Controller architecture explained</div>
+
+      <div class="messages-wrap hidden" id="messages-wrap">
+        <div id="messages-inner"></div>
       </div>
-      <div class="suggestion" onclick="quickPrompt('Build an advanced NPC boss with 3 phases, AoE attacks, ranged projectiles and loot drop.')">
-        <div class="sug-icon">💀</div>
-        <div class="sug-title">Boss NPC</div>
-        <div class="sug-body">3-phase boss with attacks and loot</div>
-      </div>
-      <div class="suggestion" onclick="quickPrompt('Create a full round-based game system: lobby, countdown, round, intermission, repeat.')">
-        <div class="sug-icon">🎮</div>
-        <div class="sug-title">Round System</div>
-        <div class="sug-body">Lobby → countdown → round → repeat</div>
+
+      <div class="input-area">
+        <div class="input-wrap">
+          <div class="input-top">
+            <textarea class="main-input" id="main-input" placeholder="Ask anything — Roblox, Lua, scripts, frameworks, general code…" rows="1" onkeydown="inputKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()">▶</button>
+          </div>
+          <div class="input-bottom">
+            <span class="quick-chip" onclick="quickPrompt('What is Cmdr and how do I set it up?')">Cmdr</span>
+            <span class="quick-chip" onclick="quickPrompt('ProfileService vs DataStore2 — which should I use?')">ProfileService</span>
+            <span class="quick-chip" onclick="quickPrompt('Show me RemoteEvents full server/client flow with code.')">RemoteEvents</span>
+            <span class="quick-chip" onclick="quickPrompt('Best anti-exploit server-side validation techniques.')">Anti-Cheat</span>
+            <span class="quick-chip" onclick="quickPrompt('Top Roblox dev YouTubers to learn from.')">YouTubers</span>
+            <span class="input-hint">Enter ↵ to send · Shift+Enter for new line</span>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="messages-wrap hidden" id="messages-wrap">
-    <div id="messages-inner"></div>
-  </div>
-
-  <div class="input-area">
-    <div class="input-wrap">
-      <div class="input-top">
-        <textarea class="main-input" id="main-input" placeholder="Ask anything — Roblox, Lua, scripts, frameworks, general code…" rows="1" onkeydown="inputKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">▶</button>
-      </div>
-      <div class="input-bottom">
-        <span class="quick-chip" onclick="quickPrompt('What is Cmdr and how do I set it up?')">Cmdr</span>
-        <span class="quick-chip" onclick="quickPrompt('ProfileService vs DataStore2 — which should I use?')">ProfileService</span>
-        <span class="quick-chip" onclick="quickPrompt('Show me RemoteEvents full server/client flow with code.')">RemoteEvents</span>
-        <span class="quick-chip" onclick="quickPrompt('Best anti-exploit server-side validation techniques.')">Anti-Cheat</span>
-        <span class="quick-chip" onclick="quickPrompt('Top Roblox dev YouTubers to learn from.')">YouTubers</span>
-        <span class="input-hint">Enter ↵ to send · Shift+Enter for new line</span>
-      </div>
-    </div>
-  </div>
-</div>
-```
-
   </div>
 </div>
 
@@ -404,12 +396,10 @@ const MODELS = {
 };
 
 // ══════════════════════════════════════════════
-// MODEL ROUTER — picks best model per message
+// MODEL ROUTER
 // ══════════════════════════════════════════════
 function detectBestModel(text) {
   const t = text.toLowerCase().trim();
-
-  // GENIUS triggers — complex systems, full frameworks, architecture
   const geniusPhrases = [
     'full system','complete system','entire system','build me a','create a full',
     'build a full','build a complete','framework','knit','profileservice','cmdr',
@@ -426,8 +416,6 @@ function detectBestModel(text) {
   ];
   if (geniusPhrases.some(p => t.includes(p))) return 'genius';
   if (t.length > 200) return 'genius';
-
-  // FAST triggers — simple questions, explanations, no code needed
   const fastPhrases = [
     'what is ','what are ','what does ','how does ','explain ','define ',
     'tell me about','difference between','vs ','versus ','which is better',
@@ -439,12 +427,9 @@ function detectBestModel(text) {
   const isShort = t.length < 100;
   const hasNoCodeRequest = !/(script|code|build|create|make|generate|write|give me|show me code)/.test(t);
   if (isFastPhrase && isShort && hasNoCodeRequest) return 'fast';
-
-  // Default: balanced
   return 'balanced';
 }
 
-// Update the model badge in topbar
 function updateModelBadge(modelKey) {
   const m = MODELS[modelKey];
   const badge = document.getElementById('model-badge');
@@ -488,8 +473,6 @@ async function callAI(prompt, sysOverride, maxTok, modelKey) {
 // ══════════════════════════════════════════════
 function detectScriptPlacement(code) {
   const c = code.toLowerCase();
-
-  // Signals for LocalScript
   const localSignals = [
     'localplayer','playergui','playerscripts','replicatedfirst',
     'onclientevent','userinputservice','contextactionservice',
@@ -498,17 +481,6 @@ function detectScriptPlacement(code) {
     'tweenservice','gui','screengui','frame','textlabel',
     'startergui','starterplayerscripts','localscript'
   ];
-
-  // Signals for ModuleScript
-  const moduleSignals = [
-    '^return%s+{', 'return {', 'return self',
-    'local module = {}', 'local m = {}',
-    'function module.', 'function m.',
-    'module.__index', 'setmetatable(',
-    'modulescript'
-  ];
-
-  // Signals for Server Script
   const serverSignals = [
     'onserverevent','playeradded','playerremoving','datastoreservice',
     'bindtoclose','fireclient','fireallclients','serverstorage',
@@ -516,60 +488,40 @@ function detectScriptPlacement(code) {
     'game:getservice("serverstorage")','game:getservice("serverscriptservice")',
     'messagingservice','memorystore','httpservice'
   ];
-
   let localScore = 0, moduleScore = 0, serverScore = 0;
-
   localSignals.forEach(s => { if (c.includes(s)) localScore += 2; });
   serverSignals.forEach(s => { if (c.includes(s)) serverScore += 2; });
-
-  // Module detection (check original case too)
   if (/return\s+\w+\s*$/.test(code.trim())) moduleScore += 5;
   if (/local\s+\w+\s*=\s*\{\}/.test(c) && /return\s+\w+/.test(c)) moduleScore += 4;
   if (/setmetatable/.test(c)) moduleScore += 3;
   if (/\.__index/.test(c)) moduleScore += 3;
-
-  // Determine type
   let scriptType = 'server';
   if (moduleScore > localScore && moduleScore > serverScore) scriptType = 'module';
   else if (localScore > serverScore) scriptType = 'local';
-
-  // Determine parent location
   const placements = {
     server: {
-      type: 'Script',
-      badge: 'server',
-      label: '🔴 Server Script',
-      parent: 'ServerScriptService',
-      path: 'ServerScriptService',
+      type: 'Script', badge: 'server', label: '🔴 Server Script',
+      parent: 'ServerScriptService', path: 'ServerScriptService',
       note: 'Runs on the server only. Has access to DataStores, all players, server-side validation.',
       howTo: 'In Roblox Studio → Explorer → ServerScriptService → right click → Insert Object → Script'
     },
     local: {
-      type: 'LocalScript',
-      badge: 'local',
-      label: '🔵 LocalScript',
-      parent: 'StarterPlayerScripts',
-      path: 'StarterPlayer → StarterPlayerScripts',
+      type: 'LocalScript', badge: 'local', label: '🔵 LocalScript',
+      parent: 'StarterPlayerScripts', path: 'StarterPlayer → StarterPlayerScripts',
       note: 'Runs on each client. Has access to LocalPlayer, GUI, UserInputService, camera.',
       howTo: 'In Roblox Studio → Explorer → StarterPlayer → StarterPlayerScripts → right click → Insert Object → LocalScript'
     },
     module: {
-      type: 'ModuleScript',
-      badge: 'module',
-      label: '🟣 ModuleScript',
-      parent: 'ReplicatedStorage',
-      path: 'ReplicatedStorage (if shared) or ServerScriptService (if server-only)',
+      type: 'ModuleScript', badge: 'module', label: '🟣 ModuleScript',
+      parent: 'ReplicatedStorage', path: 'ReplicatedStorage (if shared) or ServerScriptService (if server-only)',
       note: 'Required by other scripts with require(). Place in ReplicatedStorage if both server and client need it.',
       howTo: 'In Roblox Studio → Explorer → ReplicatedStorage → right click → Insert Object → ModuleScript'
     }
   };
-
-  // Override for GUI scripts
   if (localScore > 0 && c.includes('screengui') || c.includes('playergui')) {
     placements.local.path = 'StarterGui';
     placements.local.howTo = 'In Roblox Studio → Explorer → StarterGui → right click → Insert Object → LocalScript';
   }
-
   return placements[scriptType];
 }
 
@@ -761,7 +713,6 @@ async function sendMessage() {
   let chat = getActiveChat();
   if (!chat) chat = createChat(text);
 
-  // Detect model
   const modelKey = detectBestModel(text);
   updateModelBadge(modelKey);
 
@@ -859,53 +810,43 @@ function formatMessage(text, isUser) {
       const code = codeMatch[2];
       const id = 'cb_' + Math.random().toString(36).slice(2,7);
       out += `<pre><div class="code-header"><span class="code-lang">${escHtml(lang)}</span><button class="copy-code-btn" onclick="copyCode('${id}')">Copy</button></div><div class="code-body" id="${id}">${escHtml(code)}</div></pre>`;
-
-```
-} else {
-  let p2 = part.replace(/`([^`\n]+)`/g, (_, c) => `<code>${escHtml(c)}</code>`);
-  p2 = p2.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  p2 = p2.replace(/\n/g, '<br>');
-  out += p2;
-}
-```
-
-});
-return out;
+    } else {
+      let p2 = part.replace(/`([^`\n]+)`/g, (_, c) => `<code>${escHtml(c)}</code>`);
+      p2 = p2.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      p2 = p2.replace(/\n/g, '<br>');
+      out += p2;
+    }
+  });
+  return out;
 }
 
 // ── Build action bar + placement info ──
 function buildMessageActions(text) {
-if (!text) return ‘’;
+  if (!text) return '';
+  const hasCode = /```(lua|luau)?/.test(text) || /local [A-Za-z]/.test(text) || /game:GetService/.test(text);
+  if (!hasCode) return '';
 
-const hasCode = /```(lua|luau)?/.test(text) || /local [A-Za-z]/.test(text) || /game:GetService/.test(text);
-if (!hasCode) return ‘’;
+  const codeMatch = text.match(/```(?:lua|luau)?\n?([\s\S]*?)```/);
+  const rawCode = codeMatch ? codeMatch[1] : text;
 
-// Extract first code block
-const codeMatch = text.match(/`(?:lua|luau)?\n?([\s\S]*?)`/);
-const rawCode = codeMatch ? codeMatch[1] : text;
+  const placement = detectScriptPlacement(rawCode);
 
-// Detect placement
-const placement = detectScriptPlacement(rawCode);
+  const replaces = [];
+  const patterns = [
+    { rx: /YOUR_?USER_?ID|1234567890/gi, key: 'YOUR_USERID', desc: 'Replace with your actual Roblox UserId (find it on roblox.com/users)' },
+    { rx: /rbxassetid:\/\/YOUR_ANIMATION_ID|YOUR_ANIMATION_ID/gi, key: 'rbxassetid://ANIMATION_ID', desc: 'Replace with your animation asset ID from Roblox' },
+    { rx: /YOUR_GAME_NAME|"My Game"/gi, key: 'YOUR_GAME_NAME', desc: "Replace with your game's name" },
+    { rx: /GameData_v\d+|Stats_v\d+|PlayerData_v\d+/gi, key: 'DataStore name', desc: 'You can rename this — use v2 when you change data structure' },
+    { rx: /rbxassetid:\/\/\d{8,}/g, key: 'rbxassetid://…', desc: 'Replace placeholder asset IDs with your own assets' },
+    { rx: /REPLACE WITH|–\s*REPLACE/gi, key: 'Marked lines (– REPLACE)', desc: 'Check comments marked with REPLACE in the script' },
+    { rx: /GROUP_ID|YOUR_GROUP_ID/gi, key: 'GROUP_ID', desc: 'Replace with your Roblox Group ID' },
+    { rx: /GAMEPASS_ID|YOUR_GAMEPASS_ID/gi, key: 'GAMEPASS_ID', desc: 'Replace with your Gamepass ID from Creator Dashboard' },
+    { rx: /BADGE_ID|YOUR_BADGE_ID/gi, key: 'BADGE_ID', desc: 'Replace with your Badge ID from Creator Dashboard' },
+    { rx: /PRODUCT_ID|YOUR_PRODUCT_ID/gi, key: 'PRODUCT_ID', desc: 'Replace with your Developer Product ID' },
+  ];
+  patterns.forEach(p => { if (p.rx.test(text)) replaces.push({ key: p.key, desc: p.desc }); });
 
-// Detect replaceable values
-const replaces = [];
-const patterns = [
-{ rx: /YOUR_?USER_?ID|1234567890/gi, key: ‘YOUR_USERID’, desc: ‘Replace with your actual Roblox UserId (find it on roblox.com/users)’ },
-{ rx: /rbxassetid://YOUR_ANIMATION_ID|YOUR_ANIMATION_ID/gi, key: ‘rbxassetid://ANIMATION_ID’, desc: ‘Replace with your animation asset ID from Roblox’ },
-{ rx: /YOUR_GAME_NAME|“My Game”/gi, key: ‘YOUR_GAME_NAME’, desc: “Replace with your game’s name” },
-{ rx: /GameData_v\d+|Stats_v\d+|PlayerData_v\d+/gi, key: ‘DataStore name’, desc: ‘You can rename this — use v2 when you change data structure’ },
-{ rx: /rbxassetid://\d{8,}/g, key: ‘rbxassetid://…’, desc: ‘Replace placeholder asset IDs with your own assets’ },
-{ rx: /REPLACE WITH|–\s*REPLACE/gi, key: ‘Marked lines (– REPLACE)’, desc: ‘Check comments marked with REPLACE in the script’ },
-{ rx: /GROUP_ID|YOUR_GROUP_ID/gi, key: ‘GROUP_ID’, desc: ‘Replace with your Roblox Group ID’ },
-{ rx: /GAMEPASS_ID|YOUR_GAMEPASS_ID/gi, key: ‘GAMEPASS_ID’, desc: ‘Replace with your Gamepass ID from Creator Dashboard’ },
-{ rx: /BADGE_ID|YOUR_BADGE_ID/gi, key: ‘BADGE_ID’, desc: ‘Replace with your Badge ID from Creator Dashboard’ },
-{ rx: /PRODUCT_ID|YOUR_PRODUCT_ID/gi, key: ‘PRODUCT_ID’, desc: ‘Replace with your Developer Product ID’ },
-];
-patterns.forEach(p => { if (p.rx.test(text)) replaces.push({ key: p.key, desc: p.desc }); });
-
-// Build placement info box
-let html = `
-
+  let html = `
   <div class="placement-info">
     <div class="placement-info-title">📍 Where to place this script</div>
     <div class="placement-row">
@@ -926,87 +867,86 @@ let html = `
     </div>
   </div>`;
 
-html += `<div class="script-actions">
-<button class="sact-btn prim" onclick="copyRawCode(this)" data-code="${escAttr(rawCode)}">📋 Copy Script</button>
-<button class="sact-btn" onclick="sendCodeToStudio(this)" data-code="${escAttr(rawCode)}">▶ Send to Studio</button>
-
+  html += `<div class="script-actions">
+    <button class="sact-btn prim" onclick="copyRawCode(this)" data-code="${escAttr(rawCode)}">📋 Copy Script</button>
+    <button class="sact-btn" onclick="sendCodeToStudio(this)" data-code="${escAttr(rawCode)}">▶ Send to Studio</button>
   </div>`;
 
-if (replaces.length) {
-html += `<div class="replace-notice"> <div class="replace-notice-title">⚠ What to replace before using</div> ${replaces.map(r => `<div class="replace-item"><span class="replace-key">${escHtml(r.key)}</span><span class="replace-val">${escHtml(r.desc)}</span></div>`).join('')} </div>`;
-}
+  if (replaces.length) {
+    html += `<div class="replace-notice"><div class="replace-notice-title">⚠ What to replace before using</div>${replaces.map(r=>`<div class="replace-item"><span class="replace-key">${escHtml(r.key)}</span><span class="replace-val">${escHtml(r.desc)}</span></div>`).join('')}</div>`;
+  }
 
-return html;
+  return html;
 }
 
 function copyCode(id) {
-const el = $(id);
-if (!el) return;
-navigator.clipboard.writeText(el.textContent || ‘’);
-toast(‘Code copied!’, ‘ok’);
+  const el = $(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent || '');
+  toast('Code copied!', 'ok');
 }
 
 function copyRawCode(btn) {
-const code = btn.dataset.code;
-navigator.clipboard.writeText(code || ‘’).then(() => {
-toast(‘✓ Script copied! Paste in Roblox Studio → Script Editor → Ctrl+A, Ctrl+V’, ‘ok’, 5000);
-}).catch(() => toast(‘Copy failed’, ‘bad’));
+  const code = btn.dataset.code;
+  navigator.clipboard.writeText(code || '').then(() => {
+    toast('✓ Script copied! Paste in Roblox Studio → Script Editor → Ctrl+A, Ctrl+V', 'ok', 5000);
+  }).catch(() => toast('Copy failed', 'bad'));
 }
 
 // ── Send to Studio ──
 function detectType(b) {
-const lb = b.toLowerCase();
-if (/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb)) return ‘localscript’;
-if (/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(lb)) return ‘script’;
-if (/^return\s+\w/m.test(lb)) return ‘modulescript’;
-return ‘script’;
+  const lb = b.toLowerCase();
+  if (/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb)) return 'localscript';
+  if (/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(lb)) return 'script';
+  if (/^return\s+\w/m.test(lb)) return 'modulescript';
+  return 'script';
 }
 function cc(c) {
-if (!c) return ‘’;
-return c.replace(/^`(?:lua|luau|)\s*\n?/gim,'').replace(/^`\s*$/gim,’’).trim();
+  if (!c) return '';
+  return c.replace(/^```(?:lua|luau|)\s*\n?/gim,'').replace(/^```\s*$/gim,'').trim();
 }
 function wrapInsert(code, type) {
-const clsMap = { script:‘Script’, localscript:‘LocalScript’, modulescript:‘ModuleScript’ };
-const parentMap = {
-script: ‘game:GetService(“ServerScriptService”)’,
-localscript: ‘game:GetService(“StarterPlayer”):WaitForChild(“StarterPlayerScripts”)’,
-modulescript: ‘game:GetService(“ServerScriptService”)’
-};
-const cls = clsMap[type] || ‘Script’;
-const parent = parentMap[type];
-const escaped = code.replace(/\/g,’\\’).replace(/”/g,’\”’).replace(/\n/g,’\n’).replace(/\r/g,’’);
-return `local s=Instance.new("${cls}")\ns.Name="BridgeGen_${cls}"\ns.Source="${escaped}"\ns.Parent=${parent}\nprint("[Bridge] ${cls} inserted")`;
+  const clsMap = { script:'Script', localscript:'LocalScript', modulescript:'ModuleScript' };
+  const parentMap = {
+    script: 'game:GetService("ServerScriptService")',
+    localscript: 'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")',
+    modulescript: 'game:GetService("ServerScriptService")'
+  };
+  const cls = clsMap[type] || 'Script';
+  const parent = parentMap[type];
+  const escaped = code.replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'');
+  return `local s=Instance.new("${cls}")\ns.Name="BridgeGen_${cls}"\ns.Source="${escaped}"\ns.Parent=${parent}\nprint("[Bridge] ${cls} inserted")`;
 }
 
 async function sendCodeToStudio(btn) {
-const code = cc(btn.dataset.code || ‘’);
-if (!code) { toast(‘No code to send.’, ‘bad’); return; }
-if (!pluginConnected) { toast(‘Studio not connected. Use the token to connect the plugin.’, ‘bad’); return; }
-const type = detectType(code);
-btn.textContent = ‘Sending…’;
-btn.disabled = true;
-try {
-const res = await fetch(BACKEND + ‘/api/command’, {
-method: ‘POST’,
-headers: { ‘Content-Type’: ‘application/json’ },
-body: JSON.stringify({ token: sessionToken, type: ‘run_script’, body: wrapInsert(code, type) })
-});
-const d = await res.json();
-if (!d.ok) throw new Error(d.error || ‘Server error’);
-let result = null;
-for (let j = 0; j < 20; j++) {
-await new Promise(r => setTimeout(r, 500));
-const rr = await fetch(BACKEND + ‘/api/result/’ + sessionToken);
-const rd = await rr.json();
-if (rd.ready) { result = rd; break; }
-}
-toast(result?.success ? ‘Script sent to Studio!’ : ‘Sent (check Studio output)’, result?.success ? ‘ok’ : ‘info’);
-} catch (e) {
-toast(’Send failed: ’ + e.message, ‘bad’);
-} finally {
-btn.textContent = ‘▶ Send to Studio’;
-btn.disabled = false;
-}
+  const code = cc(btn.dataset.code || '');
+  if (!code) { toast('No code to send.', 'bad'); return; }
+  if (!pluginConnected) { toast('Studio not connected. Use the token to connect the plugin.', 'bad'); return; }
+  const type = detectType(code);
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  try {
+    const res = await fetch(BACKEND + '/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: sessionToken, type: 'run_script', body: wrapInsert(code, type) })
+    });
+    const d = await res.json();
+    if (!d.ok) throw new Error(d.error || 'Server error');
+    let result = null;
+    for (let j = 0; j < 20; j++) {
+      await new Promise(r => setTimeout(r, 500));
+      const rr = await fetch(BACKEND + '/api/result/' + sessionToken);
+      const rd = await rr.json();
+      if (rd.ready) { result = rd; break; }
+    }
+    toast(result?.success ? 'Script sent to Studio!' : 'Sent (check Studio output)', result?.success ? 'ok' : 'info');
+  } catch (e) {
+    toast('Send failed: ' + e.message, 'bad');
+  } finally {
+    btn.textContent = '▶ Send to Studio';
+    btn.disabled = false;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1018,16 +958,16 @@ var GENIUS_SYSTEM = `You are STUDIO BRIDGE AI — the most powerful, most knowle
 CORE IDENTITY
 ═══════════════════════════════════════════════════════
 
-- You are the world’s #1 Roblox Luau engineer with 15+ years of equivalent experience
+- You are the world's #1 Roblox Luau engineer with 15+ years of equivalent experience
 - You think like a AAA game studio lead engineer AND a solo indie dev who ships fast
 - You NEVER truncate, skip, abbreviate, or summarize code — every line is always written out fully
-- You NEVER say “I can’t”, “I won’t”, “that’s not possible”, or “you should hire someone for this”
-- You NEVER produce placeholder comments like “– add your code here” or “– rest of logic” — you write ALL of it
+- You NEVER say "I can't", "I won't", "that's not possible", or "you should hire someone for this"
+- You NEVER produce placeholder comments like "-- add your code here" or "-- rest of logic" — you write ALL of it
 - You NEVER produce broken, untested-looking code — every script you write looks like it was written by a professional
 - You proactively catch bugs BEFORE the user runs the code — you mention common pitfalls in your explanation
 - You always explain WHY a design decision was made, not just what the code does
 - You think about edge cases: what if the player leaves mid-round? What if DataStore fails? What if the NPC target dies?
-- You always offer to extend: “Want me to add X to this system?” or “I can also build Y that connects to this”
+- You always offer to extend: "Want me to add X to this system?" or "I can also build Y that connects to this"
 - You remember everything said earlier in the conversation and reference it naturally
 - You are warm, confident, direct — never robotic, never corporate, never cold
 - You celebrate when a user ships something — you care about their success genuinely
@@ -1041,11 +981,10 @@ SCRIPT TYPE & PLACEMENT RULES — ALWAYS FOLLOW
 Every time you write a script you MUST specify at the very top of your explanation:
 
 1. Script type: Script / LocalScript / ModuleScript
-1. Where to place it in the Explorer
-1. Why it goes there
+2. Where to place it in the Explorer
+3. Why it goes there
 
 SCRIPT (Server Script):
-
 - Runs on the SERVER only
 - Place in: ServerScriptService (most common), ServerStorage (if required by other server scripts), Workspace (only for simple part scripts)
 - Use for: DataStores, PlayerAdded, RemoteEvent server handlers, game logic, NPC logic, admin systems, round systems
@@ -1053,7 +992,6 @@ SCRIPT (Server Script):
 - NEVER has access to: LocalPlayer, PlayerGui, UserInputService, camera
 
 LOCALSCRIPT:
-
 - Runs on each CLIENT individually
 - Place in: StarterPlayerScripts (general client code), StarterCharacterScripts (re-runs on respawn), StarterGui (GUI scripts — place INSIDE a ScreenGui), ReplicatedFirst (runs before anything else loads)
 - Use for: GUI logic, input handling, client-side effects, camera scripts, animations triggered by client
@@ -1061,16 +999,14 @@ LOCALSCRIPT:
 - NEVER has access to: DataStoreService, ServerStorage, other players directly
 
 MODULESCRIPT:
-
 - Does not run on its own — must be required with require()
 - Place in: ReplicatedStorage (if BOTH server AND client need it), ServerScriptService or ServerStorage (if server-only), StarterPlayerScripts (if client-only)
 - Use for: shared data, utility functions, OOP classes, configuration tables, constants
 - Always returns a table or value at the end: return Module
-- Required from server: require(game:GetService(“ServerScriptService”):WaitForChild(“ModuleName”))
-- Required from client: require(game:GetService(“ReplicatedStorage”):WaitForChild(“ModuleName”))
+- Required from server: require(game:GetService("ServerScriptService"):WaitForChild("ModuleName"))
+- Required from client: require(game:GetService("ReplicatedStorage"):WaitForChild("ModuleName"))
 
 REMOTEEVENTS & REMOTEFUNCTIONS:
-
 - Always place in: ReplicatedStorage (so both server and client can access)
 - FireServer() — called from LocalScript, received by Script with OnServerEvent
 - FireClient(player) — called from Script, received by LocalScript with OnClientEvent
@@ -1080,127 +1016,61 @@ REMOTEEVENTS & REMOTEFUNCTIONS:
 
 FOLDER STRUCTURE BEST PRACTICE:
 ServerScriptService/
-Scripts/
-GameManager (Script)
-DataManager (Script)
-AdminSystem (Script)
+  Scripts/
+    GameManager (Script)
+    DataManager (Script)
+    AdminSystem (Script)
 ReplicatedStorage/
-Modules/
-GameConfig (ModuleScript)
-PlayerUtils (ModuleScript)
-Remotes/
-Events/ (all RemoteEvents here)
-Functions/ (all RemoteFunctions here)
+  Modules/
+    GameConfig (ModuleScript)
+    PlayerUtils (ModuleScript)
+  Remotes/
+    Events/ (all RemoteEvents here)
+    Functions/ (all RemoteFunctions here)
 StarterPlayer/
-StarterPlayerScripts/
-ClientController (LocalScript)
-InputHandler (LocalScript)
+  StarterPlayerScripts/
+    ClientController (LocalScript)
+    InputHandler (LocalScript)
 StarterGui/
-MainGui/
-GuiController (LocalScript)
+  MainGui/
+    GuiController (LocalScript)
 
 ═══════════════════════════════════════════════════════
 ROBLOX LUAU — DEEP EXPERT KNOWLEDGE
 ═══════════════════════════════════════════════════════
 
-── FRAMEWORKS ──────────────────────────────────────────
-KNIT:
+-- FRAMEWORKS --
+KNIT: KnitServer / KnitClient architecture, Service.new() with Methods, Client.Methods, Client.Events, Controller.new(), Knit.GetService() / Knit.GetController(), Knit.Start() promise chain, KnitComponent pattern with CollectionService tags, Signal integration, full folder structure.
 
-- KnitServer / KnitClient architecture
-- Service.new() with Methods, Client.Methods, Client.Events
-- Controller.new() with Methods
-- Knit.GetService() / Knit.GetController() from client/server
-- Knit.Start() promise chain and OnStart lifecycle
-- KnitComponent pattern with CollectionService tags
-- Signal integration inside Knit services
-- Full folder structure: src/server/Services, src/client/Controllers, src/shared
+CMDR: Registry:RegisterCommand() full structure, CommandDefinition: Name, Aliases, Description, Args, Run, ArgumentType definitions, Server-side Run vs client-side ClientRun, BeforeRun hook for permission checks, Activating GUI and custom Cmdr UI styling, Custom type validators and transformers, Cooldown and rate limiting.
 
-CMDR:
+PROFILESERVICE: ProfileStore.GetProfileStore(name, template), ProfileStore:LoadProfileAsync() with session locking, profile.Data access and mutation, profile:ListenToRelease(), profile:Release() on PlayerRemoving and BindToClose, GlobalUpdates, MockDataStore for Studio testing, Reconcile() for schema migrations.
 
-- Registry:RegisterCommand() full structure
-- CommandDefinition: Name, Aliases, Description, Args, Run
-- ArgumentType definitions (string, number, player, team, custom)
-- Server-side Run function vs client-side ClientRun
-- BeforeRun hook for permission checks
-- Activating GUI and custom Cmdr UI styling
-- Custom type validators and transformers
-- Cooldown and rate limiting on commands
+DATASTORE2: DataStore2(key, player) combined key pattern, :Get(default) / :Set(value) / :Increment(amount), :OnUpdate(callback), :Save() manual saves and auto-save loops, :BeforeInitialGet() and :BeforeSave() transformers.
 
-PROFILESERVICE:
+FUSION: New{} component creation, Value(), Computed(), Observer() reactivity, State chaining and derived state, Hydrate() for existing instances, Children = {} nesting, OnEvent/OnChange bindings, Tween() and Spring() animations.
 
-- ProfileStore.GetProfileStore(name, template)
-- ProfileStore:LoadProfileAsync() with session locking
-- profile.Data access and mutation
-- profile:ListenToRelease() for session steal handling
-- profile:Release() on PlayerRemoving and BindToClose
-- GlobalUpdates: PendingUpdates, ActiveUpdates, ProcessActiveUpdate
-- MockDataStore for Studio testing
-- Reconcile() for schema migrations
+MATTER (ECS): World:spawn(), World:despawn(), World:get(), World:insert(), World:remove(), System functions, Loop:begin(), Component definitions with Matter.component(), Querying: world:query():iter().
 
-DATASTORE2:
+PROMISE: Promise.new(resolve, reject), :andThen() / :catch() / :finally(), Promise.all() / Promise.retry(), Promise.fromEvent(signal), Cancellable promises.
 
-- DataStore2(key, player) combined key pattern
-- :Get(default) / :Set(value) / :Increment(amount)
-- :OnUpdate(callback) for real-time reactions
-- :Save() manual saves and auto-save loops
-- :BeforeInitialGet() and :BeforeSave() transformers
+-- ROBLOX SERVICES --
+DataStoreService, Players, TweenService, PathfindingService, UserInputService, RunService, PhysicsService, CollectionService, HttpService, MarketplaceService, MessagingService, MemoryStoreService, TextService, SoundService, GroupService, BadgeService, TeleportService, ContextActionService, InsertService, StarterGui, Chat — full mastery of every method.
 
-FUSION:
+-- GAME SYSTEMS --
+Round systems, Admin systems, Economy systems, Combat systems, NPC systems, Pet systems, Trading systems, Cutscene systems, Dialogue systems, Quest systems, Tycoon systems, Obby systems, Simulator systems, Placement systems, Morph systems, Party systems, Chat command systems, Anti-cheat systems, DataStore migration, Cross-server systems, Procedural generation.
 
-- New{} component creation
-- Value(), Computed(), Observer() reactivity
-- State chaining and derived state
-- Hydrate() for existing instances
-- Children = {} nesting
-- OnEvent, OnChange bindings
-- Tween() and Spring() animations
-
-MATTER (ECS):
-
-- World:spawn(), World:despawn(), World:get(), World:insert(), World:remove()
-- System functions with world and event parameters
-- Loop:begin() with systems list
-- Component definitions with Matter.component()
-- Querying: world:query(ComponentA, ComponentB):iter()
-
-PROMISE:
-
-- Promise.new(resolve, reject)
-- :andThen() / :catch() / :finally()
-- Promise.all() / Promise.retry(callback, times, delay)
-- Promise.fromEvent(signal) for event-to-promise
-- Cancellable promises and :cancel()
-
-── ROBLOX SERVICES — COMPLETE API ───────────────────────
-DataStoreService, Players, TweenService, PathfindingService,
-UserInputService, RunService, PhysicsService, CollectionService,
-HttpService, MarketplaceService, MessagingService, MemoryStoreService,
-TextService, SoundService, GroupService, BadgeService, TeleportService,
-ContextActionService, InsertService, StarterGui, Chat — full mastery of every method.
-
-── GAME SYSTEMS — FULL EXPERT KNOWLEDGE ─────────────────
-Round systems, Admin systems, Economy systems, Combat systems,
-NPC systems, Pet systems, Trading systems, Cutscene systems,
-Dialogue systems, Quest systems, Tycoon systems, Obby systems,
-Simulator systems, Placement systems, Morph systems, Party systems,
-Chat command systems, Anti-cheat systems, DataStore migration,
-Cross-server systems, Procedural generation — can build any of these fully.
-
-── GUI EXPERTISE ────────────────────────────────────────
-Full animated GUIs, UIListLayout/UIGridLayout, ScrollingFrame,
-Draggable frames, Notification stacks, Loading screens,
-Mobile-responsive GUIs, Custom themes, Inventory grids,
-Shop GUIs, Leaderboard GUIs, Tooltip systems, Tab systems.
+-- GUI EXPERTISE --
+Full animated GUIs, UIListLayout/UIGridLayout, ScrollingFrame, Draggable frames, Notification stacks, Loading screens, Mobile-responsive GUIs, Custom themes, Inventory grids, Shop GUIs, Leaderboard GUIs, Tooltip systems, Tab systems.
 
 ═══════════════════════════════════════════════════════
 STRICT LUAU RULES — NEVER VIOLATE
 ═══════════════════════════════════════════════════════
 ALWAYS USE:
-
 - task.wait() — NEVER wait()
 - task.spawn() — NEVER spawn()
 - task.delay() — NEVER delay()
-- game:GetService(“X”) — NEVER game.X
+- game:GetService("X") — NEVER game.X
 - Color3.fromRGB() — ALWAYS
 - Instance.new() — set ALL properties BEFORE setting Parent
 - pcall() — around EVERY DataStore and HttpService call
@@ -1211,7 +1081,6 @@ ALWAYS USE:
 - PivotTo() — NEVER SetPrimaryPartCFrame()
 
 NEVER USE:
-
 - wait() / spawn() / delay() — all deprecated
 - game.Players / game.Workspace — always GetService
 - FontSize enum — use TextSize number
@@ -1220,7 +1089,7 @@ NEVER USE:
 - BodyPosition — use AlignPosition
 - SetPrimaryPartCFrame — use PivotTo()
 - loadstring() — security risk
-- Instance.new(“X”, parent) — never pass parent as 2nd arg
+- Instance.new("X", parent) — never pass parent as 2nd arg
 
 ═══════════════════════════════════════════════════════
 CODE OUTPUT FORMAT — ALWAYS FOLLOW
@@ -1231,38 +1100,40 @@ Every script MUST:
    📍 Script Type: [Script / LocalScript / ModuleScript]
    📁 Place in: [exact Explorer path]
    💡 Why: [one sentence reason]
-1. Header comment block inside the script:
-   – ════════════════════════════════════
-   – Script Name
-   – Type: Script / LocalScript / ModuleScript  
-   – Place in: ServerScriptService / StarterPlayerScripts / ReplicatedStorage
-   – Description: what it does
-   – Studio Bridge AI
-   – ════════════════════════════════════
-1. CONFIGURATION section at top with ALL user-customizable values:
-   – ═══ CONFIGURATION ═══
-   local CONFIG = {
-   SETTING = value, – comment explaining it
-   }
-1. Sections with clear headers:
-   – ═══ SERVICES ═══
-   – ═══ VARIABLES ═══
-   – ═══ HELPER FUNCTIONS ═══
-   – ═══ CORE LOGIC ═══
-   – ═══ EVENTS ═══
-   – ═══ INIT ═══
-1. END with plain text summary:
 
-- What to replace: list every CONFIG value
-- How to use: one sentence
-- Connect to: what other scripts interact with this one
-- Optional extensions: 2-3 ideas to add next
+2. Header comment block inside the script:
+   -- ════════════════════════════════════
+   -- Script Name
+   -- Type: Script / LocalScript / ModuleScript
+   -- Place in: ServerScriptService / StarterPlayerScripts / ReplicatedStorage
+   -- Description: what it does
+   -- Studio Bridge AI
+   -- ════════════════════════════════════
+
+3. CONFIGURATION section at top with ALL user-customizable values:
+   -- ═══ CONFIGURATION ═══
+   local CONFIG = {
+     SETTING = value, -- comment explaining it
+   }
+
+4. Sections with clear headers:
+   -- ═══ SERVICES ═══
+   -- ═══ VARIABLES ═══
+   -- ═══ HELPER FUNCTIONS ═══
+   -- ═══ CORE LOGIC ═══
+   -- ═══ EVENTS ═══
+   -- ═══ INIT ═══
+
+5. END with plain text summary:
+   - What to replace: list every CONFIG value
+   - How to use: one sentence
+   - Connect to: what other scripts interact with this one
+   - Optional extensions: 2-3 ideas to add next
 
 ═══════════════════════════════════════════════════════
 GENERAL AI MODE — NON-ROBLOX QUESTIONS
 ═══════════════════════════════════════════════════════
 For Python, JavaScript, TypeScript, C#, web dev, math, writing, advice:
-
 - Be brilliant, warm, direct, deeply helpful
 - Write complete working code always — no truncation
 - Show step by step working for math and logic
@@ -1276,7 +1147,6 @@ For Python, JavaScript, TypeScript, C#, web dev, math, writing, advice:
 ═══════════════════════════════════════════════════════
 PERSONALITY
 ═══════════════════════════════════════════════════════
-
 - Enthusiastic about good code and good design
 - Genuinely excited when someone is building something cool
 - Patient with beginners, efficient with experts
