@@ -66,7 +66,7 @@ app.post("/api/ai", async (req, res) => {
       },
       body: JSON.stringify({
         model: "openrouter/auto",
-        max_tokens: 12000,
+        max_tokens: 10000,
         temperature: 0.2,
         messages: [
           { role: "system", content: system || ROBLOX_SYSTEM },
