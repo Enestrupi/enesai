@@ -34,45 +34,97 @@ const ROBLOX_SYSTEM = `You are an expert Roblox Lua developer. Follow these rule
   ===SCRIPT_LOCAL===
   ===SCRIPT_MODULE===`;
 
-// ── Available models ──
-const MODELS = {
-“deepseek-v3”:       “deepseek/deepseek-chat-v3-0324”,
-“deepseek-r1”:       “deepseek/deepseek-r1”,
-“gemma-4-31b”:       “google/gemma-3-27b-it”,
-“gemini-flash-lite”: “google/gemini-flash-1.5-8b”,
-“claude-sonnet”:     “anthropic/claude-sonnet-4-5”,
-“auto”:              “openrouter/auto”,   // fallback
-};
+// ── Pinned / featured models (always shown first) ──
+const PINNED_MODELS = [
+{ id: “deepseek/deepseek-chat-v3-0324”, name: “DeepSeek V3.2”,          pinned: true },
+{ id: “deepseek/deepseek-r1”,           name: “DeepSeek R1 (Immersive)”, pinned: true },
+{ id: “google/gemma-3-27b-it”,          name: “Gemma 4 31B”,             pinned: true },
+{ id: “google/gemini-flash-1.5-8b”,     name: “Gemini Flash Lite”,       pinned: true },
+{ id: “anthropic/claude-sonnet-4-5”,    name: “Claude Sonnet 4.6”,       pinned: true },
+];
 
-const DEFAULT_MODEL = “auto”;
+// ── Dynamic model cache ──
+let modelCache = [];
+let modelCacheTime = 0;
+const MODEL_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
-// ── Token estimator (rough: 1 token ≈ 4 chars) ──
-function estimateTokens(str) {
-return Math.ceil(str.length / 4);
+async function fetchOpenRouterModels() {
+const now = Date.now();
+if (modelCache.length && now - modelCacheTime < MODEL_CACHE_TTL) {
+return modelCache;
 }
 
-// ── Trim to fit within a token budget ──
-function trimToTokens(str, maxTokens) {
-return str.slice(0, maxTokens * 4);
+try {
+const key = process.env.OPENROUTER_API_KEY;
+const headers = { “Content-Type”: “application/json” };
+if (key) headers[“Authorization”] = “Bearer “ + key;
+
+```
+const res = await fetch("https://openrouter.ai/api/v1/models", { headers });
+const data = await res.json();
+
+if (!data.data) throw new Error("No model data returned");
+
+const pinnedIds = new Set(PINNED_MODELS.map(m => m.id));
+
+const allFromAPI = data.data.map(m => ({
+  id: m.id,
+  name: m.name || m.id,
+  context_length: m.context_length,
+  pricing: m.pricing,
+  pinned: pinnedIds.has(m.id)
+}));
+
+// Pinned first (in defined order), then rest alphabetically
+const pinnedOrdered = PINNED_MODELS.map(p => {
+  const found = allFromAPI.find(m => m.id === p.id);
+  return found ? { ...found, name: p.name, pinned: true } : { ...p, pinned: true };
+});
+
+const rest = allFromAPI
+  .filter(m => !pinnedIds.has(m.id))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+modelCache = [...pinnedOrdered, ...rest];
+modelCacheTime = now;
+console.log(`Model cache refreshed: ${modelCache.length} models`);
+return modelCache;
+```
+
+} catch (e) {
+console.error(“Failed to fetch OpenRouter models:”, e.message);
+if (!modelCache.length) modelCache = PINNED_MODELS;
+return modelCache;
+}
 }
 
+// Pre-fetch on startup
+fetchOpenRouterModels();
+
 // ═══════════════════════════════════════════
-// GET /api/models — list available models
+// GET /api/models — full live model list
 // ═══════════════════════════════════════════
-app.get(”/api/models”, (req, res) => {
-const list = Object.entries(MODELS).map(([id, orId]) => ({ id, orId }));
-res.json({ models: list, default: DEFAULT_MODEL });
+app.get(”/api/models”, async (req, res) => {
+const models = await fetchOpenRouterModels();
+res.json({ models, count: models.length });
 });
 
 // ═══════════════════════════════════════════
-// AI — OpenRouter (multi-model)
+// GET /api/models/pinned — featured models only
+// ═══════════════════════════════════════════
+app.get(”/api/models/pinned”, (req, res) => {
+res.json({ models: PINNED_MODELS });
+});
+
+// ═══════════════════════════════════════════
+// AI — OpenRouter (any model)
 // ═══════════════════════════════════════════
 app.post(”/api/ai”, async (req, res) => {
-const { prompt, system, model: modelKey } = req.body;
+const { prompt, system, model } = req.body;
 if (!prompt) return res.status(400).json({ error: “prompt required” });
 
-// Resolve model — accept either a shorthand key or a raw OpenRouter model ID
-const resolvedModel = MODELS[modelKey] || modelKey || MODELS[DEFAULT_MODEL];
+// Accept any valid OpenRouter model ID, default to auto
+const resolvedModel = model || “openrouter/auto”;
 
 const key = process.env.OPENROUTER_API_KEY;
 if (!key) return res.status(500).json({ error: “OPENROUTER_API_KEY not set” });
@@ -102,7 +154,7 @@ messages: [
 ```
 clearTimeout(timeout);
 const data = await response.json();
-console.log(`OpenRouter [${resolvedModel}] response:`, JSON.stringify(data).slice(0, 200));
+console.log(`OpenRouter [${resolvedModel}]:`, JSON.stringify(data).slice(0, 200));
 
 if (!response.ok) {
   console.error("OpenRouter error:", data);
@@ -215,9 +267,11 @@ sessions[token].connected = false;
 }
 }, 30000);
 
+// ── Refresh model cache periodically ──
+setInterval(fetchOpenRouterModels, MODEL_CACHE_TTL);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 console.log(“Studio Bridge on port “ + PORT);
 console.log(“OpenRouter key: “ + (process.env.OPENROUTER_API_KEY ? “SET” : “MISSING”));
-console.log(“Available models:”, Object.keys(MODELS).join(”, “));
 });
