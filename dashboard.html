@@ -10,212 +10,214 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#050709;--bg2:#0a0d14;--bg3:#0f1320;--bg4:#141929;--bg5:#1c2236;
-  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);--border3:rgba(255,255,255,0.16);
-  --c1:#00e5ff;--c1d:rgba(0,229,255,0.08);--c1g:rgba(0,229,255,0.18);
+  --bg:#050709;--bg2:#0a0d14;--bg3:#0f1320;
+  --border:rgba(255,255,255,0.05);--border2:rgba(255,255,255,0.09);
+  --c1:#00e5ff;--c1d:rgba(0,229,255,0.08);
   --c2:#7c3aed;--c2d:rgba(124,58,237,0.1);
   --c3:#10b981;--c3d:rgba(16,185,129,0.09);
-  --c4:#f59e0b;--c4d:rgba(245,158,11,0.09);
-  --c5:#ef4444;--c5d:rgba(239,68,68,0.09);
+  --c4:#f59e0b;
+  --c5:#ef4444;
   --text:#dde1f0;--text2:#6b7394;--text3:#2e344a;
   --rbx:#e31e25;
   --fd:'Syne',sans-serif;--fm:'JetBrains Mono',monospace;
-  --r:6px;--rlg:12px;
-  --sidebar:260px;
-  --topbar:48px;
+  --r:6px;--rlg:12px;--sidebar:268px;--topbar:48px;
 }
 html,body{background:var(--bg);color:var(--text);font-family:var(--fm);font-size:13px;height:100%;overflow:hidden}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
-::-webkit-scrollbar-track{background:transparent}
-body::before{
-  content:'';position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% -10%,rgba(0,229,255,0.03),transparent),
-    radial-gradient(ellipse 50% 60% at 100% 100%,rgba(124,58,237,0.03),transparent);
-  pointer-events:none;z-index:0
-}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(0,229,255,0.04),transparent),radial-gradient(ellipse 50% 60% at 100% 100%,rgba(124,58,237,0.04),transparent);pointer-events:none;z-index:0}
 
-.model-badge{display:flex;align-items:center;gap:4px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;color:var(–text2);transition:all .3s}
-.model-badge.fast{border-color:rgba(16,185,129,.3);color:var(–c3)}
-.model-badge.balanced{border-color:rgba(0,229,255,.3);color:var(–c1)}
-.model-badge.genius{border-color:rgba(124,58,237,.4);color:#a78bfa;box-shadow:0 0 10px rgba(124,58,237,.2)}
-.model-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
-
+/* AUTH */
 #auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:999;background:var(–bg)}
 #auth.gone{display:none}
-.auth-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none}
-.auth-wrap{width:400px;position:relative;z-index:2}
-.auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem}
-.auth-brand-mark{width:34px;height:34px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 28px rgba(0,229,255,0.25)}
-.auth-brand-name{font-family:var(–fd);font-size:15px;font-weight:800;color:var(–text)}
-.auth-brand-ver{font-size:9px;color:var(–text2);margin-top:1px;letter-spacing:.15em}
-.auth-card{background:var(–bg2);border:.5px solid var(–border2);border-radius:var(–rlg);padding:2rem;backdrop-filter:blur(20px)}
-.auth-card h2{font-family:var(–fd);font-size:17px;font-weight:800;margin-bottom:.35rem}
-.auth-card p{font-size:10px;color:var(–text2);margin-bottom:1.5rem;line-height:1.7}
+.auth-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(0,229,255,0.06) 0%,transparent 70%);pointer-events:none}
+.auth-wrap{width:420px;position:relative;z-index:2}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:2.5rem}
+.auth-brand-mark{width:38px;height:38px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 32px rgba(0,229,255,0.3);animation:glow-pulse 3s ease-in-out infinite}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 32px rgba(0,229,255,0.3)}50%{box-shadow:0 0 52px rgba(0,229,255,0.55)}}
+.auth-brand-name{font-family:var(–fd);font-size:16px;font-weight:800;color:var(–text)}
+.auth-brand-ver{font-size:9px;color:var(–text2);margin-top:2px;letter-spacing:.18em}
+.auth-card{background:var(–bg2);border:.5px solid var(–border2);border-radius:16px;padding:2.2rem;backdrop-filter:blur(20px);box-shadow:0 0 60px rgba(0,0,0,0.5)}
+.auth-card h2{font-family:var(–fd);font-size:20px;font-weight:800;margin-bottom:.4rem;background:linear-gradient(135deg,var(–text) 60%,var(–c1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.auth-card p{font-size:10px;color:var(–text2);margin-bottom:1.8rem;line-height:1.8}
 .field{margin-bottom:1rem}
-.field label{display:block;font-size:9px;color:var(–text2);margin-bottom:5px;letter-spacing:.12em;text-transform:uppercase}
-.field input{width:100%;background:var(–bg3);border:.5px solid var(–border2);border-radius:var(–r);padding:10px 12px;font-family:var(–fm);font-size:12px;color:var(–text);outline:none;transition:border-color .2s}
-.field input:focus{border-color:var(–c1)}
+.field label{display:block;font-size:9px;color:var(–text2);margin-bottom:6px;letter-spacing:.14em;text-transform:uppercase}
+.field input{width:100%;background:var(–bg3);border:.5px solid var(–border2);border-radius:var(–r);padding:11px 14px;font-family:var(–fm);font-size:12px;color:var(–text);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(–c1);box-shadow:0 0 0 3px rgba(0,229,255,0.08)}
 .field input::placeholder{color:var(–text3)}
-.btn-main{width:100%;background:linear-gradient(135deg,var(–c1),#00b4d8);color:#050709;border:none;border-radius:var(–r);padding:11px;font-family:var(–fd);font-weight:800;font-size:11px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
-.btn-main:hover{box-shadow:0 0 24px rgba(0,229,255,0.4);transform:translateY(-1px)}
+.btn-main{width:100%;background:linear-gradient(135deg,var(–c1),#00b4d8);color:#050709;border:none;border-radius:var(–r);padding:12px;font-family:var(–fd);font-weight:800;font-size:12px;letter-spacing:.06em;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.btn-main:hover{box-shadow:0 0 28px rgba(0,229,255,0.5);transform:translateY(-1px)}
 .auth-err{color:var(–c5);font-size:10px;margin-top:6px;display:none}
 
+/* APP */
 #app{display:none;height:100%;flex-direction:column;position:relative;z-index:1}
 #app.show{display:flex}
 
-.topbar{height:var(–topbar);border-bottom:.5px solid var(–border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.97);backdrop-filter:blur(20px);flex-shrink:0;z-index:100;position:sticky;top:0}
+/* TOPBAR */
+.topbar{height:var(–topbar);border-bottom:.5px solid var(–border);display:flex;align-items:center;padding:0 1rem;gap:.75rem;background:rgba(5,7,9,0.97);backdrop-filter:blur(20px);flex-shrink:0;z-index:100}
 .topbar-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.topbar-brand-mark{width:22px;height:22px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px}
-.topbar-brand-name{font-family:var(–fd);font-size:11px;font-weight:800;color:var(–text);letter-spacing:.03em}
-.topbar-sep{width:.5px;height:18px;background:var(–border);margin:0 4px}
-.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;color:var(–text2)}
+.topbar-brand-mark{width:24px;height:24px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px}
+.topbar-brand-name{font-family:var(–fd);font-size:12px;font-weight:800;color:var(–text);letter-spacing:.03em}
+.topbar-sep{width:.5px;height:18px;background:var(–border);margin:0 2px}
+.conn-pill{display:flex;align-items:center;gap:5px;padding:3px 9px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;color:var(–text2)}
 .conn-dot{width:5px;height:5px;border-radius:50%;background:var(–text3);flex-shrink:0}
 .conn-dot.on{background:var(–c3);box-shadow:0 0 6px var(–c3)}
 .conn-dot.wait{background:var(–c4);animation:pb 1.4s infinite}
 @keyframes pb{0%,100%{opacity:1}50%{opacity:.3}}
+.model-badge{display:flex;align-items:center;gap:4px;padding:3px 9px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px;transition:all .4s}
+.model-badge.fast{border-color:rgba(16,185,129,.35);color:var(–c3)}
+.model-badge.balanced{border-color:rgba(0,229,255,.35);color:var(–c1)}
+.model-badge.genius{border-color:rgba(124,58,237,.5);color:#a78bfa;box-shadow:0 0 12px rgba(124,58,237,.25)}
+.model-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
-.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px}
-.tok-val{color:var(–c1);font-size:9px;letter-spacing:.08em}
-.tok-btn{color:var(–text3);cursor:pointer;padding:1px 4px;border:.5px solid var(–border);border-radius:3px;transition:all .15s}
+.tok-chip{display:flex;align-items:center;gap:5px;padding:3px 9px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px;font-size:9px}
+.tok-val{color:var(–c1);font-size:9px;letter-spacing:.08em;font-weight:600}
+.tok-btn{color:var(–text3);cursor:pointer;padding:1px 5px;border:.5px solid var(–border);border-radius:3px;transition:all .15s;font-size:8px}
 .tok-btn:hover{border-color:var(–c1);color:var(–c1)}
 .user-chip{display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(–bg3);border:.5px solid var(–border);border-radius:20px}
 .user-ava{width:22px;height:22px;border-radius:50%;background:var(–rbx);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0}
 .user-name{font-size:10px;color:var(–text)}
-.logout-btn{color:var(–text3);cursor:pointer;margin-left:4px;font-size:10px}
+.logout-btn{color:var(–text3);cursor:pointer;margin-left:4px;font-size:10px;transition:color .15s}
 .logout-btn:hover{color:var(–c5)}
 
+/* LAYOUT */
 .app-body{flex:1;display:flex;overflow:hidden;min-height:0}
 
+/* SIDEBAR */
 .sidebar{width:var(–sidebar);flex-shrink:0;border-right:.5px solid var(–border);display:flex;flex-direction:column;background:var(–bg2);overflow:hidden}
 .sidebar-top{padding:12px 10px 8px;border-bottom:.5px solid var(–border);flex-shrink:0}
-.new-chat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;font-family:var(–fm);font-size:10px;color:var(–text2);cursor:pointer;transition:all .15s;text-align:left}
+.new-chat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;font-family:var(–fm);font-size:10px;color:var(–text2);cursor:pointer;transition:all .15s;text-align:left}
 .new-chat-btn:hover{border-color:var(–c1);color:var(–c1);background:var(–c1d)}
-.new-chat-btn span{margin-left:auto;font-size:16px;line-height:1}
-.sidebar-section{padding:10px 10px 4px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(–text3)}
+.tmpl-tabs{display:flex;border-bottom:.5px solid var(–border);flex-shrink:0}
+.tmpl-tab{flex:1;padding:7px 4px;font-size:8px;text-align:center;cursor:pointer;color:var(–text3);letter-spacing:.06em;text-transform:uppercase;transition:all .15s;border-bottom:1.5px solid transparent}
+.tmpl-tab.active{color:var(–c1);border-bottom-color:var(–c1);background:var(–c1d)}
+.tmpl-panel{display:none;overflow-y:auto;flex:1}
+.tmpl-panel.active{display:flex;flex-direction:column}
 .chat-history{flex:1;overflow-y:auto;padding:4px 8px}
+.sidebar-tools-scroll{overflow-y:auto;padding:4px 8px;flex:1}
 .chat-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(–text2);transition:all .12s;border:.5px solid transparent;margin-bottom:2px}
 .chat-item:hover{background:var(–bg3);border-color:var(–border)}
 .chat-item.active{background:var(–c1d);color:var(–c1);border-color:rgba(0,229,255,.15)}
 .chat-item-dot{width:5px;height:5px;border-radius:50%;background:var(–c2);flex-shrink:0;opacity:.6}
 .chat-item.active .chat-item-dot{background:var(–c1);opacity:1}
-.chat-item-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.chat-item-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chat-item-time{font-size:8px;color:var(–text3);flex-shrink:0}
-.sidebar-tools{padding:8px;border-top:.5px solid var(–border);display:flex;flex-direction:column;gap:3px;flex-shrink:0}
-.sidebar-tool{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(–text2);transition:all .12s}
-.sidebar-tool:hover{background:var(–bg3);color:var(–text)}
-.sidebar-tool-icon{font-size:12px;flex-shrink:0;width:16px;text-align:center}
+.chat-del{font-size:9px;color:transparent;cursor:pointer;flex-shrink:0;padding:0 3px;transition:color .12s}
+.chat-item:hover .chat-del{color:var(–text3)}
+.chat-del:hover{color:var(–c5) !important}
+.sidebar-tool{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:10px;color:var(–text2);transition:all .12s;border:.5px solid transparent;margin-bottom:2px}
+.sidebar-tool:hover{background:var(–bg3);color:var(–text);border-color:var(–border)}
+.sidebar-tool-icon{font-size:13px;flex-shrink:0;width:18px;text-align:center;margin-top:1px}
+.sidebar-tool-body{flex:1;min-width:0}
+.sidebar-tool-title{font-weight:700;font-size:10px;color:var(–text);margin-bottom:1px}
+.sidebar-tool-desc{font-size:8px;color:var(–text3);line-height:1.4}
+.tmpl-badge{font-size:7px;padding:1px 5px;border-radius:8px;font-weight:700;letter-spacing:.04em;margin-left:auto;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.tmpl-badge.adv{background:rgba(124,58,237,.15);color:#a78bfa;border:.5px solid rgba(124,58,237,.3)}
+.tmpl-badge.pro{background:rgba(245,158,11,.12);color:var(–c4);border:.5px solid rgba(245,158,11,.25)}
+.tmpl-badge.new{background:rgba(16,185,129,.1);color:var(–c3);border:.5px solid rgba(16,185,129,.2)}
+.tmpl-cat{padding:8px 8px 3px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(–text3)}
 
+/* CHAT */
 .chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;overflow-y:auto}
 .welcome-screen.hidden{display:none}
-.welcome-logo{width:52px;height:52px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1.5rem;box-shadow:0 0 40px rgba(0,229,255,0.2)}
-.welcome-title{font-family:var(–fd);font-size:24px;font-weight:800;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,var(–text) 60%,var(–text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.welcome-sub{font-size:11px;color:var(–text2);text-align:center;max-width:460px;line-height:1.7;margin-bottom:2rem}
-.suggestion-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;max-width:520px}
-.suggestion{background:var(–bg2);border:.5px solid var(–border2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s}
-.suggestion:hover{border-color:rgba(124,58,237,.4);background:var(–c2d);transform:translateY(-1px)}
-.sug-icon{font-size:16px;margin-bottom:5px}
-.sug-title{font-size:10px;font-weight:700;color:var(–text);margin-bottom:2px;font-family:var(–fd)}
+.welcome-logo{width:58px;height:58px;background:linear-gradient(135deg,var(–c1),var(–c2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:1.5rem;box-shadow:0 0 48px rgba(0,229,255,0.25)}
+.welcome-title{font-family:var(–fd);font-size:26px;font-weight:800;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,var(–text) 50%,var(–text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.welcome-sub{font-size:11px;color:var(–text2);text-align:center;max-width:480px;line-height:1.8;margin-bottom:2rem}
+.suggestion-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%;max-width:560px}
+.suggestion{background:var(–bg2);border:.5px solid var(–border2);border-radius:10px;padding:13px 15px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.suggestion:hover{border-color:rgba(124,58,237,.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.sug-icon{font-size:18px;margin-bottom:6px}
+.sug-title{font-size:10px;font-weight:700;color:var(–text);margin-bottom:3px;font-family:var(–fd)}
 .sug-body{font-size:9px;color:var(–text2);line-height:1.5}
-
 .messages-wrap{flex:1;overflow-y:auto;padding:20px 0;display:flex;flex-direction:column}
 .messages-wrap.hidden{display:none}
-.msg-row{display:flex;gap:12px;padding:8px 24px;align-items:flex-start;max-width:100%}
-.msg-row:hover{background:rgba(255,255,255,.01)}
+.msg-row{display:flex;gap:12px;padding:8px 24px;align-items:flex-start}
+.msg-row:hover{background:rgba(255,255,255,.012)}
 .msg-row.user{flex-direction:row-reverse}
 .msg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
 .msg-avatar.ai{background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(0,229,255,0.25));border:.5px solid rgba(124,58,237,0.5);color:var(–c1);font-size:11px}
 .msg-avatar.user{background:var(–rbx);color:white}
-.msg-content{flex:1;min-width:0;max-width:680px}
+.msg-content{flex:1;min-width:0;max-width:720px}
 .msg-row.user .msg-content{display:flex;flex-direction:column;align-items:flex-end}
-.msg-name{font-size:9px;font-weight:700;color:var(–text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
-.msg-model-tag{font-size:8px;padding:1px 5px;border-radius:8px;font-weight:400;text-transform:none;letter-spacing:0}
+.msg-name{font-size:9px;font-weight:700;color:var(–text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.msg-model-tag{font-size:8px;padding:1px 6px;border-radius:8px;font-weight:500;text-transform:none;letter-spacing:0}
 .msg-model-tag.fast{background:rgba(16,185,129,.1);color:var(–c3);border:.5px solid rgba(16,185,129,.2)}
 .msg-model-tag.balanced{background:rgba(0,229,255,.08);color:var(–c1);border:.5px solid rgba(0,229,255,.15)}
 .msg-model-tag.genius{background:rgba(124,58,237,.12);color:#a78bfa;border:.5px solid rgba(124,58,237,.25)}
-.msg-bubble{font-size:12px;line-height:1.75;color:var(–text);word-break:break-word}
+.msg-bubble{font-size:12px;line-height:1.8;color:var(–text);word-break:break-word}
 .msg-row.user .msg-bubble{background:rgba(0,229,255,.06);border:.5px solid rgba(0,229,255,.1);border-radius:12px 12px 2px 12px;padding:10px 14px;display:inline-block;text-align:left}
-
-.placement-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;margin-bottom:8px;letter-spacing:.05em}
+.msg-bubble pre{background:var(–bg2);border:.5px solid var(–border2);border-radius:10px;margin:10px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;border-bottom:.5px solid var(–border);background:var(–bg3)}
+.code-lang{font-size:8px;color:var(–text2);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.copy-code-btn{font-size:8px;color:var(–text3);cursor:pointer;padding:2px 8px;border:.5px solid var(–border);border-radius:3px;font-family:var(–fm);background:transparent;transition:all .15s}
+.copy-code-btn:hover{border-color:var(–c1);color:var(–c1)}
+.code-body{padding:13px 15px;font-size:10px;color:var(–c1);line-height:1.75;overflow-x:auto;white-space:pre}
+.msg-bubble code{background:var(–bg3);border-radius:3px;padding:1px 6px;color:var(–c1);font-size:10px;font-family:var(–fm);border:.5px solid var(–border)}
+.placement-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.05em}
 .placement-badge.server{background:rgba(239,68,68,.1);color:#f87171;border:.5px solid rgba(239,68,68,.25)}
 .placement-badge.local{background:rgba(0,229,255,.08);color:var(–c1);border:.5px solid rgba(0,229,255,.2)}
 .placement-badge.module{background:rgba(124,58,237,.1);color:#a78bfa;border:.5px solid rgba(124,58,237,.25)}
-
-.placement-info{background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:10px;line-height:1.7;color:var(–text2)}
-.placement-info-title{font-size:9px;font-weight:700;color:var(–text);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
-.placement-row{display:flex;align-items:flex-start;gap:8px;padding:3px 0;border-bottom:.5px solid var(–border);font-size:10px}
+.placement-info{background:var(–bg3);border:.5px solid var(–border2);border-radius:10px;padding:11px 15px;margin-bottom:10px}
+.placement-info-title{font-size:9px;font-weight:700;color:var(–text);margin-bottom:7px;text-transform:uppercase;letter-spacing:.08em}
+.placement-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0;border-bottom:.5px solid var(–border);font-size:10px}
 .placement-row:last-child{border-bottom:none}
 .placement-label{min-width:110px;flex-shrink:0;font-size:9px;color:var(–text3);text-transform:uppercase;letter-spacing:.06em;padding-top:1px}
 .placement-val{color:var(–text2);line-height:1.5}
 .placement-path{color:var(–c1);font-family:var(–fm);font-size:9px}
-
-.msg-bubble pre{background:var(–bg2);border:.5px solid var(–border2);border-radius:8px;margin:10px 0;overflow:hidden}
-.code-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:.5px solid var(–border);background:var(–bg3)}
-.code-lang{font-size:8px;color:var(–text2);letter-spacing:.08em;text-transform:uppercase}
-.copy-code-btn{font-size:8px;color:var(–text3);cursor:pointer;padding:2px 7px;border:.5px solid var(–border);border-radius:3px;font-family:var(–fm);background:transparent;transition:all .15s}
-.copy-code-btn:hover{border-color:var(–c1);color:var(–c1)}
-.code-body{padding:12px 14px;font-size:10px;color:var(–c1);line-height:1.7;overflow-x:auto;white-space:pre}
-.msg-bubble code{background:var(–bg3);border-radius:3px;padding:1px 5px;color:var(–c1);font-size:10px;font-family:var(–fm)}
-
-.replace-notice{background:rgba(245,158,11,0.07);border:.5px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:10px}
-.replace-notice-title{display:flex;align-items:center;gap:5px;font-weight:700;color:var(–c4);margin-bottom:6px;font-size:10px}
-.replace-item{display:flex;align-items:flex-start;gap:6px;padding:3px 0;font-size:10px;color:var(–text2);border-bottom:.5px solid rgba(255,255,255,.04)}
-.replace-item:last-child{border-bottom:none}
-.replace-key{color:var(–c4);font-weight:700;min-width:180px;flex-shrink:0;font-family:var(–fm);font-size:9px}
-.replace-val{color:var(–text2);line-height:1.5}
-
-.files-list{background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;padding:10px 14px;margin-bottom:10px}
-.files-list-title{font-size:9px;font-weight:700;color:var(–text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em}
-.file-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(–border);font-size:10px}
+.files-list{background:var(–bg3);border:.5px solid var(–border2);border-radius:10px;padding:11px 15px;margin-bottom:10px}
+.files-list-title{font-size:9px;font-weight:700;color:var(–text);margin-bottom:9px;text-transform:uppercase;letter-spacing:.08em}
+.file-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid var(–border);font-size:10px}
 .file-row:last-child{border-bottom:none}
-.file-type-badge{font-size:8px;padding:2px 6px;border-radius:10px;font-weight:700;flex-shrink:0;min-width:80px;text-align:center}
+.file-type-badge{font-size:8px;padding:2px 7px;border-radius:10px;font-weight:700;flex-shrink:0;min-width:90px;text-align:center}
 .file-type-badge.server{background:rgba(239,68,68,.1);color:#f87171;border:.5px solid rgba(239,68,68,.2)}
 .file-type-badge.local{background:rgba(0,229,255,.08);color:var(–c1);border:.5px solid rgba(0,229,255,.15)}
 .file-type-badge.module{background:rgba(124,58,237,.1);color:#a78bfa;border:.5px solid rgba(124,58,237,.2)}
-.file-name{color:var(–text);font-weight:700;flex-shrink:0;min-width:140px}
-.file-path{color:var(–text3);font-size:9px;font-family:var(–fm)}
-
+.file-name{color:var(–text);font-weight:700;flex-shrink:0;min-width:140px;font-size:10px}
+.file-path{color:var(–text3);font-size:9px;font-family:var(–fm);flex:1}
+.file-copy-btn{margin-left:auto;font-size:8px;color:var(–text3);cursor:pointer;padding:2px 7px;border:.5px solid var(–border);border-radius:3px;font-family:var(–fm);background:transparent;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.file-copy-btn:hover{border-color:var(–c1);color:var(–c1)}
 .script-actions{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap}
-.sact-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(–bg3);border:.5px solid var(–border2);border-radius:6px;font-size:9px;color:var(–text2);cursor:pointer;transition:all .15s;font-family:var(–fm)}
+.sact-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(–bg3);border:.5px solid var(–border2);border-radius:7px;font-size:9px;color:var(–text2);cursor:pointer;transition:all .15s;font-family:var(–fm);white-space:nowrap}
 .sact-btn:hover{border-color:var(–c1);color:var(–c1)}
-.sact-btn.prim{background:var(–c1);color:#050709;border-color:var(–c1);font-weight:700}
-.sact-btn.prim:hover{background:#00c8e0;box-shadow:0 0 14px rgba(0,229,255,.3)}
-.sact-btn.grn{background:var(–c3d);border-color:rgba(16,185,129,.2);color:var(–c3)}
+.sact-btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+.sact-btn.prim{background:rgba(0,229,255,.1);color:var(–c1);border-color:rgba(0,229,255,.3);font-weight:700}
+.sact-btn.prim:hover{background:var(–c1);color:#050709;box-shadow:0 0 16px rgba(0,229,255,.35)}
+.sact-btn.studio{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35);color:#a78bfa;font-weight:700}
+.sact-btn.studio:hover{background:var(–c2);color:white;border-color:var(–c2);box-shadow:0 0 16px rgba(124,58,237,.35)}
+.sact-btn.grn{background:var(–c3d);border-color:rgba(16,185,129,.25);color:var(–c3)}
 .sact-btn.grn:hover{background:var(–c3);color:#050709}
-/* FIX: studio button style when not connected */
-.sact-btn.studio-btn{background:var(–c2d);border-color:rgba(124,58,237,.3);color:#a78bfa}
-.sact-btn.studio-btn:hover{background:var(–c2);color:white;border-color:var(–c2)}
-
+.replace-notice{background:rgba(245,158,11,0.07);border:.5px solid rgba(245,158,11,0.2);border-radius:10px;padding:11px 15px;margin-top:10px}
+.replace-notice-title{display:flex;align-items:center;gap:5px;font-weight:700;color:var(–c4);margin-bottom:7px;font-size:10px}
+.replace-item{display:flex;align-items:flex-start;gap:7px;padding:4px 0;font-size:10px;color:var(–text2);border-bottom:.5px solid rgba(255,255,255,.04)}
+.replace-item:last-child{border-bottom:none}
+.replace-key{color:var(–c4);font-weight:700;min-width:170px;flex-shrink:0;font-family:var(–fm);font-size:9px}
 .typing-row{display:flex;gap:12px;padding:8px 24px;align-items:flex-start}
 .typing-dots{display:flex;gap:4px;padding:6px 2px}
 .typing-dots span{width:5px;height:5px;border-radius:50%;background:var(–c2);animation:td .9s infinite both}
 .typing-dots span:nth-child(2){animation-delay:.2s}
 .typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-
 .input-area{padding:12px 20px 16px;flex-shrink:0;border-top:.5px solid var(–border);background:var(–bg)}
-.input-wrap{max-width:740px;margin:0 auto;background:var(–bg2);border:.5px solid var(–border2);border-radius:14px;overflow:hidden;transition:border-color .2s}
-.input-wrap:focus-within{border-color:rgba(124,58,237,.4)}
+.input-wrap{max-width:760px;margin:0 auto;background:var(–bg2);border:.5px solid var(–border2);border-radius:14px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.input-wrap:focus-within{border-color:rgba(124,58,237,.45);box-shadow:0 0 0 4px rgba(124,58,237,.06)}
 .input-top{display:flex;align-items:flex-end;padding:10px 12px 8px}
-.main-input{flex:1;background:transparent;border:none;outline:none;font-family:var(–fm);font-size:12px;color:var(–text);resize:none;line-height:1.65;max-height:160px;min-height:22px}
+.main-input{flex:1;background:transparent;border:none;outline:none;font-family:var(–fm);font-size:12px;color:var(–text);resize:none;line-height:1.7;max-height:160px;min-height:22px}
 .main-input::placeholder{color:var(–text3)}
-.send-btn{width:32px;height:32px;border-radius:8px;background:var(–c2);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;margin-left:8px;align-self:flex-end}
-.send-btn:hover{background:#6d28d9;box-shadow:0 0 14px rgba(124,58,237,.4)}
+.send-btn{width:34px;height:34px;border-radius:8px;background:var(–c2);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0;margin-left:8px;align-self:flex-end}
+.send-btn:hover{background:#6d28d9;box-shadow:0 0 16px rgba(124,58,237,.45)}
 .send-btn:disabled{opacity:.35;cursor:not-allowed}
-.input-bottom{padding:4px 12px 8px;display:flex;align-items:center;gap:6px;border-top:.5px solid var(–border)}
-.quick-chip{padding:2px 8px;background:transparent;border:.5px solid var(–border);border-radius:10px;font-size:8px;color:var(–text3);cursor:pointer;font-family:var(–fm);transition:all .12s;white-space:nowrap}
+.input-bottom{padding:5px 12px 9px;display:flex;align-items:center;gap:5px;border-top:.5px solid var(–border);flex-wrap:wrap}
+.quick-chip{padding:2px 9px;background:transparent;border:.5px solid var(–border);border-radius:10px;font-size:8px;color:var(–text3);cursor:pointer;font-family:var(–fm);transition:all .12s;white-space:nowrap}
 .quick-chip:hover{border-color:var(–c2);color:var(–c2);background:var(–c2d)}
-.input-hint{margin-left:auto;font-size:8px;color:var(–text3)}
-
-#toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:5px;z-index:999}
-.toast{background:var(–bg2);border:.5px solid var(–border2);border-radius:6px;padding:8px 12px;font-size:10px;display:flex;align-items:center;gap:7px;animation:tin .2s ease;min-width:180px}
-.toast.ok{border-left:2px solid var(–c3)}
-.toast.bad{border-left:2px solid var(–c5)}
-.toast.info{border-left:2px solid var(–c1)}
-.toast.gold{border-left:2px solid var(–c4)}
-@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.input-hint{margin-left:auto;font-size:8px;color:var(–text3);white-space:nowrap}
+#toasts{position:fixed;bottom:1rem;right:1rem;display:flex;flex-direction:column;gap:5px;z-index:9999}
+.toast{background:var(–bg2);border:.5px solid var(–border2);border-radius:8px;padding:9px 14px;font-size:10px;display:flex;align-items:center;gap:8px;min-width:200px;max-width:360px;animation:tin .2s ease;line-height:1.5}
+.toast.ok{border-left:2.5px solid var(–c3)}
+.toast.bad{border-left:2.5px solid var(–c5)}
+.toast.info{border-left:2.5px solid var(–c1)}
+.toast.gold{border-left:2.5px solid var(–c4)}
+@keyframes tin{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
 </style>
 
 </head>
@@ -233,8 +235,11 @@ body::before{
     </div>
     <div class="auth-card">
       <h2>The Ultimate Roblox Dev Studio</h2>
-      <p>3-model AI engine — Fast, Balanced &amp; Genius modes. Deep Roblox knowledge: scripts, frameworks, GUI, NPC, admin, placement detection and more.</p>
-      <div class="field"><label>Your Name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')startApp()"/></div>
+      <p>3-model AI engine — Fast ⚡, Balanced ✦ &amp; Genius 🧠 modes. AI names every script &amp; model automatically. Deep Roblox knowledge: scripts, frameworks, GUI, NPC, admin, 3D models and more.</p>
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')startApp()"/>
+      </div>
       <div id="auth-err" class="auth-err">Please enter your name.</div>
       <button class="btn-main" onclick="startApp()">Open Studio →</button>
     </div>
@@ -248,14 +253,8 @@ body::before{
       <div class="topbar-brand-name">Studio Bridge v3</div>
     </div>
     <div class="topbar-sep"></div>
-    <div class="conn-pill">
-      <span class="conn-dot wait" id="conn-dot"></span>
-      <span id="conn-txt">Not connected</span>
-    </div>
-    <div class="model-badge balanced" id="model-badge">
-      <span class="model-dot"></span>
-      <span id="model-badge-txt">Balanced</span>
-    </div>
+    <div class="conn-pill"><span class="conn-dot wait" id="conn-dot"></span><span id="conn-txt">Not connected</span></div>
+    <div class="model-badge balanced" id="model-badge"><span class="model-dot"></span><span id="model-badge-txt">Balanced ✦</span></div>
     <div class="topbar-right">
       <div class="tok-chip">
         <span style="color:var(--text3);font-size:8px">TOKEN</span>
@@ -274,33 +273,22 @@ body::before{
     <div class="sidebar">
       <div class="sidebar-top">
         <button class="new-chat-btn" onclick="newChat()">
-          <span style="font-size:11px">✦</span>
-          New conversation
-          <span>+</span>
+          <span style="font-size:12px">✦</span> New conversation
+          <span style="font-size:16px;line-height:1;margin-left:auto">+</span>
         </button>
       </div>
-      <div class="sidebar-section">Recent</div>
-      <div class="chat-history" id="chat-history"></div>
-      <div class="sidebar-tools">
-        <div class="sidebar-tool" onclick="quickPrompt('Give me a RemoteEvent system with server validation and client feedback.')">
-          <span class="sidebar-tool-icon">📡</span> RemoteEvent boilerplate
-        </div>
-        <div class="sidebar-tool" onclick="quickPrompt('Build a complete DataStore save/load system with retries and BindToClose.')">
-          <span class="sidebar-tool-icon">💾</span> DataStore system
-        </div>
-        <div class="sidebar-tool" onclick="quickPrompt('Create a complete admin system with 5 rank tiers, kick/ban/tp commands, F9 GUI panel.')">
-          <span class="sidebar-tool-icon">👑</span> Admin system
-        </div>
-        <div class="sidebar-tool" onclick="quickPrompt('Generate an animated GUI with dark theme, UIGradient, TweenService open/close animation.')">
-          <span class="sidebar-tool-icon">🖥</span> GUI template
-        </div>
-        <div class="sidebar-tool" onclick="quickPrompt('Create a pathfinding NPC with health bar, patrol, attack, and death cleanup.')">
-          <span class="sidebar-tool-icon">🤖</span> NPC template
-        </div>
-        <div class="sidebar-tool" onclick="quickPrompt('Build a 3D model builder script that creates a detailed castle with towers, walls, gate and battlements entirely in code using BaseParts.')">
-          <span class="sidebar-tool-icon">🏗</span> 3D Model Builder
-        </div>
+      <div class="tmpl-tabs">
+        <div class="tmpl-tab active" onclick="switchTab('history',this)">History</div>
+        <div class="tmpl-tab" onclick="switchTab('basic',this)">Basic</div>
+        <div class="tmpl-tab" onclick="switchTab('advanced',this)">Advanced</div>
+        <div class="tmpl-tab" onclick="switchTab('pro',this)">Pro</div>
       </div>
+      <div class="tmpl-panel active" id="panel-history">
+        <div class="chat-history" id="chat-history"></div>
+      </div>
+      <div class="tmpl-panel" id="panel-basic"><div class="sidebar-tools-scroll" id="basic-tools"></div></div>
+      <div class="tmpl-panel" id="panel-advanced"><div class="sidebar-tools-scroll" id="advanced-tools"></div></div>
+      <div class="tmpl-panel" id="panel-pro"><div class="sidebar-tools-scroll" id="pro-tools"></div></div>
     </div>
 
 ```
@@ -308,27 +296,19 @@ body::before{
   <div class="welcome-screen" id="welcome-screen">
     <div class="welcome-logo">✦</div>
     <div class="welcome-title">What can I help you build?</div>
-    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠 based on your question. Script placement &amp; naming included.</div>
+    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠. AI names every script automatically. Open in Studio always works.</div>
     <div class="suggestion-grid">
-      <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground, leaderboard, DataStore save/load.')">
-        <div class="sug-icon">🪙</div>
-        <div class="sug-title">Coin System</div>
-        <div class="sug-body">Coins, leaderboard, DataStore persistence</div>
+      <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground with pickup animation, leaderboard, DataStore save/load with pcall retry logic.')">
+        <div class="sug-icon">🪙</div><div class="sug-title">Coin System</div><div class="sug-body">Coins, leaderboard, DataStore persistence</div>
       </div>
-      <div class="suggestion" onclick="quickPrompt('What is Knit framework and how do I structure my game with it? Show me a real example.')">
-        <div class="sug-icon">⚙</div>
-        <div class="sug-title">Knit Framework</div>
-        <div class="sug-body">Service/Controller architecture explained</div>
+      <div class="suggestion" onclick="quickPrompt('What is Knit framework and how do I structure my game with it? Show me a real example with a Service and Controller.')">
+        <div class="sug-icon">⚙️</div><div class="sug-title">Knit Framework</div><div class="sug-body">Service/Controller architecture explained</div>
       </div>
-      <div class="suggestion" onclick="quickPrompt('Build an advanced NPC boss with 3 phases, AoE attacks, ranged projectiles and loot drop.')">
-        <div class="sug-icon">💀</div>
-        <div class="sug-title">Boss NPC</div>
-        <div class="sug-body">3-phase boss with attacks and loot</div>
+      <div class="suggestion" onclick="quickPrompt('Build an advanced NPC boss with 3 phases, AoE attacks, ranged projectiles, health bar GUI and loot drop table.')">
+        <div class="sug-icon">💀</div><div class="sug-title">Boss NPC</div><div class="sug-body">3-phase boss with attacks and loot</div>
       </div>
-      <div class="suggestion" onclick="quickPrompt('Create a full round-based game system: lobby, countdown, round, intermission, repeat.')">
-        <div class="sug-icon">🎮</div>
-        <div class="sug-title">Round System</div>
-        <div class="sug-body">Lobby → countdown → round → repeat</div>
+      <div class="suggestion" onclick="quickPrompt('Create a full round-based game system: lobby countdown, teleport players to map, round timer, winner announcement, intermission, repeat.')">
+        <div class="sug-icon">🎮</div><div class="sug-title">Round System</div><div class="sug-body">Lobby → countdown → round → repeat</div>
       </div>
     </div>
   </div>
@@ -340,16 +320,16 @@ body::before{
   <div class="input-area">
     <div class="input-wrap">
       <div class="input-top">
-        <textarea class="main-input" id="main-input" placeholder="Ask anything — Roblox, Lua, scripts, frameworks, 3D models, general code…" rows="1" onkeydown="inputKey(event)" oninput="autoResize(this)"></textarea>
+        <textarea class="main-input" id="main-input" placeholder="Ask anything — Roblox, Lua, scripts, frameworks, 3D models…" rows="1" onkeydown="inputKey(event)" oninput="autoResize(this)"></textarea>
         <button class="send-btn" id="send-btn" onclick="sendMessage()">▶</button>
       </div>
       <div class="input-bottom">
-        <span class="quick-chip" onclick="quickPrompt('What is Cmdr and how do I set it up?')">Cmdr</span>
-        <span class="quick-chip" onclick="quickPrompt('ProfileService vs DataStore2 — which should I use?')">ProfileService</span>
-        <span class="quick-chip" onclick="quickPrompt('Show me RemoteEvents full server/client flow with code.')">RemoteEvents</span>
-        <span class="quick-chip" onclick="quickPrompt('Best anti-exploit server-side validation techniques.')">Anti-Cheat</span>
-        <span class="quick-chip" onclick="quickPrompt('Build a 3D sword model entirely in code using BaseParts, no meshes needed.')">3D Model</span>
-        <span class="input-hint">Enter ↵ to send · Shift+Enter for new line</span>
+        <span class="quick-chip" onclick="quickPrompt('What is Cmdr and how do I set it up with custom commands?')">Cmdr</span>
+        <span class="quick-chip" onclick="quickPrompt('ProfileService vs DataStore2 — which should I use and why?')">ProfileService</span>
+        <span class="quick-chip" onclick="quickPrompt('Show me the complete RemoteEvents server/client flow with validation.')">RemoteEvents</span>
+        <span class="quick-chip" onclick="quickPrompt('Best server-side anti-exploit validation techniques.')">Anti-Cheat</span>
+        <span class="quick-chip" onclick="quickPrompt('Build a detailed 3D sword model in Lua using BaseParts and WeldConstraints.')">3D Model</span>
+        <span class="input-hint">Enter ↵ send · Shift+Enter new line</span>
       </div>
     </div>
   </div>
@@ -362,394 +342,402 @@ body::before{
 <div id="toasts"></div>
 
 <script>
+// ══════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════
 const BACKEND = "https://enesai-production.up.railway.app";
-
 const MODELS = {
-  fast:     { id: "claude-haiku-4-5-20251001",  label: "Fast ⚡",    cls: "fast"     },
-  balanced: { id: "claude-sonnet-4-20250514",    label: "Balanced ✦", cls: "balanced" },
-  genius:   { id: "claude-sonnet-4-20250514",    label: "Genius 🧠",  cls: "genius"   }
+  fast:     { id:"claude-haiku-4-5-20251001",  label:"Fast ⚡",    cls:"fast"     },
+  balanced: { id:"claude-sonnet-4-20250514",    label:"Balanced ✦", cls:"balanced" },
+  genius:   { id:"claude-sonnet-4-20250514",    label:"Genius 🧠",  cls:"genius"   }
 };
 
+// ══════════════════════════════════════════════════════════
+// CODE STORE — THE KEY FIX
+// Instead of putting code in data-* HTML attributes (which
+// causes HTML-entity encoding corruption), we store all code
+// in a JS Map and pass only a numeric ID in the DOM.
+// This completely eliminates the encoding bug.
+// ══════════════════════════════════════════════════════════
+const CODE_STORE = new Map();
+let csIdx = 0;
+function csSet(code) { const id = ++csIdx; CODE_STORE.set(id, code); return id; }
+function csGet(id)   { return CODE_STORE.get(Number(id)) || ''; }
+
+// ══════════════════════════════════════════════════════════
+// TEMPLATES
+// ══════════════════════════════════════════════════════════
+const TEMPLATES = {
+  basic: [
+    {icon:"📡",title:"RemoteEvent System",    desc:"Server/client bridge + rate limiting",  badge:"",    prompt:"Give me a complete RemoteEvent system with server-side validation, rate limiting and client feedback. Name all scripts properly with header comments."},
+    {icon:"💾",title:"DataStore System",      desc:"Save/load with retry + BindToClose",    badge:"",    prompt:"Build a complete DataStore save/load system with pcall retries, BindToClose, and default data table. Auto-name all scripts."},
+    {icon:"🪙",title:"Coin + Leaderboard",    desc:"Ground coins, stats, persistence",      badge:"",    prompt:"Build a complete coin pickup system with animated spinning coins on the ground, a leaderboard, and DataStore persistence. Name all scripts properly."},
+    {icon:"🖥️",title:"GUI Template",           desc:"Animated dark-theme GUI panel",        badge:"",    prompt:"Create a fully animated GUI panel with dark theme, UIGradient background, TweenService open/close animation and close button. Name the LocalScript properly."},
+    {icon:"🤖",title:"NPC Template",          desc:"Patrol, attack, health bar, cleanup",   badge:"",    prompt:"Create a pathfinding NPC with health bar billboard GUI, patrol waypoints, aggro attack and death cleanup. Name the script properly."},
+    {icon:"👑",title:"Admin System",          desc:"5 rank tiers, commands + F9 GUI",       badge:"",    prompt:"Create a complete admin system with 5 rank tiers, kick/ban/tp/warn commands and an F9 GUI panel. Name all scripts properly."},
+    {icon:"🔊",title:"Sound Manager",         desc:"BGM, SFX, volume, zone audio",          badge:"new", prompt:"Build a SoundManager ModuleScript: background music, SFX playing, volume control, zone-based ambient audio. Name the module SoundManager."},
+    {icon:"⌨️",title:"Keybind System",         desc:"ContextActionService + settings GUI",  badge:"",    prompt:"Create a keybind system using ContextActionService with a settings GUI showing all bindings. Name the LocalScript KeybindController."},
+  ],
+  advanced: [
+    {icon:"🏗️",title:"3D Castle Builder",      desc:"Procedural castle from BaseParts",     badge:"adv", prompt:"Build a detailed 3D castle model script in Lua using only BaseParts, WeldConstraints and CFrame math. Include towers, walls, gate, battlements. Name it CastleBuilder."},
+    {icon:"🗡️",title:"3D Sword Builder",        desc:"Detailed sword model from BaseParts",  badge:"adv", prompt:"Build a realistic 3D sword model in Lua using BaseParts and WeldConstraints: blade, crossguard, grip, pommel. Name the script SwordBuilder."},
+    {icon:"⚔️",title:"Combat System",           desc:"Hitbox, combos, knockback, anims",    badge:"adv", prompt:"Build a full melee combat system: hitbox detection, 3-hit combo chain, damage with knockback, hit effects, animation tracks. Full server validation. Name all scripts."},
+    {icon:"🛍️",title:"Shop System",             desc:"GUI shop, gamepasses, DataStore",     badge:"adv", prompt:"Create a complete shop system: GUI shop panel, item purchase with currency check, gamepass support, DataStore persistence. Name all scripts."},
+    {icon:"🐾",title:"Pet System",              desc:"Equip pets, stat boosts, saving",     badge:"adv", prompt:"Build a full pet system: equip/unequip pets that follow the player, stat boosts, pet levels, DataStore saving. Name all scripts."},
+    {icon:"🗺️",title:"Map Voting System",       desc:"Vote GUI, random map load, rounds",   badge:"adv", prompt:"Create a map voting system: vote GUI with 3 options, countdown timer, winner loads map from ReplicatedStorage. Integrates with round system. Name all scripts."},
+    {icon:"💰",title:"Economy System",          desc:"Currency, transfers, shop, logs",     badge:"adv", prompt:"Build a complete game economy: server-side currency manager, player-to-player transfers, purchase validation, transaction log. Full exploit protection. Name all scripts."},
+    {icon:"🔫",title:"Raycast Gun System",      desc:"Raycast, damage, ammo, reload GUI",   badge:"adv", prompt:"Build a complete raycast gun system: client-side raycast, server validation, damage with headshot multiplier, ammo HUD, reload animation. Name all scripts."},
+  ],
+  pro: [
+    {icon:"🧠",title:"ProfileService Setup",    desc:"Full profile + leaderstats template", badge:"pro", prompt:"Set up a complete ProfileService game template: profile loading, leaderstats binding, default data, session locking and BindToClose. Name all scripts ProfileManager and ProfileClient."},
+    {icon:"🌐",title:"Cross-Server Messaging",  desc:"MessagingService + MemoryStore",      badge:"pro", prompt:"Build a cross-server messaging system using MessagingService for broadcasts and MemoryStore for shared state. Include a notification GUI. Name all scripts."},
+    {icon:"🎯",title:"Knit Framework Game",     desc:"Full Service + Controller setup",     badge:"pro", prompt:"Set up a complete Knit framework game: KnitServer loader, KnitClient loader, a CurrencyService with client-exposed methods, and a CurrencyController with GUI updates. Name all files."},
+    {icon:"🛡️",title:"Anti-Exploit Suite",      desc:"Rate limits, sanity checks, ban log", badge:"pro", prompt:"Build a comprehensive server-side anti-exploit suite: RemoteEvent rate limiting, position/value sanity checks, kick on detection, violation logging to DataStore. Name the script AntiExploit."},
+    {icon:"🎲",title:"Tycoon System",           desc:"Buttons, collectors, upgrades, save", badge:"pro", prompt:"Build a full tycoon system: purchase buttons with cost display, collector droppers, upgrade tiers, auto-save with ProfileService. Name all scripts TycoonServer, TycoonClient, TycoonConfig."},
+    {icon:"⚡",title:"Parallel Luau Workers",   desc:"Actor-based parallel computation",   badge:"pro", prompt:"Show me how to use Parallel Luau with Actors for a pathfinding grid computation. Include the Script, ModuleScript and Actor setup with full explanation and named files."},
+    {icon:"🔄",title:"Simulator Core",          desc:"Click, auto, rebirth, prestige",     badge:"pro", prompt:"Build a complete simulator core: click counter, auto-clicker, rebirth system with multiplier, prestige with cosmetic unlock, all saved via ProfileService. Name all scripts."},
+    {icon:"🌍",title:"Open World Spawner",      desc:"Dynamic spawning, LOD, collection",  badge:"pro", prompt:"Create a dynamic world object spawner: spawn trees/rocks/items in radius around player, LOD unload when far, CollectionService tagging, server authoritative. Name all scripts."},
+  ]
+};
+
+// ══════════════════════════════════════════════════════════
+// MODEL DETECTION
+// ══════════════════════════════════════════════════════════
 function detectBestModel(text) {
   const t = text.toLowerCase().trim();
-  const geniusPhrases = [
-    'full system','complete system','entire system','build me a','create a full',
-    'build a full','build a complete','framework','knit','profileservice','cmdr',
-    'round system','admin system','anti-cheat','anti exploit','anti cheat',
-    'tycoon system','simulator system','pet system','trading system',
-    'full game','whole game','entire game','advanced','production','enterprise',
-    'architecture','datastore migration','cross server','memorystore',
-    'parallel luau','ecs','matter framework','fusion','bridgenet',
-    'multiple scripts','server and client','3 scripts','three scripts',
-    'full npc','boss fight','boss npc','phase','3 phase','placement system',
-    'inventory system','economy system','combat system','rebirth system',
-    'obby system','leaderboard system','full gui','complete gui',
-    'everything','all features','with all','step by step full',
-    '3d model','3d sword','3d castle','3d house','3d tree','build a model',
-    'baseparts','build in code','model builder','procedural model'
-  ];
-  if (geniusPhrases.some(p => t.includes(p))) return 'genius';
+  const g = ['full system','complete system','entire system','build me a','create a full','build a full',
+    'build a complete','framework','knit','profileservice','cmdr','round system','admin system',
+    'anti-cheat','anti exploit','tycoon','simulator','pet system','full game','whole game','advanced',
+    'production','architecture','cross server','memorystore','parallel luau','ecs','matter','fusion',
+    'multiple scripts','server and client','full npc','boss','placement system','inventory system',
+    'economy system','combat system','rebirth','leaderboard system','full gui','complete gui',
+    'everything','all features','3d model','3d sword','3d castle','3d house','build a model',
+    'baseparts','procedural','open world','global leaderboard','anti-exploit','gamepass','gun system'];
+  if (g.some(p=>t.includes(p))) return 'genius';
   if (t.length > 200) return 'genius';
-  const fastPhrases = [
-    'what is ','what are ','what does ','how does ','explain ','define ',
-    'tell me about','difference between','vs ','versus ','which is better',
-    "what's the",'whats the','can you explain','why does','why is',
-    'when should i','should i use','is it possible','do you know',
-    "what's a",'what is a','quick question','quick answer','briefly'
-  ];
-  const isFastPhrase = fastPhrases.some(p => t.startsWith(p) || t.includes(p));
-  const isShort = t.length < 100;
-  const hasNoCodeRequest = !/(script|code|build|create|make|generate|write|give me|show me code|3d|model)/.test(t);
-  if (isFastPhrase && isShort && hasNoCodeRequest) return 'fast';
+  const f = ['what is ','what are ','what does ','how does ','explain ','define ','tell me about',
+    'difference between',' vs ','versus ','which is better',"what's the",'whats the','can you explain',
+    'why does','why is','when should i','should i use','is it possible','briefly','quick'];
+  if (f.some(p=>t.startsWith(p)||t.includes(p)) && t.length<100 && !/(script|code|build|create|make|generate|write|give me|3d|model)/.test(t)) return 'fast';
   return 'balanced';
 }
-
-function updateModelBadge(modelKey) {
-  const m = MODELS[modelKey];
-  const badge = document.getElementById('model-badge');
-  const txt = document.getElementById('model-badge-txt');
-  badge.className = 'model-badge ' + m.cls;
-  txt.textContent = m.label;
+function updateModelBadge(key) {
+  const m = MODELS[key];
+  const b = document.getElementById('model-badge');
+  b.className = 'model-badge ' + m.cls;
+  document.getElementById('model-badge-txt').textContent = m.label;
 }
 
-async function callAI(prompt, sysOverride, maxTok, modelKey) {
-  if (!maxTok) maxTok = 16000;
-  const modelId = MODELS[modelKey || 'balanced'].id;
+// ══════════════════════════════════════════════════════════
+// AI CALL
+// ══════════════════════════════════════════════════════════
+async function callAI(prompt, sys, maxTok, modelKey) {
   try {
-    const response = await fetch(BACKEND + "/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: prompt,
-        system: sysOverride || GENIUS_SYSTEM,
-        maxTokens: maxTok,
-        model: modelId
-      })
+    const r = await fetch(BACKEND+"/api/ai",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt,system:sys||GENIUS_SYSTEM,maxTokens:maxTok||16000,model:MODELS[modelKey||'balanced'].id})
     });
-    if (!response.ok) {
-      const errText = await response.text().catch(() => "");
-      throw new Error("API " + response.status + ": " + errText.slice(0, 120));
+    if(!r.ok) throw new Error("API "+r.status);
+    const d = await r.json();
+    return (d.content||[]).map(b=>b.text||"").join("").trim()||null;
+  } catch(e){ console.error("AI:",e); return null; }
+}
+
+// ══════════════════════════════════════════════════════════
+// SCRIPT NAMING — heuristic first, then AI upgrade
+// ══════════════════════════════════════════════════════════
+function heuristicName(code, ctx, idx, pl) {
+  const hdr = code.match(/--\s*(?:Script Name|Name|Title)[:\s]+([A-Za-z][A-Za-z0-9_\s]+)/i);
+  if (hdr) return hdr[1].trim().replace(/\s+/g,'');
+  const tbl = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main|Module|Builder|Server|Client)?)\s*=\s*\{/);
+  if (tbl) return tbl[1];
+  if (ctx) {
+    const p = ctx.toLowerCase();
+    const map = [
+      [['coin'],['CoinManager','CoinClient','CoinConfig']],
+      [['admin'],['AdminSystem','AdminClient','AdminConfig']],
+      [['datastore','data store'],['DataManager','DataClient','DataConfig']],
+      [['round'],['RoundManager','RoundClient','RoundConfig']],
+      [['npc','pathfinding'],['NPCController','NPCClient','NPCConfig']],
+      [['boss'],['BossController','BossClient','BossConfig']],
+      [['gui','interface'],['GuiController','GuiManager','GuiConfig']],
+      [['shop'],['ShopServer','ShopClient','ShopConfig']],
+      [['pet'],['PetSystem','PetClient','PetConfig']],
+      [['remote'],['RemoteHandler','RemoteClient','RemoteConfig']],
+      [['leaderboard','leaderstats'],['LeaderboardManager','LeaderboardClient','LeaderboardConfig']],
+      [['castle'],['CastleBuilder','CastleViewer','CastleConfig']],
+      [['sword'],['SwordBuilder','SwordClient','SwordConfig']],
+      [['3d model','3d house','3d tree','build a model','baseparts','procedural'],['ModelBuilder','ModelViewer','ModelConfig']],
+      [['combat'],['CombatSystem','CombatClient','CombatConfig']],
+      [['gun','raycast'],['GunSystem','GunClient','GunConfig']],
+      [['economy','currency'],['EconomyManager','EconomyClient','EconomyConfig']],
+      [['tycoon'],['TycoonServer','TycoonClient','TycoonConfig']],
+      [['simulator'],['SimulatorServer','SimulatorClient','SimulatorConfig']],
+      [['rebirth'],['RebirthManager','RebirthClient','RebirthConfig']],
+      [['anti-exploit','anti exploit'],['AntiExploit','ExploitDetector','SecurityConfig']],
+      [['sound','music'],['SoundManager','SoundClient','SoundConfig']],
+      [['knit'],['KnitServer','KnitClient','KnitConfig']],
+      [['profile'],['ProfileManager','ProfileClient','ProfileConfig']],
+      [['voting','vote'],['VoteManager','VoteClient','VoteConfig']],
+      [['map'],['MapManager','MapClient','MapConfig']],
+      [['keybind'],['KeybindController','KeybindClient','KeybindConfig']],
+    ];
+    for (const [kws, names] of map) {
+      if (kws.some(kw=>p.includes(kw))) return names[idx % names.length];
     }
-    const d = await response.json();
-    const text = (d.content || []).map(b => b.text || "").join("").trim();
-    return text || null;
-  } catch(e) {
-    console.error("AI error:", e);
-    return null;
   }
+  const fallbacks = {Script:['GameServer','ServerMain','ServerCore'],LocalScript:['ClientMain','GuiClient','PlayerClient'],ModuleScript:['SharedModule','GameConfig','UtilModule']};
+  return (fallbacks[pl.type]||['BridgeScript'])[idx % 3];
 }
 
-function detectScriptPlacement(code) {
-  const c = code.toLowerCase();
-  let localScore = 0, moduleScore = 0, serverScore = 0;
-  const localSignals = ['localplayer','playergui','playerscripts','replicatedfirst','onclientevent','userinputservice','contextactionservice','renderstepped','fireserver','players").localplayer','camera','keydown','inputbegan','inputended','tweenservice','gui','screengui','frame','textlabel','startergui','starterplayerscripts','localscript'];
-  const serverSignals = ['onserverevent','playeradded','playerremoving','datastoreservice','bindtoclose','fireclient','fireallclients','serverstorage','serverscriptservice','serverscript','getservice("datastoreservice")','getservice("serverstorage")','getservice("serverscriptservice")','messagingservice','memorystore','httpservice'];
-  const moduleSignals = ['return ','setmetatable','__index','local module = {}','local self = setmetatable','module.__index','local config = {','local util = {}','local library = {}','local system = {}','function module.','function module:','module.new','module.init'];
-  localSignals.forEach(s => { if (c.includes(s)) localScore += 2; });
-  serverSignals.forEach(s => { if (c.includes(s)) serverScore += 2; });
-  moduleSignals.forEach(s => { if (c.includes(s)) moduleScore += 2; });
-  if (/return\s+\w+\s*$/.test(code.trim())) moduleScore += 6;
-  if (/local\s+\w+\s*=\s*\{\}/.test(c) && /return\s+\w+/.test(c)) moduleScore += 4;
-  if (/setmetatable/.test(c)) moduleScore += 3;
-  if (/\.__index/.test(c)) moduleScore += 3;
-  let scriptType = 'server';
-  if (moduleScore >= 6 && moduleScore >= localScore && moduleScore >= serverScore) scriptType = 'module';
-  else if (localScore > serverScore) scriptType = 'local';
-  const placements = {
-    server: { type: 'Script', badge: 'server', label: '🔴 Server Script', parent: 'ServerScriptService', path: 'ServerScriptService', note: 'Runs on the server only. Has access to DataStores, all players, server-side validation.', howTo: 'Explorer → ServerScriptService → right-click → Insert Object → Script' },
-    local:  { type: 'LocalScript', badge: 'local', label: '🔵 LocalScript', parent: 'StarterPlayerScripts', path: 'StarterPlayer → StarterPlayerScripts', note: 'Runs on each client. Has access to LocalPlayer, GUI, UserInputService, camera.', howTo: 'Explorer → StarterPlayer → StarterPlayerScripts → right-click → Insert Object → LocalScript' },
-    module: { type: 'ModuleScript', badge: 'module', label: '🟣 ModuleScript', parent: 'ReplicatedStorage', path: 'ReplicatedStorage → Modules', note: 'Required by other scripts with require(). In ReplicatedStorage so both server AND client can access it.', howTo: 'Explorer → ReplicatedStorage → right-click → Insert Object → ModuleScript' }
-  };
-  if (scriptType === 'module' && serverScore > localScore && serverScore > 2) {
-    placements.module.parent = 'ServerScriptService';
-    placements.module.path = 'ServerScriptService → Modules';
-    placements.module.note = 'Server-only ModuleScript — uses DataStores or server services. Do NOT place in ReplicatedStorage.';
-    placements.module.howTo = 'Explorer → ServerScriptService → right-click → Insert Object → ModuleScript';
-  }
-  if (scriptType === 'local' && (c.includes('screengui') || c.includes('playergui'))) {
-    placements.local.path = 'StarterGui';
-    placements.local.howTo = 'Explorer → StarterGui → right-click → Insert Object → LocalScript';
-  }
-  return placements[scriptType];
-}
-
-let user = null, sessionToken = null, pluginConnected = false, pollInterval = null;
-let conversations = [];
-let activeChatId = null;
-
-const $ = id => document.getElementById(id);
-function genTok() { return Math.random().toString(36).slice(2,8).toUpperCase(); }
-function ts() { return new Date().toLocaleTimeString(); }
-function tsShort() {
-  const d = new Date();
-  return d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
-}
-
-function toast(msg, type='info', dur=3200) {
-  const c = $('toasts');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, dur);
-}
-
-function sv() {
-  localStorage.setItem('sb_u', JSON.stringify(user));
-  localStorage.setItem('sb_t', sessionToken);
-  localStorage.setItem('sb_convos', JSON.stringify(conversations));
-}
-function lv() {
+async function aiUpgradeName(code, ctx, idx, pl, domIds) {
+  const hName = heuristicName(code, ctx, idx, pl);
+  // Only call AI if heuristic gave a generic fallback
+  const generics = new Set(['GameServer','ServerMain','ServerCore','ClientMain','GuiClient','PlayerClient','SharedModule','GameConfig','UtilModule','BridgeScript']);
+  if (!generics.has(hName)) return; // heuristic was good enough
   try {
-    user = JSON.parse(localStorage.getItem('sb_u'));
-    sessionToken = localStorage.getItem('sb_t');
-    const c = localStorage.getItem('sb_convos');
-    conversations = c ? JSON.parse(c) : [];
+    const sys = `Output ONLY a single PascalCase Roblox script name. No explanation, no punctuation, no quotes. Max 3 words joined. Examples: CoinManager, RoundController, ShopServer, PetClient. The name must match what the code does and that it is a ${pl.type}.`;
+    const pr = `Type: ${pl.type}\nContext: "${ctx}"\nCode:\n${code.slice(0,500)}`;
+    const name = await callAI(pr, sys, 30, 'fast');
+    if (name && /^[A-Z][A-Za-z0-9]+$/.test(name.trim()) && name.trim().length < 40) {
+      const n = name.trim();
+      domIds.forEach(id => { const el=document.getElementById(id); if(el) el.textContent=n; });
+    }
   } catch {}
 }
 
-function startApp() {
-  const inp = $('rbx-username');
-  const u = (inp.value || '').trim();
-  if (!u) { $('auth-err').style.display = 'block'; inp.focus(); return; }
-  $('auth-err').style.display = 'none';
-  user = { username: u, avatar: u[0].toUpperCase() };
-  sessionToken = genTok() + genTok();
+// ══════════════════════════════════════════════════════════
+// PLACEMENT DETECTION
+// ══════════════════════════════════════════════════════════
+function detectPlacement(code) {
+  const c = code.toLowerCase();
+  let loc=0, mod=0, srv=0;
+  ['localplayer','playergui','playerscripts','replicatedfirst','onclientevent','userinputservice',
+   'contextactionservice','renderstepped','fireserver','camera','inputbegan','inputended',
+   'tweenservice','screengui','frame','textlabel','startergui','starterplayerscripts','localscript'
+  ].forEach(s=>{if(c.includes(s))loc+=2;});
+  ['onserverevent','playeradded','playerremoving','datastoreservice','bindtoclose',
+   'fireclient','fireallclients','serverstorage','serverscriptservice','messagingservice','memorystore','httpservice'
+  ].forEach(s=>{if(c.includes(s))srv+=2;});
+  ['return ','setmetatable','__index','local module = {}','module.__index','function module.','function module:','module.new'
+  ].forEach(s=>{if(c.includes(s))mod+=2;});
+  if(/return\s+\w+\s*$/.test(code.trim()))mod+=6;
+  if(/local\s+\w+\s*=\s*\{\}/.test(c)&&/return\s+\w+/.test(c))mod+=4;
+  if(/setmetatable/.test(c))mod+=3;
+  if(/\.__index/.test(c))mod+=3;
+  let type = (mod>=6&&mod>=loc&&mod>=srv)?'module':(loc>srv)?'local':'server';
+  const P = {
+    server:{ type:'Script',      badge:'server', label:'🔴 Server Script', path:'ServerScriptService',
+             note:'Server-only. Access to DataStores, all players, server validation.',
+             howTo:'Explorer → ServerScriptService → right-click → Insert Object → Script' },
+    local: { type:'LocalScript', badge:'local',  label:'🔵 LocalScript',   path:'StarterPlayer → StarterPlayerScripts',
+             note:'Runs per client. Access to LocalPlayer, GUI, input, camera.',
+             howTo:'Explorer → StarterPlayer → StarterPlayerScripts → right-click → LocalScript' },
+    module:{ type:'ModuleScript',badge:'module', label:'🟣 ModuleScript',   path:'ReplicatedStorage → Modules',
+             note:'Required via require(). ReplicatedStorage = both server and client can access.',
+             howTo:'Explorer → ReplicatedStorage → right-click → Insert Object → ModuleScript' }
+  };
+  const p = P[type];
+  if(type==='module'&&srv>loc&&srv>2){p.path='ServerScriptService → Modules';p.note='Server-only ModuleScript. Uses DataStores/server services. NOT in ReplicatedStorage.';}
+  if(type==='local'&&(c.includes('screengui')||c.includes('playergui'))){p.path='StarterGui';p.howTo='Explorer → StarterGui → right-click → LocalScript';}
+  return p;
+}
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let user=null, sessionToken=null, pluginConnected=false, pollInterval=null;
+let conversations=[], activeChatId=null, lastUserPrompt='';
+const $=id=>document.getElementById(id);
+const genTok=()=>Math.random().toString(36).slice(2,8).toUpperCase()+Math.random().toString(36).slice(2,6).toUpperCase();
+const tsShort=()=>{const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');};
+
+function toast(msg,type='info',dur=3500){
+  const c=$('toasts'),t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},dur);
+}
+function sv(){try{localStorage.setItem('sb_u',JSON.stringify(user));localStorage.setItem('sb_t',sessionToken);localStorage.setItem('sb_convos',JSON.stringify(conversations));}catch{}}
+function lv(){try{user=JSON.parse(localStorage.getItem('sb_u'));sessionToken=localStorage.getItem('sb_t');const c=localStorage.getItem('sb_convos');conversations=c?JSON.parse(c):[];}catch{conversations=[];}}
+
+// ══════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════
+function startApp(){
+  const inp=$('rbx-username'),u=(inp.value||'').trim();
+  if(!u){$('auth-err').style.display='block';inp.focus();return;}
+  $('auth-err').style.display='none';
+  user={username:u,avatar:u[0].toUpperCase()};
+  sessionToken=genTok();
   enterApp();
 }
-
-function enterApp() {
-  sv();
-  $('auth').classList.add('gone');
-  $('app').classList.add('show');
-  $('top-ava').textContent = user.avatar;
-  $('top-name').textContent = user.username;
-  $('tok-val').textContent = sessionToken;
-  startPolling();
-  renderHistory();
+function enterApp(){
+  sv();$('auth').classList.add('gone');$('app').classList.add('show');
+  $('top-ava').textContent=user.avatar;$('top-name').textContent=user.username;
+  $('tok-val').textContent=sessionToken;
+  buildTemplates();startPolling();renderHistory();
 }
-
-function logout() {
-  user = null; sessionToken = null;
-  localStorage.clear();
-  stopPolling();
-  $('app').classList.remove('show');
-  $('auth').classList.remove('gone');
-  $('rbx-username').value = '';
+function logout(){
+  user=null;sessionToken=null;conversations=[];localStorage.clear();
+  stopPolling();pluginConnected=false;
+  $('app').classList.remove('show');$('auth').classList.remove('gone');
+  $('rbx-username').value='';
 }
+lv();if(user&&sessionToken)enterApp();
 
-lv();
-if (user && sessionToken) enterApp();
-
-function startPolling() {
-  pollInterval = setInterval(async () => {
-    try {
-      const r = await fetch(BACKEND + '/api/ping/' + sessionToken);
-      const d = await r.json();
-      if (d.connected && !pluginConnected) setConn(true);
-      else if (!d.connected && pluginConnected) setConn(false);
-    } catch {}
-  }, 2500);
-}
-function stopPolling() { clearInterval(pollInterval); }
-function setConn(v) {
-  pluginConnected = v;
-  const d = $('conn-dot');
-  d.className = 'conn-dot ' + (v ? 'on' : 'wait');
-  $('conn-txt').textContent = v ? 'Studio connected' : 'Not connected';
-  if (v) toast('Studio connected!', 'ok');
-}
-function copyToken() {
-  navigator.clipboard.writeText(sessionToken || '');
-  toast('Token copied!', 'ok');
-}
-
-function newChat() {
-  activeChatId = null;
-  $('messages-inner').innerHTML = '';
-  $('messages-wrap').classList.add('hidden');
-  $('welcome-screen').classList.remove('hidden');
-  updateModelBadge('balanced');
-  renderHistory();
-}
-
-function getActiveChat() {
-  return conversations.find(c => c.id === activeChatId);
-}
-
-function createChat(firstMessage) {
-  const id = 'c' + Date.now();
-  const title = firstMessage.slice(0, 38) + (firstMessage.length > 38 ? '…' : '');
-  const chat = { id, title, messages: [], createdAt: tsShort() };
-  conversations.unshift(chat);
-  activeChatId = id;
-  sv();
-  renderHistory();
-  return chat;
-}
-
-function renderHistory() {
-  const el = $('chat-history');
-  if (!conversations.length) {
-    el.innerHTML = '<div style="font-size:9px;color:var(--text3);padding:8px">No conversations yet.</div>';
-    return;
-  }
-  el.innerHTML = conversations.map(c => `
-    <div class="chat-item${c.id === activeChatId ? ' active' : ''}" onclick="openChat('${c.id}')">
-      <div class="chat-item-dot"></div>
-      <span class="chat-item-text">${escHtml(c.title)}</span>
-      <span class="chat-item-time">${c.createdAt || ''}</span>
-    </div>
-  `).join('');
-}
-
-function openChat(id) {
-  activeChatId = id;
-  const chat = getActiveChat();
-  if (!chat) return;
-  $('welcome-screen').classList.add('hidden');
-  $('messages-wrap').classList.remove('hidden');
-  $('messages-inner').innerHTML = '';
-  chat.messages.forEach(m => renderMessage(m, false));
-  scrollToBottom();
-  renderHistory();
-}
-
-function inputKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 160) + 'px';
-}
-function quickPrompt(text) {
-  $('main-input').value = text;
-  autoResize($('main-input'));
-  $('main-input').focus();
-}
-function scrollToBottom() {
-  const w = $('messages-wrap');
-  w.scrollTop = w.scrollHeight;
-}
-
-let lastUserPrompt = '';
-
-async function sendMessage() {
-  const inp = $('main-input');
-  const text = inp.value.trim();
-  if (!text) return;
-  lastUserPrompt = text;
-  inp.value = '';
-  inp.style.height = 'auto';
-  $('send-btn').disabled = true;
-
-  $('welcome-screen').classList.add('hidden');
-  $('messages-wrap').classList.remove('hidden');
-
-  let chat = getActiveChat();
-  if (!chat) chat = createChat(text);
-
-  const modelKey = detectBestModel(text);
-  updateModelBadge(modelKey);
-
-  const userMsg = { role: 'user', content: text };
-  chat.messages.push(userMsg);
-  renderMessage(userMsg, true);
-  scrollToBottom();
-
-  const tid = 'typing_' + Date.now();
-  showTyping(tid);
-  scrollToBottom();
-
-  const response = await callAI(text, GENIUS_SYSTEM, 16000, modelKey);
-  removeTyping(tid);
-  $('send-btn').disabled = false;
-
-  const reply = response || "Sorry, the AI request failed. Please try again.";
-  const aiMsg = { role: 'assistant', content: reply, modelKey: modelKey, prompt: text };
-  chat.messages.push(aiMsg);
-  renderMessage(aiMsg, true);
-  scrollToBottom();
-  sv();
-  renderHistory();
-}
-
-function showTyping(id) {
-  const inner = $('messages-inner');
-  const d = document.createElement('div');
-  d.className = 'typing-row';
-  d.id = id;
-  d.innerHTML = `
-    <div class="msg-avatar ai">✦</div>
-    <div class="msg-content">
-      <div class="typing-dots"><span></span><span></span><span></span></div>
-    </div>`;
-  inner.appendChild(d);
-}
-function removeTyping(id) { const el = $(id); if (el) el.remove(); }
-
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escAttr(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-function renderMessage(msg, animate) {
-  const inner = $('messages-inner');
-  const isUser = msg.role === 'user';
-  const row = document.createElement('div');
-  row.className = 'msg-row' + (isUser ? ' user' : '');
-  if (animate) row.style.cssText = 'opacity:0;transform:translateY(6px);transition:all .25s ease';
-
-  const avatarHtml = isUser
-    ? `<div class="msg-avatar user">${user ? user.avatar : 'U'}</div>`
-    : `<div class="msg-avatar ai">✦</div>`;
-
-  const modelKey = msg.modelKey || 'balanced';
-  const modelLabel = MODELS[modelKey] ? MODELS[modelKey].label : '';
-
-  const nameHtml = isUser
-    ? `<div class="msg-name">${escHtml(user ? user.username : 'You')}</div>`
-    : `<div class="msg-name">Studio Bridge AI <span class="msg-model-tag ${modelKey}">${modelLabel}</span></div>`;
-
-  const contentHtml = formatMessage(msg.content, isUser);
-
-  row.innerHTML = `
-    ${avatarHtml}
-    <div class="msg-content">
-      ${nameHtml}
-      <div class="msg-bubble">${contentHtml}</div>
-      ${!isUser ? buildMessageActions(msg.content, msg.prompt || lastUserPrompt) : ''}
-    </div>`;
-
-  inner.appendChild(row);
-
-  if (animate) requestAnimationFrame(() => {
-    row.style.opacity = '1';
-    row.style.transform = 'translateY(0)';
+// ══════════════════════════════════════════════════════════
+// TEMPLATES
+// ══════════════════════════════════════════════════════════
+function buildTemplates(){
+  ['basic','advanced','pro'].forEach(cat=>{
+    $(`${cat}-tools`).innerHTML=TEMPLATES[cat].map(t=>`
+      <div class="sidebar-tool" onclick="quickPrompt(${JSON.stringify(t.prompt)})">
+        <span class="sidebar-tool-icon">${t.icon}</span>
+        <div class="sidebar-tool-body">
+          <div class="sidebar-tool-title">${escHtml(t.title)}</div>
+          <div class="sidebar-tool-desc">${escHtml(t.desc)}</div>
+        </div>
+        ${t.badge?`<span class="tmpl-badge ${t.badge}">${t.badge.toUpperCase()}</span>`:''}
+      </div>`).join('');
   });
 }
+function switchTab(name,el){
+  document.querySelectorAll('.tmpl-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tmpl-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');$('panel-'+name).classList.add('active');
+}
 
-function formatMessage(text, isUser) {
-  if (!text) return '';
-  if (isUser) return escHtml(text).replace(/\n/g,'<br>');
-  let out = '';
-  const parts = text.split(/(```[\w]*\n?[\s\S]*?```)/g);
-  parts.forEach(part => {
-    const codeMatch = part.match(/^```([\w]*)\n?([\s\S]*?)```$/);
-    if (codeMatch) {
-      const lang = codeMatch[1] || 'lua';
-      const code = codeMatch[2];
-      const id = 'cb_' + Math.random().toString(36).slice(2,7);
-      out += `<pre><div class="code-header"><span class="code-lang">${escHtml(lang)}</span><button class="copy-code-btn" onclick="copyCode('${id}')">Copy</button></div><div class="code-body" id="${id}">${escHtml(code)}</div></pre>`;
+// ══════════════════════════════════════════════════════════
+// PLUGIN POLLING
+// ══════════════════════════════════════════════════════════
+function startPolling(){
+  pollInterval=setInterval(async()=>{
+    try{const r=await fetch(BACKEND+'/api/ping/'+sessionToken);const d=await r.json();
+    if(d.connected&&!pluginConnected)setConn(true);else if(!d.connected&&pluginConnected)setConn(false);}catch{}
+  },3000);
+}
+function stopPolling(){clearInterval(pollInterval);}
+function setConn(v){
+  pluginConnected=v;$('conn-dot').className='conn-dot '+(v?'on':'wait');
+  $('conn-txt').textContent=v?'Studio connected':'Not connected';
+  if(v)toast('✓ Studio plugin connected!','ok');
+}
+function copyToken(){navigator.clipboard.writeText(sessionToken||'').then(()=>toast('Token copied!','ok'));}
+
+// ══════════════════════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════════════════════
+function newChat(){
+  activeChatId=null;$('messages-inner').innerHTML='';
+  $('messages-wrap').classList.add('hidden');$('welcome-screen').classList.remove('hidden');
+  updateModelBadge('balanced');
+  switchTab('history',document.querySelector('.tmpl-tab'));renderHistory();
+}
+function getActiveChat(){return conversations.find(c=>c.id===activeChatId);}
+function createChat(first){
+  const id='c'+Date.now(),title=first.slice(0,42)+(first.length>42?'…':'');
+  const chat={id,title,messages:[],createdAt:tsShort()};
+  conversations.unshift(chat);activeChatId=id;sv();renderHistory();return chat;
+}
+function deleteChat(id,e){
+  e.stopPropagation();conversations=conversations.filter(c=>c.id!==id);
+  if(activeChatId===id){activeChatId=null;$('messages-inner').innerHTML='';$('messages-wrap').classList.add('hidden');$('welcome-screen').classList.remove('hidden');}
+  sv();renderHistory();
+}
+function renderHistory(){
+  const el=$('chat-history');
+  if(!conversations.length){el.innerHTML='<div style="font-size:9px;color:var(--text3);padding:10px 4px">No conversations yet.</div>';return;}
+  el.innerHTML=conversations.map(c=>`
+    <div class="chat-item${c.id===activeChatId?' active':''}" onclick="openChat('${c.id}')">
+      <div class="chat-item-dot"></div>
+      <span class="chat-item-text">${escHtml(c.title)}</span>
+      <span class="chat-item-time">${c.createdAt||''}</span>
+      <span class="chat-del" onclick="deleteChat('${c.id}',event)">✕</span>
+    </div>`).join('');
+}
+function openChat(id){
+  activeChatId=id;const chat=getActiveChat();if(!chat)return;
+  $('welcome-screen').classList.add('hidden');$('messages-wrap').classList.remove('hidden');
+  $('messages-inner').innerHTML='';chat.messages.forEach(m=>renderMessage(m,false));
+  scrollToBottom();renderHistory();
+}
+
+// ══════════════════════════════════════════════════════════
+// INPUT
+// ══════════════════════════════════════════════════════════
+function inputKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+function quickPrompt(text){$('main-input').value=text;autoResize($('main-input'));$('main-input').focus();}
+function scrollToBottom(){const w=$('messages-wrap');w.scrollTop=w.scrollHeight;}
+
+// ══════════════════════════════════════════════════════════
+// SEND
+// ══════════════════════════════════════════════════════════
+async function sendMessage(){
+  const inp=$('main-input'),text=inp.value.trim();
+  if(!text)return;
+  lastUserPrompt=text;inp.value='';inp.style.height='auto';$('send-btn').disabled=true;
+  $('welcome-screen').classList.add('hidden');$('messages-wrap').classList.remove('hidden');
+  let chat=getActiveChat();if(!chat)chat=createChat(text);
+  const modelKey=detectBestModel(text);updateModelBadge(modelKey);
+  const userMsg={role:'user',content:text};chat.messages.push(userMsg);
+  renderMessage(userMsg,true);scrollToBottom();
+  const tid='typing_'+Date.now();showTyping(tid);scrollToBottom();
+  const reply=await callAI(text,GENIUS_SYSTEM,16000,modelKey);
+  removeTyping(tid);$('send-btn').disabled=false;
+  const content=reply||"Sorry, the AI request failed. Please try again.";
+  const aiMsg={role:'assistant',content,modelKey,prompt:text};
+  chat.messages.push(aiMsg);renderMessage(aiMsg,true);scrollToBottom();sv();renderHistory();
+}
+function showTyping(id){
+  const d=document.createElement('div');d.className='typing-row';d.id=id;
+  d.innerHTML=`<div class="msg-avatar ai">✦</div><div class="msg-content"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  $('messages-inner').appendChild(d);
+}
+function removeTyping(id){const el=$(id);if(el)el.remove();}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══════════════════════════════════════════════════════════
+// RENDER MESSAGE
+// ══════════════════════════════════════════════════════════
+function renderMessage(msg,animate){
+  const inner=$('messages-inner'),isUser=msg.role==='user';
+  const row=document.createElement('div');
+  row.className='msg-row'+(isUser?' user':'');
+  if(animate)row.style.cssText='opacity:0;transform:translateY(6px);transition:all .25s ease';
+  const avatarHtml=isUser?`<div class="msg-avatar user">${user?user.avatar:'U'}</div>`:`<div class="msg-avatar ai">✦</div>`;
+  const mk=msg.modelKey||'balanced';
+  const ml=MODELS[mk]?MODELS[mk].label:'';
+  const nameHtml=isUser?`<div class="msg-name">${escHtml(user?user.username:'You')}</div>`:`<div class="msg-name">Studio Bridge AI <span class="msg-model-tag ${mk}">${ml}</span></div>`;
+  const contentHtml=formatMessage(msg.content,isUser);
+  row.innerHTML=`${avatarHtml}<div class="msg-content">${nameHtml}<div class="msg-bubble">${contentHtml}</div>${!isUser?buildActions(msg.content,msg.prompt||lastUserPrompt):''}</div>`;
+  inner.appendChild(row);
+  if(animate)requestAnimationFrame(()=>{row.style.opacity='1';row.style.transform='translateY(0)';});
+}
+
+// ══════════════════════════════════════════════════════════
+// FORMAT MESSAGE
+// ══════════════════════════════════════════════════════════
+function formatMessage(text,isUser){
+  if(!text)return'';
+  if(isUser)return escHtml(text).replace(/\n/g,'<br>');
+  let out='';
+  text.split(/(```[\w]*\n?[\s\S]*?```)/g).forEach(part=>{
+    const cm=part.match(/^```([\w]*)\n?([\s\S]*?)```$/);
+    if(cm){
+      const lang=cm[1]||'lua',code=cm[2];
+      const cbId='cb_'+Math.random().toString(36).slice(2,9);
+      // Store code safely — no HTML attribute encoding
+      const cid=csSet(code);
+      out+=`<pre><div class="code-header"><span class="code-lang">${escHtml(lang)}</span><button class="copy-code-btn" onclick="copyBlockById('${cbId}')">Copy</button></div><div class="code-body" id="${cbId}">${escHtml(code)}</div></pre>`;
 
 ```
 } else {
-  let p2 = part.replace(/`([^`\n]+)`/g, (_, c) => `<code>${escHtml(c)}</code>`);
-  p2 = p2.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  p2 = p2.replace(/\n/g, '<br>');
-  out += p2;
+  let p2=part.replace(/`([^`\n]+)`/g,(_,c)=>`<code>${escHtml(c)}</code>`);
+  p2=p2.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  p2=p2.replace(/^### (.+)$/gm,'<strong style="font-size:11px;color:var(--text)">$1</strong>');
+  p2=p2.replace(/\n/g,'<br>');
+  out+=p2;
 }
 ```
 
@@ -757,230 +745,204 @@ function formatMessage(text, isUser) {
 return out;
 }
 
-function buildMessageActions(text, promptContext) {
-if (!text) return ‘’;
-const hasCode = /```(lua|luau)?/.test(text) || /local [A-Za-z]/.test(text) || /game:GetService/.test(text);
-if (!hasCode) return ‘’;
+// ══════════════════════════════════════════════════════════
+// BUILD ACTIONS — uses CODE_STORE IDs exclusively
+// This is the core fix: no code ever goes through HTML attributes
+// ══════════════════════════════════════════════════════════
+function buildActions(text,promptCtx){
+if(!text)return’’;
+const hasCode=/```(lua|luau)?/.test(text)||(/local [A-Za-z]/.test(text)&&/game:GetService/.test(text));
+if(!hasCode)return’’;
 
-const allCodeBlocks = [];
-const blockRx = /`(?:lua|luau)?\n?([\s\S]*?)`/g;
+const blocks=[];
+const rx=/`(?:lua|luau)?\n?([\s\S]*?)`/g;
 let m;
-while ((m = blockRx.exec(text)) !== null) {
-allCodeBlocks.push(m[1]);
-}
-if (!allCodeBlocks.length) return ‘’;
+while((m=rx.exec(text))!==null){const c=m[1].trim();if(c.length>10)blocks.push(c);}
+if(!blocks.length)return’’;
 
-function deriveScriptName(code, index) {
-const headerMatch = code.match(/–\s*(?:Script Name|Name|Title)[:\s]+([A-Za-z][A-Za-z0-9_\s]+)/i);
-if (headerMatch) return headerMatch[1].trim().replace(/\s+/g, ‘’);
-const tableMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main|Module)?)\s*=\s*{/);
-if (tableMatch) return tableMatch[1];
-if (promptContext) {
-const p = promptContext.toLowerCase();
-if (p.includes(‘coin’)) return index === 0 ? ‘CoinManager’ : index === 1 ? ‘CoinClient’ : ‘CoinConfig’;
-if (p.includes(‘admin’)) return index === 0 ? ‘AdminSystem’ : ‘AdminClient’;
-if (p.includes(‘datastore’) || p.includes(‘data store’)) return ‘DataManager’;
-if (p.includes(‘round’)) return index === 0 ? ‘RoundManager’ : ‘RoundClient’;
-if (p.includes(‘npc’) || p.includes(‘pathfinding’)) return ‘NPCController’;
-if (p.includes(‘gui’) || p.includes(‘interface’)) return ‘GuiController’;
-if (p.includes(‘shop’)) return index === 0 ? ‘ShopServer’ : ‘ShopClient’;
-if (p.includes(‘pet’)) return index === 0 ? ‘PetSystem’ : ‘PetClient’;
-if (p.includes(‘remote’)) return ‘RemoteHandler’;
-if (p.includes(‘leaderstats’) || p.includes(‘leaderboard’)) return ‘LeaderboardManager’;
-if (p.includes(‘3d’) || p.includes(‘model’) || p.includes(‘build’)) return ‘ModelBuilder’;
-}
-const placement = detectScriptPlacement(code);
-const suffixMap = {
-Script: [‘GameServer’,‘ServerMain’,‘ServerCore’],
-LocalScript: [‘ClientMain’,‘GuiClient’,‘PlayerClient’],
-ModuleScript: [‘SharedModule’,‘GameConfig’,‘UtilModule’]
-};
-const options = suffixMap[placement.type] || [‘BridgeScript’];
-return options[index % options.length];
+// Store all blocks, get IDs — ZERO encoding issues
+const cids=blocks.map(c=>csSet(c));
+const pls=blocks.map(c=>detectPlacement(c));
+const names=blocks.map((c,i)=>heuristicName(c,promptCtx,i,pls[i]));
+
+// Generate stable DOM IDs for async name upgrade
+const nameEls=cids.map(id=>‘fn_’+id);      // file row name
+const plNameEls=cids.map(id=>‘pn_’+id);    // placement info name
+
+// Files list
+let html=’’;
+if(blocks.length>=1){
+html+=`<div class="files-list"><div class="files-list-title">📁 Scripts in this response</div>`;
+blocks.forEach((_,i)=>{
+html+=`<div class="file-row"> <span class="file-type-badge ${pls[i].badge}">${pls[i].type}</span> <span class="file-name" id="${nameEls[i]}">${escHtml(names[i])}</span> <span class="file-path">→ ${escHtml(pls[i].path)}</span> <button class="file-copy-btn" onclick="copyByCid(${cids[i]})">copy</button> </div>`;
+});
+html+=`</div>`;
 }
 
-let filesHtml = ‘’;
-if (allCodeBlocks.length >= 1) {
-const fileRows = allCodeBlocks.map((code, i) => {
-const placement = detectScriptPlacement(code);
-const name = deriveScriptName(code, i);
-const badgeCls = placement.badge;
-return `<div class="file-row"><span class="file-type-badge ${badgeCls}">${placement.type}</span><span class="file-name">${escHtml(name)}</span><span class="file-path">→ ${escHtml(placement.path)}</span></div>`;
-}).join(’’);
-filesHtml = `<div class="files-list"><div class="files-list-title">📁 Scripts in this response</div>${fileRows}</div>`;
+// Single script placement info
+if(blocks.length===1){
+const pl=pls[0];
+html+=`<div class="placement-info"> <div class="placement-info-title">📍 Where to place this script</div> <div class="placement-row"><span class="placement-label">Script Name</span> <span class="placement-val" style="color:var(--text);font-weight:700" id="${plNameEls[0]}">${escHtml(names[0])}</span></div> <div class="placement-row"><span class="placement-label">Script Type</span> <span class="placement-val"><span class="placement-badge ${pl.badge}">${pl.label}</span></span></div> <div class="placement-row"><span class="placement-label">Location</span> <span class="placement-val"><span class="placement-path">${escHtml(pl.path)}</span></span></div> <div class="placement-row"><span class="placement-label">Why</span> <span class="placement-val">${escHtml(pl.note)}</span></div> <div class="placement-row"><span class="placement-label">How to add</span> <span class="placement-val">${escHtml(pl.howTo)}</span></div> </div>`;
 }
 
-const primaryCode = allCodeBlocks[0];
-const placement = detectScriptPlacement(primaryCode);
-const primaryName = deriveScriptName(primaryCode, 0);
-
-let html = filesHtml;
-
-if (allCodeBlocks.length === 1) {
-html += `<div class="placement-info"> <div class="placement-info-title">📍 Where to place this script</div> <div class="placement-row"><span class="placement-label">Script Name</span><span class="placement-val" style="color:var(--text);font-weight:700">${escHtml(primaryName)}</span></div> <div class="placement-row"><span class="placement-label">Script Type</span><span class="placement-val"><span class="placement-badge ${placement.badge}">${placement.label}</span></span></div> <div class="placement-row"><span class="placement-label">Location</span><span class="placement-val"><span class="placement-path">${escHtml(placement.path)}</span></span></div> <div class="placement-row"><span class="placement-label">Why</span><span class="placement-val">${escHtml(placement.note)}</span></div> <div class="placement-row"><span class="placement-label">How to add</span><span class="placement-val">${escHtml(placement.howTo)}</span></div> </div>`;
-}
-
-// ── FIX: “Open in Studio” button works connected OR offline ──
-const studioLabel = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
-html += `<div class="script-actions">
-<button class="sact-btn prim" onclick="copyRawCode(this)" data-code="${escAttr(primaryCode)}">📋 Copy Script</button>
-<button class="sact-btn studio-btn" onclick="openInStudio(this)" data-code="${escAttr(primaryCode)}" data-name="${escAttr(primaryName)}" data-type="${escAttr(placement.type.toLowerCase())}">${studioLabel}</button>
+// Action buttons — data-cid stores only a small integer, no code strings
+const pCid=cids[0], pName=names[0], pType=pls[0].type.toLowerCase();
+const studioLabel=pluginConnected?‘▶ Send to Studio’:‘📋 Copy for Studio’;
+html+=`<div class="script-actions"> <button class="sact-btn prim" onclick="copyByCid(${pCid})">📋 Copy Script</button> <button class="sact-btn studio" data-cid="${pCid}" data-type="${escHtml(pType)}" data-nameel="${nameEls[0]}" onclick="openInStudio(this)">${studioLabel}</button> ${blocks.length>1?`<button class="sact-btn grn" onclick="copyAllByCids('${cids.join(',')}','${names.map(n=>encodeURIComponent(n)).join(',')}')">📦 Copy All (${blocks.length})</button>`:’’}
 
   </div>`;
 
-const replaces = [];
-const patterns = [
-{ rx: /YOUR_?USER_?ID|1234567890/gi, key: ‘YOUR_USERID’, desc: ‘Replace with your actual Roblox UserId’ },
-{ rx: /rbxassetid://YOUR_ANIMATION_ID|YOUR_ANIMATION_ID/gi, key: ‘rbxassetid://ANIMATION_ID’, desc: ‘Replace with your animation asset ID’ },
-{ rx: /YOUR_GAME_NAME|“My Game”/gi, key: ‘YOUR_GAME_NAME’, desc: “Replace with your game’s name” },
-{ rx: /GameData_v\d+|Stats_v\d+|PlayerData_v\d+/gi, key: ‘DataStore name’, desc: ‘Rename as needed — increment version when data structure changes’ },
-{ rx: /REPLACE WITH|–\s*REPLACE/gi, key: ‘Marked lines (– REPLACE)’, desc: ‘Check comments marked with REPLACE in the script’ },
-{ rx: /GROUP_ID|YOUR_GROUP_ID/gi, key: ‘GROUP_ID’, desc: ‘Replace with your Roblox Group ID’ },
-{ rx: /GAMEPASS_ID|YOUR_GAMEPASS_ID/gi, key: ‘GAMEPASS_ID’, desc: ‘Replace with your Gamepass ID from Creator Dashboard’ },
+// Replace warnings
+const rPatterns=[
+{rx:/YOUR_?USER_?ID|1234567890/gi,key:‘YOUR_USERID’,desc:‘Replace with your actual Roblox UserId’},
+{rx:/rbxassetid://YOUR_ANIMATION/gi,key:‘ANIMATION_ID’,desc:‘Replace with your animation asset ID’},
+{rx:/YOUR_GAME_NAME|“My Game”/gi,key:‘YOUR_GAME_NAME’,desc:“Replace with your game’s name”},
+{rx:/GameData_v\d+|PlayerData_v\d+/gi,key:‘DataStore name’,desc:‘Rename as needed — increment version when data structure changes’},
+{rx:/REPLACE WITH|– REPLACE/gi,key:‘Marked – REPLACE lines’,desc:‘Look for comments marked REPLACE in the script’},
+{rx:/GROUP_ID|YOUR_GROUP_ID/gi,key:‘GROUP_ID’,desc:‘Replace with your Roblox Group ID’},
+{rx:/GAMEPASS_ID|YOUR_GAMEPASS_ID/gi,key:‘GAMEPASS_ID’,desc:‘Replace with your Gamepass ID’},
 ];
-patterns.forEach(p => { if (p.rx.test(text)) replaces.push({ key: p.key, desc: p.desc }); });
+const rRows=rPatterns.filter(p=>p.rx.test(text)).map(p=>`<div class="replace-item"><span class="replace-key">${escHtml(p.key)}</span><span class="replace-val">${escHtml(p.desc)}</span></div>`).join(’’);
+if(rRows)html+=`<div class="replace-notice"><div class="replace-notice-title">⚠ What to replace before using</div>${rRows}</div>`;
 
-if (replaces.length) {
-html += `<div class="replace-notice"><div class="replace-notice-title">⚠ What to replace before using</div>${replaces.map(r=>`<div class="replace-item"><span class="replace-key">${escHtml(r.key)}</span><span class="replace-val">${escHtml(r.desc)}</span></div>`).join('')}</div>`;
-}
+// Async AI name upgrade — fires after DOM paints, updates name elements in place
+setTimeout(()=>{
+blocks.forEach(async(code,i)=>{
+const domIds=[nameEls[i]];
+if(i===0)domIds.push(plNameEls[0]);
+await aiUpgradeName(code,promptCtx,i,pls[i],domIds);
+});
+},80);
 
 return html;
 }
 
-function copyCode(id) {
-const el = $(id);
-if (!el) return;
-navigator.clipboard.writeText(el.textContent || ‘’);
-toast(‘Code copied!’, ‘ok’);
+// ══════════════════════════════════════════════════════════
+// COPY HELPERS — all use CODE_STORE, no HTML attributes
+// ══════════════════════════════════════════════════════════
+function copyBlockById(cbId){
+const el=document.getElementById(cbId);
+if(!el)return;
+navigator.clipboard.writeText(el.textContent||’’).then(()=>toast(‘Code copied!’,‘ok’));
+}
+function copyByCid(cid){
+const code=csGet(cid);
+if(!code){toast(‘No code found.’,‘bad’);return;}
+navigator.clipboard.writeText(code).then(()=>toast(‘✓ Script copied! Paste in Studio → Ctrl+A, Ctrl+V’,‘ok’,5000)).catch(()=>toast(‘Copy failed’,‘bad’));
+}
+function copyAllByCids(cidsStr,namesEncoded){
+const cids=cidsStr.split(’,’);
+const names=namesEncoded.split(’,’).map(n=>decodeURIComponent(n));
+const parts=cids.map((cid,i)=>{
+const code=csGet(cid),name=names[i]||(‘Script_’+(i+1));
+return `-- ═══════════════════════════════\n-- ${name}\n-- ═══════════════════════════════\n${code}`;
+});
+navigator.clipboard.writeText(parts.join(’\n\n’)).then(()=>toast(`✓ ${cids.length} scripts copied!`,‘ok’,4000)).catch(()=>toast(‘Copy failed’,‘bad’));
 }
 
-function copyRawCode(btn) {
-const code = btn.dataset.code;
-navigator.clipboard.writeText(code || ‘’).then(() => {
-toast(‘✓ Script copied! Paste in Roblox Studio → Script Editor → Ctrl+A, Ctrl+V’, ‘ok’, 5000);
-}).catch(() => toast(‘Copy failed’, ‘bad’));
-}
+// ══════════════════════════════════════════════════════════
+// OPEN IN STUDIO — fully rewritten, uses CODE_STORE only
+// ══════════════════════════════════════════════════════════
+async function openInStudio(btn){
+const cid=btn.dataset.cid;
+const code=csGet(Number(cid));  // get from store — zero encoding issues
+if(!code){toast(‘Code not found in store.’,‘bad’);return;}
 
-// ── FIX: unified “Open in Studio” — sends if connected, otherwise copies the
-//         ready-to-paste Studio insert wrapper so it ALWAYS works ──
-async function openInStudio(btn) {
-const code = cc(btn.dataset.code || ‘’);
-if (!code) { toast(‘No code found.’, ‘bad’); return; }
+// Get name from the live DOM element (may have been AI-upgraded)
+const nameEl=document.getElementById(btn.dataset.nameel);
+const scriptName=(nameEl?nameEl.textContent.trim():null)||‘BridgeScript’;
+const scriptType=btn.dataset.type||‘script’;
+const wrapped=wrapInsert(code,scriptType,scriptName);
 
-const type = btn.dataset.type || detectType(code);
-const scriptName = btn.dataset.name || ‘BridgeScript’;
-const wrapped = wrapInsert(code, type, scriptName);
-
-if (!pluginConnected) {
-// Offline fallback: copy the Lua insert wrapper — user pastes it in
-// the Command Bar (View → Command Bar) and hits Enter.
-navigator.clipboard.writeText(wrapped).then(() => {
-toast(‘📋 Copied! Paste into Studio Command Bar (View → Command Bar) and press Enter.’, ‘gold’, 6000);
-}).catch(() => toast(‘Copy failed — try the Copy Script button instead.’, ‘bad’));
+if(!pluginConnected){
+// OFFLINE MODE: copy the command bar snippet
+navigator.clipboard.writeText(wrapped).then(()=>{
+toast(‘📋 Copied! In Studio: View → Command Bar → Paste → Enter’,‘gold’,8000);
+}).catch(()=>toast(‘Copy failed — use Copy Script button instead’,‘bad’));
 return;
 }
 
-// Online path: send via backend
-btn.textContent = ‘Sending…’;
-btn.disabled = true;
-try {
-const res = await fetch(BACKEND + ‘/api/command’, {
-method: ‘POST’,
-headers: { ‘Content-Type’: ‘application/json’ },
-body: JSON.stringify({ token: sessionToken, type: ‘run_script’, body: wrapped })
+// ONLINE MODE: send via backend
+const orig=btn.textContent;
+btn.textContent=‘Sending…’;btn.disabled=true;
+try{
+const res=await fetch(BACKEND+’/api/command’,{
+method:‘POST’,headers:{‘Content-Type’:‘application/json’},
+body:JSON.stringify({token:sessionToken,type:‘run_script’,body:wrapped})
 });
-const d = await res.json();
-if (!d.ok) throw new Error(d.error || ‘Server error’);
-let result = null;
-for (let j = 0; j < 20; j++) {
-await new Promise(r => setTimeout(r, 500));
-const rr = await fetch(BACKEND + ‘/api/result/’ + sessionToken);
-const rd = await rr.json();
-if (rd.ready) { result = rd; break; }
+const d=await res.json();
+if(!d.ok)throw new Error(d.error||‘Server error’);
+let result=null;
+for(let j=0;j<20;j++){
+await new Promise(r=>setTimeout(r,500));
+const rr=await fetch(BACKEND+’/api/result/’+sessionToken);
+const rd=await rr.json();
+if(rd.ready){result=rd;break;}
 }
-toast(result?.success ? `"${scriptName}" sent to Studio!` : ‘Sent (check Studio output)’, result?.success ? ‘ok’ : ‘info’);
-} catch (e) {
-toast(’Send failed: ’ + e.message, ‘bad’);
-} finally {
-btn.textContent = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
-btn.disabled = false;
-}
+toast(result?.success?`"${scriptName}" inserted into Studio!`:‘Sent! Check Studio output.’,result?.success?‘ok’:‘info’);
+}catch(e){toast(’Send failed: ’+e.message,‘bad’);}
+finally{btn.textContent=pluginConnected?‘▶ Send to Studio’:‘📋 Copy for Studio’;btn.disabled=false;}
 }
 
-function detectType(b) {
-const lb = b.toLowerCase();
-if (/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb)) return ‘localscript’;
-if (/onserverevent|playeradded|datastoreservice|bindtoclose|fireclient/.test(lb)) return ‘script’;
-if (/^return\s+\w/m.test(lb)) return ‘modulescript’;
-return ‘script’;
-}
-function cc(c) {
-if (!c) return ‘’;
-return c.replace(/^`(?:lua|luau|)\s*\n?/gim,'').replace(/^`\s*$/gim,’’).trim();
-}
-
-function wrapInsert(code, type, scriptName) {
-  const clsMap = { script:'Script', localscript:'LocalScript', modulescript:'ModuleScript' };
-  const parentMap = {
-    script:       'game:GetService("ServerScriptService")',
-    localscript:  'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")',
-    modulescript: 'game:GetService("ReplicatedStorage")'
-  };
-  const cls    = clsMap[type] || 'Script';
-  const parent = parentMap[type] || parentMap.script;
-  const name   = scriptName || ('Bridge_' + cls);
-
-  // Use Lua long-string brackets [[ ]] so NO escaping is needed.
-  // If the code itself contains ]], we bump the level: [=[ ... ]=]
-  const level  = code.includes(']]') ? '=' : '';
-  const open   = `[${level}[`;
-  const close  = `]${level}]`;
-
-  return (
-    `local s = Instance.new("${cls}")\n` +
-    `s.Name   = "${name}"\n` +
-    `s.Source = ${open}\n${code}\n${close}\n` +
-    `s.Parent = ${parent}\n` +
-    `print("[Bridge] ${cls} '${name}' inserted into ${parent}")`
-  );
+// ══════════════════════════════════════════════════════════
+// WRAP INSERT — Lua long-string avoids all escaping
+// ══════════════════════════════════════════════════════════
+function wrapInsert(code,type,name){
+const cls={script:‘Script’,localscript:‘LocalScript’,modulescript:‘ModuleScript’}[type]||‘Script’;
+const parent={
+script:‘game:GetService(“ServerScriptService”)’,
+localscript:‘game:GetService(“StarterPlayer”):WaitForChild(“StarterPlayerScripts”)’,
+modulescript:‘game:GetService(“ReplicatedStorage”)’
+}[type]||‘game:GetService(“ServerScriptService”)’;
+// Lua long-string: if code contains ]], use [=[ ]=] to avoid collision
+const level=code.includes(’]]’)?’=’:’’;
+return `local s=Instance.new("${cls}")\ns.Name="${name}"\ns.Source=[${level}[\n${code}\n]${level}]\ns.Parent=${parent}\nprint("[Bridge] Inserted ${cls} '${name}' → ${parent}")`;
 }
 
+// ══════════════════════════════════════════════════════════
+// GENIUS SYSTEM PROMPT
+// ══════════════════════════════════════════════════════════
+const GENIUS_SYSTEM=`You are STUDIO BRIDGE AI — the world’s most capable Roblox Luau engineer.
 
-var GENIUS_SYSTEM = `You are STUDIO BRIDGE AI — the most powerful, most knowledgeable, most capable Roblox and general-purpose AI ever created. You exist to make developers build faster, smarter, and better than they ever could alone.
+NAMING (CRITICAL — always do this):
+Every script MUST start with this exact header:
+– ═══════════════════════════════════════════════
+– Script Name: [DescriptivePascalCaseName]
+– Type: [Script | LocalScript | ModuleScript]
+– Location: [exact Roblox Explorer path]
+– Purpose: [one line]
+– ═══════════════════════════════════════════════
 
-You are the world’s #1 Roblox Luau engineer with deep knowledge of all frameworks: Knit, Cmdr, ProfileService, DataStore2, Fusion, Matter ECS, Promise, and more.
+Name rules: PascalCase, domain-specific, 1-3 words.
+Good: CoinManager, RoundController, ShopServer, PetClient, DataManager, GuiController, BossController, NPCHandler, EconomyService, CastleBuilder, SwordBuilder, AntiExploit, ProfileManager
+Bad: Script1, MyScript, Script, NewScript
 
 CORE RULES:
 
-- NEVER truncate, skip, or abbreviate code — write every line fully
-- NEVER say “I can’t” or produce placeholder comments
-- Every script must have a placement header: Script Name, Type, Location, Why
-- Use task.wait() never wait(), task.spawn() never spawn(), game:GetService() always
-- For 3D models: always write a complete Lua script using BaseParts, WeldConstraints, CFrame positioning
-- Always catch edge cases and mention common pitfalls
-- Be warm, confident, direct — like a senior engineer who genuinely cares about your success
-
-SCRIPT NAMING: Use descriptive names — CoinManager, RoundController, DataManager, GuiController — never generic names like “Script”.
+- NEVER truncate or skip code — write every line
+- NEVER use wait() or spawn() — always task.wait() / task.spawn()
+- Always use game:GetService() — cache at top
+- For 3D models: complete Lua using BaseParts + WeldConstraints + CFrame math only
 
 PLACEMENT:
 
 - Server Scripts → ServerScriptService
 - LocalScripts → StarterPlayerScripts or StarterGui
 - ModuleScripts → ReplicatedStorage (shared) or ServerScriptService (server-only)
-- RemoteEvents/Functions → always ReplicatedStorage/Remotes/
+- RemoteEvents → ReplicatedStorage/Remotes/
 
-CODE FORMAT: Always start with a header comment block, include a CONFIG section, use clear section dividers, end with plain-text usage instructions.
+CODE QUALITY — always:
 
-QUALITY STANDARD — your Lua code must always:
+- pcall() around all DataStore calls
+- Validate ALL RemoteEvent args server-side
+- Rate-limit high-frequency RemoteEvents
+- Disconnect connections on cleanup
+- Cache GetService() calls at top
+- Include a CONFIG table for easy customization
+- Section dividers: – ── SECTION ──
 
-- Use pcall() around all DataStore calls
-- Use task.delay() and task.spawn() never deprecated wait()/spawn()
-- Clean up connections with :Disconnect() and use Maid/Janitor pattern for cleanup
-- Validate all RemoteEvent arguments server-side (never trust the client)
-- Add rate-limiting on any RemoteEvent that fires frequently
-- Use attributes or CollectionService tags instead of string-checking Names
-- Cache repeated game:GetService() calls at the top of each script`;
-
+STYLE: Warm, direct, senior engineer. Brief explanations. End with concise usage summary.`;
 </script>
+
 </body>
 </html>
