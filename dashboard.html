@@ -184,6 +184,9 @@ body::before{
 .sact-btn.prim:hover{background:#00c8e0;box-shadow:0 0 14px rgba(0,229,255,.3)}
 .sact-btn.grn{background:var(–c3d);border-color:rgba(16,185,129,.2);color:var(–c3)}
 .sact-btn.grn:hover{background:var(–c3);color:#050709}
+/* FIX: studio button style when not connected */
+.sact-btn.studio-btn{background:var(–c2d);border-color:rgba(124,58,237,.3);color:#a78bfa}
+.sact-btn.studio-btn:hover{background:var(–c2);color:white;border-color:var(–c2)}
 
 .typing-row{display:flex;gap:12px;padding:8px 24px;align-items:flex-start}
 .typing-dots{display:flex;gap:4px;padding:6px 2px}
@@ -390,9 +393,9 @@ function detectBestModel(text) {
   const fastPhrases = [
     'what is ','what are ','what does ','how does ','explain ','define ',
     'tell me about','difference between','vs ','versus ','which is better',
-    'what\'s the','whats the','can you explain','why does','why is',
+    "what's the",'whats the','can you explain','why does','why is',
     'when should i','should i use','is it possible','do you know',
-    'what\'s a','what is a','quick question','quick answer','briefly'
+    "what's a",'what is a','quick question','quick answer','briefly'
   ];
   const isFastPhrase = fastPhrases.some(p => t.startsWith(p) || t.includes(p));
   const isShort = t.length < 100;
@@ -468,16 +471,6 @@ function detectScriptPlacement(code) {
     placements.local.howTo = 'Explorer → StarterGui → right-click → Insert Object → LocalScript';
   }
   return placements[scriptType];
-}
-
-function extractScriptName(code, fallback) {
-  const headerMatch = code.match(/--\s*(?:Script Name|Name)[:\s]+([A-Za-z][A-Za-z0-9_]+)/i);
-  if (headerMatch) return headerMatch[1];
-  const moduleMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+)\s*=\s*\{\}/);
-  if (moduleMatch) return moduleMatch[1] + 'Module';
-  const tableMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main))/);
-  if (tableMatch) return tableMatch[1];
-  return fallback || 'BridgeScript';
 }
 
 let user = null, sessionToken = null, pluginConnected = false, pollInterval = null;
@@ -797,7 +790,11 @@ if (p.includes(‘leaderstats’) || p.includes(‘leaderboard’)) return ‘Le
 if (p.includes(‘3d’) || p.includes(‘model’) || p.includes(‘build’)) return ‘ModelBuilder’;
 }
 const placement = detectScriptPlacement(code);
-const suffixMap = { Script: [‘GameServer’,‘ServerMain’,‘ServerCore’], LocalScript: [‘ClientMain’,‘GuiClient’,‘PlayerClient’], ModuleScript: [‘SharedModule’,‘GameConfig’,‘UtilModule’] };
+const suffixMap = {
+Script: [‘GameServer’,‘ServerMain’,‘ServerCore’],
+LocalScript: [‘ClientMain’,‘GuiClient’,‘PlayerClient’],
+ModuleScript: [‘SharedModule’,‘GameConfig’,‘UtilModule’]
+};
 const options = suffixMap[placement.type] || [‘BridgeScript’];
 return options[index % options.length];
 }
@@ -823,9 +820,11 @@ if (allCodeBlocks.length === 1) {
 html += `<div class="placement-info"> <div class="placement-info-title">📍 Where to place this script</div> <div class="placement-row"><span class="placement-label">Script Name</span><span class="placement-val" style="color:var(--text);font-weight:700">${escHtml(primaryName)}</span></div> <div class="placement-row"><span class="placement-label">Script Type</span><span class="placement-val"><span class="placement-badge ${placement.badge}">${placement.label}</span></span></div> <div class="placement-row"><span class="placement-label">Location</span><span class="placement-val"><span class="placement-path">${escHtml(placement.path)}</span></span></div> <div class="placement-row"><span class="placement-label">Why</span><span class="placement-val">${escHtml(placement.note)}</span></div> <div class="placement-row"><span class="placement-label">How to add</span><span class="placement-val">${escHtml(placement.howTo)}</span></div> </div>`;
 }
 
+// ── FIX: “Open in Studio” button works connected OR offline ──
+const studioLabel = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
 html += `<div class="script-actions">
 <button class="sact-btn prim" onclick="copyRawCode(this)" data-code="${escAttr(primaryCode)}">📋 Copy Script</button>
-<button class="sact-btn" onclick="sendCodeToStudio(this)" data-code="${escAttr(primaryCode)}" data-name="${escAttr(primaryName)}" data-type="${escAttr(placement.type.toLowerCase())}">▶ Send to Studio</button>
+<button class="sact-btn studio-btn" onclick="openInStudio(this)" data-code="${escAttr(primaryCode)}" data-name="${escAttr(primaryName)}" data-type="${escAttr(placement.type.toLowerCase())}">${studioLabel}</button>
 
   </div>`;
 
@@ -862,6 +861,52 @@ toast(‘✓ Script copied! Paste in Roblox Studio → Script Editor → Ctrl+A,
 }).catch(() => toast(‘Copy failed’, ‘bad’));
 }
 
+// ── FIX: unified “Open in Studio” — sends if connected, otherwise copies the
+//         ready-to-paste Studio insert wrapper so it ALWAYS works ──
+async function openInStudio(btn) {
+const code = cc(btn.dataset.code || ‘’);
+if (!code) { toast(‘No code found.’, ‘bad’); return; }
+
+const type = btn.dataset.type || detectType(code);
+const scriptName = btn.dataset.name || ‘BridgeScript’;
+const wrapped = wrapInsert(code, type, scriptName);
+
+if (!pluginConnected) {
+// Offline fallback: copy the Lua insert wrapper — user pastes it in
+// the Command Bar (View → Command Bar) and hits Enter.
+navigator.clipboard.writeText(wrapped).then(() => {
+toast(‘📋 Copied! Paste into Studio Command Bar (View → Command Bar) and press Enter.’, ‘gold’, 6000);
+}).catch(() => toast(‘Copy failed — try the Copy Script button instead.’, ‘bad’));
+return;
+}
+
+// Online path: send via backend
+btn.textContent = ‘Sending…’;
+btn.disabled = true;
+try {
+const res = await fetch(BACKEND + ‘/api/command’, {
+method: ‘POST’,
+headers: { ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify({ token: sessionToken, type: ‘run_script’, body: wrapped })
+});
+const d = await res.json();
+if (!d.ok) throw new Error(d.error || ‘Server error’);
+let result = null;
+for (let j = 0; j < 20; j++) {
+await new Promise(r => setTimeout(r, 500));
+const rr = await fetch(BACKEND + ‘/api/result/’ + sessionToken);
+const rd = await rr.json();
+if (rd.ready) { result = rd; break; }
+}
+toast(result?.success ? `"${scriptName}" sent to Studio!` : ‘Sent (check Studio output)’, result?.success ? ‘ok’ : ‘info’);
+} catch (e) {
+toast(’Send failed: ’ + e.message, ‘bad’);
+} finally {
+btn.textContent = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
+btn.disabled = false;
+}
+}
+
 function detectType(b) {
 const lb = b.toLowerCase();
 if (/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb)) return ‘localscript’;
@@ -884,40 +929,13 @@ modulescript: ‘game:GetService(“ReplicatedStorage”)’
 const cls = clsMap[type] || ‘Script’;
 const parent = parentMap[type];
 const name = scriptName || (‘Bridge_’ + cls);
-const escaped = code.replace(/\/g,’\\’).replace(/”/g,’\”’).replace(/\n/g,’\n’).replace(/\r/g,’’);
+// Safely escape the source for embedding in a Lua string literal
+const escaped = code
+.replace(/\/g, ‘\\’)
+.replace(/”/g, ‘\”’)
+.replace(/\n/g, ‘\n’)
+.replace(/\r/g, ‘’);
 return `local s=Instance.new("${cls}")\ns.Name="${name}"\ns.Source="${escaped}"\ns.Parent=${parent}\nprint("[Bridge] ${cls} '${name}' inserted into ${parent}")`;
-}
-
-async function sendCodeToStudio(btn) {
-const code = cc(btn.dataset.code || ‘’);
-if (!code) { toast(‘No code to send.’, ‘bad’); return; }
-if (!pluginConnected) { toast(‘Studio not connected. Use the token to connect the plugin.’, ‘bad’); return; }
-const type = btn.dataset.type || detectType(code);
-const scriptName = btn.dataset.name || ‘BridgeScript’;
-btn.textContent = ‘Sending…’;
-btn.disabled = true;
-try {
-const res = await fetch(BACKEND + ‘/api/command’, {
-method: ‘POST’,
-headers: { ‘Content-Type’: ‘application/json’ },
-body: JSON.stringify({ token: sessionToken, type: ‘run_script’, body: wrapInsert(code, type, scriptName) })
-});
-const d = await res.json();
-if (!d.ok) throw new Error(d.error || ‘Server error’);
-let result = null;
-for (let j = 0; j < 20; j++) {
-await new Promise(r => setTimeout(r, 500));
-const rr = await fetch(BACKEND + ‘/api/result/’ + sessionToken);
-const rd = await rr.json();
-if (rd.ready) { result = rd; break; }
-}
-toast(result?.success ? `"${scriptName}" sent to Studio!` : ‘Sent (check Studio output)’, result?.success ? ‘ok’ : ‘info’);
-} catch (e) {
-toast(’Send failed: ’ + e.message, ‘bad’);
-} finally {
-btn.textContent = ‘▶ Send to Studio’;
-btn.disabled = false;
-}
 }
 
 var GENIUS_SYSTEM = `You are STUDIO BRIDGE AI — the most powerful, most knowledgeable, most capable Roblox and general-purpose AI ever created. You exist to make developers build faster, smarter, and better than they ever could alone.
@@ -943,8 +961,18 @@ PLACEMENT:
 - ModuleScripts → ReplicatedStorage (shared) or ServerScriptService (server-only)
 - RemoteEvents/Functions → always ReplicatedStorage/Remotes/
 
-CODE FORMAT: Always start with a header comment block, include a CONFIG section, use clear section dividers, end with plain-text usage instructions.`;
-</script>
+CODE FORMAT: Always start with a header comment block, include a CONFIG section, use clear section dividers, end with plain-text usage instructions.
 
+QUALITY STANDARD — your Lua code must always:
+
+- Use pcall() around all DataStore calls
+- Use task.delay() and task.spawn() never deprecated wait()/spawn()
+- Clean up connections with :Disconnect() and use Maid/Janitor pattern for cleanup
+- Validate all RemoteEvent arguments server-side (never trust the client)
+- Add rate-limiting on any RemoteEvent that fires frequently
+- Use attributes or CollectionService tags instead of string-checking Names
+- Cache repeated game:GetService() calls at the top of each script`;
+
+</script>
 </body>
 </html>
