@@ -166,7 +166,6 @@ body::before{
 .replace-key{color:var(–c4);font-weight:700;min-width:180px;flex-shrink:0;font-family:var(–fm);font-size:9px}
 .replace-val{color:var(–text2);line-height:1.5}
 
-/* ── Script files list ── */
 .files-list{background:var(–bg3);border:.5px solid var(–border2);border-radius:8px;padding:10px 14px;margin-bottom:10px}
 .files-list-title{font-size:9px;font-weight:700;color:var(–text);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em}
 .file-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(–border);font-size:10px}
@@ -231,7 +230,7 @@ body::before{
     </div>
     <div class="auth-card">
       <h2>The Ultimate Roblox Dev Studio</h2>
-      <p>3-model AI engine — Fast, Balanced & Genius modes. Deep Roblox knowledge: scripts, frameworks, GUI, NPC, admin, placement detection and more.</p>
+      <p>3-model AI engine — Fast, Balanced &amp; Genius modes. Deep Roblox knowledge: scripts, frameworks, GUI, NPC, admin, placement detection and more.</p>
       <div class="field"><label>Your Name</label><input type="text" id="rbx-username" placeholder="Enter your name…" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')startApp()"/></div>
       <div id="auth-err" class="auth-err">Please enter your name.</div>
       <button class="btn-main" onclick="startApp()">Open Studio →</button>
@@ -306,7 +305,7 @@ body::before{
   <div class="welcome-screen" id="welcome-screen">
     <div class="welcome-logo">✦</div>
     <div class="welcome-title">What can I help you build?</div>
-    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠 based on your question. Script placement & naming included.</div>
+    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠 based on your question. Script placement &amp; naming included.</div>
     <div class="suggestion-grid">
       <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground, leaderboard, DataStore save/load.')">
         <div class="sug-icon">🪙</div>
@@ -360,23 +359,14 @@ body::before{
 <div id="toasts"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// BACKEND
-// ══════════════════════════════════════════════
 const BACKEND = "https://enesai-production.up.railway.app";
 
-// ══════════════════════════════════════════════
-// MODEL DEFINITIONS
-// ══════════════════════════════════════════════
 const MODELS = {
-  fast:     { id: "claude-haiku-4-5-20251001",   label: "Fast ⚡",    cls: "fast"     },
-  balanced: { id: "claude-sonnet-4-20250514",     label: "Balanced ✦", cls: "balanced" },
-  genius:   { id: "claude-sonnet-4-20250514",     label: "Genius 🧠",  cls: "genius"   }
+  fast:     { id: "claude-haiku-4-5-20251001",  label: "Fast ⚡",    cls: "fast"     },
+  balanced: { id: "claude-sonnet-4-20250514",    label: "Balanced ✦", cls: "balanced" },
+  genius:   { id: "claude-sonnet-4-20250514",    label: "Genius 🧠",  cls: "genius"   }
 };
 
-// ══════════════════════════════════════════════
-// MODEL ROUTER
-// ══════════════════════════════════════════════
 function detectBestModel(text) {
   const t = text.toLowerCase().trim();
   const geniusPhrases = [
@@ -419,9 +409,6 @@ function updateModelBadge(modelKey) {
   txt.textContent = m.label;
 }
 
-// ══════════════════════════════════════════════
-// AI CORE
-// ══════════════════════════════════════════════
 async function callAI(prompt, sysOverride, maxTok, modelKey) {
   if (!maxTok) maxTok = 16000;
   const modelId = MODELS[modelKey || 'balanced'].id;
@@ -449,114 +436,50 @@ async function callAI(prompt, sysOverride, maxTok, modelKey) {
   }
 }
 
-// ══════════════════════════════════════════════
-// ✅ FIX 1: IMPROVED SCRIPT PLACEMENT DETECTOR
-// Now correctly identifies ModuleScripts for ReplicatedStorage
-// and properly names scripts based on their content
-// ══════════════════════════════════════════════
 function detectScriptPlacement(code) {
   const c = code.toLowerCase();
-
-  // Score each type
   let localScore = 0, moduleScore = 0, serverScore = 0;
-
-  const localSignals = [
-    'localplayer','playergui','playerscripts','replicatedfirst',
-    'onclientevent','userinputservice','contextactionservice',
-    'renderstepped','fireserver','players").localplayer',
-    'camera','keydown','inputbegan','inputended',
-    'tweenservice','gui','screengui','frame','textlabel',
-    'startergui','starterplayerscripts','localscript'
-  ];
-  const serverSignals = [
-    'onserverevent','playeradded','playerremoving','datastoreservice',
-    'bindtoclose','fireclient','fireallclients','serverstorage',
-    'serverscriptservice','serverscript','getservice("datastoreservice")',
-    'getservice("serverstorage")','getservice("serverscriptservice")',
-    'messagingservice','memorystore','httpservice'
-  ];
-  const moduleSignals = [
-    'return ','setmetatable','__index','local module = {}',
-    'local self = setmetatable','module.__index','local config = {',
-    'local util = {}','local library = {}','local system = {}',
-    'function module.','function module:','module.new','module.init'
-  ];
-
+  const localSignals = ['localplayer','playergui','playerscripts','replicatedfirst','onclientevent','userinputservice','contextactionservice','renderstepped','fireserver','players").localplayer','camera','keydown','inputbegan','inputended','tweenservice','gui','screengui','frame','textlabel','startergui','starterplayerscripts','localscript'];
+  const serverSignals = ['onserverevent','playeradded','playerremoving','datastoreservice','bindtoclose','fireclient','fireallclients','serverstorage','serverscriptservice','serverscript','getservice("datastoreservice")','getservice("serverstorage")','getservice("serverscriptservice")','messagingservice','memorystore','httpservice'];
+  const moduleSignals = ['return ','setmetatable','__index','local module = {}','local self = setmetatable','module.__index','local config = {','local util = {}','local library = {}','local system = {}','function module.','function module:','module.new','module.init'];
   localSignals.forEach(s => { if (c.includes(s)) localScore += 2; });
   serverSignals.forEach(s => { if (c.includes(s)) serverScore += 2; });
   moduleSignals.forEach(s => { if (c.includes(s)) moduleScore += 2; });
-
-  // Strong module indicators
   if (/return\s+\w+\s*$/.test(code.trim())) moduleScore += 6;
   if (/local\s+\w+\s*=\s*\{\}/.test(c) && /return\s+\w+/.test(c)) moduleScore += 4;
   if (/setmetatable/.test(c)) moduleScore += 3;
   if (/\.__index/.test(c)) moduleScore += 3;
-
   let scriptType = 'server';
   if (moduleScore >= 6 && moduleScore >= localScore && moduleScore >= serverScore) scriptType = 'module';
   else if (localScore > serverScore) scriptType = 'local';
-
-  // ✅ FIX: Correct paths — modules go to ReplicatedStorage, not ServerScriptService
   const placements = {
-    server: {
-      type: 'Script', badge: 'server', label: '🔴 Server Script',
-      parent: 'ServerScriptService', path: 'ServerScriptService',
-      note: 'Runs on the server only. Has access to DataStores, all players, server-side validation.',
-      howTo: 'Explorer → ServerScriptService → right-click → Insert Object → Script'
-    },
-    local: {
-      type: 'LocalScript', badge: 'local', label: '🔵 LocalScript',
-      parent: 'StarterPlayerScripts', path: 'StarterPlayer → StarterPlayerScripts',
-      note: 'Runs on each client. Has access to LocalPlayer, GUI, UserInputService, camera.',
-      howTo: 'Explorer → StarterPlayer → StarterPlayerScripts → right-click → Insert Object → LocalScript'
-    },
-    module: {
-      // ✅ FIX: ModuleScripts belong in ReplicatedStorage (shared) by default
-      type: 'ModuleScript', badge: 'module', label: '🟣 ModuleScript',
-      parent: 'ReplicatedStorage', path: 'ReplicatedStorage → Modules',
-      note: 'Required by other scripts with require(). In ReplicatedStorage so both server AND client can access it.',
-      howTo: 'Explorer → ReplicatedStorage → right-click → Insert Object → ModuleScript'
-    }
+    server: { type: 'Script', badge: 'server', label: '🔴 Server Script', parent: 'ServerScriptService', path: 'ServerScriptService', note: 'Runs on the server only. Has access to DataStores, all players, server-side validation.', howTo: 'Explorer → ServerScriptService → right-click → Insert Object → Script' },
+    local:  { type: 'LocalScript', badge: 'local', label: '🔵 LocalScript', parent: 'StarterPlayerScripts', path: 'StarterPlayer → StarterPlayerScripts', note: 'Runs on each client. Has access to LocalPlayer, GUI, UserInputService, camera.', howTo: 'Explorer → StarterPlayer → StarterPlayerScripts → right-click → Insert Object → LocalScript' },
+    module: { type: 'ModuleScript', badge: 'module', label: '🟣 ModuleScript', parent: 'ReplicatedStorage', path: 'ReplicatedStorage → Modules', note: 'Required by other scripts with require(). In ReplicatedStorage so both server AND client can access it.', howTo: 'Explorer → ReplicatedStorage → right-click → Insert Object → ModuleScript' }
   };
-
-  // If module has server-only signals, keep it server-side
   if (scriptType === 'module' && serverScore > localScore && serverScore > 2) {
     placements.module.parent = 'ServerScriptService';
     placements.module.path = 'ServerScriptService → Modules';
     placements.module.note = 'Server-only ModuleScript — uses DataStores or server services. Do NOT place in ReplicatedStorage.';
     placements.module.howTo = 'Explorer → ServerScriptService → right-click → Insert Object → ModuleScript';
   }
-
-  // Local GUI scripts go in StarterGui
   if (scriptType === 'local' && (c.includes('screengui') || c.includes('playergui'))) {
     placements.local.path = 'StarterGui';
     placements.local.howTo = 'Explorer → StarterGui → right-click → Insert Object → LocalScript';
   }
-
   return placements[scriptType];
 }
 
-// ✅ FIX 2: Extract a proper script name from the code or prompt context
 function extractScriptName(code, fallback) {
-  // Try to find a name from the header comment
   const headerMatch = code.match(/--\s*(?:Script Name|Name)[:\s]+([A-Za-z][A-Za-z0-9_]+)/i);
   if (headerMatch) return headerMatch[1];
-
-  // Try to find the main table/module name
   const moduleMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+)\s*=\s*\{\}/);
   if (moduleMatch) return moduleMatch[1] + 'Module';
-
-  // Try to find a named function pattern like "local GameManager = {}"
   const tableMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main))/);
   if (tableMatch) return tableMatch[1];
-
-  // Use fallback (derived from the prompt)
   return fallback || 'BridgeScript';
 }
 
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
 let user = null, sessionToken = null, pluginConnected = false, pollInterval = null;
 let conversations = [];
 let activeChatId = null;
@@ -592,9 +515,6 @@ function lv() {
   } catch {}
 }
 
-// ══════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════
 function startApp() {
   const inp = $('rbx-username');
   const u = (inp.value || '').trim();
@@ -628,9 +548,6 @@ function logout() {
 lv();
 if (user && sessionToken) enterApp();
 
-// ══════════════════════════════════════════════
-// POLLING
-// ══════════════════════════════════════════════
 function startPolling() {
   pollInterval = setInterval(async () => {
     try {
@@ -654,9 +571,6 @@ function copyToken() {
   toast('Token copied!', 'ok');
 }
 
-// ══════════════════════════════════════════════
-// CONVERSATIONS
-// ══════════════════════════════════════════════
 function newChat() {
   activeChatId = null;
   $('messages-inner').innerHTML = '';
@@ -708,9 +622,6 @@ function openChat(id) {
   renderHistory();
 }
 
-// ══════════════════════════════════════════════
-// MESSAGING
-// ══════════════════════════════════════════════
 function inputKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
@@ -728,7 +639,6 @@ function scrollToBottom() {
   w.scrollTop = w.scrollHeight;
 }
 
-// Store last user prompt for script naming
 let lastUserPrompt = '';
 
 async function sendMessage() {
@@ -792,9 +702,6 @@ function escAttr(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ══════════════════════════════════════════════
-// RENDER MESSAGE
-// ══════════════════════════════════════════════
 function renderMessage(msg, animate) {
   const inner = $('messages-inner');
   const isUser = msg.role === 'user';
@@ -831,13 +738,9 @@ function renderMessage(msg, animate) {
   });
 }
 
-// ══════════════════════════════════════════════
-// FORMAT MESSAGE
-// ══════════════════════════════════════════════
 function formatMessage(text, isUser) {
   if (!text) return '';
   if (isUser) return escHtml(text).replace(/\n/g,'<br>');
-
   let out = '';
   const parts = text.split(/(```[\w]*\n?[\s\S]*?```)/g);
   parts.forEach(part => {
@@ -861,82 +764,63 @@ function formatMessage(text, isUser) {
 return out;
 }
 
-// ══════════════════════════════════════════════
-// ✅ FIX: BUILD MESSAGE ACTIONS — with file list + correct names
-// ══════════════════════════════════════════════
 function buildMessageActions(text, promptContext) {
 if (!text) return ‘’;
 const hasCode = /```(lua|luau)?/.test(text) || /local [A-Za-z]/.test(text) || /game:GetService/.test(text);
 if (!hasCode) return ‘’;
 
-// Extract ALL code blocks (multi-script support)
 const allCodeBlocks = [];
 const blockRx = /`(?:lua|luau)?\n?([\s\S]*?)`/g;
 let m;
 while ((m = blockRx.exec(text)) !== null) {
 allCodeBlocks.push(m[1]);
 }
-
 if (!allCodeBlocks.length) return ‘’;
 
-// ✅ Generate proper names from context and code content
 function deriveScriptName(code, index) {
-// Try header comment first
 const headerMatch = code.match(/–\s*(?:Script Name|Name|Title)[:\s]+([A-Za-z][A-Za-z0-9_\s]+)/i);
 if (headerMatch) return headerMatch[1].trim().replace(/\s+/g, ‘’);
-
-```
-// Try main module/table name
-const tableMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main|Module)?)\s*=\s*\{/);
+const tableMatch = code.match(/local\s+([A-Z][A-Za-z0-9]+(?:Manager|System|Service|Controller|Handler|Helper|Config|Utils?|Core|Main|Module)?)\s*=\s*{/);
 if (tableMatch) return tableMatch[1];
-
-// Try to derive from prompt keywords
 if (promptContext) {
-  const p = promptContext.toLowerCase();
-  if (p.includes('coin')) return index === 0 ? 'CoinManager' : index === 1 ? 'CoinClient' : 'CoinConfig';
-  if (p.includes('admin')) return index === 0 ? 'AdminSystem' : 'AdminClient';
-  if (p.includes('datastore') || p.includes('data store')) return 'DataManager';
-  if (p.includes('round')) return index === 0 ? 'RoundManager' : 'RoundClient';
-  if (p.includes('npc') || p.includes('pathfinding')) return 'NPCController';
-  if (p.includes('gui') || p.includes('interface')) return 'GuiController';
-  if (p.includes('shop')) return index === 0 ? 'ShopServer' : 'ShopClient';
-  if (p.includes('pet')) return index === 0 ? 'PetSystem' : 'PetClient';
-  if (p.includes('remote')) return 'RemoteHandler';
-  if (p.includes('leaderstats') || p.includes('leaderboard')) return 'LeaderboardManager';
-  if (p.includes('3d') || p.includes('model') || p.includes('build')) return 'ModelBuilder';
+const p = promptContext.toLowerCase();
+if (p.includes(‘coin’)) return index === 0 ? ‘CoinManager’ : index === 1 ? ‘CoinClient’ : ‘CoinConfig’;
+if (p.includes(‘admin’)) return index === 0 ? ‘AdminSystem’ : ‘AdminClient’;
+if (p.includes(‘datastore’) || p.includes(‘data store’)) return ‘DataManager’;
+if (p.includes(‘round’)) return index === 0 ? ‘RoundManager’ : ‘RoundClient’;
+if (p.includes(‘npc’) || p.includes(‘pathfinding’)) return ‘NPCController’;
+if (p.includes(‘gui’) || p.includes(‘interface’)) return ‘GuiController’;
+if (p.includes(‘shop’)) return index === 0 ? ‘ShopServer’ : ‘ShopClient’;
+if (p.includes(‘pet’)) return index === 0 ? ‘PetSystem’ : ‘PetClient’;
+if (p.includes(‘remote’)) return ‘RemoteHandler’;
+if (p.includes(‘leaderstats’) || p.includes(‘leaderboard’)) return ‘LeaderboardManager’;
+if (p.includes(‘3d’) || p.includes(‘model’) || p.includes(‘build’)) return ‘ModelBuilder’;
 }
-
-// Detect type and assign generic but descriptive name
 const placement = detectScriptPlacement(code);
-const suffixMap = { Script: ['GameServer','ServerMain','ServerCore'], LocalScript: ['ClientMain','GuiClient','PlayerClient'], ModuleScript: ['SharedModule','GameConfig','UtilModule'] };
-const options = suffixMap[placement.type] || ['BridgeScript'];
+const suffixMap = { Script: [‘GameServer’,‘ServerMain’,‘ServerCore’], LocalScript: [‘ClientMain’,‘GuiClient’,‘PlayerClient’], ModuleScript: [‘SharedModule’,‘GameConfig’,‘UtilModule’] };
+const options = suffixMap[placement.type] || [‘BridgeScript’];
 return options[index % options.length];
-```
-
 }
 
-// Build file list for multi-script responses
 let filesHtml = ‘’;
 if (allCodeBlocks.length >= 1) {
 const fileRows = allCodeBlocks.map((code, i) => {
 const placement = detectScriptPlacement(code);
 const name = deriveScriptName(code, i);
 const badgeCls = placement.badge;
-return `<div class="file-row"> <span class="file-type-badge ${badgeCls}">${placement.type}</span> <span class="file-name">${escHtml(name)}</span> <span class="file-path">→ ${escHtml(placement.path)}</span> </div>`;
+return `<div class="file-row"><span class="file-type-badge ${badgeCls}">${placement.type}</span><span class="file-name">${escHtml(name)}</span><span class="file-path">→ ${escHtml(placement.path)}</span></div>`;
 }).join(’’);
 filesHtml = `<div class="files-list"><div class="files-list-title">📁 Scripts in this response</div>${fileRows}</div>`;
 }
 
-// Placement info for first/primary script
 const primaryCode = allCodeBlocks[0];
 const placement = detectScriptPlacement(primaryCode);
 const primaryName = deriveScriptName(primaryCode, 0);
 
 let html = filesHtml;
 
-// Only show full placement info if single script (multi shows the file list instead)
 if (allCodeBlocks.length === 1) {
-html += ` <div class="placement-info"> <div class="placement-info-title">📍 Where to place this script</div> <div class="placement-row"> <span class="placement-label">Script Name</span> <span class="placement-val" style="color:var(--text);font-weight:700">${escHtml(primaryName)}</span> </div> <div class="placement-row"> <span class="placement-label">Script Type</span> <span class="placement-val"><span class="placement-badge ${placement.badge}">${placement.label}</span></span> </div> <div class="placement-row"> <span class="placement-label">Location</span> <span class="placement-val"><span class="placement-path">${escHtml(placement.path)}</span></span> </div> <div class="placement-row"> <span class="placement-label">Why</span> <span class="placement-val">${escHtml(placement.note)}</span> </div> <div class="placement-row"> <span class="placement-label">How to add</span> <span class="placement-val">${escHtml(placement.howTo)}</span> </div> </div>`;
+html += `<div class="placement-info"> <div class="placement-info-title">📍 Where to place this script</div> <div class="placement-row"><span class="placement-label">Script Name</span><span class="placement-val" style="color:var(--text);font-weight:700">${escHtml(primaryName)}</span></div> <div class="placement-row"><span class="placement-label">Script Type</span><span class="placement-val"><span class="placement-badge ${placement.badge}">${placement.label}</span></span></div> <div class="placement-row"><span class="placement-label">Location</span><span class="placement-val"><span class="placement-path">${escHtml(placement.path)}</span></span></div> <div class="placement-row"><span class="placement-label">Why</span><span class="placement-val">${escHtml(placement.note)}</span></div> <div class="placement-row"><span class="placement-label">How to add</span><span class="placement-val">${escHtml(placement.howTo)}</span></div> </div>`;
 }
 
 html += `<div class="script-actions">
@@ -945,13 +829,12 @@ html += `<div class="script-actions">
 
   </div>`;
 
-// Replace warnings
 const replaces = [];
 const patterns = [
-{ rx: /YOUR_?USER_?ID|1234567890/gi, key: ‘YOUR_USERID’, desc: ‘Replace with your actual Roblox UserId (find it on roblox.com/users)’ },
-{ rx: /rbxassetid://YOUR_ANIMATION_ID|YOUR_ANIMATION_ID/gi, key: ‘rbxassetid://ANIMATION_ID’, desc: ‘Replace with your animation asset ID from Roblox’ },
+{ rx: /YOUR_?USER_?ID|1234567890/gi, key: ‘YOUR_USERID’, desc: ‘Replace with your actual Roblox UserId’ },
+{ rx: /rbxassetid://YOUR_ANIMATION_ID|YOUR_ANIMATION_ID/gi, key: ‘rbxassetid://ANIMATION_ID’, desc: ‘Replace with your animation asset ID’ },
 { rx: /YOUR_GAME_NAME|“My Game”/gi, key: ‘YOUR_GAME_NAME’, desc: “Replace with your game’s name” },
-{ rx: /GameData_v\d+|Stats_v\d+|PlayerData_v\d+/gi, key: ‘DataStore name’, desc: ‘You can rename this — use v2 when you change data structure’ },
+{ rx: /GameData_v\d+|Stats_v\d+|PlayerData_v\d+/gi, key: ‘DataStore name’, desc: ‘Rename as needed — increment version when data structure changes’ },
 { rx: /REPLACE WITH|–\s*REPLACE/gi, key: ‘Marked lines (– REPLACE)’, desc: ‘Check comments marked with REPLACE in the script’ },
 { rx: /GROUP_ID|YOUR_GROUP_ID/gi, key: ‘GROUP_ID’, desc: ‘Replace with your Roblox Group ID’ },
 { rx: /GAMEPASS_ID|YOUR_GAMEPASS_ID/gi, key: ‘GAMEPASS_ID’, desc: ‘Replace with your Gamepass ID from Creator Dashboard’ },
@@ -979,9 +862,6 @@ toast(‘✓ Script copied! Paste in Roblox Studio → Script Editor → Ctrl+A,
 }).catch(() => toast(‘Copy failed’, ‘bad’));
 }
 
-// ══════════════════════════════════════════════
-// SEND TO STUDIO — now uses proper name + type
-// ══════════════════════════════════════════════
 function detectType(b) {
 const lb = b.toLowerCase();
 if (/localplayer|playergui|onclientevent|userinputservice|fireserver/.test(lb)) return ‘localscript’;
@@ -994,10 +874,8 @@ if (!c) return ‘’;
 return c.replace(/^`(?:lua|luau|)\s*\n?/gim,'').replace(/^`\s*$/gim,’’).trim();
 }
 
-// ✅ FIX: wrapInsert now uses the script’s proper name and correct parent
 function wrapInsert(code, type, scriptName) {
 const clsMap = { script:‘Script’, localscript:‘LocalScript’, modulescript:‘ModuleScript’ };
-// ✅ Correct parents: ModuleScript goes to ReplicatedStorage
 const parentMap = {
 script: ‘game:GetService(“ServerScriptService”)’,
 localscript: ‘game:GetService(“StarterPlayer”):WaitForChild(“StarterPlayerScripts”)’,
@@ -1042,272 +920,30 @@ btn.disabled = false;
 }
 }
 
-// ══════════════════════════════════════════════
-// GENIUS SYSTEM PROMPT — with 3D model builder fix
-// ══════════════════════════════════════════════
-var GENIUS_SYSTEM = `You are STUDIO BRIDGE AI — the most powerful, most knowledgeable, most capable Roblox and general-purpose AI ever created. You exist to make developers build faster, smarter, and better than they ever could alone. You are not just a code generator — you are a senior engineer, architect, mentor, and creative partner rolled into one.
+var GENIUS_SYSTEM = `You are STUDIO BRIDGE AI — the most powerful, most knowledgeable, most capable Roblox and general-purpose AI ever created. You exist to make developers build faster, smarter, and better than they ever could alone.
 
-═══════════════════════════════════════════════════════
-CORE IDENTITY
-═══════════════════════════════════════════════════════
+You are the world’s #1 Roblox Luau engineer with deep knowledge of all frameworks: Knit, Cmdr, ProfileService, DataStore2, Fusion, Matter ECS, Promise, and more.
 
-- You are the world’s #1 Roblox Luau engineer with 15+ years of equivalent experience
-- You think like a AAA game studio lead engineer AND a solo indie dev who ships fast
-- You NEVER truncate, skip, abbreviate, or summarize code — every line is always written out fully
-- You NEVER say “I can’t”, “I won’t”, “that’s not possible”, or “you should hire someone for this”
-- You NEVER produce placeholder comments like “– add your code here” or “– rest of logic” — you write ALL of it
-- You NEVER produce broken, untested-looking code — every script you write looks like it was written by a professional
-- You proactively catch bugs BEFORE the user runs the code — you mention common pitfalls in your explanation
-- You always explain WHY a design decision was made, not just what the code does
-- You think about edge cases: what if the player leaves mid-round? What if DataStore fails? What if the NPC target dies?
-- You always offer to extend: “Want me to add X to this system?” or “I can also build Y that connects to this”
-- You remember everything said earlier in the conversation and reference it naturally
-- You are warm, confident, direct — never robotic, never corporate, never cold
-- You celebrate when a user ships something — you care about their success genuinely
-- You adapt your explanation depth to the user — beginner gets more explanation, expert gets clean code fast
-- When a request is vague, you answer the most useful interpretation AND clarify at the end
-- You never gatekeep knowledge — you share everything you know openly and generously
+CORE RULES:
 
-═══════════════════════════════════════════════════════
-3D MODEL BUILDING — CRITICAL RULES
-═══════════════════════════════════════════════════════
+- NEVER truncate, skip, or abbreviate code — write every line fully
+- NEVER say “I can’t” or produce placeholder comments
+- Every script must have a placement header: Script Name, Type, Location, Why
+- Use task.wait() never wait(), task.spawn() never spawn(), game:GetService() always
+- For 3D models: always write a complete Lua script using BaseParts, WeldConstraints, CFrame positioning
+- Always catch edge cases and mention common pitfalls
+- Be warm, confident, direct — like a senior engineer who genuinely cares about your success
 
-When the user asks you to “make a 3D model”, “build a 3D sword”, “create a 3D castle”, “make a house”, “build a tree”, “make a character model”, or ANY request involving creating a 3D object or shape in Roblox:
+SCRIPT NAMING: Use descriptive names — CoinManager, RoundController, DataManager, GuiController — never generic names like “Script”.
 
-YOU MUST ALWAYS write a complete Lua script that builds the model procedurally using BaseParts (Parts, WedgeParts, SpecialMeshes, etc.). You NEVER say:
+PLACEMENT:
 
-- “You’ll need to build this in Studio manually”
-- “I can’t create 3D models”
-- “You should use Blender for this”
-- “I can only write scripts, not models”
+- Server Scripts → ServerScriptService
+- LocalScripts → StarterPlayerScripts or StarterGui
+- ModuleScripts → ReplicatedStorage (shared) or ServerScriptService (server-only)
+- RemoteEvents/Functions → always ReplicatedStorage/Remotes/
 
-Instead, you write a Script placed in ServerScriptService (or a LocalScript in StarterPlayerScripts that uses RunService.Heartbeat to build on client) that:
-
-1. Creates a Model instance with a proper name
-1. Creates all Parts that make up the object
-1. Sets Size, CFrame/Position, Color (BrickColor.new or Color3.fromRGB), Material, Anchored=true
-1. Welds parts together with WeldConstraints
-1. Sets a PrimaryPart
-1. Parents the finished Model to Workspace
-
-EXAMPLE 3D MODEL PATTERN:
-```lua
-– ════════════════════════════════════
-– SwordModel_Builder
-– Type: Script
-– Place in: ServerScriptService
-– Description: Builds a 3D sword model from BaseParts
-– Studio Bridge AI
-– ════════════════════════════════════
-
-local function buildSword(origin)
-local model = Instance.new(“Model”)
-model.Name = “Sword”
-
-local function makePart(name, size, cf, color, material)
-local p = Instance.new(“Part”)
-p.Name = name
-p.Size = size
-p.CFrame = origin * cf
-p.BrickColor = BrickColor.new(color)
-p.Material = material or Enum.Material.SmoothPlastic
-p.Anchored = true
-p.Parent = model
-return p
-end
-
-local blade = makePart(“Blade”, Vector3.new(0.15, 3, 0.05), CFrame.new(0, 1.5, 0), “Medium stone grey”, Enum.Material.Metal)
-local guard = makePart(“Guard”, Vector3.new(0.8, 0.1, 0.1), CFrame.new(0, 0, 0), “Reddish brown”, Enum.Material.SmoothPlastic)
-local handle = makePart(“Handle”, Vector3.new(0.12, 0.6, 0.12), CFrame.new(0, -0.3, 0), “Reddish brown”, Enum.Material.Wood)
-local pommel = makePart(“Pommel”, Vector3.new(0.2, 0.2, 0.2), CFrame.new(0, -0.65, 0), “Medium stone grey”, Enum.Material.Metal)
-
-model.PrimaryPart = blade
-
-local function weld(a, b)
-local w = Instance.new(“WeldConstraint”)
-w.Part0 = a
-w.Part1 = b
-w.Parent = a
-end
-weld(blade, guard)
-weld(blade, handle)
-weld(blade, pommel)
-
-model.Parent = workspace
-return model
-end
-
-buildSword(CFrame.new(0, 5, 0))
-print(”[Bridge] Sword model built!”)
-```
-
-Always build the FULL model with proper proportions, colors, materials, and welds. Never leave parts floating — always weld them.
-
-For complex models (castles, houses, vehicles, characters) create many parts to accurately represent the shape. Use WedgeParts for diagonal/sloped surfaces. Use SpecialMesh for cylinders and spheres if needed. Think like a builder.
-
-═══════════════════════════════════════════════════════
-SCRIPT TYPE & PLACEMENT RULES — ALWAYS FOLLOW
-═══════════════════════════════════════════════════════
-Every time you write a script you MUST specify at the very top of your explanation:
-
-1. Script name (a real descriptive name, like “CoinManager” or “RoundSystem” — NEVER generic names like “Script” or “LocalScript”)
-1. Script type: Script / LocalScript / ModuleScript
-1. Where to place it in the Explorer
-1. Why it goes there
-
-NAMING RULES — ALWAYS NAME SCRIPTS DESCRIPTIVELY:
-
-- Server scripts: GameManager, RoundController, DataManager, CoinServer, AdminSystem, NPCController, ShopServer
-- LocalScripts: GuiController, InputHandler, CoinClient, ShopClient, CameraController, MobileController
-- ModuleScripts: GameConfig, PlayerUtils, ItemData, WeaponStats, MapConfig, EffectsLibrary, EventBridge
-
-SCRIPT (Server Script):
-
-- Runs on the SERVER only
-- Place in: ServerScriptService (most common)
-- DO NOT place server scripts in ReplicatedStorage — they won’t run there
-- Use for: DataStores, PlayerAdded, RemoteEvent server handlers, game logic, NPC logic, admin systems, round systems
-
-LOCALSCRIPT:
-
-- Runs on each CLIENT individually
-- Place in: StarterPlayerScripts (general client code), StarterCharacterScripts (re-runs on respawn), StarterGui (GUI scripts inside a ScreenGui), ReplicatedFirst (runs before anything else)
-- DO NOT place LocalScripts in ServerScriptService — they won’t run there
-
-MODULESCRIPT — PLACEMENT IS CRITICAL:
-
-- Place in ReplicatedStorage IF: both server and client scripts need it (shared config, item data, utility functions)
-- Place in ServerScriptService IF: only server scripts need it (server-only logic, DataStore wrappers)
-- Place in StarterPlayerScripts IF: only client scripts need it (client-only utilities)
-- NEVER place a ModuleScript in ServerScriptService if a LocalScript will require() it — it won’t work!
-- Always returns a value: return Module
-
-REMOTEEVENTS & REMOTEFUNCTIONS:
-
-- ALWAYS place in ReplicatedStorage — both server and client need to find them
-- Create a folder: ReplicatedStorage → Remotes → Events / Functions
-- Name them descriptively: “CoinCollected”, “PurchaseItem”, “AdminKick” — not “RemoteEvent1”
-
-FOLDER STRUCTURE BEST PRACTICE:
-ServerScriptService/
-GameManager (Script)
-DataManager (Script)
-AdminSystem (Script)
-Modules/
-DataHelper (ModuleScript) ← server-only modules here
-ReplicatedStorage/
-Modules/
-GameConfig (ModuleScript) ← shared modules here
-PlayerUtils (ModuleScript)
-ItemData (ModuleScript)
-Remotes/
-Events/
-CoinCollected (RemoteEvent)
-PlayerDied (RemoteEvent)
-Functions/
-GetPlayerData (RemoteFunction)
-StarterPlayer/
-StarterPlayerScripts/
-GuiController (LocalScript)
-InputHandler (LocalScript)
-StarterGui/
-MainGui (ScreenGui)/
-ShopGui (LocalScript)
-
-═══════════════════════════════════════════════════════
-ROBLOX LUAU — DEEP EXPERT KNOWLEDGE
-═══════════════════════════════════════════════════════
-
-– FRAMEWORKS –
-KNIT: KnitServer / KnitClient architecture, Service.new() with Methods, Client.Methods, Client.Events, Controller.new(), Knit.GetService() / Knit.GetController(), Knit.Start() promise chain, KnitComponent pattern with CollectionService tags, Signal integration, full folder structure.
-
-CMDR: Registry:RegisterCommand() full structure, CommandDefinition: Name, Aliases, Description, Args, Run, ArgumentType definitions, Server-side Run vs client-side ClientRun, BeforeRun hook for permission checks, Activating GUI and custom Cmdr UI styling, Custom type validators and transformers.
-
-PROFILESERVICE: ProfileStore.GetProfileStore(name, template), ProfileStore:LoadProfileAsync() with session locking, profile.Data access and mutation, profile:ListenToRelease(), profile:Release() on PlayerRemoving and BindToClose, GlobalUpdates, MockDataStore for Studio testing, Reconcile() for schema migrations.
-
-DATASTORE2: DataStore2(key, player) combined key pattern, :Get(default) / :Set(value) / :Increment(amount), :OnUpdate(callback), :Save() manual saves and auto-save loops.
-
-FUSION: New{} component creation, Value(), Computed(), Observer() reactivity, State chaining and derived state, Hydrate() for existing instances, Children = {} nesting, OnEvent/OnChange bindings, Tween() and Spring() animations.
-
-MATTER (ECS): World:spawn(), World:despawn(), World:get(), World:insert(), World:remove(), System functions, Loop:begin(), Component definitions.
-
-PROMISE: Promise.new(resolve, reject), :andThen() / :catch() / :finally(), Promise.all() / Promise.retry(), Promise.fromEvent(signal), Cancellable promises.
-
-– ROBLOX SERVICES –
-DataStoreService, Players, TweenService, PathfindingService, UserInputService, RunService, PhysicsService, CollectionService, HttpService, MarketplaceService, MessagingService, MemoryStoreService, TextService, SoundService, GroupService, BadgeService, TeleportService, ContextActionService — full mastery.
-
-═══════════════════════════════════════════════════════
-STRICT LUAU RULES — NEVER VIOLATE
-═══════════════════════════════════════════════════════
-ALWAYS USE:
-
-- task.wait() — NEVER wait()
-- task.spawn() — NEVER spawn()
-- task.delay() — NEVER delay()
-- game:GetService(“X”) — NEVER game.X
-- Color3.fromRGB() — ALWAYS
-- Instance.new() — set ALL properties BEFORE setting Parent
-- pcall() — around EVERY DataStore and HttpService call
-- :Destroy() — on every removed Instance
-- WeldConstraints for welding parts in 3D models
-- PivotTo() — NEVER SetPrimaryPartCFrame()
-
-NEVER USE:
-
-- wait() / spawn() / delay() — all deprecated
-- game.Players / game.Workspace — always GetService
-- BodyVelocity — use LinearVelocity
-- SetPrimaryPartCFrame — use PivotTo()
-- loadstring() — security risk
-- Instance.new(“X”, parent) — never pass parent as 2nd arg
-
-═══════════════════════════════════════════════════════
-CODE OUTPUT FORMAT — ALWAYS FOLLOW
-═══════════════════════════════════════════════════════
-Every script MUST:
-
-1. START with placement header (plain text, before code block):
-   📝 Script Name: [descriptive name like CoinManager, not just “Script”]
-   📍 Script Type: [Script / LocalScript / ModuleScript]
-   📁 Place in: [exact Explorer path]
-   💡 Why: [one sentence reason]
-1. Header comment block inside the script:
-   – ════════════════════════════════════
-   – [Script Name]
-   – Type: Script / LocalScript / ModuleScript
-   – Place in: [exact path]
-   – Description: what it does
-   – Studio Bridge AI
-   – ════════════════════════════════════
-1. CONFIGURATION section at top:
-   – ═══ CONFIGURATION ═══
-   local CONFIG = { SETTING = value }
-1. Clear section headers throughout
-1. END with plain text summary covering: what to replace, how to use, what connects to it
-
-═══════════════════════════════════════════════════════
-GENERAL AI MODE
-═══════════════════════════════════════════════════════
-For Python, JavaScript, TypeScript, C#, web dev, math, writing, advice:
-
-- Be brilliant, warm, direct, deeply helpful
-- Write complete working code always — no truncation
-- Give real honest opinions when asked
-- Be like a trusted senior friend who knows everything
-
-═══════════════════════════════════════════════════════
-PERSONALITY
-═══════════════════════════════════════════════════════
-
-- Enthusiastic about good code and good design
-- Genuinely excited when someone is building something cool
-- Patient with beginners, efficient with experts
-- Willing to debate technical decisions and explain your reasoning
-- Never condescending, never dismissive
-- Proud of the code you write — you stand behind every line
-- You love Roblox and want to see amazing games made
-
-You are STUDIO BRIDGE AI. Every response is your best work. Every script is production-ready. Every explanation makes the developer better. Act like it.`;
+CODE FORMAT: Always start with a header comment block, include a CONFIG section, use clear section dividers, end with plain-text usage instructions.`;
 </script>
 
 </body>
