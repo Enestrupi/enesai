@@ -44,6 +44,23 @@ function trimToTokens(str, maxTokens) {
   return str.slice(0, maxTokens * 4);
 }
 
+// ── Map frontend model IDs → OpenRouter model strings ──
+const MODEL_MAP = {
+  // Claude models (via OpenRouter)
+  "claude-haiku-4-5-20251001": "anthropic/claude-haiku-4-5",
+  "claude-sonnet-4-20250514":  "anthropic/claude-sonnet-4-5",
+  // Fallbacks
+  "openrouter/auto":           "openrouter/auto",
+};
+
+function resolveModel(raw) {
+  if (!raw) return "openrouter/auto";
+  if (MODEL_MAP[raw]) return MODEL_MAP[raw];
+  // If it already looks like an OpenRouter slug (contains /) pass through
+  if (raw.includes("/")) return raw;
+  return "openrouter/auto";
+}
+
 // ═══════════════════════════════════════════
 // AI — OpenRouter
 // ═══════════════════════════════════════════
@@ -52,10 +69,16 @@ app.post("/api/ai", async (req, res) => {
   if (!prompt) return res.status(400).json({ error: "prompt required" });
 
   const key = process.env.OPENROUTER_API_KEY;
-  if (!key) return res.status(500).json({ error: "OPENROUTER_API_KEY not set" });
+  if (!key) {
+    console.error("OPENROUTER_API_KEY is not set!");
+    return res.status(500).json({ error: "OPENROUTER_API_KEY not set on server" });
+  }
+
+  const resolvedModel = resolveModel(model);
+  console.log("AI request — model raw:", model, "→ resolved:", resolvedModel, "| prompt len:", prompt.length);
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
+  const timeout = setTimeout(() => controller.abort(), 90000);
 
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -63,35 +86,45 @@ app.post("/api/ai", async (req, res) => {
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + key
+        "Authorization": "Bearer " + key,
+        "HTTP-Referer": "https://studio-bridge.app",
+        "X-Title": "Studio Bridge"
       },
       body: JSON.stringify({
-        model: model || "openrouter/auto",
+        model: resolvedModel,
         max_tokens: maxTokens || 10000,
         temperature: 0.2,
         messages: [
           { role: "system", content: system || ROBLOX_SYSTEM },
-          { role: "user", content: prompt }
+          { role: "user",   content: prompt }
         ]
       })
     });
 
     clearTimeout(timeout);
     const data = await response.json();
-    console.log("OpenRouter response:", JSON.stringify(data).slice(0, 300));
 
     if (!response.ok) {
-      console.error("OpenRouter error:", data);
-      return res.status(500).json({ error: data.error?.message || "OpenRouter API error" });
+      console.error("OpenRouter HTTP", response.status, JSON.stringify(data));
+      return res.status(500).json({
+        error: data.error?.message || ("OpenRouter error: HTTP " + response.status),
+        detail: data
+      });
     }
 
     const text = data.choices?.[0]?.message?.content || "";
+    if (!text) {
+      console.warn("OpenRouter returned empty content:", JSON.stringify(data));
+      return res.status(500).json({ error: "OpenRouter returned empty response", detail: data });
+    }
+
+    console.log("AI ok — chars:", text.length);
     res.json({ content: [{ text }] });
 
   } catch (e) {
     clearTimeout(timeout);
-    const msg = e.name === "AbortError" ? "Request timed out (60s)" : e.message;
-    console.error("AI error:", msg);
+    const msg = e.name === "AbortError" ? "Request timed out (90s)" : e.message;
+    console.error("AI fetch error:", msg);
     res.status(500).json({ error: msg });
   }
 });
@@ -179,6 +212,23 @@ app.post("/api/disconnect/:token", (req, res) => {
 
 // ── Health check ──
 app.get("/", (req, res) => res.send("Studio Bridge OK"));
+
+// ── Favicon (suppress 404 noise) ──
+app.get("/favicon.ico", (req, res) => res.sendStatus(204));
+
+// ── Debug — visit /api/debug in browser to check server state ──
+app.get("/api/debug", (req, res) => {
+  res.json({
+    status: "ok",
+    apiKeySet: !!process.env.OPENROUTER_API_KEY,
+    apiKeyPrefix: process.env.OPENROUTER_API_KEY
+      ? process.env.OPENROUTER_API_KEY.slice(0, 8) + "..."
+      : "MISSING",
+    activeSessions: Object.keys(sessions).length,
+    nodeVersion: process.version,
+    uptime: Math.floor(process.uptime()) + "s"
+  });
+});
 
 // ── Clean up idle sessions every 30s ──
 setInterval(() => {
