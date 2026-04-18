@@ -252,11 +252,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="topbar-brand-name">Studio Bridge v3</div>
     </div>
     <div class="topbar-sep"></div>
-    <div class="conn-pill"><span class="conn-dot on" id="conn-dot"></span><span id="conn-txt">AI Ready</span></div>
+    <div class="conn-pill"><span class="conn-dot wait" id="conn-dot"></span><span id="conn-txt">Not connected</span></div>
     <div class="model-badge balanced" id="model-badge"><span class="model-dot"></span><span id="model-badge-txt">Balanced ✦</span></div>
     <div class="topbar-right">
       <div class="tok-chip">
-        <span style="color:var(--text3);font-size:8px">SESSION</span>
+        <span style="color:var(--text3);font-size:8px">TOKEN</span>
         <span class="tok-val" id="tok-val">—</span>
         <span class="tok-btn" onclick="copyToken()">copy</span>
       </div>
@@ -295,7 +295,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="welcome-screen" id="welcome-screen">
     <div class="welcome-logo">✦</div>
     <div class="welcome-title">What can I help you build?</div>
-    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠. AI names every script automatically. Copy scripts directly into Roblox Studio.</div>
+    <div class="welcome-sub">3-model AI engine — auto-selects Fast ⚡, Balanced ✦ or Genius 🧠. AI names every script automatically. Open in Studio always works.</div>
     <div class="suggestion-grid">
       <div class="suggestion" onclick="quickPrompt('Build a complete coin system: coins on the ground with pickup animation, leaderboard, DataStore save/load with pcall retry logic.')">
         <div class="sug-icon">🪙</div><div class="sug-title">Coin System</div><div class="sug-body">Coins, leaderboard, DataStore persistence</div>
@@ -342,29 +342,35 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <script>
 // ══════════════════════════════════════════════════════════
-// ANTHROPIC API — direct call (no backend needed)
+// CONFIG — Railway backend → OpenRouter
 // ══════════════════════════════════════════════════════════
-const ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
+const BACKEND = "https://enesai-production.up.railway.app";
+
+// These IDs are sent to the backend which maps them to OpenRouter slugs
+const MODELS = {
+  fast:     { id: "anthropic/claude-haiku-4-5",   label: "Fast ⚡",    cls: "fast"     },
+  balanced: { id: "anthropic/claude-sonnet-4-5",   label: "Balanced ✦", cls: "balanced" },
+  genius:   { id: "anthropic/claude-sonnet-4-5",   label: "Genius 🧠",  cls: "genius"   }
+};
 
 async function callAI(prompt, sys, maxTok, modelKey) {
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const r = await fetch(BACKEND + "/api/ai", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: maxTok || 1000,
+        prompt,
         system: sys || GENIUS_SYSTEM,
-        messages: [{ role: "user", content: prompt }]
+        maxTokens: maxTok || 8000,
+        model: MODELS[modelKey || 'balanced'].id
       })
     });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || "API " + response.status);
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.error || "Backend HTTP " + r.status);
     }
-    const data = await response.json();
-    const text = (data.content || []).map(b => b.text || "").join("").trim();
-    return text || null;
+    const d = await r.json();
+    return (d.content || []).map(b => b.text || "").join("").trim() || null;
   } catch (e) {
     console.error("AI error:", e);
     return null;
@@ -418,12 +424,6 @@ const TEMPLATES = {
 // ══════════════════════════════════════════════════════════
 // MODEL DETECTION
 // ══════════════════════════════════════════════════════════
-const MODELS = {
-  fast:     { label: "Fast ⚡",    cls: "fast"     },
-  balanced: { label: "Balanced ✦", cls: "balanced" },
-  genius:   { label: "Genius 🧠",  cls: "genius"   }
-};
-
 function detectBestModel(text) {
   const t = text.toLowerCase().trim();
   const genius_kws = ['full system','complete system','entire system','build me a','create a full','build a full',
@@ -552,7 +552,7 @@ function detectPlacement(code) {
 // ══════════════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════════════
-let user = null, sessionToken = null;
+let user = null, sessionToken = null, pluginConnected = false, pollInterval = null;
 let conversations = [], activeChatId = null, lastUserPrompt = '';
 const $ = id => document.getElementById(id);
 const genTok = () => Math.random().toString(36).slice(2,8).toUpperCase() + Math.random().toString(36).slice(2,6).toUpperCase();
@@ -582,12 +582,38 @@ function enterApp() {
   $('top-ava').textContent = user.avatar;
   $('top-name').textContent = user.username;
   $('tok-val').textContent = sessionToken;
-  buildTemplates(); renderHistory();
+  buildTemplates(); startPolling(); renderHistory();
 }
 function logout() {
   user = null; sessionToken = null; conversations = []; localStorage.clear();
+  stopPolling(); pluginConnected = false;
   $('app').classList.remove('show'); $('auth').classList.remove('gone');
   $('rbx-username').value = '';
+}
+
+// ══════════════════════════════════════════════════════════
+// PLUGIN POLLING
+// ══════════════════════════════════════════════════════════
+function startPolling() {
+  pollInterval = setInterval(async () => {
+    try {
+      const r = await fetch(BACKEND + '/api/ping/' + sessionToken);
+      const d = await r.json();
+      if (d.connected && !pluginConnected) setConn(true);
+      else if (!d.connected && pluginConnected) setConn(false);
+    } catch {}
+  }, 3000);
+}
+function stopPolling() { clearInterval(pollInterval); }
+function setConn(v) {
+  pluginConnected = v;
+  $('conn-dot').className = 'conn-dot ' + (v ? 'on' : 'wait');
+  $('conn-txt').textContent = v ? 'Studio connected' : 'Not connected';
+  if (v) toast('✓ Studio plugin connected!', 'ok');
+  // Update all Studio buttons
+  document.querySelectorAll('.sact-btn.studio').forEach(btn => {
+    btn.textContent = v ? '▶ Send to Studio' : '📋 Copy for Studio';
+  });
 }
 lv(); if (user && sessionToken) enterApp();
 
@@ -673,35 +699,7 @@ async function sendMessage() {
   chat.messages.push(userMsg); renderMessage(userMsg, true); scrollToBottom();
   const tid = 'typing_' + Date.now(); showTyping(tid); scrollToBottom();
 
-  // Build conversation history for context
-  const history = chat.messages.slice(0, -1).slice(-10).map(m => ({
-    role: m.role === 'user' ? 'user' : 'assistant',
-    content: m.content
-  }));
-  history.push({ role: 'user', content: text });
-
-  let reply = null;
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: 1000,
-        system: GENIUS_SYSTEM,
-        messages: history
-      })
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || "API " + response.status);
-    }
-    const data = await response.json();
-    reply = (data.content || []).map(b => b.text || "").join("").trim() || null;
-  } catch (e) {
-    console.error("Send error:", e);
-    reply = null;
-  }
+  const reply = await callAI(text, GENIUS_SYSTEM, 8000, modelKey);
 
   removeTyping(tid); $('send-btn').disabled = false;
   const content = reply || "⚠️ AI request failed. Please check your connection and try again.";
@@ -803,7 +801,8 @@ html += ‘<div class="placement-info"><div class="placement-info-title">📍 Wh
 }
 
 const pCid = cids[0], pType = pls[0].type.toLowerCase();
-html += ‘<div class="script-actions"><button class="sact-btn prim" onclick="copyByCid(' + pCid + ')">📋 Copy Script</button><button class="sact-btn studio" onclick="copyForStudio(this,' + pCid + ',\'' + escHtml(pType) + '\',\'' + nameEls[0] + '\')">📋 Copy for Studio</button>’ + (blocks.length > 1 ? ‘<button class="sact-btn grn" onclick="copyAllByCids(\'' + cids.join(',') + '\',\'' + names.map(n => encodeURIComponent(n)).join(',') + '\')">’ + ‘📦 Copy All (’ + blocks.length + ‘)</button>’ : ‘’) + ‘</div>’;
+const studioLabel = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
+html += ‘<div class="script-actions"><button class="sact-btn prim" onclick="copyByCid(' + pCid + ')">📋 Copy Script</button><button class="sact-btn studio" data-cid="' + pCid + '" data-type="' + escHtml(pType) + '" data-nameel="' + nameEls[0] + '" onclick="openInStudio(this)">’ + studioLabel + ‘</button>’ + (blocks.length > 1 ? ‘<button class="sact-btn grn" onclick="copyAllByCids(\'' + cids.join(',') + '\',\'' + names.map(n => encodeURIComponent(n)).join(',') + '\')">’ + ‘📦 Copy All (’ + blocks.length + ‘)</button>’ : ‘’) + ‘</div>’;
 
 const rPatterns = [
 {rx:/YOUR_?USER_?ID|1234567890/gi,          key:‘YOUR_USERID’,          desc:‘Replace with your actual Roblox UserId’},
@@ -864,11 +863,51 @@ navigator.clipboard.writeText(wrapped)
 .then(() => toast(‘📋 Copied! In Studio: View → Command Bar → Paste → Enter’, ‘gold’, 8000))
 .catch(() => toast(‘Copy failed — use Copy Script button instead’, ‘bad’));
 }
-function copyToken() { navigator.clipboard.writeText(sessionToken || ‘’).then(() => toast(‘Session token copied!’, ‘ok’)); }
+function copyToken() { navigator.clipboard.writeText(sessionToken || ‘’).then(() => toast(‘Token copied!’, ‘ok’)); }
 
 // ══════════════════════════════════════════════════════════
-// WRAP INSERT
+// OPEN IN STUDIO
 // ══════════════════════════════════════════════════════════
+async function openInStudio(btn) {
+const cid = Number(btn.dataset.cid);
+const code = csGet(cid);
+if (!code) { toast(‘Code not found in store.’, ‘bad’); return; }
+const nameEl = document.getElementById(btn.dataset.nameel);
+const scriptName = (nameEl ? nameEl.textContent.trim() : null) || ‘BridgeScript’;
+const scriptType = btn.dataset.type || ‘script’;
+const wrapped = wrapInsert(code, scriptType, scriptName);
+
+if (!pluginConnected) {
+navigator.clipboard.writeText(wrapped)
+.then(() => toast(‘📋 Copied! In Studio: View → Command Bar → Paste → Enter’, ‘gold’, 8000))
+.catch(() => toast(‘Copy failed — use Copy Script button instead’, ‘bad’));
+return;
+}
+
+const orig = btn.textContent;
+btn.textContent = ‘Sending…’; btn.disabled = true;
+try {
+const res = await fetch(BACKEND + ‘/api/command’, {
+method: ‘POST’, headers: { ‘Content-Type’: ‘application/json’ },
+body: JSON.stringify({ token: sessionToken, type: ‘run_script’, body: wrapped })
+});
+const d = await res.json();
+if (!d.ok) throw new Error(d.error || ‘Server error’);
+let result = null;
+for (let j = 0; j < 20; j++) {
+await new Promise(r => setTimeout(r, 500));
+const rr = await fetch(BACKEND + ‘/api/result/’ + sessionToken);
+const rd = await rr.json();
+if (rd.ready) { result = rd; break; }
+}
+toast(result?.success ? ‘”’ + scriptName + ‘” inserted into Studio!’ : ‘Sent! Check Studio output.’, result?.success ? ‘ok’ : ‘info’);
+} catch (e) {
+toast(‘Send failed: ’ + e.message, ‘bad’);
+} finally {
+btn.textContent = pluginConnected ? ‘▶ Send to Studio’ : ‘📋 Copy for Studio’;
+btn.disabled = false;
+}
+}
 function wrapInsert(code, type, name) {
 const cls = {script:‘Script’,localscript:‘LocalScript’,modulescript:‘ModuleScript’}[type] || ‘Script’;
 const parent = {
