@@ -230,6 +230,32 @@ app.get("/api/debug", (req, res) => {
   });
 });
 
+// ── Test — visit /api/test to fire a real minimal OpenRouter call ──
+app.get("/api/test", async (req, res) => {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) return res.json({ ok: false, error: "No API key" });
+  try {
+    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + key,
+        "HTTP-Referer": "https://studio-bridge.app",
+        "X-Title": "Studio Bridge"
+      },
+      body: JSON.stringify({
+        model: "openrouter/auto",
+        max_tokens: 20,
+        messages: [{ role: "user", content: "Say: OK" }]
+      })
+    });
+    const data = await r.json();
+    res.json({ httpStatus: r.status, data });
+  } catch(e) {
+    res.json({ ok: false, error: e.message });
+  }
+});
+
 // ── Clean up idle sessions every 30s ──
 setInterval(() => {
   const cutoff = Date.now() - 5 * 60 * 1000;
