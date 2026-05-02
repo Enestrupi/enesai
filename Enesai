@@ -3472,6 +3472,54 @@ def chat():
     message = data.get("message", "")
     return jsonify({"response": ai_brain(message)})
 
+# ── STUDIO BRIDGE ──────────────────────────────────────
+@app.route("/api/ping/<token>")
+def api_ping(token):
+    with _lock:
+        _sessions[token] = time.time()
+        cmd = _pending.pop(token, None)
+    payload = {"connected": True}
+    if cmd:
+        payload["command"] = cmd
+    r = jsonify(payload)
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+
+@app.route("/api/command", methods=["POST"])
+def api_command():
+    data  = request.get_json(silent=True) or {}
+    token = data.get("token")
+    if not token:
+        return jsonify({"ok": False, "error": "Missing token"}), 400
+    with _lock:
+        _pending[token] = {"type": data.get("type", "run_script"), "body": data.get("body", "")}
+        _results.pop(token, None)
+        _sessions[token] = time.time()
+    r = jsonify({"ok": True})
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+
+@app.route("/api/result/<token>")
+def api_result(token):
+    with _lock:
+        result = _results.get(token)
+    if result:
+        return jsonify({"ready": True, **result})
+    return jsonify({"ready": False})
+
+@app.route("/api/report", methods=["POST"])
+def api_report():
+    data  = request.get_json(silent=True) or {}
+    token = data.get("token")
+    if not token:
+        return jsonify({"ok": False, "error": "Missing token"}), 400
+    with _lock:
+        _results[token] = {"success": data.get("success", False), "message": data.get("message", "")}
+        _sessions[token] = time.time()
+    r = jsonify({"ok": True})
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+
 if __name__ == "__main__":
     print("Studio Bridge AI Server running!")
     app.run(host="0.0.0.0", port=5000)
