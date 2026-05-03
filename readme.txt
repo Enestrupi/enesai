@@ -3506,6 +3506,17 @@ def api_command():
     r.headers["Access-Control-Allow-Origin"] = "*"
     return r
 
+@app.route("/api/command/<token>")
+def api_command_get(token):
+    with _lock:
+        cmd = _pending.get(token)
+    if cmd:
+        r = jsonify({"pending": True, "type": cmd["type"], "body": cmd["body"], "id": token})
+    else:
+        r = jsonify({"pending": False})
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+
 @app.route("/api/result/<token>")
 def api_result(token):
     with _lock:
