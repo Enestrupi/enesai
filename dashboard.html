@@ -3,294 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Forge AI — Roblox Dev</title>
+<title>Forge AI</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-:root{--bg:#0a0a0a;--bg2:#111111;--bg3:#1a1a1a;--border:#222;--border2:#2a2a2a;--accent:#f97316;--accent2:#fb923c;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#e5e5e5;--text2:#888;--text3:#555;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--border:#222;--accent:#f97316;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--text:#e5e5e5;--text2:#888;--text3:#444;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
 /* TOP BAR */
-.topbar{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;z-index:100;}
-.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;letter-spacing:-.5px;}
-.logo-icon{background:var(--accent);width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.logo{font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px;}
+.logo-dot{width:26px;height:26px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;}
 .logo span{color:var(--accent);}
-.topbar-mid{flex:1;display:flex;align-items:center;gap:8px;max-width:480px;margin:0 auto;}
-.url-in{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:6px 11px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;}
+.url-in{flex:1;max-width:400px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;margin:0 auto;}
 .url-in:focus{border-color:var(--accent);}
 .url-in::placeholder{color:var(--text3);}
-.conn-btn{background:var(--accent);border:none;border-radius:7px;padding:6px 13px;color:#000;font-weight:700;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;white-space:nowrap;}
+.conn-btn{background:var(--accent);border:none;border-radius:6px;padding:6px 12px;color:#000;font-weight:700;font-size:11px;cursor:pointer;}
 .conn-btn:hover{opacity:.85;}
-.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
-.studio-pill{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'JetBrains Mono',monospace;}
+.status-pill{display:flex;align-items:center;gap:5px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);margin-left:auto;white-space:nowrap;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
-.dot.on{background:var(--green);box-shadow:0 0 6px var(--green);}
+.dot.on{background:var(--green);box-shadow:0 0 5px var(--green);}
 
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{width:200px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--bg);flex-shrink:0;}
-.sb-head{padding:14px 12px 8px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
-.sb-item{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;border-left:2px solid transparent;}
+.sidebar{width:195px;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.sidebar::-webkit-scrollbar{width:0;}
+.sb-head{padding:12px 12px 4px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+.sb-item{display:flex;align-items:center;gap:7px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .12s;border-left:2px solid transparent;}
 .sb-item:hover{background:var(--bg2);color:var(--text);}
 .sb-item.active{background:var(--bg2);color:var(--accent);border-left-color:var(--accent);}
-.sb-item .sb-ico{font-size:13px;width:16px;text-align:center;}
-.sb-div{height:1px;background:var(--border);margin:6px 0;}
-.sb-section{padding:8px 12px 4px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);}
+.sb-item .ico{font-size:12px;width:16px;text-align:center;}
+.sb-div{height:1px;background:var(--border);margin:4px 0;}
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .panel{display:none;flex-direction:column;height:100%;overflow:hidden;}
 .panel.active{display:flex;}
 
-/* CHAT */
-.chat-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.chat-bar-left{display:flex;align-items:center;gap:10px;}
-.chat-title{font-weight:700;font-size:13px;}
-.studio-token-row{display:flex;align-items:center;gap:6px;}
-.token-label{font-size:10px;color:var(--text3);font-weight:600;}
-.token-in{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:140px;}
-.token-in:focus{border-color:var(--accent);}
-.token-in::placeholder{color:var(--text3);}
-.sync-status{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
-.sync-status.syncing{color:var(--accent);}
-.sync-status.done{color:var(--green);}
-.clear-btn{background:transparent;border:1px solid var(--border);border-radius:5px;padding:4px 9px;color:var(--text2);font-size:10px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
-.clear-btn:hover{border-color:var(--accent);color:var(--accent);}
+/* CHAT BAR */
+.chat-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;}
+.studio-row{display:flex;align-items:center;gap:6px;}
+.tk-label{font-size:10px;color:var(--text3);font-weight:600;white-space:nowrap;}
+.tk-in{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:130px;}
+.tk-in:focus{border-color:var(--accent);}
+.tk-in::placeholder{color:var(--text3);}
+.sync-lbl{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text3);}
+.sync-lbl.syncing{color:var(--accent);}
+.sync-lbl.done{color:var(--green);}
+.clr-btn{background:transparent;border:1px solid var(--border);border-radius:5px;padding:4px 8px;color:var(--text2);font-size:10px;font-weight:600;cursor:pointer;transition:all .12s;}
+.clr-btn:hover{border-color:var(--accent);color:var(--accent);}
 
-.msgs{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth;}
+/* MESSAGES */
+.msgs{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
 .msgs::-webkit-scrollbar{width:3px;}
-.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.msgs::-webkit-scrollbar-thumb{background:var(--border);}
 
-/* Welcome */
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:14px;padding:40px;animation:up .4s ease;}
-@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.wicon{width:60px;height:60px;background:linear-gradient(135deg,var(--accent),#f59e0b);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 30px rgba(249,115,22,.25);}
-.wtitle{font-size:22px;font-weight:800;letter-spacing:-.5px;}
+/* WELCOME */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:12px;padding:40px;animation:up .4s ease;}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.wico{width:54px;height:54px;background:linear-gradient(135deg,var(--accent),#f59e0b);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px rgba(249,115,22,.25);}
+.wtitle{font-size:20px;font-weight:800;letter-spacing:-.5px;}
 .wtitle span{color:var(--accent);}
-.wsub{color:var(--text2);font-size:12px;max-width:360px;line-height:1.7;}
-.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px;}
-.chip{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;}
+.wsub{color:var(--text2);font-size:12px;max-width:340px;line-height:1.7;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.chip{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .12s;}
 .chip:hover{border-color:var(--accent);color:var(--accent);}
 
-/* Messages */
-.msg{display:flex;gap:10px;animation:up .25s ease;max-width:860px;}
+/* MESSAGES */
+.msg{display:flex;gap:9px;animation:up .2s ease;max-width:100%;}
 .msg.user{flex-direction:row-reverse;align-self:flex-end;}
 .msg.ai{align-self:flex-start;width:100%;}
-.av{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px;}
+.av{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px;}
 .msg.user .av{background:var(--bg3);border:1px solid var(--border);}
 .msg.ai .av{background:var(--accent);}
-.bub{padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.65;word-break:break-word;}
-.msg.user .bub{background:var(--bg2);border:1px solid var(--border);border-top-right-radius:2px;max-width:480px;}
-.msg.ai .bub{background:transparent;padding:0;width:100%;}
-.bub p{margin-bottom:5px;}
-.bub p:last-child{margin-bottom:0;}
-.bub strong{color:var(--accent);}
-.plain-bub{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;line-height:1.65;}
-.plain-bub p{margin-bottom:5px;}
-.plain-bub strong{color:var(--accent);}
+.bub{font-size:13px;line-height:1.65;word-break:break-word;}
+.msg.user .bub{background:var(--bg2);border:1px solid var(--border);border-radius:10px;border-top-right-radius:2px;padding:9px 12px;max-width:440px;}
+.msg.ai .bub{width:100%;}
+.plain{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;}
+.plain p{margin-bottom:5px;}
+.plain p:last-child{margin-bottom:0;}
+.plain strong{color:var(--accent);}
+.plain code{background:rgba(249,115,22,.12);color:var(--accent);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;}
+.plain pre{margin:6px 0 !important;border-radius:8px !important;}
 
 /* TYPING */
-.typing{display:flex;gap:4px;padding:12px 14px;align-items:center;}
-.typing span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:blink 1.1s infinite;}
-.typing span:nth-child(2){animation-delay:.2s;}
-.typing span:nth-child(3){animation-delay:.4s;}
-@keyframes blink{0%,60%,100%{opacity:.2;transform:scale(.8)}30%{opacity:1;transform:scale(1)}}
+.typing-d{display:flex;gap:4px;align-items:center;padding:12px 13px;}
+.typing-d span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:blink 1.1s infinite;}
+.typing-d span:nth-child(2){animation-delay:.2s;}
+.typing-d span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,60%,100%{opacity:.2;transform:scale(.8)}30%{opacity:1;transform:scale(1.1)}}
 
 /* SCRIPT CARD */
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:6px;animation:up .3s ease;}
-.sc-head{display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);}
-.sc-name{font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;}
-.sc-badge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:.5px;}
-.sc-badge.Script{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.25);}
-.sc-badge.LocalScript{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25);}
-.sc-badge.ModuleScript{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25);}
-.sc-path{padding:5px 12px;font-size:10px;color:#38bdf8;font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);background:rgba(56,189,248,.04);}
-.sc-code pre{margin:0!important;border-radius:0!important;max-height:280px;overflow-y:auto;font-size:11.5px!important;}
-.sc-code pre::-webkit-scrollbar{width:3px;}
-.sc-code pre::-webkit-scrollbar-thumb{background:var(--border);}
-.sc-foot{display:flex;align-items:center;gap:7px;padding:8px 12px;border-top:1px solid var(--border);background:var(--bg3);}
-.sc-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.sc-wrap{display:flex;flex-direction:column;gap:8px;width:100%;}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;animation:up .25s ease;}
+.sc-head{display:flex;align-items:center;gap:7px;padding:8px 11px;background:var(--bg3);border-bottom:1px solid var(--border);}
+.sc-name{font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text);}
+.badge{font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;}
+.badge.Script{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
+.badge.LocalScript{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+.badge.ModuleScript{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.3);}
+.sc-path{padding:5px 11px;font-size:10px;color:#38bdf8;font-family:'JetBrains Mono',monospace;background:rgba(56,189,248,.04);border-bottom:1px solid var(--border);}
+.sc-code pre{margin:0 !important;border-radius:0 !important;max-height:260px;overflow-y:auto;font-size:11.5px !important;line-height:1.5 !important;}
+.sc-foot{display:flex;align-items:center;gap:6px;padding:7px 11px;border-top:1px solid var(--border);background:var(--bg3);flex-wrap:wrap;}
+.sc-btn{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:5px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s;}
 .sc-btn:hover{border-color:var(--accent);color:var(--accent);}
-.sc-btn.copy:active,.sc-btn.copied{border-color:var(--green)!important;color:var(--green)!important;}
-.sc-btn.sync-btn:hover{border-color:var(--blue);color:var(--blue);}
-.sc-synced{font-size:10px;color:var(--green);font-weight:700;display:none;}
-.sc-synced.show{display:inline;}
 .sc-note{font-size:10px;color:var(--text3);margin-left:auto;}
-.guide-content{padding:10px 14px;border-top:1px solid var(--border);background:rgba(249,115,22,.04);display:none;}
-.guide-content.show{display:block;}
-.guide-content ol{padding-left:16px;display:flex;flex-direction:column;gap:4px;}
-.guide-content li{font-size:11px;color:var(--text2);line-height:1.6;}
-.guide-content li strong{color:var(--text);}
+.sc-guide{padding:10px 12px;border-top:1px solid var(--border);background:rgba(249,115,22,.04);display:none;}
+.sc-guide.open{display:block;}
+.sc-guide ol{padding-left:14px;display:flex;flex-direction:column;gap:3px;}
+.sc-guide li{font-size:11px;color:var(--text2);line-height:1.6;}
+.sc-guide li strong{color:var(--text);}
 
 /* INPUT */
-.input-area{padding:12px 18px 16px;border-top:1px solid var(--border);flex-shrink:0;}
-.input-wrap{display:flex;gap:8px;align-items:flex-end;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:8px 8px 8px 13px;transition:border-color .2s,box-shadow .2s;}
-.input-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(249,115,22,.12);}
-textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:none;line-height:1.55;max-height:120px;min-height:22px;}
+.input-area{padding:11px 16px 14px;border-top:1px solid var(--border);flex-shrink:0;}
+.input-wrap{display:flex;gap:7px;align-items:flex-end;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:7px 7px 7px 12px;transition:border-color .2s;}
+.input-wrap:focus-within{border-color:var(--accent);}
+textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:none;line-height:1.55;max-height:110px;min-height:22px;}
 textarea::placeholder{color:var(--text3);}
-.send-btn{width:34px;height:34px;background:var(--accent);border:none;border-radius:7px;cursor:pointer;color:#000;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s,transform .1s;}
+.send-btn{width:32px;height:32px;background:var(--accent);border:none;border-radius:7px;cursor:pointer;color:#000;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s,transform .1s;}
 .send-btn:hover:not(:disabled){opacity:.85;}
 .send-btn:active:not(:disabled){transform:scale(.92);}
 .send-btn:disabled{opacity:.3;cursor:not-allowed;}
-.hint{text-align:center;color:var(--text3);font-size:10px;margin-top:6px;}
+.hint{text-align:center;color:var(--text3);font-size:10px;margin-top:5px;}
 
 /* STATUS PANEL */
-.status-panel{padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;}
-.panel-title{font-size:18px;font-weight:800;letter-spacing:-.5px;}
-.panel-title span{color:var(--accent);}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px;}
-.s-icon{font-size:22px;margin-bottom:8px;}
-.s-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
-.s-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;}
-.s-val.g{color:var(--green);}
-.s-val.o{color:var(--accent);}
-.s-val.r{color:var(--red);}
-.svc-list{display:flex;flex-direction:column;gap:7px;}
-.svc-row{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;}
-.svc-ico{font-size:16px;width:20px;text-align:center;}
+.status-panel{padding:22px;overflow-y:auto;display:flex;flex-direction:column;gap:18px;}
+.ptitle{font-size:17px;font-weight:800;letter-spacing:-.5px;}
+.ptitle span{color:var(--accent);}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;}
+.sc2{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px;}
+.s2-ico{font-size:20px;margin-bottom:7px;}
+.s2-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px;}
+.s2-val{font-size:17px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.s2-val.g{color:var(--green);}
+.s2-val.o{color:var(--accent);}
+.svc-list{display:flex;flex-direction:column;gap:6px;}
+.svc-row{display:flex;align-items:center;gap:9px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;}
+.svc-ico{font-size:15px;width:18px;text-align:center;}
 .svc-name{font-weight:600;font-size:12px;flex:1;}
-.svc-desc{font-size:10px;color:var(--text3);}
 .svc-tag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
 .svc-tag.on{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
 .svc-tag.off{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .svc-tag.free{background:rgba(249,115,22,.1);color:var(--accent);border:1px solid rgba(249,115,22,.2);}
-.svc-tag.opt{background:var(--bg3);color:var(--text3);border:1px solid var(--border);}
-.guide-box{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:16px;}
-.guide-box ol{padding-left:16px;display:flex;flex-direction:column;gap:7px;}
+.guide-box{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px;}
+.guide-box ol{padding-left:14px;display:flex;flex-direction:column;gap:6px;}
 .guide-box li{font-size:12px;color:var(--text2);line-height:1.6;}
 .guide-box li strong{color:var(--text);}
 .guide-box li code{background:rgba(249,115,22,.12);color:var(--accent);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;}
 
 /* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;font-weight:800;font-size:11px;padding:8px 15px;border-radius:8px;z-index:9999;transform:translateY(50px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--green);color:#000;font-weight:800;font-size:11px;padding:7px 14px;border-radius:8px;z-index:9999;transform:translateY(40px);opacity:0;transition:all .25s;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 </style>
 </head>
 <body>
-<div class="toast" id="toast">✅ Copied!</div>
+<div class="toast" id="toast"></div>
 
-<!-- TOP BAR -->
 <div class="topbar">
-  <div class="logo"><div class="logo-icon">⚡</div><span>Forge</span> AI</div>
-  <div class="topbar-mid">
-    <input class="url-in" id="urlIn" type="text" placeholder="https://your-app.onrender.com">
-    <button class="conn-btn" onclick="connect()">Connect</button>
-  </div>
-  <div class="topbar-right">
-    <div class="studio-pill">
-      <div class="dot" id="studioDot"></div>
-      <span id="studioText">Studio offline</span>
-    </div>
+  <div class="logo"><div class="logo-dot">⚡</div><span>Forge</span> AI</div>
+  <input class="url-in" id="urlIn" type="text" placeholder="https://your-app.onrender.com">
+  <button class="conn-btn" onclick="connect()">Connect</button>
+  <div class="status-pill">
+    <div class="dot" id="dot"></div>
+    <span id="statusTxt">offline</span>
   </div>
 </div>
 
-<!-- LAYOUT -->
 <div class="layout">
-
-<!-- SIDEBAR -->
 <nav class="sidebar">
   <div class="sb-head">Menu</div>
-  <div class="sb-item active" id="nav-chat" onclick="nav('chat',this)"><span class="sb-ico">💬</span>Chat</div>
-  <div class="sb-item" id="nav-status" onclick="nav('status',this)"><span class="sb-ico">📊</span>Status</div>
+  <div class="sb-item active" id="nav-chat" onclick="nav('chat',this)"><span class="ico">💬</span>Chat</div>
+  <div class="sb-item" id="nav-status" onclick="nav('status',this)"><span class="ico">📊</span>Status</div>
   <div class="sb-div"></div>
-  <div class="sb-section">Quick Generate</div>
-  <div class="sb-item" onclick="ask('leaderstats')"><span class="sb-ico">🏆</span>Leaderstats</div>
-  <div class="sb-item" onclick="ask('npc ai system')"><span class="sb-ico">🤖</span>NPC AI</div>
-  <div class="sb-item" onclick="ask('gun system')"><span class="sb-ico">🔫</span>Gun System</div>
-  <div class="sb-item" onclick="ask('combat system')"><span class="sb-ico">⚔️</span>Combat</div>
-  <div class="sb-item" onclick="ask('tycoon system')"><span class="sb-ico">🏗️</span>Tycoon</div>
-  <div class="sb-item" onclick="ask('round manager system')"><span class="sb-ico">🔄</span>Round System</div>
-  <div class="sb-item" onclick="ask('datastore save player data')"><span class="sb-ico">💾</span>DataStore</div>
-  <div class="sb-item" onclick="ask('admin system commands')"><span class="sb-ico">🛡️</span>Admin</div>
-  <div class="sb-item" onclick="ask('pet system')"><span class="sb-ico">🐾</span>Pet System</div>
-  <div class="sb-item" onclick="ask('shop system buy item')"><span class="sb-ico">🛒</span>Shop</div>
-  <div class="sb-item" onclick="ask('vehicle car system')"><span class="sb-ico">🚗</span>Vehicle</div>
-  <div class="sb-item" onclick="ask('door system proximity')"><span class="sb-ico">🚪</span>Door</div>
-  <div class="sb-item" onclick="ask('terrain generator procedural')"><span class="sb-ico">🌍</span>Terrain</div>
-  <div class="sb-item" onclick="ask('coin system pickup')"><span class="sb-ico">🪙</span>Coins</div>
-  <div class="sb-item" onclick="ask('gui remotes setup')"><span class="sb-ico">🖥️</span>GUI/Remotes</div>
+  <div class="sb-head">Scripts</div>
+  <div class="sb-item" onclick="ask('leaderstats')"><span class="ico">🏆</span>Leaderstats</div>
+  <div class="sb-item" onclick="ask('npc')"><span class="ico">🤖</span>NPC AI</div>
+  <div class="sb-item" onclick="ask('gun')"><span class="ico">🔫</span>Gun System</div>
+  <div class="sb-item" onclick="ask('combat')"><span class="ico">⚔️</span>Combat</div>
+  <div class="sb-item" onclick="ask('tycoon')"><span class="ico">🏗️</span>Tycoon</div>
+  <div class="sb-item" onclick="ask('round')"><span class="ico">🔄</span>Round System</div>
+  <div class="sb-item" onclick="ask('datastore')"><span class="ico">💾</span>DataStore</div>
+  <div class="sb-item" onclick="ask('admin')"><span class="ico">🛡️</span>Admin</div>
+  <div class="sb-item" onclick="ask('pet')"><span class="ico">🐾</span>Pets</div>
+  <div class="sb-item" onclick="ask('shop')"><span class="ico">🛒</span>Shop</div>
+  <div class="sb-item" onclick="ask('vehicle')"><span class="ico">🚗</span>Vehicle</div>
+  <div class="sb-item" onclick="ask('door')"><span class="ico">🚪</span>Door</div>
+  <div class="sb-item" onclick="ask('terrain')"><span class="ico">🌍</span>Terrain</div>
+  <div class="sb-item" onclick="ask('coin')"><span class="ico">🪙</span>Coins</div>
+  <div class="sb-item" onclick="ask('gui')"><span class="ico">🖥️</span>GUI/Remotes</div>
 </nav>
 
-<!-- MAIN -->
 <div class="main">
 
-<!-- CHAT PANEL -->
+<!-- CHAT -->
 <div class="panel active" id="panel-chat">
   <div class="chat-bar">
-    <div class="chat-bar-left">
-      <div class="chat-title">Chat</div>
-      <div class="studio-token-row">
-        <span class="token-label">STUDIO TOKEN:</span>
-        <input class="token-in" id="tokenIn" placeholder="studio_abc123" title="Enter the token shown in your Roblox Studio plugin">
-      </div>
-      <span class="sync-status" id="syncStatus">No Studio connected</span>
+    <div class="studio-row">
+      <span class="tk-label">STUDIO TOKEN:</span>
+      <input class="tk-in" id="tkIn" placeholder="studio_abc123">
+      <span class="sync-lbl" id="syncLbl">–</span>
     </div>
-    <button class="clear-btn" onclick="clearChat()">Clear</button>
+    <button class="clr-btn" onclick="clearChat()">Clear</button>
   </div>
 
   <div class="msgs" id="msgs">
     <div class="welcome" id="welcome">
-      <div class="wicon">⚡</div>
+      <div class="wico">⚡</div>
       <div class="wtitle"><span>Forge</span> AI</div>
-      <div class="wsub">Expert Roblox AI. Type a prompt, scripts auto-sync to your Studio. Enter your Studio token above first.</div>
+      <div class="wsub">Click a script in the sidebar, or type anything. Scripts auto-sync to Studio when a token is set.</div>
       <div class="chips">
-        <div class="chip" onclick="ask('gun system with ADS recoil and headshots')">🔫 Gun System</div>
-        <div class="chip" onclick="ask('smart NPC that chases and attacks players')">🤖 Smart NPC</div>
-        <div class="chip" onclick="ask('complete leaderstats with datastore')">🏆 Leaderstats</div>
-        <div class="chip" onclick="ask('battle royale round system')">⚔️ Round System</div>
-        <div class="chip" onclick="ask('tycoon with dropper and collector')">🏗️ Tycoon</div>
-        <div class="chip" onclick="ask('generate image of roblox game map')">🎨 AI Image</div>
+        <div class="chip" onclick="ask('gun')">🔫 Gun</div>
+        <div class="chip" onclick="ask('npc')">🤖 NPC</div>
+        <div class="chip" onclick="ask('tycoon')">🏗️ Tycoon</div>
+        <div class="chip" onclick="ask('leaderstats')">🏆 Leaderstats</div>
+        <div class="chip" onclick="ask('combat')">⚔️ Combat</div>
+        <div class="chip" onclick="ask('generate image of a roblox map')">🎨 Image</div>
       </div>
     </div>
   </div>
 
   <div class="input-area">
     <div class="input-wrap">
-      <textarea id="inp" placeholder="Describe what you want to build..." rows="1" onkeydown="handleKey(event)" oninput="ar(this)"></textarea>
-      <button class="send-btn" id="sendBtn" onclick="send()">↑</button>
+      <textarea id="inp" placeholder="Ask anything..." rows="1"
+        onkeydown="handleKey(event)" oninput="ar(this)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="doSend()">↑</button>
     </div>
-    <div class="hint">Enter to send · Shift+Enter new line · Scripts auto-sync to Roblox Studio when token is set</div>
+    <div class="hint">Enter to send · Shift+Enter new line</div>
   </div>
 </div>
 
-<!-- STATUS PANEL -->
+<!-- STATUS -->
 <div class="panel" id="panel-status">
   <div class="status-panel">
-    <div class="panel-title"><span>Forge</span> AI Status</div>
+    <div class="ptitle"><span>Forge</span> AI Status</div>
     <div class="stat-grid">
-      <div class="stat-card"><div class="s-icon">🤖</div><div class="s-lbl">AI Engine</div><div class="s-val o" id="sv-ai">—</div></div>
-      <div class="stat-card"><div class="s-icon">🎮</div><div class="s-lbl">Studios</div><div class="s-val g" id="sv-studios">—</div></div>
-      <div class="stat-card"><div class="s-icon">🎨</div><div class="s-lbl">Images</div><div class="s-val g">FREE</div></div>
-      <div class="stat-card"><div class="s-icon">📜</div><div class="s-lbl">Scripts</div><div class="s-val o">15</div></div>
+      <div class="sc2"><div class="s2-ico">🎮</div><div class="s2-lbl">Mode</div><div class="s2-val o">SELF</div></div>
+      <div class="sc2"><div class="s2-ico">📜</div><div class="s2-lbl">Generators</div><div class="s2-val o">15</div></div>
+      <div class="sc2"><div class="s2-ico">🎨</div><div class="s2-lbl">Images</div><div class="s2-val g">FREE</div></div>
+      <div class="sc2"><div class="s2-ico">🔌</div><div class="s2-lbl">Studios</div><div class="s2-val g" id="sv-st">–</div></div>
     </div>
     <div>
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Services</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Services</div>
       <div class="svc-list">
-        <div class="svc-row"><div class="svc-ico">🤖</div><div style="flex:1"><div class="svc-name">Gemini AI</div><div class="svc-desc">Free AI — aistudio.google.com</div></div><div class="svc-tag" id="sv-gemini">CHECK</div></div>
-        <div class="svc-row"><div class="svc-ico">🎨</div><div style="flex:1"><div class="svc-name">Image Gen</div><div class="svc-desc">Pollinations AI — no key needed</div></div><div class="svc-tag free">FREE</div></div>
-        <div class="svc-row"><div class="svc-ico">🔍</div><div style="flex:1"><div class="svc-name">Web Search</div><div class="svc-desc">DuckDuckGo — no key needed</div></div><div class="svc-tag free">FREE</div></div>
-        <div class="svc-row"><div class="svc-ico">🎲</div><div style="flex:1"><div class="svc-name">Meshy 3D</div><div class="svc-desc">3D models — meshy.ai (optional)</div></div><div class="svc-tag" id="sv-meshy">CHECK</div></div>
-        <div class="svc-row"><div class="svc-ico">🌉</div><div style="flex:1"><div class="svc-name">Backend</div><div class="svc-desc" id="sv-url">Not connected</div></div><div class="svc-tag" id="sv-back">OFF</div></div>
+        <div class="svc-row"><div class="svc-ico">⚡</div><div style="flex:1"><div class="svc-name">Forge AI Brain</div></div><div class="svc-tag free">BUILT-IN</div></div>
+        <div class="svc-row"><div class="svc-ico">🎨</div><div style="flex:1"><div class="svc-name">Pollinations (Images)</div></div><div class="svc-tag free">FREE</div></div>
+        <div class="svc-row"><div class="svc-ico">🔍</div><div style="flex:1"><div class="svc-name">DuckDuckGo (Search)</div></div><div class="svc-tag free">FREE</div></div>
+        <div class="svc-row"><div class="svc-ico">🌉</div><div style="flex:1"><div class="svc-name">Backend</div><div style="font-size:10px;color:var(--text3)" id="sv-url">–</div></div><div class="svc-tag" id="sv-back">OFF</div></div>
       </div>
     </div>
     <div>
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Setup Guide</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Setup</div>
       <div class="guide-box">
         <ol>
-          <li>Get free <strong>Gemini key</strong> at <strong>aistudio.google.com</strong> → Get API Key</li>
-          <li>On Render → Environment → add <code>GEMINI_KEY</code></li>
           <li>Push <strong>server.py</strong> + <strong>dashboard.html</strong> to GitHub</li>
-          <li>In Roblox Studio: install <strong>plugin.lua</strong> from Plugins folder</li>
-          <li>Enable HTTP: Game Settings → Security → Allow HTTP Requests</li>
-          <li>Set backend URL in the plugin, copy the <strong>token</strong> shown</li>
-          <li>Paste token in the <strong>Studio Token</strong> field above</li>
-          <li>Chat — scripts auto-appear in your Studio Explorer ⚡</li>
+          <li>Render auto-deploys — no API keys needed!</li>
+          <li>Install <strong>plugin.lua</strong> in Roblox Studio Plugins folder</li>
+          <li>Enable HTTP: <strong>Game Settings → Security → Allow HTTP Requests ✅</strong></li>
+          <li>Set your Render URL in the plugin, copy the <strong>token</strong></li>
+          <li>Paste token in <strong>Studio Token</strong> field above</li>
+          <li>Type a prompt → scripts appear in Studio automatically ⚡</li>
         </ol>
       </div>
     </div>
@@ -302,12 +278,12 @@ textarea::placeholder{color:var(--text3);}
 
 <script>
 let backendUrl = localStorage.getItem('forge_url') || '';
-let studioToken = localStorage.getItem('forge_token') || '';
 let loading = false;
 
 if (backendUrl) { document.getElementById('urlIn').value = backendUrl; checkHealth(); }
-if (studioToken) document.getElementById('tokenIn').value = studioToken;
-setInterval(checkHealth, 15000);
+const savedTk = localStorage.getItem('forge_token');
+if (savedTk) document.getElementById('tkIn').value = savedTk;
+setInterval(checkHealth, 20000);
 
 function nav(p, el) {
   document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
@@ -329,253 +305,318 @@ async function checkHealth() {
   try {
     const r = await fetch(backendUrl + '/api/health');
     const d = await r.json();
-    setTag('sv-gemini', d.gemini ? 'ON' : 'NO KEY', d.gemini ? 'on' : 'off');
-    setTag('sv-meshy', d.meshy ? 'ON' : 'OPT', d.meshy ? 'on' : 'opt');
-    setTag('sv-back', 'ON', 'on');
+    document.getElementById('dot').className = 'dot on';
+    document.getElementById('statusTxt').textContent = 'online';
+    document.getElementById('sv-back').textContent = 'ON';
+    document.getElementById('sv-back').className = 'svc-tag on';
     document.getElementById('sv-url').textContent = backendUrl;
-    document.getElementById('sv-ai').textContent = d.gemini ? 'GEMINI' : 'NO KEY';
-    document.getElementById('sv-studios').textContent = d.studios_connected || '0';
-    // Check if our token is connected
-    const token = document.getElementById('tokenIn').value.trim();
-    if (token && d.studios_connected > 0) {
-      document.getElementById('studioDot').className = 'dot on';
-      document.getElementById('studioText').textContent = 'Studio connected';
-      document.getElementById('syncStatus').className = 'sync-status done';
-      document.getElementById('syncStatus').textContent = '● Studio ready';
-    } else if (token) {
-      document.getElementById('studioDot').className = 'dot';
-      document.getElementById('studioText').textContent = 'Studio offline';
-      document.getElementById('syncStatus').className = 'sync-status';
-      document.getElementById('syncStatus').textContent = 'Open plugin in Studio';
-    }
-  } catch(e) {
-    setTag('sv-back', 'OFF', 'off');
-    document.getElementById('studioDot').className = 'dot';
-    document.getElementById('studioText').textContent = 'Backend offline';
+    document.getElementById('sv-st').textContent = d.studios_connected ?? '0';
+  } catch {
+    document.getElementById('dot').className = 'dot';
+    document.getElementById('statusTxt').textContent = 'offline';
+    document.getElementById('sv-back').textContent = 'OFF';
+    document.getElementById('sv-back').className = 'svc-tag off';
   }
-}
-
-function setTag(id, text, cls) {
-  const el = document.getElementById(id); if (!el) return;
-  el.textContent = text; el.className = 'svc-tag ' + cls;
 }
 
 function ask(text) {
   nav('chat', document.getElementById('nav-chat'));
   document.getElementById('inp').value = text;
-  send();
+  doSend();
 }
 
 function clearChat() {
-  document.getElementById('msgs').innerHTML = '<div class="welcome" id="welcome"><div class="wicon">⚡</div><div class="wtitle"><span>Forge</span> AI</div><div class="wsub">Ask me anything about Roblox!</div></div>';
+  document.getElementById('msgs').innerHTML = '';
+  addMsg('ai', '✅ Chat cleared. What do you want to build?');
 }
 
-function ar(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
-function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+function ar(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,110)+'px'; }
+function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); doSend(); } }
 
-async function send() {
+async function doSend() {
   if (loading) return;
   const inp = document.getElementById('inp');
-  const text = inp.value.trim(); if (!text) return;
-  if (!backendUrl) { backendUrl = document.getElementById('urlIn').value.trim().replace(/\/$/,''); }
-  if (!backendUrl) { addMsg('ai','⚠️ Enter your backend URL at the top and click Connect.'); return; }
+  const text = inp.value.trim();
+  if (!text) return;
+
+  if (!backendUrl) {
+    backendUrl = document.getElementById('urlIn').value.trim().replace(/\/$/, '');
+    if (!backendUrl) { addMsg('ai', '⚠️ Enter your backend URL at the top and click Connect first.'); return; }
+  }
+
   const w = document.getElementById('welcome'); if (w) w.remove();
   addMsg('user', text);
-  inp.value = ''; inp.style.height='auto';
+  inp.value = ''; inp.style.height = 'auto';
   loading = true;
   document.getElementById('sendBtn').disabled = true;
   addTyping();
-  const token = document.getElementById('tokenIn').value.trim();
+
+  const token = document.getElementById('tkIn').value.trim();
   if (token) localStorage.setItem('forge_token', token);
+
   try {
-    const r = await fetch(backendUrl + '/api/chat', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ message: text, studio_token: token || '' })
+    // Use /v1/messages — works with ALL server versions
+    const r = await fetch(backendUrl + '/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: text }] })
     });
+
+    if (!r.ok) throw new Error('Server returned ' + r.status);
+
     const d = await r.json();
     removeTyping();
-    renderResponse(d.response || '⚠️ Empty response');
-    if (d.scripts_queued > 0) {
-      document.getElementById('syncStatus').className = 'sync-status syncing';
-      document.getElementById('syncStatus').textContent = `⏳ Syncing ${d.scripts_queued} script${d.scripts_queued>1?'s':''} to Studio...`;
-      setTimeout(() => {
-        document.getElementById('syncStatus').className = 'sync-status done';
-        document.getElementById('syncStatus').textContent = `✅ ${d.scripts_queued} script${d.scripts_queued>1?'s':''} sent to Studio`;
-      }, 3000);
-    }
-  } catch(e) {
+
+    // Extract text — handle both response formats
+    const responseText = (d.content && d.content[0] && d.content[0].text)
+                      || d.response
+                      || '⚠️ Empty response from server.';
+
+    renderAI(responseText, token);
+
+  } catch (e) {
     removeTyping();
-    addMsg('ai','⚠️ Cannot reach backend: '+e.message);
+    addMsg('ai', '⚠️ Error: ' + e.message + '\n\nMake sure your backend URL is correct and the server is running.');
   } finally {
-    loading=false;
-    document.getElementById('sendBtn').disabled=false;
+    loading = false;
+    document.getElementById('sendBtn').disabled = false;
   }
 }
 
+// ── MESSAGE HELPERS ───────────────────────────────
 function addMsg(role, text) {
   const msgs = document.getElementById('msgs');
-  const div = document.createElement('div'); div.className='msg '+role;
-  const av = document.createElement('div'); av.className='av'; av.textContent=role==='user'?'👤':'⚡';
-  const bub = document.createElement('div'); bub.className='bub';
-  if (role==='user') { bub.innerHTML=fmtText(text); }
-  else { bub.innerHTML=`<div class="plain-bub">${fmtText(text)}</div>`; }
+  const div = document.createElement('div'); div.className = 'msg ' + role;
+  const av = document.createElement('div'); av.className = 'av';
+  av.textContent = role === 'user' ? '👤' : '⚡';
+  const bub = document.createElement('div'); bub.className = 'bub';
+  if (role === 'user') {
+    bub.textContent = text;
+  } else {
+    bub.innerHTML = '<div class="plain">' + mdToHtml(text) + '</div>';
+  }
   div.appendChild(av); div.appendChild(bub);
-  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
 
 function addTyping() {
-  const w=document.getElementById('welcome'); if(w) w.remove();
-  const msgs=document.getElementById('msgs');
-  const div=document.createElement('div'); div.className='msg ai'; div.id='typing';
-  const av=document.createElement('div'); av.className='av'; av.textContent='⚡';
-  const bub=document.createElement('div'); bub.className='bub';
-  bub.innerHTML='<div class="plain-bub"><div class="typing"><span></span><span></span><span></span></div></div>';
+  const w = document.getElementById('welcome'); if (w) w.remove();
+  const msgs = document.getElementById('msgs');
+  const div = document.createElement('div'); div.className = 'msg ai'; div.id = 'typing';
+  const av = document.createElement('div'); av.className = 'av'; av.textContent = '⚡';
+  const bub = document.createElement('div'); bub.className = 'bub';
+  bub.innerHTML = '<div class="plain"><div class="typing-d"><span></span><span></span><span></span></div></div>';
   div.appendChild(av); div.appendChild(bub);
-  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
-function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+function removeTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
 
-// ── SCRIPT PARSING ──
-function parseScripts(text) {
-  const out=[]; const re=/###\s+(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\n```lua\n([\s\S]*?)```/g;
-  let m;
-  while((m=re.exec(text))!==null){
-    out.push({name:m[1].trim(),type:m[2].trim(),path:m[3].trim(),code:m[4].trim(),idx:m.index,len:m[0].length});
-  }
-  return out;
-}
+// ── MAIN RENDER ───────────────────────────────────
+function renderAI(text, studioToken) {
+  const msgs = document.getElementById('msgs');
+  const scripts = extractScripts(text);
 
-function renderResponse(text) {
-  const msgs=document.getElementById('msgs');
-  const scripts=parseScripts(text);
-  const div=document.createElement('div'); div.className='msg ai';
-  const av=document.createElement('div'); av.className='av'; av.textContent='⚡';
-  div.appendChild(av);
-  const container=document.createElement('div');
-  container.style.cssText='display:flex;flex-direction:column;gap:8px;flex:1;min-width:0';
+  const row = document.createElement('div'); row.className = 'msg ai';
+  const av = document.createElement('div'); av.className = 'av'; av.textContent = '⚡';
+  row.appendChild(av);
 
-  if(scripts.length===0){
-    const bub=document.createElement('div'); bub.className='bub';
-    bub.innerHTML=`<div class="plain-bub">${fmtText(text)}</div>`;
-    container.appendChild(bub);
+  const wrap = document.createElement('div'); wrap.className = 'bub';
+
+  if (scripts.length === 0) {
+    // Plain response
+    wrap.innerHTML = '<div class="plain">' + mdToHtml(text) + '</div>';
   } else {
-    const parts=[]; let last=0;
-    for(const s of scripts){
-      if(s.idx>last){ const t=text.slice(last,s.idx).trim(); if(t) parts.push({type:'text',content:t}); }
-      parts.push({type:'script',...s});
-      last=s.idx+s.len;
-      const note=text.slice(last).match(/^\n?📌\s*(.+?)(?:\n|$)/);
-      if(note){ parts[parts.length-1].note=note[1]; last+=note[0].length; }
+    // Has scripts — split text around them and render cards
+    const container = document.createElement('div'); container.className = 'sc-wrap';
+
+    // Text before first script
+    const pre = text.slice(0, scripts[0].start).trim();
+    if (pre) {
+      const p = document.createElement('div'); p.className = 'plain';
+      p.innerHTML = mdToHtml(stripScriptHeaders(pre));
+      container.appendChild(p);
     }
-    const remain=text.slice(last).trim();
-    if(remain) parts.push({type:'text',content:remain});
-    for(const p of parts){
-      if(p.type==='text'&&p.content.trim()){
-        const bub=document.createElement('div'); bub.className='bub';
-        bub.innerHTML=`<div class="plain-bub">${fmtText(p.content)}</div>`;
-        container.appendChild(bub);
-      } else if(p.type==='script'){
-        container.appendChild(makeCard(p));
-      }
+
+    // Script cards
+    scripts.forEach(s => {
+      container.appendChild(makeCard(s));
+      // Auto-sync to Studio
+      if (studioToken) syncOne(studioToken, s);
+    });
+
+    // Text after last script
+    const last = scripts[scripts.length - 1];
+    const post = text.slice(last.start + last.raw.length).replace(/^📌[^\n]*\n?/, '').trim();
+    if (post) {
+      const p = document.createElement('div'); p.className = 'plain';
+      p.innerHTML = mdToHtml(stripScriptHeaders(post));
+      container.appendChild(p);
+    }
+
+    wrap.appendChild(container);
+
+    // Show sync status
+    if (studioToken && scripts.length > 0) {
+      const sl = document.getElementById('syncLbl');
+      sl.className = 'sync-lbl syncing';
+      sl.textContent = '⏳ Syncing ' + scripts.length + ' script' + (scripts.length > 1 ? 's' : '') + '...';
+      setTimeout(() => {
+        sl.className = 'sync-lbl done';
+        sl.textContent = '✅ ' + scripts.length + ' sent to Studio';
+        setTimeout(() => { sl.className = 'sync-lbl'; sl.textContent = '–'; }, 5000);
+      }, 2500);
     }
   }
 
-  div.appendChild(container);
-  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
-  document.querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));
+  row.appendChild(wrap);
+  msgs.appendChild(row);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Highlight code
+  requestAnimationFrame(() => {
+    row.querySelectorAll('pre code').forEach(b => {
+      try { hljs.highlightElement(b); } catch(e) {}
+    });
+  });
 }
 
+// ── SCRIPT EXTRACTION ─────────────────────────────
+function extractScripts(text) {
+  const scripts = [];
+  // Regex: ### Name | Type | Path\n```lua\ncode\n```
+  // Uses [^|\n] to be explicit about what each group matches
+  const re = /###[ \t]+([^|\n]+?)[ \t]*\|[ \t]*([^|\n]+?)[ \t]*\|[ \t]*([^\n]+?)\n```lua\n([\s\S]*?)```/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    let note = '';
+    const afterEnd = text.slice(m.index + m[0].length);
+    const noteM = afterEnd.match(/^[ \t]*📌[ \t]*([^\n]+)/);
+    if (noteM) note = noteM[1].trim();
+    scripts.push({
+      name:  m[1].trim(),
+      type:  m[2].trim(),
+      path:  m[3].trim(),
+      code:  m[4].trim(),
+      note:  note,
+      start: m.index,
+      raw:   m[0]
+    });
+  }
+  return scripts;
+}
+
+// ── SCRIPT CARD ───────────────────────────────────
 function makeCard(s) {
-  const typeClass=s.type.replace(/\s+/g,'');
-  const card=document.createElement('div'); card.className='sc';
-  const token=document.getElementById('tokenIn').value.trim();
-  card.innerHTML=`
-  <div class="sc-head">
-    <span class="sc-name">📄 ${esc(s.name)}</span>
-    <span class="sc-badge ${typeClass}">${esc(s.type)}</span>
-    <span class="sc-synced" id="synced-${esc(s.name).replace(/\s/g,'_')}">✅ In Studio</span>
-  </div>
-  <div class="sc-path">📁 ${esc(s.path)}</div>
-  <div class="sc-code"><pre><code class="language-lua">${esc(s.code)}</code></pre></div>
-  <div class="sc-foot">
-    <button class="sc-btn copy" onclick="copyCode(this,${JSON.stringify(s.code)})">📋 Copy</button>
-    <button class="sc-btn sync-btn" onclick="sendToStudio(this,${JSON.stringify(s)})">🔄 Send to Studio</button>
-    <button class="sc-btn" onclick="toggleGuide(this)">📖 Guide</button>
-    ${s.note?`<span class="sc-note">💡 ${esc(s.note)}</span>`:''}
-  </div>
-  <div class="guide-content">${makeGuide(s)}</div>`;
+  const typeClass = s.type.replace(/\s/g, '');
+  const card = document.createElement('div'); card.className = 'sc';
+  card.innerHTML = `
+    <div class="sc-head">
+      <span class="sc-name">📄 ${esc(s.name)}</span>
+      <span class="badge ${typeClass}">${esc(s.type)}</span>
+    </div>
+    <div class="sc-path">📁 ${esc(s.path)}</div>
+    <div class="sc-code"><pre><code class="language-lua">${esc(s.code)}</code></pre></div>
+    <div class="sc-foot">
+      <button class="sc-btn" onclick="doCopy(this, ${JSON.stringify(s.code)})">📋 Copy</button>
+      <button class="sc-btn" onclick="doSync(this, ${JSON.stringify(s)})">🔄 Send to Studio</button>
+      <button class="sc-btn" onclick="toggleGuide(this)">📖 Guide</button>
+      ${s.note ? '<span class="sc-note">💡 ' + esc(s.note) + '</span>' : ''}
+    </div>
+    <div class="sc-guide">${makeGuide(s)}</div>`;
   return card;
 }
 
 function makeGuide(s) {
-  const parts=s.path.split(/[>→]/g).map(p=>p.trim()).filter(Boolean);
-  const types=['Script','LocalScript','ModuleScript'];
-  const isType=types.includes(parts[parts.length-1]);
-  const parent=isType?parts.slice(0,-1).join(' → '):parts.join(' → ');
+  const parts = s.path.split(/\s*[>→]\s*/);
+  const types = ['Script','LocalScript','ModuleScript'];
+  const isType = types.includes(parts[parts.length-1]);
+  const parent = isType ? parts.slice(0,-1).join(' → ') : parts.join(' → ');
   return `<ol>
     <li>Open <strong>Roblox Studio</strong></li>
-    <li>Open <strong>Explorer</strong>: View → Explorer</li>
-    <li>Navigate to: <strong>${esc(parent||'ServerScriptService')}</strong></li>
+    <li>View → <strong>Explorer</strong></li>
+    <li>Navigate to: <strong>${esc(parent)}</strong></li>
     <li>Right-click → Insert Object → <strong>${esc(s.type)}</strong></li>
     <li>Rename to <strong>"${esc(s.name)}"</strong></li>
-    <li>Double-click → Script Editor opens</li>
-    <li><strong>Ctrl+A</strong> → <strong>Ctrl+V</strong> to paste</li>
+    <li>Double-click to open Script Editor</li>
+    <li><strong>Ctrl+A</strong> then <strong>Ctrl+V</strong> to paste</li>
     <li><strong>Ctrl+S</strong> to save</li>
   </ol>`;
 }
 
 function toggleGuide(btn) {
-  const g=btn.closest('.sc').querySelector('.guide-content');
-  g.classList.toggle('show');
-  btn.textContent=g.classList.contains('show')?'📖 Hide':'📖 Guide';
+  const g = btn.closest('.sc').querySelector('.sc-guide');
+  g.classList.toggle('open');
+  btn.textContent = g.classList.contains('open') ? '📖 Hide' : '📖 Guide';
 }
 
-async function copyCode(btn, code) {
-  try { await navigator.clipboard.writeText(code); } catch(e) {
-    const ta=document.createElement('textarea'); ta.value=code; ta.style.position='fixed'; ta.style.opacity='0';
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+// ── COPY ─────────────────────────────────────────
+async function doCopy(btn, code) {
+  try { await navigator.clipboard.writeText(code); }
+  catch {
+    const ta = document.createElement('textarea');
+    ta.value = code; ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
   }
-  btn.classList.add('copied'); btn.textContent='✅ Copied!';
-  showToast('Copied — paste into Studio Script Editor');
-  setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copy';},2000);
+  btn.textContent = '✅ Copied!';
+  showToast('Copied to clipboard!');
+  setTimeout(() => btn.textContent = '📋 Copy', 1800);
 }
 
-async function sendToStudio(btn, s) {
-  const token=document.getElementById('tokenIn').value.trim();
-  if (!token) { showToast('Enter your Studio token first!'); return; }
-  if (!backendUrl) { showToast('Connect to backend first!'); return; }
-  btn.textContent='⏳...';
+// ── STUDIO SYNC ───────────────────────────────────
+async function syncOne(token, s) {
+  if (!token || !backendUrl) return;
   try {
-    const r=await fetch(backendUrl+'/api/command',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({token,name:s.name,scriptType:s.type,body:s.code,path:s.path,type:'script'})
+    await fetch(backendUrl + '/api/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, name: s.name, scriptType: s.type, body: s.code, path: s.path, type: 'script' })
     });
-    const d=await r.json();
-    if(d.ok){
-      btn.textContent='✅ Sent!';
-      const el=document.getElementById('synced-'+s.name.replace(/\s/g,'_'));
-      if(el) el.classList.add('show');
-      showToast(s.name+' sent to Studio!');
-    } else { btn.textContent='❌ Failed'; }
-    setTimeout(()=>btn.textContent='🔄 Send to Studio',2000);
-  } catch(e) { btn.textContent='❌ Error'; setTimeout(()=>btn.textContent='🔄 Send to Studio',2000); }
+  } catch {}
 }
 
+async function doSync(btn, s) {
+  const token = document.getElementById('tkIn').value.trim();
+  if (!token) { showToast('Enter your Studio token first!'); return; }
+  btn.textContent = '⏳...';
+  await syncOne(token, s);
+  btn.textContent = '✅ Sent!';
+  showToast(s.name + ' sent to Studio!');
+  setTimeout(() => btn.textContent = '🔄 Send to Studio', 2000);
+}
+
+// ── UTILITIES ─────────────────────────────────────
 function showToast(msg) {
-  const t=document.getElementById('toast'); t.textContent='✅ '+msg;
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
+  const t = document.getElementById('toast'); t.textContent = '✅ ' + msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function fmtText(text) {
-  text=text.replace(/```(\w*)\n([\s\S]*?)```/g,(_,l,c)=>`<pre><code class="language-${l||'lua'}">${esc(c.trim())}</code></pre>`);
-  text=text.replace(/`([^`]+)`/g,`<code style="background:rgba(249,115,22,.12);color:#f97316;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px">$1</code>`);
-  text=text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
-  text=text.replace(/### .+?\n/g,'');
-  const ps=text.split('\n\n').filter(p=>p.trim());
-  return ps.length>1?ps.map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join(''):text.replace(/\n/g,'<br>');
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function stripScriptHeaders(text) {
+  return text.replace(/###[^\n]+\n/g, '');
+}
+
+function mdToHtml(text) {
+  // Code blocks
+  text = text.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+    `<pre><code class="language-${lang||'lua'}">${esc(code.trim())}</code></pre>`);
+  // Inline code
+  text = text.replace(/`([^`\n]+)`/g,
+    '<code>$1</code>');
+  // Bold
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Strip ### headers
+  text = text.replace(/###[^\n]+\n?/g, '');
+  // Paragraphs
+  const parts = text.split(/\n\n+/).filter(p => p.trim());
+  if (parts.length > 1) {
+    return parts.map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+  }
+  return text.replace(/\n/g, '<br>');
+}
 </script>
 </body>
 </html>
