@@ -2,37 +2,1132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Forge AI — Dashboard</title>
 <style>
-  body { font-family: -apple-system, sans-serif; background: #0b0b0f; color: #eee; margin: 0; padding: 40px; }
-  h1 { font-size: 28px; }
-  .card { background: #16161c; border-radius: 12px; padding: 20px; margin-top: 20px; max-width: 480px; }
-  .stat { font-size: 32px; font-weight: 700; }
-  .label { color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  :root {
+    --bg: #14110d;
+    --bg-panel: #1d1811;
+    --bg-panel-raised: #241e15;
+    --ember: #ff6a1a;
+    --ember-deep: #c43a1f;
+    --steel: #7ea0b2;
+    --steel-dim: #3e5561;
+    --ash: #ede6da;
+    --ash-dim: #9c9285;
+    --border: rgba(237, 230, 218, 0.09);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 18px;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255, 106, 26, 0.14), transparent 60%),
+      var(--bg);
+    color: var(--ash);
+    font-family: var(--sans);
+    line-height: 1.5;
+    padding: 28px 20px 80px;
+  }
+
+  .page { max-width: 880px; margin: 0 auto; }
+
+  a { color: var(--ember); }
+
+  :focus-visible {
+    outline: 2px solid var(--ember);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Header ---------- */
+  .site-header { margin-bottom: 30px; }
+
+  .wordmark-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+
+  .wordmark {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(28px, 6vw, 38px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+  .wordmark-accent { color: var(--ember); }
+
+  .version-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ash-dim);
+    border: 1px solid var(--border);
+    padding: 4px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .tagline {
+    margin: 8px 0 0;
+    color: var(--ash-dim);
+    font-size: 15px;
+    max-width: 46ch;
+  }
+
+  .status-row {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 6px 12px 6px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--ash-dim);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--steel-dim);
+    flex-shrink: 0;
+  }
+  .status-dot.lit {
+    background: var(--ember);
+    box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.6);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .status-dot.lit { animation: ember-pulse 2.2s ease-in-out infinite; }
+  }
+  @keyframes ember-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.55); }
+    50% { box-shadow: 0 0 0 6px rgba(255, 106, 26, 0); }
+  }
+
+  .live-indicator {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ash-dim);
+  }
+
+  /* ---------- Stat plates ---------- */
+  .stat-plates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .plate {
+    position: relative;
+    background: linear-gradient(160deg, var(--bg-panel-raised), var(--bg-panel));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 16px;
+  }
+  .plate::before, .plate::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(237, 230, 218, 0.14);
+    top: 8px;
+  }
+  .plate::before { left: 8px; }
+  .plate::after { right: 8px; }
+
+  .plate-value {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(24px, 5vw, 30px);
+    color: var(--ash);
+  }
+  .plate-label {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--ash-dim);
+    letter-spacing: 0.02em;
+  }
+
+  .stat-caption {
+    font-size: 12px;
+    color: var(--ash-dim);
+    margin: 0 0 34px;
+  }
+
+  /* ---------- Section shell ---------- */
+  section { margin-bottom: 40px; }
+
+  .section-head { margin-bottom: 14px; }
+  .section-head h2 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .section-sub {
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    color: var(--ash-dim);
+  }
+  .section-sub span { color: var(--steel); font-family: var(--mono); }
+
+  /* ---------- Anvil Console ---------- */
+  .console-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .console-field {
+    flex: 1 1 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .console-textarea-wrap { position: relative; }
+
+  #consoleInput {
+    width: 100%;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--ash);
+    font-family: var(--sans);
+    font-size: 14.5px;
+    padding: 12px 44px 12px 14px;
+    resize: vertical;
+    min-height: 48px;
+  }
+  #consoleInput::placeholder { color: var(--ash-dim); }
+
+  .attach-btn {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--ash-dim);
+    cursor: pointer;
+  }
+  .attach-btn:hover { color: var(--ember); background: rgba(255, 106, 26, 0.1); }
+  .attach-btn svg { width: 16px; height: 16px; }
+
+  .attachment-row { display: flex; }
+  .attachment-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-panel);
+    border: 1px solid var(--steel-dim);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px 5px 5px;
+    max-width: 100%;
+  }
+  .attachment-chip img {
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .attachment-chip span:not(.attachment-remove) {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ash-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 22ch;
+  }
+  .attachment-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    color: var(--ash-dim);
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .attachment-remove:hover { color: var(--ember); }
+  .attachment-remove svg { width: 13px; height: 13px; }
+
+  .strike-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--ember), var(--ember-deep));
+    color: #1a0e07;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 13px 18px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    position: relative;
+    overflow: visible;
+  }
+  .strike-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255, 106, 26, 0.25); }
+  .strike-btn:active { transform: translateY(0); }
+  .strike-btn:disabled { opacity: 0.65; cursor: default; transform: none; box-shadow: none; }
+  .strike-btn svg { width: 15px; height: 15px; }
+
+  .spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ember);
+    top: 50%;
+    left: 50%;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .spark { animation: spark-fly 0.55s ease-out forwards; }
+  }
+  @keyframes spark-fly {
+    to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+  }
+
+  .console-output { margin-top: 18px; }
+  .console-output:empty { margin-top: 0; }
+
+  .console-hint {
+    font-size: 13px;
+    color: var(--ash-dim);
+    padding: 10px 0 0;
+  }
+  .console-error {
+    font-size: 13.5px;
+    color: #f0b199;
+    background: rgba(196, 58, 31, 0.12);
+    border: 1px solid rgba(196, 58, 31, 0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  .prose { font-size: 14.5px; color: var(--ash); }
+  .prose p { margin: 0 0 10px; }
+  .howto-note {
+    font-size: 13px;
+    color: var(--steel);
+    margin: 6px 0 10px;
+  }
+  .console-image-wrap { margin: 10px 0; }
+  .console-image {
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    display: block;
+  }
+
+  .color-swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 4px 0 12px;
+  }
+  .color-swatch-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px 4px 4px;
+  }
+  .color-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(237, 230, 218, 0.25);
+    flex-shrink: 0;
+  }
+  .color-swatch-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ash-dim);
+  }
+
+  .code-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--steel-dim);
+    border-radius: var(--radius-md);
+    margin: 10px 0 16px;
+    overflow: hidden;
+  }
+  .code-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    background: rgba(126, 160, 178, 0.08);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-panel-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--steel);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ash-dim);
+    font-size: 11.5px;
+    font-family: var(--sans);
+    padding: 4px 9px;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover { color: var(--ash); border-color: var(--ash-dim); }
+  .copy-btn svg { width: 11px; height: 11px; }
+
+  .code-panel pre {
+    margin: 0;
+    padding: 14px;
+    overflow-x: auto;
+  }
+  .code-panel code {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ash);
+    white-space: pre;
+  }
+
+  /* ---------- Tool Rack ---------- */
+  .rack-search {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .rack-search svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--ash-dim);
+  }
+  #rackSearch {
+    width: 100%;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--ash);
+    font-size: 14px;
+    padding: 10px 12px 10px 36px;
+  }
+  #rackSearch::placeholder { color: var(--ash-dim); }
+
+  .rack-group { margin-bottom: 16px; }
+  .rack-group h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ash-dim);
+    margin: 0 0 10px;
+    font-weight: 700;
+  }
+
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--ash);
+    padding: 7px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+  }
+  .chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--ember);
+    background: var(--bg-panel-raised);
+  }
+  .chip[hidden] { display: none; }
+
+  .rack-empty {
+    font-size: 13px;
+    color: var(--ash-dim);
+    padding: 6px 0;
+  }
+
+  /* ---------- Placement guide accordion ---------- */
+  .accordion { border-top: 1px solid var(--border); }
+  .accordion-item { border-bottom: 1px solid var(--border); }
+
+  .accordion-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    color: var(--ash);
+    font-family: var(--sans);
+    font-size: 14.5px;
+    font-weight: 600;
+    padding: 13px 2px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .accordion-trigger svg {
+    width: 15px;
+    height: 15px;
+    color: var(--ash-dim);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+  .accordion-item.open .accordion-trigger svg { transform: rotate(180deg); }
+
+  .accordion-panel-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+  }
+  .accordion-item.open .accordion-panel-wrap { grid-template-rows: 1fr; }
+  .accordion-panel {
+    overflow: hidden;
+    min-height: 0;
+  }
+  .accordion-panel p {
+    margin: 0 0 14px;
+    font-size: 13.5px;
+    color: var(--ash-dim);
+    padding-right: 20px;
+  }
+
+  .rule-of-thumb {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--steel);
+    font-family: var(--mono);
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    font-size: 12.5px;
+    color: var(--ash-dim);
+  }
+
+  @media (max-width: 560px) {
+    .stat-plates { grid-template-columns: 1fr; }
+    .console-form { flex-direction: column; align-items: stretch; }
+    .strike-btn { justify-content: center; }
+  }
 </style>
 </head>
 <body>
-  <h1>⚡ Forge AI Genius v16.0</h1>
-  <div class="card">
-    <div class="label">Status</div>
-    <div class="stat" id="status">loading…</div>
-  </div>
-  <div class="card">
-    <div class="label">Studios Connected</div>
-    <div class="stat" id="studios">–</div>
-  </div>
-  <div class="card">
-    <div class="label">Templates / Knowledge Entries</div>
-    <div class="stat" id="counts">–</div>
-  </div>
-  <script>
-    fetch('/api/health').then(r => r.json()).then(d => {
-      document.getElementById('status').textContent = d.ok ? 'Online' : 'Offline';
-      document.getElementById('studios').textContent = d.studios_connected;
-      document.getElementById('counts').textContent = d.templates + ' / ' + d.knowledge_base;
-    }).catch(() => {
-      document.getElementById('status').textContent = 'Unreachable';
+<div class="page">
+
+  <header class="site-header">
+    <div class="wordmark-row">
+      <div class="wordmark">FORGE<span class="wordmark-accent">AI</span></div>
+      <div class="version-badge">v16.1 · GENIUS EDITION</div>
+    </div>
+    <p class="tagline">Your Roblox AI backend — self-hosted, no API key required.</p>
+    <div class="status-row">
+      <span class="status-pill">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Checking the forge…</span>
+      </span>
+      <span class="live-indicator" id="liveIndicator"></span>
+    </div>
+  </header>
+
+  <section class="stat-plates" aria-label="Server statistics">
+    <div class="plate">
+      <div class="plate-value" id="statTemplates">84</div>
+      <div class="plate-label">Script Templates</div>
+    </div>
+    <div class="plate">
+      <div class="plate-value" id="statKnowledge">29</div>
+      <div class="plate-label">Knowledge Entries</div>
+    </div>
+    <div class="plate">
+      <div class="plate-value" id="statStudios">0</div>
+      <div class="plate-label">Studios Connected</div>
+    </div>
+  </section>
+  <p class="stat-caption" id="statCaption">Snapshot from server.py — connect this page to your running server for live numbers.</p>
+
+  <section aria-labelledby="consoleTitle">
+    <div class="section-head">
+      <h2 id="consoleTitle">Anvil Console</h2>
+      <p class="section-sub">Type what you need — Forge AI answers the same way it would answer your Studio plugin. Attach a photo to get its size, format, and dominant colors.</p>
+    </div>
+    <form class="console-form" id="consoleForm">
+      <div class="console-field">
+        <div class="attachment-row" id="attachmentRow" hidden>
+          <span class="attachment-chip">
+            <img id="attachmentThumb" alt="">
+            <span id="attachmentName"></span>
+            <button type="button" class="attachment-remove" id="attachmentRemove" aria-label="Remove photo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="console-textarea-wrap">
+          <textarea id="consoleInput" rows="2" placeholder="inventory system · build a castle · what is TweenService…" aria-label="Describe what you need"></textarea>
+          <button type="button" class="attach-btn" id="attachBtn" aria-label="Attach a photo" title="Attach a photo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <input type="file" id="attachInput" accept="image/*" hidden>
+        </div>
+      </div>
+      <button type="submit" class="strike-btn" id="strikeBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+        <span id="strikeBtnText">Generate</span>
+      </button>
+    </form>
+    <div class="console-output" id="consoleOutput" aria-live="polite"></div>
+  </section>
+
+  <section aria-labelledby="rackTitle">
+    <div class="section-head">
+      <h2 id="rackTitle">Tool Rack</h2>
+      <p class="section-sub"><span id="rackCount">84</span> templates ready to pull down — tap one to load it into the console above.</p>
+    </div>
+    <div class="rack-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="rackSearch" placeholder="Filter templates…" aria-label="Filter templates">
+    </div>
+    <div class="rack-group">
+      <h3>Gameplay Systems</h3>
+      <div class="chip-grid" id="chipsSystems"></div>
+    </div>
+    <div class="rack-group">
+      <h3>3D Builders</h3>
+      <div class="chip-grid" id="chipsBuilders"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="guideTitle">
+    <div class="section-head">
+      <h2 id="guideTitle">Placement Guide</h2>
+      <p class="section-sub">Where each script type actually goes in Studio.</p>
+    </div>
+    <div class="accordion" id="accordion"></div>
+    <p class="rule-of-thumb">Script → server logic. LocalScript → client UI/input. ModuleScript → shared reusable code.</p>
+  </section>
+
+  <footer>
+    Forge AI Genius — deterministic template engine, zero external API keys.
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------------- Utilities ---------------- */
+
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        if (k === "class") node.className = attrs[k];
+        else if (k === "text") node.textContent = attrs[k];
+        else node.setAttribute(k, attrs[k]);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c) node.appendChild(c);
     });
-  </script>
+    return node;
+  }
+
+  function countUp(node, from, to, duration) {
+    if (from === to) { node.textContent = to; return; }
+    if (reducedMotion) { node.textContent = to; return; }
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var value = Math.round(from + (to - from) * progress);
+      node.textContent = value;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------------- Health / stats ---------------- */
+
+  var statusDot = document.getElementById("statusDot");
+  var statusText = document.getElementById("statusText");
+  var liveIndicator = document.getElementById("liveIndicator");
+  var statCaption = document.getElementById("statCaption");
+  var statTemplates = document.getElementById("statTemplates");
+  var statKnowledge = document.getElementById("statKnowledge");
+  var statStudios = document.getElementById("statStudios");
+
+  function setOffline(message) {
+    statusDot.classList.remove("lit");
+    statusText.textContent = message || "Forge unreachable";
+    liveIndicator.textContent = "○ last known snapshot";
+  }
+
+  function setOnline() {
+    statusDot.classList.add("lit");
+    statusText.textContent = "Forge is online";
+    liveIndicator.textContent = "● live";
+  }
+
+  function loadHealth() {
+    fetch("/api/health")
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) {
+        setOnline();
+        statCaption.textContent = "Live numbers from your running server.";
+        countUp(statTemplates, parseInt(statTemplates.textContent, 10), data.templates, 500);
+        countUp(statKnowledge, parseInt(statKnowledge.textContent, 10), data.knowledge_base, 500);
+        countUp(statStudios, parseInt(statStudios.textContent, 10), data.studios_connected, 500);
+      })
+      .catch(function () {
+        setOffline("Forge unreachable — showing snapshot");
+      });
+  }
+
+  loadHealth();
+
+  /* ---------------- Anvil Console ---------------- */
+
+  var consoleForm = document.getElementById("consoleForm");
+  var consoleInput = document.getElementById("consoleInput");
+  var consoleOutput = document.getElementById("consoleOutput");
+  var strikeBtn = document.getElementById("strikeBtn");
+  var strikeBtnText = document.getElementById("strikeBtnText");
+
+  var attachBtn = document.getElementById("attachBtn");
+  var attachInput = document.getElementById("attachInput");
+  var attachmentRow = document.getElementById("attachmentRow");
+  var attachmentThumb = document.getElementById("attachmentThumb");
+  var attachmentName = document.getElementById("attachmentName");
+  var attachmentRemove = document.getElementById("attachmentRemove");
+  var attachedImage = null; // { dataUrl, name }
+  var MAX_ATTACH_BYTES = 5 * 1024 * 1024;
+
+  function showConsoleError(msg) {
+    consoleOutput.innerHTML = "";
+    consoleOutput.appendChild(el("div", { class: "console-error", text: msg }));
+  }
+
+  function renderAttachmentPreview() {
+    if (!attachedImage) {
+      attachmentRow.hidden = true;
+      attachmentThumb.removeAttribute("src");
+      return;
+    }
+    attachmentRow.hidden = false;
+    attachmentThumb.src = attachedImage.dataUrl;
+    attachmentThumb.alt = attachedImage.name;
+    attachmentName.textContent = attachedImage.name;
+  }
+
+  attachBtn.addEventListener("click", function () { attachInput.click(); });
+
+  attachInput.addEventListener("change", function () {
+    var file = attachInput.files && attachInput.files[0];
+    if (!file) return;
+    if (file.type.indexOf("image/") !== 0) {
+      showConsoleError("That file isn't an image.");
+      attachInput.value = "";
+      return;
+    }
+    if (file.size > MAX_ATTACH_BYTES) {
+      showConsoleError("That image is too large (max 5MB).");
+      attachInput.value = "";
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      attachedImage = { dataUrl: reader.result, name: file.name };
+      renderAttachmentPreview();
+    };
+    reader.onerror = function () {
+      showConsoleError("Couldn't read that file.");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  attachmentRemove.addEventListener("click", function () {
+    attachedImage = null;
+    attachInput.value = "";
+    renderAttachmentPreview();
+  });
+
+  function escapeForAttr(s) { return s; } // reserved for future use; DOM setters used instead of raw HTML
+
+  function inlineNodesForLine(line, container) {
+    // Handle markdown images first: ![alt](url)
+    var imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgMatch) {
+      var wrap = el("div", { class: "console-image-wrap" });
+      var img = el("img", { class: "console-image", alt: imgMatch[1] });
+      img.src = imgMatch[2];
+      img.loading = "lazy";
+      wrap.appendChild(img);
+      container.appendChild(wrap);
+      return;
+    }
+
+    // Dominant-color lines from photo analysis: render as real swatches, not hex text.
+    if (line.indexOf("🎨 Dominant colors:") === 0) {
+      var hexCodes = line.match(/#[0-9A-Fa-f]{6}/g);
+      if (hexCodes && hexCodes.length) {
+        var row = el("div", { class: "color-swatch-row" });
+        hexCodes.forEach(function (hex) {
+          var swatchWrap = el("span", { class: "color-swatch-wrap" });
+          var dot = el("span", { class: "color-swatch" });
+          dot.style.background = hex;
+          dot.title = hex;
+          swatchWrap.appendChild(dot);
+          swatchWrap.appendChild(el("span", { class: "color-swatch-label", text: hex }));
+          row.appendChild(swatchWrap);
+        });
+        container.appendChild(row);
+        return;
+      }
+    }
+
+    var p = el("p");
+    if (line.indexOf("📌") === 0) {
+      p.className = "howto-note";
+    }
+    // Handle **bold** and *italic* segments as plain text nodes + <strong>/<em>, no raw HTML involved.
+    var parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+    parts.forEach(function (part) {
+      if (!part) return;
+      var boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
+      var italicMatch = !boldMatch && part.match(/^\*([^*]+)\*$/);
+      if (boldMatch) {
+        p.appendChild(el("strong", { text: boldMatch[1] }));
+      } else if (italicMatch) {
+        p.appendChild(el("em", { text: italicMatch[1] }));
+      } else {
+        p.appendChild(document.createTextNode(part));
+      }
+    });
+    container.appendChild(p);
+  }
+
+  function appendProse(text, container) {
+    var trimmed = text.replace(/^\n+|\n+$/g, "");
+    if (!trimmed.trim()) return;
+    var proseDiv = el("div", { class: "prose" });
+    trimmed.split("\n").forEach(function (line) {
+      if (line.trim() === "") return;
+      inlineNodesForLine(line.trim(), proseDiv);
+    });
+    container.appendChild(proseDiv);
+  }
+
+  function copyIconSvg() {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", "9"); rect.setAttribute("y", "9");
+    rect.setAttribute("width", "13"); rect.setAttribute("height", "13"); rect.setAttribute("rx", "2");
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1");
+    svg.appendChild(rect);
+    svg.appendChild(path);
+    return svg;
+  }
+
+  function appendCodePanel(code, titleInfo, container) {
+    var panel = el("div", { class: "code-panel" });
+    var head = el("div", { class: "code-panel-head" });
+    var title = el("span", {
+      class: "code-panel-title",
+      text: titleInfo ? (titleInfo.name + " · " + titleInfo.type + " · " + titleInfo.path) : "Lua"
+    });
+    var copyBtn = el("button", { class: "copy-btn", type: "button" });
+    copyBtn.appendChild(copyIconSvg());
+    var copyLabel = el("span", { text: "Copy" });
+    copyBtn.appendChild(copyLabel);
+    copyBtn.addEventListener("click", function () {
+      if (!navigator.clipboard) { copyLabel.textContent = "Unavailable"; return; }
+      navigator.clipboard.writeText(code).then(function () {
+        copyLabel.textContent = "Copied";
+        setTimeout(function () { copyLabel.textContent = "Copy"; }, 1500);
+      }).catch(function () {
+        copyLabel.textContent = "Failed";
+        setTimeout(function () { copyLabel.textContent = "Copy"; }, 1500);
+      });
+    });
+    head.appendChild(title);
+    head.appendChild(copyBtn);
+
+    var pre = el("pre");
+    var codeEl = el("code", { text: code });
+    pre.appendChild(codeEl);
+
+    panel.appendChild(head);
+    panel.appendChild(pre);
+    container.appendChild(panel);
+  }
+
+  function renderResponse(rawText) {
+    consoleOutput.innerHTML = "";
+    var regex = /```lua\n([\s\S]*?)```/g;
+    var lastIndex = 0;
+    var match;
+    var found = false;
+
+    while ((match = regex.exec(rawText)) !== null) {
+      found = true;
+      var before = rawText.slice(lastIndex, match.index);
+      var titleInfo = null;
+
+      var lines = before.split("\n");
+      var lastLine = "";
+      for (var i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].trim() !== "") { lastLine = lines[i].trim(); break; }
+      }
+      var titleMatch = lastLine.match(/^###\s+(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)$/);
+      if (titleMatch) {
+        titleInfo = { name: titleMatch[1], type: titleMatch[2], path: titleMatch[3] };
+        var idx = before.lastIndexOf(lastLine);
+        before = before.slice(0, idx);
+      }
+
+      appendProse(before, consoleOutput);
+      appendCodePanel(match[1].trim(), titleInfo, consoleOutput);
+      lastIndex = regex.lastIndex;
+    }
+
+    var after = rawText.slice(lastIndex);
+    appendProse(after, consoleOutput);
+
+    if (!found && !consoleOutput.textContent.trim()) {
+      appendProse(rawText, consoleOutput);
+    }
+  }
+
+  function spawnSparks() {
+    if (reducedMotion) return;
+    for (var i = 0; i < 8; i++) {
+      var spark = el("span", { class: "spark" });
+      var angle = Math.random() * Math.PI * 2;
+      var dist = 20 + Math.random() * 24;
+      spark.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      spark.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      strikeBtn.appendChild(spark);
+      (function (node) {
+        setTimeout(function () { node.remove(); }, 600);
+      })(spark);
+    }
+  }
+
+  consoleForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var message = consoleInput.value.trim();
+    if (!message && !attachedImage) return;
+
+    spawnSparks();
+    strikeBtn.disabled = true;
+    strikeBtnText.textContent = "Heating…";
+    consoleOutput.innerHTML = "";
+
+    var payload = { message: message, studio_token: "dashboard-preview" };
+    if (attachedImage) payload.image = attachedImage.dataUrl;
+
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) {
+        renderResponse(data.response || "");
+        loadHealth();
+        attachedImage = null;
+        attachInput.value = "";
+        renderAttachmentPreview();
+      })
+      .catch(function () {
+        showConsoleError("The forge didn't respond. Make sure server.py is running and this page is being served from it — not previewed standalone.");
+      })
+      .finally(function () {
+        strikeBtn.disabled = false;
+        strikeBtnText.textContent = "Generate";
+      });
+  });
+
+  /* ---------------- Tool Rack ---------------- */
+
+  var FALLBACK_TEMPLATES = [
+    "leaderstats", "inventory", "quest", "plugin",
+    "crafting", "skilltree", "dialogue", "pet", "mount", "vehicle", "gun", "melee",
+    "magic", "building", "farming", "fishing", "mining", "trading", "guild", "party",
+    "achievement", "daily reward", "lootbox", "shop", "bank", "auction", "mail",
+    "chat filter", "voice", "spectator", "replay", "anticheat", "admin", "ban",
+    "report", "appeal", "ticket", "event", "battle pass", "season", "clan war",
+    "arena", "dungeon", "boss", "wave survival", "parkour", "racing", "tycoon",
+    "simulator", "clicker", "idle", "incremental", "merge", "match3", "board game",
+    "card game", "dice", "slot", "wheel", "cooking", "alchemy", "enchanting",
+    "smithing", "tailoring", "animal husbandry", "woodcutting", "foraging", "treasure map",
+    "riddle", "puzzle", "maze", "platformer", "shooting gallery", "rhythm", "quiz",
+    "3d castle", "3d house", "3d tower", "3d bridge", "3d tree", "3d maze", "3d hills", "3d island", "3d biome"
+  ];
+
+  var chipsSystems = document.getElementById("chipsSystems");
+  var chipsBuilders = document.getElementById("chipsBuilders");
+  var rackCount = document.getElementById("rackCount");
+  var rackSearch = document.getElementById("rackSearch");
+
+  function buildRack(names) {
+    chipsSystems.innerHTML = "";
+    chipsBuilders.innerHTML = "";
+    rackCount.textContent = names.length;
+
+    names.forEach(function (name) {
+      var isBuilder = name.indexOf("3d ") === 0;
+      var chip = el("button", { class: "chip", type: "button", text: name });
+      chip.addEventListener("click", function () {
+        var prompt = isBuilder ? "build a " + name.slice(3) : name;
+        consoleInput.value = prompt;
+        consoleInput.focus();
+        consoleInput.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+      });
+      (isBuilder ? chipsBuilders : chipsSystems).appendChild(chip);
+    });
+  }
+
+  buildRack(FALLBACK_TEMPLATES);
+
+  fetch("/api/templates")
+    .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+    .then(function (data) {
+      if (data.templates && data.templates.length) buildRack(data.templates);
+    })
+    .catch(function () { /* keep fallback list already rendered */ });
+
+  rackSearch.addEventListener("input", function () {
+    var q = rackSearch.value.trim().toLowerCase();
+    document.querySelectorAll(".chip").forEach(function (chip) {
+      var match = chip.textContent.toLowerCase().indexOf(q) !== -1;
+      if (match) chip.removeAttribute("hidden"); else chip.setAttribute("hidden", "");
+    });
+  });
+
+  /* ---------------- Placement guide accordion ---------------- */
+
+  var GUIDE_ITEMS = [
+    { title: "Workspace", body: "Parts and models that are physically visible in the game world." },
+    { title: "ServerScriptService", body: "Server Scripts. Invisible to clients (and exploiters). Put your real game logic here." },
+    { title: "ServerStorage", body: "Server-only assets not currently in the game world — item templates, enemy models to clone in, etc." },
+    { title: "ReplicatedStorage", body: "Shared ModuleScripts, RemoteEvents/RemoteFunctions, and any assets both client and server need." },
+    { title: "StarterPlayer → StarterPlayerScripts", body: "LocalScripts that run once per player when they join — UI logic, input handling." },
+    { title: "StarterPlayer → StarterCharacterScripts", body: "LocalScripts that run every time a character respawns." },
+    { title: "StarterGui", body: "ScreenGuis and their LocalScripts." }
+  ];
+
+  var accordion = document.getElementById("accordion");
+
+  function chevronSvg() {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    var poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    poly.setAttribute("points", "6 9 12 15 18 9");
+    svg.appendChild(poly);
+    return svg;
+  }
+
+  GUIDE_ITEMS.forEach(function (item, i) {
+    var itemDiv = el("div", { class: "accordion-item" });
+    var triggerId = "guide-trigger-" + i;
+    var panelId = "guide-panel-" + i;
+
+    var trigger = el("button", {
+      class: "accordion-trigger", type: "button", id: triggerId,
+      "aria-expanded": "false", "aria-controls": panelId
+    });
+    trigger.appendChild(el("span", { text: item.title }));
+    trigger.appendChild(chevronSvg());
+
+    var wrap = el("div", { class: "accordion-panel-wrap" });
+    var panel = el("div", { class: "accordion-panel", id: panelId, role: "region", "aria-labelledby": triggerId });
+    panel.appendChild(el("p", { text: item.body }));
+    wrap.appendChild(panel);
+
+    trigger.addEventListener("click", function () {
+      var isOpen = itemDiv.classList.toggle("open");
+      trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    itemDiv.appendChild(trigger);
+    itemDiv.appendChild(wrap);
+    accordion.appendChild(itemDiv);
+  });
+
+})();
+</script>
 </body>
 </html>
