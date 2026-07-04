@@ -647,8 +647,12 @@
       <div class="chip-grid" id="chipsSystems"></div>
     </div>
     <div class="rack-group">
-      <h3>3D Builders</h3>
+      <h3>3D Structures</h3>
       <div class="chip-grid" id="chipsBuilders"></div>
+    </div>
+    <div class="rack-group">
+      <h3>3D Weapons</h3>
+      <div class="chip-grid" id="chipsWeapons"></div>
     </div>
   </section>
 
@@ -1035,29 +1039,36 @@
     "card game", "dice", "slot", "wheel", "cooking", "alchemy", "enchanting",
     "smithing", "tailoring", "animal husbandry", "woodcutting", "foraging", "treasure map",
     "riddle", "puzzle", "maze", "platformer", "shooting gallery", "rhythm", "quiz",
-    "3d castle", "3d house", "3d tower", "3d bridge", "3d tree", "3d maze", "3d hills", "3d island", "3d biome"
+    "3d castle", "3d house", "3d tower", "3d bridge", "3d tree", "3d maze", "3d hills", "3d island", "3d biome",
+    "3d scythe", "3d sword", "3d axe", "3d spear", "3d mace", "3d bow", "3d dagger", "3d staff", "3d shield"
   ];
+
+  var WEAPON_NAMES = ["scythe", "sword", "axe", "spear", "mace", "bow", "dagger", "staff", "shield"];
 
   var chipsSystems = document.getElementById("chipsSystems");
   var chipsBuilders = document.getElementById("chipsBuilders");
+  var chipsWeapons = document.getElementById("chipsWeapons");
   var rackCount = document.getElementById("rackCount");
   var rackSearch = document.getElementById("rackSearch");
 
   function buildRack(names) {
     chipsSystems.innerHTML = "";
     chipsBuilders.innerHTML = "";
+    chipsWeapons.innerHTML = "";
     rackCount.textContent = names.length;
 
     names.forEach(function (name) {
-      var isBuilder = name.indexOf("3d ") === 0;
+      var is3d = name.indexOf("3d ") === 0;
+      var isWeapon = is3d && WEAPON_NAMES.indexOf(name.slice(3)) !== -1;
       var chip = el("button", { class: "chip", type: "button", text: name });
       chip.addEventListener("click", function () {
-        var prompt = isBuilder ? "build a " + name.slice(3) : name;
+        var prompt = is3d ? "build a " + name.slice(3) : name;
         consoleInput.value = prompt;
         consoleInput.focus();
         consoleInput.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
       });
-      (isBuilder ? chipsBuilders : chipsSystems).appendChild(chip);
+      var target = isWeapon ? chipsWeapons : (is3d ? chipsBuilders : chipsSystems);
+      target.appendChild(chip);
     });
   }
 
