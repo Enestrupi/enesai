@@ -194,6 +194,7 @@
     color: var(--ash-dim);
   }
   .section-sub span { color: var(--steel); font-family: var(--mono); }
+  .section-sub a { color: var(--steel); }
 
   /* ---------- Anvil Console ---------- */
   .console-form {
@@ -438,6 +439,261 @@
     white-space: pre;
   }
 
+  /* ---------- Fuel Lines (LLM key management) ---------- */
+  .keys-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+  }
+
+  .token-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  #bridgeTokenInput {
+    flex: 1 1 200px;
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--ash);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 11px;
+  }
+  #bridgeTokenInput::placeholder { color: var(--ash-dim); }
+
+  .ghost-btn {
+    background: transparent;
+    border: 1px solid var(--steel-dim);
+    color: var(--steel);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .ghost-btn:hover { border-color: var(--steel); color: var(--ash); }
+  .ghost-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .key-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .key-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .key-row-main { flex: 1 1 180px; min-width: 0; }
+  .key-row-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ash);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .key-row-meta {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ash-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .key-row-warning {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #f0b199;
+    margin-top: 3px;
+  }
+  .key-badge {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--ash-dim);
+    flex-shrink: 0;
+  }
+  .key-badge.ready { color: var(--steel); border-color: var(--steel-dim); }
+  .key-badge.cooldown { color: #f0b199; border-color: rgba(196, 58, 31, 0.35); }
+  .key-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .key-row-actions button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ash-dim);
+    font-size: 11.5px;
+    padding: 5px 9px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .key-row-actions button:hover { color: var(--ash); border-color: var(--ash-dim); }
+  .key-row-actions button.danger:hover { color: #f0b199; border-color: rgba(196, 58, 31, 0.4); }
+
+  .keys-empty {
+    font-size: 13px;
+    color: var(--ash-dim);
+    padding: 10px 0;
+  }
+
+  .add-key-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .add-key-form input {
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--ash);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 11px;
+  }
+  #newKeyInput { flex: 1 1 200px; }
+  #newKeyLabel { flex: 1 1 110px; }
+  #newKeyModel { flex: 1 1 150px; }
+  #newKeyBaseUrl { flex: 1 1 260px; }
+
+  #providerSelect {
+    flex: 1 1 150px;
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--ash);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 9px 11px;
+    cursor: pointer;
+  }
+
+  .provider-note {
+    font-size: 12.5px;
+    color: var(--ash-dim);
+    margin: 10px 0 0;
+    line-height: 1.4;
+  }
+  .provider-note a { color: var(--steel); }
+  .provider-note.not-free { color: #f0b199; }
+
+  .keys-status {
+    font-size: 12.5px;
+    margin-top: 10px;
+    min-height: 1em;
+  }
+  .keys-status.error { color: #f0b199; }
+  .keys-status.ok { color: var(--steel); }
+
+  /* ---------- Inline model picker (in the console, switches which key/model goes first) ---------- */
+  .model-picker-row {
+    position: relative;
+    margin-top: 10px;
+  }
+  .model-picker-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--border);
+    color: var(--ash-dim);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    max-width: 100%;
+  }
+  .model-picker-pill:hover { border-color: var(--steel-dim); color: var(--ash); }
+  .model-picker-pill svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  .model-picker-pill[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .model-picker-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 240px;
+  }
+  .model-picker-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--steel-dim);
+    flex-shrink: 0;
+  }
+  .model-picker-dot.ready { background: var(--ember); }
+  .model-picker-dot.cooldown { background: #f0b199; }
+
+  .model-picker-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 250px;
+    max-width: 320px;
+    background: var(--bg-panel-raised);
+    border: 1px solid var(--steel-dim);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    z-index: 5;
+  }
+  .model-picker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--ash);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    text-align: left;
+    padding: 8px 9px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .model-picker-item:hover { background: var(--bg-panel); }
+  .model-picker-item-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .model-picker-hint {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ash-dim);
+    padding: 8px 9px;
+    line-height: 1.4;
+  }
+  .model-picker-hint button {
+    display: block;
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid var(--steel-dim);
+    color: var(--steel);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
   /* ---------- Tool Rack ---------- */
   .rack-search {
     position: relative;
@@ -573,9 +829,9 @@
   <header class="site-header">
     <div class="wordmark-row">
       <div class="wordmark">FORGE<span class="wordmark-accent">AI</span></div>
-      <div class="version-badge">v16.1 · GENIUS EDITION</div>
+      <div class="version-badge">v18.0 · GENIUS + LLM KEYS</div>
     </div>
-    <p class="tagline">Your Roblox AI backend — self-hosted, no API key required.</p>
+    <p class="tagline">Your Roblox AI backend — self-hosted, works with zero API keys, or add free ones for a smarter fallback.</p>
     <div class="status-row">
       <span class="status-pill">
         <span class="status-dot" id="statusDot"></span>
@@ -624,6 +880,14 @@
           </button>
           <input type="file" id="attachInput" accept="image/*" hidden>
         </div>
+        <div class="model-picker-row">
+          <button type="button" class="model-picker-pill" id="modelPickerPill" aria-haspopup="true" aria-expanded="false">
+            <span class="model-picker-dot" id="modelPickerDot"></span>
+            <span class="model-picker-label" id="modelPickerLabel">Checking…</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="model-picker-menu" id="modelPickerMenu" hidden></div>
+        </div>
       </div>
       <button type="submit" class="strike-btn" id="strikeBtn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
@@ -631,6 +895,30 @@
       </button>
     </form>
     <div class="console-output" id="consoleOutput" aria-live="polite"></div>
+  </section>
+
+  <section aria-labelledby="keysTitle">
+    <div class="section-head">
+      <h2 id="keysTitle">Fuel Lines</h2>
+      <p class="section-sub">API keys that power the LLM fallback for anything outside the templates above. Free ones at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> — add a few and Forge rotates between them automatically when one hits a rate limit, or switch manually below.</p>
+    </div>
+    <div class="keys-panel">
+      <div class="token-row">
+        <input type="password" id="bridgeTokenInput" placeholder="Bridge token (same as your Studio plugin)" autocomplete="off">
+        <button type="button" class="ghost-btn" id="loadKeysBtn">Load Keys</button>
+      </div>
+      <div class="key-list" id="keyList"></div>
+      <form class="add-key-form" id="addKeyForm">
+        <input type="password" id="newKeyInput" placeholder="Paste API key" autocomplete="off" required>
+        <select id="providerSelect"></select>
+        <input type="text" id="newKeyLabel" placeholder="Label (optional)">
+        <input type="text" id="newKeyModel" placeholder="Model">
+        <input type="text" id="newKeyBaseUrl" placeholder="Base URL (custom endpoints only)" hidden>
+        <button type="submit" class="ghost-btn">Add Key</button>
+      </form>
+      <p class="provider-note" id="providerNote"></p>
+      <p class="keys-status" id="keysStatus"></p>
+    </div>
   </section>
 
   <section aria-labelledby="rackTitle">
@@ -666,7 +954,7 @@
   </section>
 
   <footer>
-    Forge AI Genius — deterministic template engine, zero external API keys.
+    Forge AI Genius — deterministic template engine + optional LLM fallback, bring your own free keys.
   </footer>
 
 </div>
@@ -731,9 +1019,9 @@
     liveIndicator.textContent = "○ last known snapshot";
   }
 
-  function setOnline() {
+  function setOnline(llmConfigured, llmKeys) {
     statusDot.classList.add("lit");
-    statusText.textContent = "Forge is online";
+    statusText.textContent = "Forge is online" + (llmConfigured ? " · LLM fallback ON (" + llmKeys + " key" + (llmKeys === 1 ? "" : "s") + ")" : " · LLM fallback OFF");
     liveIndicator.textContent = "● live";
   }
 
@@ -741,11 +1029,12 @@
     fetch(api("/api/health"))
       .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
       .then(function (data) {
-        setOnline();
+        setOnline(data.llm_configured, data.llm_keys || 0);
         statCaption.textContent = "Live numbers from your running server.";
         countUp(statTemplates, parseInt(statTemplates.textContent, 10), data.templates, 500);
         countUp(statKnowledge, parseInt(statKnowledge.textContent, 10), data.knowledge_base, 500);
         countUp(statStudios, parseInt(statStudios.textContent, 10), data.studios_connected, 500);
+        renderModelPicker(null, data);
       })
       .catch(function () {
         setOffline("Forge unreachable — showing snapshot");
@@ -1023,6 +1312,248 @@
         strikeBtn.disabled = false;
         strikeBtnText.textContent = "Generate";
       });
+  });
+
+  /* ---------------- Fuel Lines (LLM key management) ---------------- */
+
+  var bridgeTokenInput = document.getElementById("bridgeTokenInput");
+  var loadKeysBtn = document.getElementById("loadKeysBtn");
+  var keyList = document.getElementById("keyList");
+  var addKeyForm = document.getElementById("addKeyForm");
+  var newKeyInput = document.getElementById("newKeyInput");
+  var newKeyLabel = document.getElementById("newKeyLabel");
+  var newKeyModel = document.getElementById("newKeyModel");
+  var newKeyBaseUrl = document.getElementById("newKeyBaseUrl");
+  var providerSelect = document.getElementById("providerSelect");
+  var providerNote = document.getElementById("providerNote");
+  var keysStatus = document.getElementById("keysStatus");
+  var providers = {}; // filled from /api/keys/providers, keyed by provider id
+
+  function setKeysStatus(msg, isError) {
+    keysStatus.textContent = msg || "";
+    keysStatus.className = "keys-status" + (msg ? (isError ? " error" : " ok") : "");
+  }
+
+  function authHeaders() {
+    return { "Content-Type": "application/json", "X-Bridge-Token": bridgeTokenInput.value.trim() };
+  }
+
+  function applyProviderSelection() {
+    var id = providerSelect.value;
+    var p = providers[id];
+    if (!p) return;
+
+    newKeyModel.value = p.default_model || "";
+    newKeyModel.placeholder = p.default_model ? p.default_model : "Model (blank auto-rotates free ones)";
+    newKeyBaseUrl.hidden = id !== "custom";
+    if (id === "custom") newKeyBaseUrl.value = "";
+
+    providerNote.className = "provider-note" + (p.free === false ? " not-free" : "");
+    var noteText = (p.note || "") + "  ";
+    providerNote.textContent = noteText;
+    if (p.signup_url) {
+      var link = el("a", { href: p.signup_url, target: "_blank", rel: "noopener", text: "Get a key →" });
+      providerNote.appendChild(link);
+    }
+  }
+
+  function loadProviders() {
+    fetch(api("/api/keys/providers"))
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) {
+        providers = data.providers || {};
+        providerSelect.innerHTML = "";
+        Object.keys(providers).forEach(function (id) {
+          var p = providers[id];
+          providerSelect.appendChild(el("option", { value: id, text: p.display_name + (p.free ? "" : " (paid)") }));
+        });
+        providerSelect.appendChild(el("option", { value: "custom", text: "Custom / other" }));
+        applyProviderSelection();
+      })
+      .catch(function () {
+        // Backend not reachable yet - "custom" alone still lets the form work
+        providerSelect.innerHTML = "";
+        providerSelect.appendChild(el("option", { value: "custom", text: "Custom / other" }));
+        newKeyBaseUrl.hidden = false;
+      });
+  }
+  providerSelect.addEventListener("change", applyProviderSelection);
+  loadProviders();
+
+  function renderKeys(keys) {
+    keyList.innerHTML = "";
+    if (!keys || !keys.length) {
+      keyList.appendChild(el("p", { class: "keys-empty", text: "No keys loaded yet — the LLM fallback is off until you add one." }));
+      return;
+    }
+    keys.forEach(function (k) {
+      var row = el("div", { class: "key-row" });
+      var main = el("div", { class: "key-row-main" });
+      main.appendChild(el("div", { class: "key-row-label", text: k.label + "  ·  " + k.api_key_masked }));
+      main.appendChild(el("div", { class: "key-row-meta", text: k.model + "  ·  " + k.source }));
+      if (k.warning) main.appendChild(el("div", { class: "key-row-warning", text: "⚠ " + k.warning }));
+      row.appendChild(main);
+      row.appendChild(el("span", { class: "key-badge " + k.status, text: k.status }));
+
+      var actions = el("div", { class: "key-row-actions" });
+      var useBtn = el("button", { type: "button", text: "Move to Top" });
+      useBtn.addEventListener("click", function () { prioritizeKey(k.id); });
+      var removeBtn = el("button", { type: "button", class: "danger", text: "Remove" });
+      removeBtn.addEventListener("click", function () { removeKey(k.id); });
+      actions.appendChild(useBtn);
+      actions.appendChild(removeBtn);
+      row.appendChild(actions);
+
+      keyList.appendChild(row);
+    });
+  }
+
+  function loadKeys() {
+    if (!bridgeTokenInput.value.trim()) {
+      setKeysStatus("Enter your bridge token first.", true);
+      return;
+    }
+    setKeysStatus("Loading…", false);
+    fetch(api("/api/keys"), { headers: authHeaders() })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("Wrong bridge token.");
+        if (!r.ok) throw new Error("bad status");
+        return r.json();
+      })
+      .then(function (data) {
+        renderKeys(data.keys);
+        renderModelPicker(data.keys);
+        setKeysStatus(data.keys.length + " key(s) loaded.", false);
+      })
+      .catch(function (err) {
+        setKeysStatus(err.message === "Wrong bridge token." ? err.message : "Couldn't load keys — check the token and that the server is running.", true);
+      });
+  }
+
+  function prioritizeKey(id) {
+    fetch(api("/api/keys/prioritize"), { method: "POST", headers: authHeaders(), body: JSON.stringify({ id: id }) })
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) { renderKeys(data.keys); renderModelPicker(data.keys); setKeysStatus("Switched — that key goes first now.", false); })
+      .catch(function () { setKeysStatus("Couldn't switch keys.", true); });
+  }
+
+  function removeKey(id) {
+    fetch(api("/api/keys"), { method: "DELETE", headers: authHeaders(), body: JSON.stringify({ id: id }) })
+      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function (data) { renderKeys(data.keys); renderModelPicker(data.keys); setKeysStatus("Removed.", false); loadHealth(); })
+      .catch(function () { setKeysStatus("Couldn't remove that key.", true); });
+  }
+
+  loadKeysBtn.addEventListener("click", loadKeys);
+
+  addKeyForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!bridgeTokenInput.value.trim()) {
+      setKeysStatus("Enter your bridge token first.", true);
+      return;
+    }
+    var payload = {
+      api_key: newKeyInput.value.trim(),
+      provider: providerSelect.value,
+      label: newKeyLabel.value.trim() || undefined,
+      model: newKeyModel.value.trim() || undefined,
+      base_url: (providerSelect.value === "custom" ? newKeyBaseUrl.value.trim() : "") || undefined
+    };
+    fetch(api("/api/keys"), { method: "POST", headers: authHeaders(), body: JSON.stringify(payload) })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("Wrong bridge token.");
+        if (!r.ok) throw new Error("bad status");
+        return r.json();
+      })
+      .then(function (data) {
+        renderKeys(data.keys);
+        renderModelPicker(data.keys);
+        setKeysStatus("Key added.", false);
+        newKeyInput.value = ""; newKeyLabel.value = ""; newKeyBaseUrl.value = "";
+        applyProviderSelection();
+        loadHealth();
+      })
+      .catch(function (err) { setKeysStatus(err.message === "Wrong bridge token." ? err.message : "Couldn't add that key.", true); });
+  });
+
+  /* ---------------- Inline model picker (compact, lives in the console) ---------------- */
+  // Lemonade-style pill showing "which model answers next" with a dropdown to
+  // switch. Shares data with the Fuel Lines panel above rather than needing
+  // its own token entry - once you Load Keys there, this fills in too.
+
+  var modelPickerPill = document.getElementById("modelPickerPill");
+  var modelPickerDot = document.getElementById("modelPickerDot");
+  var modelPickerLabel = document.getElementById("modelPickerLabel");
+  var modelPickerMenu = document.getElementById("modelPickerMenu");
+  var lastKnownKeys = null; // null = never loaded this session, [] = loaded but empty
+
+  function closeModelPicker() {
+    modelPickerMenu.hidden = true;
+    modelPickerPill.setAttribute("aria-expanded", "false");
+  }
+
+  function renderModelPicker(keys, healthFallback) {
+    if (keys) lastKnownKeys = keys;
+
+    if (lastKnownKeys && lastKnownKeys.length) {
+      var top = lastKnownKeys[0];
+      modelPickerLabel.textContent = top.label + " · " + top.model;
+      modelPickerDot.className = "model-picker-dot " + top.status;
+    } else if (healthFallback && healthFallback.llm_configured) {
+      modelPickerLabel.textContent = healthFallback.llm_keys + " key(s) · tap to view";
+      modelPickerDot.className = "model-picker-dot ready";
+    } else if (lastKnownKeys) {
+      modelPickerLabel.textContent = "No keys · templates only";
+      modelPickerDot.className = "model-picker-dot";
+    } else {
+      modelPickerLabel.textContent = "No AI key · templates only";
+      modelPickerDot.className = "model-picker-dot";
+    }
+
+    modelPickerMenu.innerHTML = "";
+    if (lastKnownKeys && lastKnownKeys.length) {
+      lastKnownKeys.forEach(function (k) {
+        var item = el("button", { type: "button", class: "model-picker-item" });
+        item.appendChild(el("span", { class: "model-picker-dot " + k.status }));
+        item.appendChild(el("span", { class: "model-picker-item-text", text: k.label + " · " + k.model }));
+        item.addEventListener("click", function () {
+          prioritizeKey(k.id);
+          closeModelPicker();
+        });
+        modelPickerMenu.appendChild(item);
+      });
+    } else {
+      var hint = el("div", { class: "model-picker-hint" });
+      hint.appendChild(document.createTextNode(
+        lastKnownKeys ? "No keys added yet — templates still work, this just adds AI answers on top." : "Enter your bridge token in Fuel Lines below to see and switch models."
+      ));
+      var goBtn = el("button", { type: "button", text: "Go to Fuel Lines" });
+      goBtn.addEventListener("click", function () {
+        closeModelPicker();
+        document.getElementById("keysTitle").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+        bridgeTokenInput.focus();
+      });
+      hint.appendChild(goBtn);
+      modelPickerMenu.appendChild(hint);
+    }
+  }
+
+  modelPickerPill.addEventListener("click", function (e) {
+    e.stopPropagation();
+    var willOpen = modelPickerMenu.hidden;
+    if (willOpen) renderModelPicker(lastKnownKeys);
+    modelPickerMenu.hidden = !willOpen;
+    modelPickerPill.setAttribute("aria-expanded", willOpen ? "true" : "false");
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!modelPickerMenu.hidden && !modelPickerMenu.contains(e.target) && e.target !== modelPickerPill) {
+      closeModelPicker();
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modelPickerMenu.hidden) closeModelPicker();
   });
 
   /* ---------------- Tool Rack ---------------- */
