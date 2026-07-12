@@ -285,28 +285,28 @@
   <div class="eyebrow">Roblox Studio Bridge · Self-Hosted</div>
   <h1>FORGE <span>AI</span></h1>
   <p class="subtitle">
-    A keyless script forge for Roblox Studio — blueprints, procedural 3D building, a deep Lua/Luau
-    reference, and a composable builder for anything that doesn't fit a blueprint. No API keys,
+    A keyless script forge for Roblox Studio — a deep Lua/Luau reference plus a composable builder
+    that assembles every script fresh from extracted parameters. No curated snippets, no API keys,
     anywhere, ever.
   </p>
 </header>
 
 <main>
 
-  <div class="keyless-banner">⛓ 100% self-contained — no external API calls, no keys to configure, nothing that can rate-limit</div>
+  <div class="keyless-banner">⛓ 100% self-contained — no external API calls, no keys, no pre-written templates. Every script is assembled per-request.</div>
 
   <div class="status-strip" id="statusStrip">
     <div class="stat"><div class="label">Server</div><div class="value dead" id="statServer">checking…</div></div>
     <div class="stat"><div class="label">Studios Connected</div><div class="value" id="statStudios">–</div></div>
-    <div class="stat"><div class="label">Blueprints</div><div class="value" id="statTemplates">–</div></div>
+    <div class="stat"><div class="label">Recognized Names</div><div class="value" id="statTemplates">–</div></div>
     <div class="stat"><div class="label">Knowledge Entries</div><div class="value" id="statKnowledge">–</div></div>
   </div>
 
   <section>
-    <h2>Blueprint Library</h2>
-    <p class="desc">Every built-in system Forge AI can hand you directly, by name. Anything not on this list still gets built — see Live Test below — assembled from reusable pieces instead of a fixed match.</p>
+    <h2>Recognized Names</h2>
+    <p class="desc">Vocabulary the composer recognizes and will name things after — "admin", "shop", "castle", "sword". None of these return pre-written code; they're just names the feature-extractor knows, same as any other word you use in a request.</p>
     <div class="search-row">
-      <input id="templateSearch" type="text" placeholder="Filter blueprints… (e.g. admin, shop, sword)" />
+      <input id="templateSearch" type="text" placeholder="Filter recognized names… (e.g. admin, shop, sword)" />
     </div>
     <div class="chip-grid" id="templateChips">
       <span class="chip">loading…</span>
@@ -315,7 +315,7 @@
 
   <section>
     <h2>Live Test</h2>
-    <p class="desc">Talk to the same brain your Studio plugin talks to. Try a blueprint name ("admin system"), a knowledge question ("how do coroutines work"), or something unmatched ("make a friend system with a gui") to see the composable builder kick in.</p>
+    <p class="desc">Talk to the same brain your Studio plugin talks to. Every build request — recognized name or not — gets assembled fresh with a `-- TODO` marking the one part that needs real understanding of your game. Try "admin system", "how do coroutines work", or "make a friend system with a gui".</p>
     <div class="chat-box">
       <div class="chat-log" id="chatLog">
         <div class="msg bot">Ready. Ask for a system, a Lua concept, or describe something custom.</div>
