@@ -1,1682 +1,425 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Forge AI — Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forge AI — Control Room</title>
 <style>
-  :root {
-    --bg: #14110d;
-    --bg-panel: #1d1811;
-    --bg-panel-raised: #241e15;
-    --ember: #ff6a1a;
-    --ember-deep: #c43a1f;
-    --steel: #7ea0b2;
-    --steel-dim: #3e5561;
-    --ash: #ede6da;
-    --ash-dim: #9c9285;
-    --border: rgba(237, 230, 218, 0.09);
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 18px;
-    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  @font-face {
+    font-family: 'Anvil Display';
+    src: local('Oswald'), local('Arial Narrow Bold');
   }
-
+  :root{
+    --iron-black: #120f0d;
+    --iron-panel: #1c1815;
+    --iron-panel-light: #262019;
+    --iron-line: #3a3128;
+    --ember: #ff6a2b;
+    --ember-bright: #ffae42;
+    --slag: #8a7f6f;
+    --steel: #cfc6b8;
+    --white: #f5efe3;
+    --good: #6ecb7a;
+    --bad: #e8543f;
+  }
   * { box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: radial-gradient(1200px 700px at 15% -10%, #2a180c 0%, var(--iron-black) 55%);
+    color: var(--steel);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+  a { color: var(--ember-bright); }
 
-  html { -webkit-text-size-adjust: 100%; }
-
-  body {
-    margin: 0;
-    background:
-      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255, 106, 26, 0.14), transparent 60%),
-      var(--bg);
-    color: var(--ash);
-    font-family: var(--sans);
-    line-height: 1.5;
-    padding: 28px 20px 80px;
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; opacity: .05; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .page { max-width: 880px; margin: 0 auto; }
-
-  a { color: var(--ember); }
-
-  :focus-visible {
-    outline: 2px solid var(--ember);
-    outline-offset: 2px;
-    border-radius: 4px;
+  header {
+    position: relative; z-index: 1;
+    padding: 56px 32px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--iron-line);
+    overflow: hidden;
   }
-
-  /* ---------- Header ---------- */
-  .site-header { margin-bottom: 30px; }
-
-  .wordmark-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px 16px;
+  header::before{
+    content:"";
+    position:absolute; left:50%; top:-120px; width:640px; height:320px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(255,106,43,.35), rgba(255,106,43,0) 70%);
+    filter: blur(10px);
+    z-index: -1;
+    animation: flicker 5s ease-in-out infinite;
   }
-
-  .wordmark {
-    font-family: var(--sans);
-    font-weight: 900;
-    font-size: clamp(28px, 6vw, 38px);
-    letter-spacing: -0.01em;
+  @keyframes flicker {
+    0%,100% { opacity: .8; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: .28em;
     text-transform: uppercase;
-    color: var(--ash);
-  }
-  .wordmark-accent { color: var(--ember); }
-
-  .version-badge {
-    font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 0.06em;
-    color: var(--ash-dim);
-    border: 1px solid var(--border);
-    padding: 4px 9px;
-    border-radius: 999px;
-    white-space: nowrap;
+    color: var(--ember);
+    margin-bottom: 14px;
   }
-
-  .tagline {
-    margin: 8px 0 0;
-    color: var(--ash-dim);
-    font-size: 15px;
-    max-width: 46ch;
-  }
-
-  .status-row {
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    padding: 6px 12px 6px 10px;
-    border-radius: 999px;
-    font-size: 13px;
-    color: var(--ash-dim);
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--steel-dim);
-    flex-shrink: 0;
-  }
-  .status-dot.lit {
-    background: var(--ember);
-    box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.6);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .status-dot.lit { animation: ember-pulse 2.2s ease-in-out infinite; }
-  }
-  @keyframes ember-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 106, 26, 0.55); }
-    50% { box-shadow: 0 0 0 6px rgba(255, 106, 26, 0); }
-  }
-
-  .live-indicator {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--ash-dim);
-  }
-
-  /* ---------- Stat plates ---------- */
-  .stat-plates {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-
-  .plate {
-    position: relative;
-    background: linear-gradient(160deg, var(--bg-panel-raised), var(--bg-panel));
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 18px 16px;
-  }
-  .plate::before, .plate::after {
-    content: "";
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: rgba(237, 230, 218, 0.14);
-    top: 8px;
-  }
-  .plate::before { left: 8px; }
-  .plate::after { right: 8px; }
-
-  .plate-value {
-    font-family: var(--mono);
+  h1 {
+    font-family: 'Oswald', 'Arial Narrow', sans-serif;
     font-weight: 700;
-    font-size: clamp(24px, 5vw, 30px);
-    color: var(--ash);
-  }
-  .plate-label {
-    margin-top: 4px;
-    font-size: 12px;
-    color: var(--ash-dim);
-    letter-spacing: 0.02em;
-  }
-
-  .stat-caption {
-    font-size: 12px;
-    color: var(--ash-dim);
-    margin: 0 0 34px;
-  }
-
-  /* ---------- Section shell ---------- */
-  section { margin-bottom: 40px; }
-
-  .section-head { margin-bottom: 14px; }
-  .section-head h2 {
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    font-size: clamp(38px, 6vw, 64px);
     margin: 0;
-    font-size: 19px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    color: var(--white);
+    text-shadow: 0 0 40px rgba(255,106,43,.25);
   }
-  .section-sub {
-    margin: 4px 0 0;
-    font-size: 13.5px;
-    color: var(--ash-dim);
+  h1 span { color: var(--ember); }
+  .subtitle {
+    max-width: 620px;
+    margin: 18px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--slag);
   }
-  .section-sub span { color: var(--steel); font-family: var(--mono); }
-  .section-sub a { color: var(--steel); }
 
-  /* ---------- Anvil Console ---------- */
-  .console-form {
+  main {
+    position: relative; z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 100px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .status-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--iron-line);
+    border: 1px solid var(--iron-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--iron-panel);
+    padding: 20px 18px;
+    text-align: left;
+  }
+  .stat .label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--slag);
+  }
+  .stat .value {
+    font-family: 'Oswald', sans-serif;
+    font-size: 30px;
+    color: var(--white);
+    margin-top: 6px;
+  }
+  .stat .value.live::before{
+    content:"";
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    background: var(--good); margin-right:8px;
+    box-shadow: 0 0 8px var(--good);
+  }
+  .stat .value.dead::before{
+    content:"";
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    background: var(--bad); margin-right:8px;
+  }
+
+  section {
+    background: var(--iron-panel);
+    border: 1px solid var(--iron-line);
+    border-radius: 10px;
+    padding: 26px 26px 28px;
+  }
+  section h2 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: 18px;
+    color: var(--white);
+    margin: 0 0 6px;
     display: flex;
+    align-items: center;
     gap: 10px;
-    align-items: flex-end;
-    flex-wrap: wrap;
+  }
+  section h2::before {
+    content: "";
+    width: 3px; height: 18px;
+    background: var(--ember);
+  }
+  section .desc {
+    font-size: 13px;
+    color: var(--slag);
+    margin: 0 0 18px;
+    line-height: 1.55;
   }
 
-  .console-field {
-    flex: 1 1 280px;
+  .keyless-banner {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(90deg, rgba(110,203,122,.1), transparent);
+    border: 1px solid rgba(110,203,122,.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--good);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  input, textarea, button, select {
+    font-family: inherit;
+  }
+  .search-row { display:flex; gap: 10px; margin-bottom: 14px; }
+  .search-row input {
+    flex: 1;
+    background: var(--iron-panel-light);
+    border: 1px solid var(--iron-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--white);
+    font-size: 13px;
+  }
+  .search-row input:focus { outline: 1px solid var(--ember); border-color: var(--ember); }
+
+  .chip-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    max-height: 220px; overflow-y: auto;
+    padding-right: 4px;
+  }
+  .chip {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    background: var(--iron-panel-light);
+    border: 1px solid var(--iron-line);
+    color: var(--steel);
+    cursor: default;
+  }
+  .chip:hover { border-color: var(--ember); color: var(--white); }
+
+  .chat-box {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 380px;
+    background: var(--iron-panel-light);
+    border: 1px solid var(--iron-line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .chat-log {
+    overflow-y: auto;
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 0;
+    gap: 12px;
   }
+  .msg { max-width: 88%; padding: 10px 13px; border-radius: 8px; white-space: pre-wrap; }
+  .msg.user { align-self: flex-end; background: rgba(255,106,43,.14); border: 1px solid rgba(255,106,43,.3); color: var(--white); }
+  .msg.bot { align-self: flex-start; background: var(--iron-panel); border: 1px solid var(--iron-line); color: var(--steel); }
+  .msg code, .msg pre { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; }
+  .msg pre { background: #0d0b09; padding: 10px; border-radius: 6px; overflow-x: auto; }
 
-  .console-textarea-wrap { position: relative; }
-
-  #consoleInput {
-    width: 100%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    color: var(--ash);
-    font-family: var(--sans);
-    font-size: 14.5px;
-    padding: 12px 44px 12px 14px;
-    resize: vertical;
-    min-height: 48px;
+  .chat-input-row {
+    display: flex; gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--iron-line);
+    background: var(--iron-panel);
   }
-  #consoleInput::placeholder { color: var(--ash-dim); }
-
-  .attach-btn {
-    position: absolute;
-    right: 8px;
-    bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--ash-dim);
-    cursor: pointer;
-  }
-  .attach-btn:hover { color: var(--ember); background: rgba(255, 106, 26, 0.1); }
-  .attach-btn svg { width: 16px; height: 16px; }
-
-  .attachment-row { display: flex; }
-  .attachment-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg-panel);
-    border: 1px solid var(--steel-dim);
-    border-radius: var(--radius-sm);
-    padding: 5px 8px 5px 5px;
-    max-width: 100%;
-  }
-  .attachment-chip img {
-    width: 26px;
-    height: 26px;
-    border-radius: 5px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-  .attachment-chip span:not(.attachment-remove) {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--ash-dim);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 22ch;
-  }
-  .attachment-remove {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    background: transparent;
-    border: none;
-    color: var(--ash-dim);
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0;
-  }
-  .attachment-remove:hover { color: var(--ember); }
-  .attachment-remove svg { width: 13px; height: 13px; }
-
-  .strike-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--ember), var(--ember-deep));
-    color: #1a0e07;
-    font-weight: 700;
-    font-size: 14px;
-    border: none;
-    border-radius: var(--radius-md);
-    padding: 13px 18px;
-    cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
-    position: relative;
-    overflow: visible;
-  }
-  .strike-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255, 106, 26, 0.25); }
-  .strike-btn:active { transform: translateY(0); }
-  .strike-btn:disabled { opacity: 0.65; cursor: default; transform: none; box-shadow: none; }
-  .strike-btn svg { width: 15px; height: 15px; }
-
-  .spark {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--ember);
-    top: 50%;
-    left: 50%;
-    pointer-events: none;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .spark { animation: spark-fly 0.55s ease-out forwards; }
-  }
-  @keyframes spark-fly {
-    to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-  }
-
-  .console-output { margin-top: 18px; }
-  .console-output:empty { margin-top: 0; }
-
-  .console-hint {
-    font-size: 13px;
-    color: var(--ash-dim);
-    padding: 10px 0 0;
-  }
-  .console-error {
-    font-size: 13.5px;
-    color: #f0b199;
-    background: rgba(196, 58, 31, 0.12);
-    border: 1px solid rgba(196, 58, 31, 0.3);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-  }
-
-  .prose { font-size: 14.5px; color: var(--ash); }
-  .prose p { margin: 0 0 10px; }
-  .howto-note {
-    font-size: 13px;
-    color: var(--steel);
-    margin: 6px 0 10px;
-  }
-  .console-image-wrap { margin: 10px 0; }
-  .console-image {
-    max-width: 100%;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    display: block;
-  }
-
-  .color-swatch-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 4px 0 12px;
-  }
-  .color-swatch-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 4px 10px 4px 4px;
-  }
-  .color-swatch {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid rgba(237, 230, 218, 0.25);
-    flex-shrink: 0;
-  }
-  .color-swatch-label {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--ash-dim);
-  }
-
-  .code-panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--steel-dim);
-    border-radius: var(--radius-md);
-    margin: 10px 0 16px;
-    overflow: hidden;
-  }
-  .code-panel-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 12px;
-    background: rgba(126, 160, 178, 0.08);
-    border-bottom: 1px solid var(--border);
-  }
-  .code-panel-title {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--steel);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .copy-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--ash-dim);
-    font-size: 11.5px;
-    font-family: var(--sans);
-    padding: 4px 9px;
-    border-radius: 999px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .copy-btn:hover { color: var(--ash); border-color: var(--ash-dim); }
-  .copy-btn svg { width: 11px; height: 11px; }
-
-  .code-panel pre {
-    margin: 0;
-    padding: 14px;
-    overflow-x: auto;
-  }
-  .code-panel code {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--ash);
-    white-space: pre;
-  }
-
-  /* ---------- Fuel Lines (LLM key management) ---------- */
-  .keys-panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 16px;
-  }
-
-  .token-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-  #bridgeTokenInput {
-    flex: 1 1 200px;
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--ash);
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 9px 11px;
-  }
-  #bridgeTokenInput::placeholder { color: var(--ash-dim); }
-
-  .ghost-btn {
-    background: transparent;
-    border: 1px solid var(--steel-dim);
-    color: var(--steel);
-    font-size: 13px;
-    font-weight: 700;
-    border-radius: var(--radius-sm);
-    padding: 9px 14px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .ghost-btn:hover { border-color: var(--steel); color: var(--ash); }
-  .ghost-btn:disabled { opacity: 0.5; cursor: default; }
-
-  .key-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .key-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-  }
-  .key-row-main { flex: 1 1 180px; min-width: 0; }
-  .key-row-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ash);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .key-row-meta {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--ash-dim);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-top: 2px;
-  }
-  .key-row-warning {
-    font-family: var(--sans);
-    font-size: 11.5px;
-    color: #f0b199;
-    margin-top: 3px;
-  }
-  .key-badge {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    color: var(--ash-dim);
-    flex-shrink: 0;
-  }
-  .key-badge.ready { color: var(--steel); border-color: var(--steel-dim); }
-  .key-badge.cooldown { color: #f0b199; border-color: rgba(196, 58, 31, 0.35); }
-  .key-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .key-row-actions button {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--ash-dim);
-    font-size: 11.5px;
-    padding: 5px 9px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-  }
-  .key-row-actions button:hover { color: var(--ash); border-color: var(--ash-dim); }
-  .key-row-actions button.danger:hover { color: #f0b199; border-color: rgba(196, 58, 31, 0.4); }
-
-  .keys-empty {
-    font-size: 13px;
-    color: var(--ash-dim);
-    padding: 10px 0;
-  }
-
-  .add-key-form {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    border-top: 1px solid var(--border);
-    padding-top: 14px;
-  }
-  .add-key-form input {
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--ash);
-    font-family: var(--mono);
-    font-size: 13px;
-    padding: 9px 11px;
-  }
-  #newKeyInput { flex: 1 1 200px; }
-  #newKeyLabel { flex: 1 1 110px; }
-  #newKeyModel { flex: 1 1 150px; }
-  #newKeyBaseUrl { flex: 1 1 260px; }
-
-  #providerSelect {
-    flex: 1 1 150px;
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--ash);
-    font-family: var(--sans);
-    font-size: 13px;
-    padding: 9px 11px;
-    cursor: pointer;
-  }
-
-  .provider-note {
-    font-size: 12.5px;
-    color: var(--ash-dim);
-    margin: 10px 0 0;
-    line-height: 1.4;
-  }
-  .provider-note a { color: var(--steel); }
-  .provider-note.not-free { color: #f0b199; }
-
-  .keys-status {
-    font-size: 12.5px;
-    margin-top: 10px;
-    min-height: 1em;
-  }
-  .keys-status.error { color: #f0b199; }
-  .keys-status.ok { color: var(--steel); }
-
-  /* ---------- Inline model picker (in the console, switches which key/model goes first) ---------- */
-  .model-picker-row {
-    position: relative;
-    margin-top: 10px;
-  }
-  .model-picker-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--border);
-    color: var(--ash-dim);
-    font-family: var(--mono);
-    font-size: 12.5px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    cursor: pointer;
-    max-width: 100%;
-  }
-  .model-picker-pill:hover { border-color: var(--steel-dim); color: var(--ash); }
-  .model-picker-pill svg {
-    width: 12px;
-    height: 12px;
-    flex-shrink: 0;
-    transition: transform 0.15s ease;
-  }
-  .model-picker-pill[aria-expanded="true"] svg { transform: rotate(180deg); }
-  .model-picker-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 240px;
-  }
-  .model-picker-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--steel-dim);
-    flex-shrink: 0;
-  }
-  .model-picker-dot.ready { background: var(--ember); }
-  .model-picker-dot.cooldown { background: #f0b199; }
-
-  .model-picker-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    min-width: 250px;
-    max-width: 320px;
-    background: var(--bg-panel-raised);
-    border: 1px solid var(--steel-dim);
-    border-radius: var(--radius-md);
-    padding: 6px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-    z-index: 5;
-  }
-  .model-picker-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--ash);
-    font-family: var(--mono);
-    font-size: 12.5px;
-    text-align: left;
-    padding: 8px 9px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-  }
-  .model-picker-item:hover { background: var(--bg-panel); }
-  .model-picker-item-text {
+  .chat-input-row input {
     flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .model-picker-hint {
-    font-family: var(--sans);
-    font-size: 12.5px;
-    color: var(--ash-dim);
-    padding: 8px 9px;
-    line-height: 1.4;
-  }
-  .model-picker-hint button {
-    display: block;
-    margin-top: 8px;
-    background: transparent;
-    border: 1px solid var(--steel-dim);
-    color: var(--steel);
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 10px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-  }
-
-  /* ---------- Tool Rack ---------- */
-  .rack-search {
-    position: relative;
-    margin-bottom: 16px;
-  }
-  .rack-search svg {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 15px;
-    height: 15px;
-    color: var(--ash-dim);
-  }
-  #rackSearch {
-    width: 100%;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    color: var(--ash);
-    font-size: 14px;
-    padding: 10px 12px 10px 36px;
-  }
-  #rackSearch::placeholder { color: var(--ash-dim); }
-
-  .rack-group { margin-bottom: 16px; }
-  .rack-group h3 {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ash-dim);
-    margin: 0 0 10px;
-    font-weight: 700;
-  }
-
-  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-
-  .chip {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    color: var(--ash);
-    padding: 7px 12px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
-  }
-  .chip:hover {
-    transform: translateY(-2px);
-    border-color: var(--ember);
-    background: var(--bg-panel-raised);
-  }
-  .chip[hidden] { display: none; }
-
-  .rack-empty {
+    background: var(--iron-panel-light);
+    border: 1px solid var(--iron-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--white);
     font-size: 13px;
-    color: var(--ash-dim);
-    padding: 6px 0;
   }
-
-  /* ---------- Placement guide accordion ---------- */
-  .accordion { border-top: 1px solid var(--border); }
-  .accordion-item { border-bottom: 1px solid var(--border); }
-
-  .accordion-trigger {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: none;
+  .chat-input-row input:focus { outline: none; border-color: var(--ember); }
+  .chat-input-row button {
+    background: var(--ember);
+    color: #1a0d05;
     border: none;
-    color: var(--ash);
-    font-family: var(--sans);
-    font-size: 14.5px;
-    font-weight: 600;
-    padding: 13px 2px;
+    border-radius: 6px;
+    padding: 0 20px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: 12px;
     cursor: pointer;
-    text-align: left;
+    transition: background .15s;
   }
-  .accordion-trigger svg {
-    width: 15px;
-    height: 15px;
-    color: var(--ash-dim);
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
-    margin-left: 10px;
-  }
-  .accordion-item.open .accordion-trigger svg { transform: rotate(180deg); }
+  .chat-input-row button:hover { background: var(--ember-bright); }
+  .chat-input-row button:disabled { background: var(--slag); cursor: wait; }
 
-  .accordion-panel-wrap {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.25s ease;
-  }
-  .accordion-item.open .accordion-panel-wrap { grid-template-rows: 1fr; }
-  .accordion-panel {
-    overflow: hidden;
-    min-height: 0;
-  }
-  .accordion-panel p {
-    margin: 0 0 14px;
-    font-size: 13.5px;
-    color: var(--ash-dim);
-    padding-right: 20px;
-  }
-
-  .rule-of-thumb {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--steel);
-    font-family: var(--mono);
-  }
-
-  /* ---------- Footer ---------- */
   footer {
-    border-top: 1px solid var(--border);
-    padding-top: 18px;
-    font-size: 12.5px;
-    color: var(--ash-dim);
+    text-align: center;
+    padding: 30px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--slag);
+    border-top: 1px solid var(--iron-line);
   }
 
-  @media (max-width: 560px) {
-    .stat-plates { grid-template-columns: 1fr; }
-    .console-form { flex-direction: column; align-items: stretch; }
-    .strike-btn { justify-content: center; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--iron-line); border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    header::before { animation: none; }
   }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="noise"></div>
 
-  <header class="site-header">
-    <div class="wordmark-row">
-      <div class="wordmark">FORGE<span class="wordmark-accent">AI</span></div>
-      <div class="version-badge">v18.0 · GENIUS + LLM KEYS</div>
-    </div>
-    <p class="tagline">Your Roblox AI backend — self-hosted, works with zero API keys, or add free ones for a smarter fallback.</p>
-    <div class="status-row">
-      <span class="status-pill">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">Checking the forge…</span>
-      </span>
-      <span class="live-indicator" id="liveIndicator"></span>
-    </div>
-  </header>
+<header>
+  <div class="eyebrow">Roblox Studio Bridge · Self-Hosted</div>
+  <h1>FORGE <span>AI</span></h1>
+  <p class="subtitle">
+    A keyless script forge for Roblox Studio — blueprints, procedural 3D building, a deep Lua/Luau
+    reference, and a composable builder for anything that doesn't fit a blueprint. No API keys,
+    anywhere, ever.
+  </p>
+</header>
 
-  <section class="stat-plates" aria-label="Server statistics">
-    <div class="plate">
-      <div class="plate-value" id="statTemplates">84</div>
-      <div class="plate-label">Script Templates</div>
+<main>
+
+  <div class="keyless-banner">⛓ 100% self-contained — no external API calls, no keys to configure, nothing that can rate-limit</div>
+
+  <div class="status-strip" id="statusStrip">
+    <div class="stat"><div class="label">Server</div><div class="value dead" id="statServer">checking…</div></div>
+    <div class="stat"><div class="label">Studios Connected</div><div class="value" id="statStudios">–</div></div>
+    <div class="stat"><div class="label">Blueprints</div><div class="value" id="statTemplates">–</div></div>
+    <div class="stat"><div class="label">Knowledge Entries</div><div class="value" id="statKnowledge">–</div></div>
+  </div>
+
+  <section>
+    <h2>Blueprint Library</h2>
+    <p class="desc">Every built-in system Forge AI can hand you directly, by name. Anything not on this list still gets built — see Live Test below — assembled from reusable pieces instead of a fixed match.</p>
+    <div class="search-row">
+      <input id="templateSearch" type="text" placeholder="Filter blueprints… (e.g. admin, shop, sword)" />
     </div>
-    <div class="plate">
-      <div class="plate-value" id="statKnowledge">29</div>
-      <div class="plate-label">Knowledge Entries</div>
-    </div>
-    <div class="plate">
-      <div class="plate-value" id="statStudios">0</div>
-      <div class="plate-label">Studios Connected</div>
+    <div class="chip-grid" id="templateChips">
+      <span class="chip">loading…</span>
     </div>
   </section>
-  <p class="stat-caption" id="statCaption">Snapshot from server.py — connect this page to your running server for live numbers.</p>
 
-  <section aria-labelledby="consoleTitle">
-    <div class="section-head">
-      <h2 id="consoleTitle">Anvil Console</h2>
-      <p class="section-sub">Type what you need — Forge AI answers the same way it would answer your Studio plugin. Attach a photo to get its size, format, and dominant colors.</p>
-    </div>
-    <form class="console-form" id="consoleForm">
-      <div class="console-field">
-        <div class="attachment-row" id="attachmentRow" hidden>
-          <span class="attachment-chip">
-            <img id="attachmentThumb" alt="">
-            <span id="attachmentName"></span>
-            <button type="button" class="attachment-remove" id="attachmentRemove" aria-label="Remove photo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </span>
-        </div>
-        <div class="console-textarea-wrap">
-          <textarea id="consoleInput" rows="2" placeholder="inventory system · build a castle · what is TweenService…" aria-label="Describe what you need"></textarea>
-          <button type="button" class="attach-btn" id="attachBtn" aria-label="Attach a photo" title="Attach a photo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-          </button>
-          <input type="file" id="attachInput" accept="image/*" hidden>
-        </div>
-        <div class="model-picker-row">
-          <button type="button" class="model-picker-pill" id="modelPickerPill" aria-haspopup="true" aria-expanded="false">
-            <span class="model-picker-dot" id="modelPickerDot"></span>
-            <span class="model-picker-label" id="modelPickerLabel">Checking…</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="model-picker-menu" id="modelPickerMenu" hidden></div>
-        </div>
+  <section>
+    <h2>Live Test</h2>
+    <p class="desc">Talk to the same brain your Studio plugin talks to. Try a blueprint name ("admin system"), a knowledge question ("how do coroutines work"), or something unmatched ("make a friend system with a gui") to see the composable builder kick in.</p>
+    <div class="chat-box">
+      <div class="chat-log" id="chatLog">
+        <div class="msg bot">Ready. Ask for a system, a Lua concept, or describe something custom.</div>
       </div>
-      <button type="submit" class="strike-btn" id="strikeBtn">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
-        <span id="strikeBtnText">Generate</span>
-      </button>
-    </form>
-    <div class="console-output" id="consoleOutput" aria-live="polite"></div>
-  </section>
-
-  <section aria-labelledby="keysTitle">
-    <div class="section-head">
-      <h2 id="keysTitle">Fuel Lines</h2>
-      <p class="section-sub">API keys that power the LLM fallback for anything outside the templates above. Free ones at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> — add a few and Forge rotates between them automatically when one hits a rate limit, or switch manually below.</p>
-    </div>
-    <div class="keys-panel">
-      <div class="token-row">
-        <input type="password" id="bridgeTokenInput" placeholder="Bridge token (same as your Studio plugin)" autocomplete="off">
-        <button type="button" class="ghost-btn" id="loadKeysBtn">Load Keys</button>
+      <div class="chat-input-row">
+        <input id="chatInput" type="text" placeholder="e.g. build a castle" onkeydown="if(event.key==='Enter')sendChat()" />
+        <button id="chatSend" onclick="sendChat()">Forge</button>
       </div>
-      <div class="key-list" id="keyList"></div>
-      <form class="add-key-form" id="addKeyForm">
-        <input type="password" id="newKeyInput" placeholder="Paste API key" autocomplete="off" required>
-        <select id="providerSelect"></select>
-        <input type="text" id="newKeyLabel" placeholder="Label (optional)">
-        <input type="text" id="newKeyModel" placeholder="Model">
-        <input type="text" id="newKeyBaseUrl" placeholder="Base URL (custom endpoints only)" hidden>
-        <button type="submit" class="ghost-btn">Add Key</button>
-      </form>
-      <p class="provider-note" id="providerNote"></p>
-      <p class="keys-status" id="keysStatus"></p>
     </div>
   </section>
 
-  <section aria-labelledby="rackTitle">
-    <div class="section-head">
-      <h2 id="rackTitle">Tool Rack</h2>
-      <p class="section-sub"><span id="rackCount">84</span> templates ready to pull down — tap one to load it into the console above.</p>
-    </div>
-    <div class="rack-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="search" id="rackSearch" placeholder="Filter templates…" aria-label="Filter templates">
-    </div>
-    <div class="rack-group">
-      <h3>Gameplay Systems</h3>
-      <div class="chip-grid" id="chipsSystems"></div>
-    </div>
-    <div class="rack-group">
-      <h3>3D Structures</h3>
-      <div class="chip-grid" id="chipsBuilders"></div>
-    </div>
-    <div class="rack-group">
-      <h3>3D Weapons</h3>
-      <div class="chip-grid" id="chipsWeapons"></div>
-    </div>
-  </section>
+</main>
 
-  <section aria-labelledby="guideTitle">
-    <div class="section-head">
-      <h2 id="guideTitle">Placement Guide</h2>
-      <p class="section-sub">Where each script type actually goes in Studio.</p>
-    </div>
-    <div class="accordion" id="accordion"></div>
-    <p class="rule-of-thumb">Script → server logic. LocalScript → client UI/input. ModuleScript → shared reusable code.</p>
-  </section>
-
-  <footer>
-    Forge AI Genius — deterministic template engine + optional LLM fallback, bring your own free keys.
-  </footer>
-
-</div>
+<footer>FORGE AI · v19.0 · KEYLESS BUILD · self-hosted, no telemetry</footer>
 
 <script>
-(function () {
-  "use strict";
+const state = { templates: [] };
 
-  // This dashboard is deployed separately from server.py, so every API call
-  // needs the full backend URL rather than a relative path. Change this one
-  // line if the backend ever moves (e.g. a new Render URL or custom domain).
-  var API_BASE = "https://backend-xrd1.onrender.com";
-
-  function api(path) { return API_BASE + path; }
-
-  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* ---------------- Utilities ---------------- */
-
-  function el(tag, attrs, children) {
-    var node = document.createElement(tag);
-    if (attrs) {
-      Object.keys(attrs).forEach(function (k) {
-        if (k === "class") node.className = attrs[k];
-        else if (k === "text") node.textContent = attrs[k];
-        else node.setAttribute(k, attrs[k]);
-      });
-    }
-    (children || []).forEach(function (c) {
-      if (c) node.appendChild(c);
-    });
-    return node;
+async function loadHealth() {
+  try {
+    const res = await fetch('/api/health');
+    const data = await res.json();
+    document.getElementById('statServer').textContent = data.ok ? 'Online' : 'Error';
+    document.getElementById('statServer').className = 'value ' + (data.ok ? 'live' : 'dead');
+    document.getElementById('statStudios').textContent = data.studios_connected ?? 0;
+    document.getElementById('statTemplates').textContent = data.templates ?? '–';
+    document.getElementById('statKnowledge').textContent = data.knowledge_base ?? '–';
+  } catch (e) {
+    document.getElementById('statServer').textContent = 'Unreachable';
+    document.getElementById('statServer').className = 'value dead';
   }
+}
 
-  function countUp(node, from, to, duration) {
-    if (from === to) { node.textContent = to; return; }
-    if (reducedMotion) { node.textContent = to; return; }
-    var start = null;
-    function step(ts) {
-      if (start === null) start = ts;
-      var progress = Math.min((ts - start) / duration, 1);
-      var value = Math.round(from + (to - from) * progress);
-      node.textContent = value;
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+async function loadTemplates() {
+  try {
+    const res = await fetch('/api/templates');
+    const data = await res.json();
+    state.templates = data.templates || [];
+    renderTemplates(state.templates);
+  } catch (e) {
+    document.getElementById('templateChips').innerHTML = '<span class="chip">could not load</span>';
   }
+}
 
-  /* ---------------- Health / stats ---------------- */
+function renderTemplates(list) {
+  const el = document.getElementById('templateChips');
+  if (!list.length) { el.innerHTML = '<span class="chip">none</span>'; return; }
+  el.innerHTML = list.map(t => `<span class="chip">${t}</span>`).join('');
+}
 
-  var statusDot = document.getElementById("statusDot");
-  var statusText = document.getElementById("statusText");
-  var liveIndicator = document.getElementById("liveIndicator");
-  var statCaption = document.getElementById("statCaption");
-  var statTemplates = document.getElementById("statTemplates");
-  var statKnowledge = document.getElementById("statKnowledge");
-  var statStudios = document.getElementById("statStudios");
+document.getElementById('templateSearch').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase();
+  renderTemplates(state.templates.filter(t => t.includes(q)));
+});
 
-  function setOffline(message) {
-    statusDot.classList.remove("lit");
-    statusText.textContent = message || "Forge unreachable";
-    liveIndicator.textContent = "○ last known snapshot";
-  }
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
-  function setOnline(llmConfigured, llmKeys) {
-    statusDot.classList.add("lit");
-    statusText.textContent = "Forge is online" + (llmConfigured ? " · LLM fallback ON (" + llmKeys + " key" + (llmKeys === 1 ? "" : "s") + ")" : " · LLM fallback OFF");
-    liveIndicator.textContent = "● live";
-  }
-
-  function loadHealth() {
-    fetch(api("/api/health"))
-      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function (data) {
-        setOnline(data.llm_configured, data.llm_keys || 0);
-        statCaption.textContent = "Live numbers from your running server.";
-        countUp(statTemplates, parseInt(statTemplates.textContent, 10), data.templates, 500);
-        countUp(statKnowledge, parseInt(statKnowledge.textContent, 10), data.knowledge_base, 500);
-        countUp(statStudios, parseInt(statStudios.textContent, 10), data.studios_connected, 500);
-        renderModelPicker(null, data);
-      })
-      .catch(function () {
-        setOffline("Forge unreachable — showing snapshot");
-      });
-  }
-
-  loadHealth();
-
-  /* ---------------- Anvil Console ---------------- */
-
-  var consoleForm = document.getElementById("consoleForm");
-  var consoleInput = document.getElementById("consoleInput");
-  var consoleOutput = document.getElementById("consoleOutput");
-  var strikeBtn = document.getElementById("strikeBtn");
-  var strikeBtnText = document.getElementById("strikeBtnText");
-
-  var attachBtn = document.getElementById("attachBtn");
-  var attachInput = document.getElementById("attachInput");
-  var attachmentRow = document.getElementById("attachmentRow");
-  var attachmentThumb = document.getElementById("attachmentThumb");
-  var attachmentName = document.getElementById("attachmentName");
-  var attachmentRemove = document.getElementById("attachmentRemove");
-  var attachedImage = null; // { dataUrl, name }
-  var MAX_ATTACH_BYTES = 5 * 1024 * 1024;
-
-  function showConsoleError(msg) {
-    consoleOutput.innerHTML = "";
-    consoleOutput.appendChild(el("div", { class: "console-error", text: msg }));
-  }
-
-  function renderAttachmentPreview() {
-    if (!attachedImage) {
-      attachmentRow.hidden = true;
-      attachmentThumb.removeAttribute("src");
-      return;
-    }
-    attachmentRow.hidden = false;
-    attachmentThumb.src = attachedImage.dataUrl;
-    attachmentThumb.alt = attachedImage.name;
-    attachmentName.textContent = attachedImage.name;
-  }
-
-  attachBtn.addEventListener("click", function () { attachInput.click(); });
-
-  attachInput.addEventListener("change", function () {
-    var file = attachInput.files && attachInput.files[0];
-    if (!file) return;
-    if (file.type.indexOf("image/") !== 0) {
-      showConsoleError("That file isn't an image.");
-      attachInput.value = "";
-      return;
-    }
-    if (file.size > MAX_ATTACH_BYTES) {
-      showConsoleError("That image is too large (max 5MB).");
-      attachInput.value = "";
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function () {
-      attachedImage = { dataUrl: reader.result, name: file.name };
-      renderAttachmentPreview();
-    };
-    reader.onerror = function () {
-      showConsoleError("Couldn't read that file.");
-    };
-    reader.readAsDataURL(file);
-  });
-
-  attachmentRemove.addEventListener("click", function () {
-    attachedImage = null;
-    attachInput.value = "";
-    renderAttachmentPreview();
-  });
-
-  function escapeForAttr(s) { return s; } // reserved for future use; DOM setters used instead of raw HTML
-
-  function inlineNodesForLine(line, container) {
-    // Handle markdown images first: ![alt](url)
-    var imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-    if (imgMatch) {
-      var wrap = el("div", { class: "console-image-wrap" });
-      var img = el("img", { class: "console-image", alt: imgMatch[1] });
-      img.src = imgMatch[2];
-      img.loading = "lazy";
-      wrap.appendChild(img);
-      container.appendChild(wrap);
-      return;
-    }
-
-    // Dominant-color lines from photo analysis: render as real swatches, not hex text.
-    if (line.indexOf("🎨 Dominant colors:") === 0) {
-      var hexCodes = line.match(/#[0-9A-Fa-f]{6}/g);
-      if (hexCodes && hexCodes.length) {
-        var row = el("div", { class: "color-swatch-row" });
-        hexCodes.forEach(function (hex) {
-          var swatchWrap = el("span", { class: "color-swatch-wrap" });
-          var dot = el("span", { class: "color-swatch" });
-          dot.style.background = hex;
-          dot.title = hex;
-          swatchWrap.appendChild(dot);
-          swatchWrap.appendChild(el("span", { class: "color-swatch-label", text: hex }));
-          row.appendChild(swatchWrap);
-        });
-        container.appendChild(row);
-        return;
-      }
-    }
-
-    var p = el("p");
-    if (line.indexOf("📌") === 0) {
-      p.className = "howto-note";
-    }
-    // Handle **bold** and *italic* segments as plain text nodes + <strong>/<em>, no raw HTML involved.
-    var parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
-    parts.forEach(function (part) {
-      if (!part) return;
-      var boldMatch = part.match(/^\*\*([^*]+)\*\*$/);
-      var italicMatch = !boldMatch && part.match(/^\*([^*]+)\*$/);
-      if (boldMatch) {
-        p.appendChild(el("strong", { text: boldMatch[1] }));
-      } else if (italicMatch) {
-        p.appendChild(el("em", { text: italicMatch[1] }));
-      } else {
-        p.appendChild(document.createTextNode(part));
-      }
-    });
-    container.appendChild(p);
-  }
-
-  function appendProse(text, container) {
-    var trimmed = text.replace(/^\n+|\n+$/g, "");
-    if (!trimmed.trim()) return;
-    var proseDiv = el("div", { class: "prose" });
-    trimmed.split("\n").forEach(function (line) {
-      if (line.trim() === "") return;
-      inlineNodesForLine(line.trim(), proseDiv);
-    });
-    container.appendChild(proseDiv);
-  }
-
-  function copyIconSvg() {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "2");
-    svg.setAttribute("stroke-linecap", "round");
-    svg.setAttribute("stroke-linejoin", "round");
-    svg.setAttribute("aria-hidden", "true");
-    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("x", "9"); rect.setAttribute("y", "9");
-    rect.setAttribute("width", "13"); rect.setAttribute("height", "13"); rect.setAttribute("rx", "2");
-    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("d", "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1");
-    svg.appendChild(rect);
-    svg.appendChild(path);
-    return svg;
-  }
-
-  function appendCodePanel(code, titleInfo, container) {
-    var panel = el("div", { class: "code-panel" });
-    var head = el("div", { class: "code-panel-head" });
-    var title = el("span", {
-      class: "code-panel-title",
-      text: titleInfo ? (titleInfo.name + " · " + titleInfo.type + " · " + titleInfo.path) : "Lua"
-    });
-    var copyBtn = el("button", { class: "copy-btn", type: "button" });
-    copyBtn.appendChild(copyIconSvg());
-    var copyLabel = el("span", { text: "Copy" });
-    copyBtn.appendChild(copyLabel);
-    copyBtn.addEventListener("click", function () {
-      if (!navigator.clipboard) { copyLabel.textContent = "Unavailable"; return; }
-      navigator.clipboard.writeText(code).then(function () {
-        copyLabel.textContent = "Copied";
-        setTimeout(function () { copyLabel.textContent = "Copy"; }, 1500);
-      }).catch(function () {
-        copyLabel.textContent = "Failed";
-        setTimeout(function () { copyLabel.textContent = "Copy"; }, 1500);
-      });
-    });
-    head.appendChild(title);
-    head.appendChild(copyBtn);
-
-    var pre = el("pre");
-    var codeEl = el("code", { text: code });
-    pre.appendChild(codeEl);
-
-    panel.appendChild(head);
-    panel.appendChild(pre);
-    container.appendChild(panel);
-  }
-
-  function renderResponse(rawText) {
-    consoleOutput.innerHTML = "";
-    var regex = /```lua\n([\s\S]*?)```/g;
-    var lastIndex = 0;
-    var match;
-    var found = false;
-
-    while ((match = regex.exec(rawText)) !== null) {
-      found = true;
-      var before = rawText.slice(lastIndex, match.index);
-      var titleInfo = null;
-
-      var lines = before.split("\n");
-      var lastLine = "";
-      for (var i = lines.length - 1; i >= 0; i--) {
-        if (lines[i].trim() !== "") { lastLine = lines[i].trim(); break; }
-      }
-      var titleMatch = lastLine.match(/^###\s+(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)$/);
-      if (titleMatch) {
-        titleInfo = { name: titleMatch[1], type: titleMatch[2], path: titleMatch[3] };
-        var idx = before.lastIndexOf(lastLine);
-        before = before.slice(0, idx);
-      }
-
-      appendProse(before, consoleOutput);
-      appendCodePanel(match[1].trim(), titleInfo, consoleOutput);
-      lastIndex = regex.lastIndex;
-    }
-
-    var after = rawText.slice(lastIndex);
-    appendProse(after, consoleOutput);
-
-    if (!found && !consoleOutput.textContent.trim()) {
-      appendProse(rawText, consoleOutput);
-    }
-  }
-
-  function spawnSparks() {
-    if (reducedMotion) return;
-    for (var i = 0; i < 8; i++) {
-      var spark = el("span", { class: "spark" });
-      var angle = Math.random() * Math.PI * 2;
-      var dist = 20 + Math.random() * 24;
-      spark.style.setProperty("--dx", Math.cos(angle) * dist + "px");
-      spark.style.setProperty("--dy", Math.sin(angle) * dist + "px");
-      strikeBtn.appendChild(spark);
-      (function (node) {
-        setTimeout(function () { node.remove(); }, 600);
-      })(spark);
-    }
-  }
-
-  consoleForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var message = consoleInput.value.trim();
-    if (!message && !attachedImage) return;
-
-    spawnSparks();
-    strikeBtn.disabled = true;
-    strikeBtnText.textContent = "Heating…";
-    consoleOutput.innerHTML = "";
-
-    var payload = { message: message, studio_token: "dashboard-preview" };
-    if (attachedImage) payload.image = attachedImage.dataUrl;
-
-    fetch(api("/api/chat"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function (data) {
-        renderResponse(data.response || "");
-        loadHealth();
-        attachedImage = null;
-        attachInput.value = "";
-        renderAttachmentPreview();
-      })
-      .catch(function () {
-        showConsoleError("The forge didn't respond. Make sure server.py is running and this page is being served from it — not previewed standalone.");
-      })
-      .finally(function () {
-        strikeBtn.disabled = false;
-        strikeBtnText.textContent = "Generate";
-      });
-  });
-
-  /* ---------------- Fuel Lines (LLM key management) ---------------- */
-
-  var bridgeTokenInput = document.getElementById("bridgeTokenInput");
-  var loadKeysBtn = document.getElementById("loadKeysBtn");
-  var keyList = document.getElementById("keyList");
-  var addKeyForm = document.getElementById("addKeyForm");
-  var newKeyInput = document.getElementById("newKeyInput");
-  var newKeyLabel = document.getElementById("newKeyLabel");
-  var newKeyModel = document.getElementById("newKeyModel");
-  var newKeyBaseUrl = document.getElementById("newKeyBaseUrl");
-  var providerSelect = document.getElementById("providerSelect");
-  var providerNote = document.getElementById("providerNote");
-  var keysStatus = document.getElementById("keysStatus");
-  var providers = {}; // filled from /api/keys/providers, keyed by provider id
-
-  function setKeysStatus(msg, isError) {
-    keysStatus.textContent = msg || "";
-    keysStatus.className = "keys-status" + (msg ? (isError ? " error" : " ok") : "");
-  }
-
-  function authHeaders() {
-    return { "Content-Type": "application/json", "X-Bridge-Token": bridgeTokenInput.value.trim() };
-  }
-
-  function applyProviderSelection() {
-    var id = providerSelect.value;
-    var p = providers[id];
-    if (!p) return;
-
-    newKeyModel.value = p.default_model || "";
-    newKeyModel.placeholder = p.default_model ? p.default_model : "Model (blank auto-rotates free ones)";
-    newKeyBaseUrl.hidden = id !== "custom";
-    if (id === "custom") newKeyBaseUrl.value = "";
-
-    providerNote.className = "provider-note" + (p.free === false ? " not-free" : "");
-    var noteText = (p.note || "") + "  ";
-    providerNote.textContent = noteText;
-    if (p.signup_url) {
-      var link = el("a", { href: p.signup_url, target: "_blank", rel: "noopener", text: "Get a key →" });
-      providerNote.appendChild(link);
-    }
-  }
-
-  function loadProviders() {
-    fetch(api("/api/keys/providers"))
-      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function (data) {
-        providers = data.providers || {};
-        providerSelect.innerHTML = "";
-        Object.keys(providers).forEach(function (id) {
-          var p = providers[id];
-          providerSelect.appendChild(el("option", { value: id, text: p.display_name + (p.free ? "" : " (paid)") }));
-        });
-        providerSelect.appendChild(el("option", { value: "custom", text: "Custom / other" }));
-        applyProviderSelection();
-      })
-      .catch(function () {
-        // Backend not reachable yet - "custom" alone still lets the form work
-        providerSelect.innerHTML = "";
-        providerSelect.appendChild(el("option", { value: "custom", text: "Custom / other" }));
-        newKeyBaseUrl.hidden = false;
-      });
-  }
-  providerSelect.addEventListener("change", applyProviderSelection);
-  loadProviders();
-
-  function renderKeys(keys) {
-    keyList.innerHTML = "";
-    if (!keys || !keys.length) {
-      keyList.appendChild(el("p", { class: "keys-empty", text: "No keys loaded yet — the LLM fallback is off until you add one." }));
-      return;
-    }
-    keys.forEach(function (k) {
-      var row = el("div", { class: "key-row" });
-      var main = el("div", { class: "key-row-main" });
-      main.appendChild(el("div", { class: "key-row-label", text: k.label + "  ·  " + k.api_key_masked }));
-      main.appendChild(el("div", { class: "key-row-meta", text: k.model + "  ·  " + k.source }));
-      if (k.warning) main.appendChild(el("div", { class: "key-row-warning", text: "⚠ " + k.warning }));
-      row.appendChild(main);
-      row.appendChild(el("span", { class: "key-badge " + k.status, text: k.status }));
-
-      var actions = el("div", { class: "key-row-actions" });
-      var useBtn = el("button", { type: "button", text: "Move to Top" });
-      useBtn.addEventListener("click", function () { prioritizeKey(k.id); });
-      var removeBtn = el("button", { type: "button", class: "danger", text: "Remove" });
-      removeBtn.addEventListener("click", function () { removeKey(k.id); });
-      actions.appendChild(useBtn);
-      actions.appendChild(removeBtn);
-      row.appendChild(actions);
-
-      keyList.appendChild(row);
-    });
-  }
-
-  function loadKeys() {
-    if (!bridgeTokenInput.value.trim()) {
-      setKeysStatus("Enter your bridge token first.", true);
-      return;
-    }
-    setKeysStatus("Loading…", false);
-    fetch(api("/api/keys"), { headers: authHeaders() })
-      .then(function (r) {
-        if (r.status === 401) throw new Error("Wrong bridge token.");
-        if (!r.ok) throw new Error("bad status");
-        return r.json();
-      })
-      .then(function (data) {
-        renderKeys(data.keys);
-        renderModelPicker(data.keys);
-        setKeysStatus(data.keys.length + " key(s) loaded.", false);
-      })
-      .catch(function (err) {
-        setKeysStatus(err.message === "Wrong bridge token." ? err.message : "Couldn't load keys — check the token and that the server is running.", true);
-      });
-  }
-
-  function prioritizeKey(id) {
-    fetch(api("/api/keys/prioritize"), { method: "POST", headers: authHeaders(), body: JSON.stringify({ id: id }) })
-      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function (data) { renderKeys(data.keys); renderModelPicker(data.keys); setKeysStatus("Switched — that key goes first now.", false); })
-      .catch(function () { setKeysStatus("Couldn't switch keys.", true); });
-  }
-
-  function removeKey(id) {
-    fetch(api("/api/keys"), { method: "DELETE", headers: authHeaders(), body: JSON.stringify({ id: id }) })
-      .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-      .then(function (data) { renderKeys(data.keys); renderModelPicker(data.keys); setKeysStatus("Removed.", false); loadHealth(); })
-      .catch(function () { setKeysStatus("Couldn't remove that key.", true); });
-  }
-
-  loadKeysBtn.addEventListener("click", loadKeys);
-
-  addKeyForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (!bridgeTokenInput.value.trim()) {
-      setKeysStatus("Enter your bridge token first.", true);
-      return;
-    }
-    var payload = {
-      api_key: newKeyInput.value.trim(),
-      provider: providerSelect.value,
-      label: newKeyLabel.value.trim() || undefined,
-      model: newKeyModel.value.trim() || undefined,
-      base_url: (providerSelect.value === "custom" ? newKeyBaseUrl.value.trim() : "") || undefined
-    };
-    fetch(api("/api/keys"), { method: "POST", headers: authHeaders(), body: JSON.stringify(payload) })
-      .then(function (r) {
-        if (r.status === 401) throw new Error("Wrong bridge token.");
-        if (!r.ok) throw new Error("bad status");
-        return r.json();
-      })
-      .then(function (data) {
-        renderKeys(data.keys);
-        renderModelPicker(data.keys);
-        setKeysStatus("Key added.", false);
-        newKeyInput.value = ""; newKeyLabel.value = ""; newKeyBaseUrl.value = "";
-        applyProviderSelection();
-        loadHealth();
-      })
-      .catch(function (err) { setKeysStatus(err.message === "Wrong bridge token." ? err.message : "Couldn't add that key.", true); });
-  });
-
-  /* ---------------- Inline model picker (compact, lives in the console) ---------------- */
-  // Lemonade-style pill showing "which model answers next" with a dropdown to
-  // switch. Shares data with the Fuel Lines panel above rather than needing
-  // its own token entry - once you Load Keys there, this fills in too.
-
-  var modelPickerPill = document.getElementById("modelPickerPill");
-  var modelPickerDot = document.getElementById("modelPickerDot");
-  var modelPickerLabel = document.getElementById("modelPickerLabel");
-  var modelPickerMenu = document.getElementById("modelPickerMenu");
-  var lastKnownKeys = null; // null = never loaded this session, [] = loaded but empty
-
-  function closeModelPicker() {
-    modelPickerMenu.hidden = true;
-    modelPickerPill.setAttribute("aria-expanded", "false");
-  }
-
-  function renderModelPicker(keys, healthFallback) {
-    if (keys) lastKnownKeys = keys;
-
-    if (lastKnownKeys && lastKnownKeys.length) {
-      var top = lastKnownKeys[0];
-      modelPickerLabel.textContent = top.label + " · " + top.model;
-      modelPickerDot.className = "model-picker-dot " + top.status;
-    } else if (healthFallback && healthFallback.llm_configured) {
-      modelPickerLabel.textContent = healthFallback.llm_keys + " key(s) · tap to view";
-      modelPickerDot.className = "model-picker-dot ready";
-    } else if (lastKnownKeys) {
-      modelPickerLabel.textContent = "No keys · templates only";
-      modelPickerDot.className = "model-picker-dot";
-    } else {
-      modelPickerLabel.textContent = "No AI key · templates only";
-      modelPickerDot.className = "model-picker-dot";
-    }
-
-    modelPickerMenu.innerHTML = "";
-    if (lastKnownKeys && lastKnownKeys.length) {
-      lastKnownKeys.forEach(function (k) {
-        var item = el("button", { type: "button", class: "model-picker-item" });
-        item.appendChild(el("span", { class: "model-picker-dot " + k.status }));
-        item.appendChild(el("span", { class: "model-picker-item-text", text: k.label + " · " + k.model }));
-        item.addEventListener("click", function () {
-          prioritizeKey(k.id);
-          closeModelPicker();
-        });
-        modelPickerMenu.appendChild(item);
-      });
-    } else {
-      var hint = el("div", { class: "model-picker-hint" });
-      hint.appendChild(document.createTextNode(
-        lastKnownKeys ? "No keys added yet — templates still work, this just adds AI answers on top." : "Enter your bridge token in Fuel Lines below to see and switch models."
-      ));
-      var goBtn = el("button", { type: "button", text: "Go to Fuel Lines" });
-      goBtn.addEventListener("click", function () {
-        closeModelPicker();
-        document.getElementById("keysTitle").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-        bridgeTokenInput.focus();
-      });
-      hint.appendChild(goBtn);
-      modelPickerMenu.appendChild(hint);
-    }
-  }
-
-  modelPickerPill.addEventListener("click", function (e) {
-    e.stopPropagation();
-    var willOpen = modelPickerMenu.hidden;
-    if (willOpen) renderModelPicker(lastKnownKeys);
-    modelPickerMenu.hidden = !willOpen;
-    modelPickerPill.setAttribute("aria-expanded", willOpen ? "true" : "false");
-  });
-
-  document.addEventListener("click", function (e) {
-    if (!modelPickerMenu.hidden && !modelPickerMenu.contains(e.target) && e.target !== modelPickerPill) {
-      closeModelPicker();
+function renderBotMessage(text) {
+  // Turn ```lua ... ``` fences into <pre><code> blocks, escape everything else.
+  const parts = text.split(/```(?:lua)?\n?([\s\S]*?)```/g);
+  let html = '';
+  parts.forEach((part, i) => {
+    if (i % 2 === 1) {
+      html += `<pre><code>${escapeHtml(part)}</code></pre>`;
+    } else if (part.trim()) {
+      html += `<div>${escapeHtml(part)}</div>`;
     }
   });
+  return html || escapeHtml(text);
+}
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !modelPickerMenu.hidden) closeModelPicker();
-  });
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const btn = document.getElementById('chatSend');
+  const log = document.getElementById('chatLog');
+  const msg = input.value.trim();
+  if (!msg) return;
 
-  /* ---------------- Tool Rack ---------------- */
+  log.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(msg)}</div>`);
+  input.value = '';
+  btn.disabled = true;
+  log.scrollTop = log.scrollHeight;
 
-  var FALLBACK_TEMPLATES = [
-    "leaderstats", "inventory", "quest", "plugin",
-    "crafting", "skilltree", "dialogue", "pet", "mount", "vehicle", "gun", "melee",
-    "magic", "building", "farming", "fishing", "mining", "trading", "guild", "party",
-    "achievement", "daily reward", "lootbox", "shop", "bank", "auction", "mail",
-    "chat filter", "voice", "spectator", "replay", "anticheat", "admin", "ban",
-    "report", "appeal", "ticket", "event", "battle pass", "season", "clan war",
-    "arena", "dungeon", "boss", "wave survival", "parkour", "racing", "tycoon",
-    "simulator", "clicker", "idle", "incremental", "merge", "match3", "board game",
-    "card game", "dice", "slot", "wheel", "cooking", "alchemy", "enchanting",
-    "smithing", "tailoring", "animal husbandry", "woodcutting", "foraging", "treasure map",
-    "riddle", "puzzle", "maze", "platformer", "shooting gallery", "rhythm", "quiz",
-    "3d castle", "3d house", "3d tower", "3d bridge", "3d tree", "3d maze", "3d hills", "3d island", "3d biome",
-    "3d scythe", "3d sword", "3d axe", "3d spear", "3d mace", "3d bow", "3d dagger", "3d staff", "3d shield"
-  ];
-
-  var WEAPON_NAMES = ["scythe", "sword", "axe", "spear", "mace", "bow", "dagger", "staff", "shield"];
-
-  var chipsSystems = document.getElementById("chipsSystems");
-  var chipsBuilders = document.getElementById("chipsBuilders");
-  var chipsWeapons = document.getElementById("chipsWeapons");
-  var rackCount = document.getElementById("rackCount");
-  var rackSearch = document.getElementById("rackSearch");
-
-  function buildRack(names) {
-    chipsSystems.innerHTML = "";
-    chipsBuilders.innerHTML = "";
-    chipsWeapons.innerHTML = "";
-    rackCount.textContent = names.length;
-
-    names.forEach(function (name) {
-      var is3d = name.indexOf("3d ") === 0;
-      var isWeapon = is3d && WEAPON_NAMES.indexOf(name.slice(3)) !== -1;
-      var chip = el("button", { class: "chip", type: "button", text: name });
-      chip.addEventListener("click", function () {
-        var prompt = is3d ? "build a " + name.slice(3) : name;
-        consoleInput.value = prompt;
-        consoleInput.focus();
-        consoleInput.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
-      });
-      var target = isWeapon ? chipsWeapons : (is3d ? chipsBuilders : chipsSystems);
-      target.appendChild(chip);
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, studio_token: 'dashboard-test' })
     });
+    const data = await res.json();
+    log.insertAdjacentHTML('beforeend', `<div class="msg bot">${renderBotMessage(data.response || '(no response)')}</div>`);
+  } catch (e) {
+    log.insertAdjacentHTML('beforeend', `<div class="msg bot">⚠ Could not reach the server.</div>`);
   }
+  btn.disabled = false;
+  log.scrollTop = log.scrollHeight;
+}
 
-  buildRack(FALLBACK_TEMPLATES);
-
-  fetch(api("/api/templates"))
-    .then(function (r) { if (!r.ok) throw new Error("bad status"); return r.json(); })
-    .then(function (data) {
-      if (data.templates && data.templates.length) buildRack(data.templates);
-    })
-    .catch(function () { /* keep fallback list already rendered */ });
-
-  rackSearch.addEventListener("input", function () {
-    var q = rackSearch.value.trim().toLowerCase();
-    document.querySelectorAll(".chip").forEach(function (chip) {
-      var match = chip.textContent.toLowerCase().indexOf(q) !== -1;
-      if (match) chip.removeAttribute("hidden"); else chip.setAttribute("hidden", "");
-    });
-  });
-
-  /* ---------------- Placement guide accordion ---------------- */
-
-  var GUIDE_ITEMS = [
-    { title: "Workspace", body: "Parts and models that are physically visible in the game world." },
-    { title: "ServerScriptService", body: "Server Scripts. Invisible to clients (and exploiters). Put your real game logic here." },
-    { title: "ServerStorage", body: "Server-only assets not currently in the game world — item templates, enemy models to clone in, etc." },
-    { title: "ReplicatedStorage", body: "Shared ModuleScripts, RemoteEvents/RemoteFunctions, and any assets both client and server need." },
-    { title: "StarterPlayer → StarterPlayerScripts", body: "LocalScripts that run once per player when they join — UI logic, input handling." },
-    { title: "StarterPlayer → StarterCharacterScripts", body: "LocalScripts that run every time a character respawns." },
-    { title: "StarterGui", body: "ScreenGuis and their LocalScripts." }
-  ];
-
-  var accordion = document.getElementById("accordion");
-
-  function chevronSvg() {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "currentColor");
-    svg.setAttribute("stroke-width", "2");
-    svg.setAttribute("stroke-linecap", "round");
-    svg.setAttribute("stroke-linejoin", "round");
-    svg.setAttribute("aria-hidden", "true");
-    var poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    poly.setAttribute("points", "6 9 12 15 18 9");
-    svg.appendChild(poly);
-    return svg;
-  }
-
-  GUIDE_ITEMS.forEach(function (item, i) {
-    var itemDiv = el("div", { class: "accordion-item" });
-    var triggerId = "guide-trigger-" + i;
-    var panelId = "guide-panel-" + i;
-
-    var trigger = el("button", {
-      class: "accordion-trigger", type: "button", id: triggerId,
-      "aria-expanded": "false", "aria-controls": panelId
-    });
-    trigger.appendChild(el("span", { text: item.title }));
-    trigger.appendChild(chevronSvg());
-
-    var wrap = el("div", { class: "accordion-panel-wrap" });
-    var panel = el("div", { class: "accordion-panel", id: panelId, role: "region", "aria-labelledby": triggerId });
-    panel.appendChild(el("p", { text: item.body }));
-    wrap.appendChild(panel);
-
-    trigger.addEventListener("click", function () {
-      var isOpen = itemDiv.classList.toggle("open");
-      trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    });
-
-    itemDiv.appendChild(trigger);
-    itemDiv.appendChild(wrap);
-    accordion.appendChild(itemDiv);
-  });
-
-})();
+loadHealth();
+loadTemplates();
+setInterval(loadHealth, 8000);
 </script>
+
 </body>
 </html>
