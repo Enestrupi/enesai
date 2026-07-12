@@ -293,7 +293,17 @@
 
 <main>
 
-  <div class="keyless-banner">⛓ 100% self-contained — no external API calls, no keys, no pre-written templates. Every script is assembled per-request.</div>
+  <div class="keyless-banner" id="keylessBanner">⛓ 100% self-contained — no external API calls, no keys, no pre-written templates. Every script is assembled per-request.</div>
+
+  <section id="serverUrlSection" style="padding: 18px 26px;">
+    <h2 style="margin-bottom: 10px;">Server URL</h2>
+    <p class="desc">This page is static (e.g. GitHub Pages) — it can't run <code>server.py</code> itself. Point it at wherever you deployed the Flask server (Render, Railway, your own VPS, or <code>http://localhost:5000</code> for local testing).</p>
+    <div class="search-row">
+      <input id="serverUrlInput" type="text" placeholder="https://your-forge-ai-server.onrender.com" />
+      <button onclick="saveServerUrl()" style="background:var(--ember); color:#1a0d05; border:none; border-radius:6px; padding:0 20px; font-weight:700; text-transform:uppercase; font-size:12px; cursor:pointer;">Connect</button>
+    </div>
+    <p class="desc" id="serverUrlStatus" style="margin:0;"></p>
+  </section>
 
   <div class="status-strip" id="statusStrip">
     <div class="stat"><div class="label">Server</div><div class="value dead" id="statServer">checking…</div></div>
@@ -334,24 +344,57 @@
 <script>
 const state = { templates: [] };
 
+function getServerUrl() {
+  return (localStorage.getItem('forgeAiServerUrl') || '').replace(/\/+$/, '');
+}
+
+function saveServerUrl() {
+  const input = document.getElementById('serverUrlInput');
+  const url = input.value.trim().replace(/\/+$/, '');
+  if (!url) return;
+  localStorage.setItem('forgeAiServerUrl', url);
+  document.getElementById('serverUrlStatus').textContent = 'Saved. Connecting…';
+  loadHealth();
+  loadTemplates();
+}
+
+function apiUrl(path) {
+  const base = getServerUrl();
+  if (!base) return null; // no server configured yet
+  return base + path;
+}
+
 async function loadHealth() {
+  const url = apiUrl('/api/health');
+  if (!url) {
+    document.getElementById('statServer').textContent = 'No server set';
+    document.getElementById('statServer').className = 'value dead';
+    return;
+  }
   try {
-    const res = await fetch('/api/health');
+    const res = await fetch(url);
     const data = await res.json();
     document.getElementById('statServer').textContent = data.ok ? 'Online' : 'Error';
     document.getElementById('statServer').className = 'value ' + (data.ok ? 'live' : 'dead');
     document.getElementById('statStudios').textContent = data.studios_connected ?? 0;
     document.getElementById('statTemplates').textContent = data.templates ?? '–';
     document.getElementById('statKnowledge').textContent = data.knowledge_base ?? '–';
+    document.getElementById('serverUrlStatus').textContent = 'Connected to ' + getServerUrl();
+    document.getElementById('serverUrlStatus').style.color = 'var(--good)';
   } catch (e) {
     document.getElementById('statServer').textContent = 'Unreachable';
     document.getElementById('statServer').className = 'value dead';
+    document.getElementById('serverUrlStatus').textContent =
+      'Could not reach that URL. Check it\'s running, uses https (mixed http/https gets blocked), and has CORS enabled (server.py already does).';
+    document.getElementById('serverUrlStatus').style.color = 'var(--bad)';
   }
 }
 
 async function loadTemplates() {
+  const url = apiUrl('/api/templates');
+  if (!url) { document.getElementById('templateChips').innerHTML = '<span class="chip">set a server URL above</span>'; return; }
   try {
-    const res = await fetch('/api/templates');
+    const res = await fetch(url);
     const data = await res.json();
     state.templates = data.templates || [];
     renderTemplates(state.templates);
@@ -396,13 +439,19 @@ async function sendChat() {
   const msg = input.value.trim();
   if (!msg) return;
 
+  const url = apiUrl('/api/chat');
+  if (!url) {
+    log.insertAdjacentHTML('beforeend', `<div class="msg bot">⚠ Set a Server URL above first.</div>`);
+    return;
+  }
+
   log.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(msg)}</div>`);
   input.value = '';
   btn.disabled = true;
   log.scrollTop = log.scrollHeight;
 
   try {
-    const res = await fetch('/api/chat', {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: msg, studio_token: 'dashboard-test' })
@@ -416,6 +465,11 @@ async function sendChat() {
   log.scrollTop = log.scrollHeight;
 }
 
+// Restore a previously-saved server URL on load, and try connecting.
+(function init() {
+  const saved = getServerUrl();
+  if (saved) document.getElementById('serverUrlInput').value = saved;
+})();
 loadHealth();
 loadTemplates();
 setInterval(loadHealth, 8000);
