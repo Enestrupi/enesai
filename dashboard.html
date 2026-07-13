@@ -257,7 +257,12 @@
 </div>
 
 <script>
-const SERVER_URL = 'https://backend-xrd1.onrender.com';
+// Points at the phone's local Forge/Enes AI server via a Cloudflare quick
+// tunnel. NOTE: quick tunnels (trycloudflare.com) generate a NEW random URL
+// every time `cloudflared tunnel --url ...` is restarted - update this line
+// again whenever the tunnel is restarted, or set up a named/persistent
+// Cloudflare tunnel later for a stable URL.
+const SERVER_URL = 'https://natural-supports-connecticut-soldiers.trycloudflare.com';
 
 const state = { templates: [] };
 
